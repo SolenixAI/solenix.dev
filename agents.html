@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agents Marketplace · SolenixAI</title>
+<meta name="description" content="Hand-picked tools for AI agents that install into Claude Code, Codex, Cursor or any MCP client with one line, and uninstall with one line.">
+<meta name="color-scheme" content="light dark">
+<meta property="og:title" content="Agents Marketplace · SolenixAI">
+<meta property="og:description" content="Hand-picked tools for AI agents. One line to install, one line to remove.">
+<meta property="og:url" content="https://solenix.dev/agents">
+<link rel="icon" href="/brand/out/logo-dark.svg" type="image/svg+xml" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/brand/out/logo-light.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/brand/out/apple-touch-icon.png">
+<link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+  <svg class="sky" viewBox="0 0 700 700" aria-hidden="true">
+    <defs>
+      <radialGradient id="glow" cx=".5" cy=".5" r=".5">
+        <stop offset=".55" style="stop-color:var(--sun2);stop-opacity:.22"/>
+        <stop offset="1" style="stop-color:var(--sun2);stop-opacity:0"/>
+      </radialGradient>
+      <radialGradient id="sun" cx=".42" cy=".38" r=".62">
+        <stop offset="0" style="stop-color:var(--sun1)"/>
+        <stop offset="1" style="stop-color:var(--sun2)"/>
+      </radialGradient>
+    </defs>
+    <circle cx="350" cy="350" r="270" fill="url(#glow)"/>
+    <circle class="ring" cx="350" cy="350" r="215"/>
+    <circle class="ring" cx="350" cy="350" r="280"/>
+    <circle class="ring" cx="350" cy="350" r="345"/>
+    <g class="orbit o1"><circle class="dot" cx="350" cy="135" r="5"/></g>
+    <g class="orbit o2"><circle class="dot" cx="70" cy="350" r="6"/></g>
+    <g class="orbit o3"><circle class="dot" cx="595" cy="100" r="4"/></g>
+    <circle cx="350" cy="350" r="150" fill="url(#sun)"/>
+  </svg>
+
+  <header>
+    <div class="wrap">
+      <a class="brand" href="/" aria-label="SolenixAI home">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/><circle cx="16" cy="16" r="8" fill="url(#sun)"/><circle cx="27" cy="9" r="2.2" fill="var(--ring)"/></svg>
+        SolenixAI
+      </a>
+      <nav aria-label="Main">
+        <a class="nav-link nav-hide" href="/#consulting">Consulting</a>
+        <a class="nav-link nav-hide" href="/#websites">Websites</a>
+        <a class="nav-link" href="/agents" aria-current="page">Agents</a>
+        <a class="nav-link" href="https://github.com/SolenixAI">GitHub</a>
+        <a class="nav-cta" href="mailto:hello@solenix.dev">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+      <section class="hero hero-sm">
+        <p class="eyebrow reveal d1">Open source · Agents Marketplace</p>
+        <h1 class="reveal d2">Agent tools that install in <em>one line.</em></h1>
+        <p class="lede reveal d3">Hand-picked tools for AI agents: ours and the best of open source. Each one installs into Claude Code, Codex, Cursor or any MCP client with one line, and one line removes it. Nothing left behind.</p>
+        <div class="actions reveal d4">
+          <a class="btn btn-primary" href="https://github.com/SolenixAI/agents-marketplace">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.25-1.28-5.25-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.43-2.7 5.4-5.27 5.69.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+            View on GitHub
+          </a>
+          <a class="btn btn-ghost" href="https://github.com/SolenixAI/agents-marketplace/issues/new?template=2-suggest-a-tool.yml">Suggest a tool</a>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="add">
+        <h2 class="section-title" id="add">Add the marketplace</h2>
+        <p class="section-lede">Add it once, then install any tool below from inside your agent.</p>
+        <div class="grid3">
+          <article class="card">
+            <h3>Claude Code</h3>
+            <p class="cmd-label">Add</p>
+            <div class="cmd"><code>/plugin marketplace add SolenixAI/agents-marketplace</code><button class="copy" type="button">Copy</button></div>
+            <p class="cmd-label">Remove</p>
+            <div class="cmd"><code>/plugin marketplace remove solenix</code><button class="copy" type="button">Copy</button></div>
+          </article>
+          <article class="card">
+            <h3>Codex</h3>
+            <p class="cmd-label">Add</p>
+            <div class="cmd"><code>codex plugin marketplace add SolenixAI/agents-marketplace</code><button class="copy" type="button">Copy</button></div>
+            <p class="cmd-label">Remove</p>
+            <div class="cmd"><code>codex plugin marketplace remove solenix</code><button class="copy" type="button">Copy</button></div>
+          </article>
+          <article class="card">
+            <h3>Cursor</h3>
+            <p>Add <strong>SolenixAI/agents-marketplace</strong> as a plugin marketplace, and remove it from the same list.</p>
+            <p class="muted-note"><a href="https://cursor.com/docs/plugins">How Cursor plugins work →</a></p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="tools-title">
+        <h2 class="section-title" id="tools-title">Tools</h2>
+        <p class="section-lede">Every tool here is open source and tested to install and uninstall cleanly. This list is read live from <a href="https://github.com/SolenixAI/agents-marketplace/blob/main/catalog.json">catalog.json</a>.</p>
+        <div class="tools" id="tools" aria-live="polite">
+          <article class="card empty" id="tools-status">
+            <h3>Loading tools…</h3>
+          </article>
+        </div>
+        <noscript>
+          <p class="muted-note">This list needs JavaScript. You can also read it on <a href="https://github.com/SolenixAI/agents-marketplace/blob/main/catalog.json">GitHub</a>.</p>
+        </noscript>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span>© 2026 SolenixAI · St. John's, Newfoundland</span>
+      <a href="mailto:hello@solenix.dev">hello@solenix.dev</a>
+    </div>
+  </footer>
+  <p class="sr-only" id="copy-status" aria-live="polite"></p>
+
+<script>
+(() => {
+  const CATALOG = 'https://raw.githubusercontent.com/SolenixAI/agents-marketplace/main/catalog.json';
+  const REPO = 'https://github.com/SolenixAI/agents-marketplace';
+  const LABELS = { claude: 'Claude Code', codex: 'Codex', cursor: 'Cursor', skills: 'Any agent (skills)', mcp: 'Any MCP client' };
+  const status = document.getElementById('copy-status');
+
+  const el = (tag, props = {}, kids = []) => {
+    const n = document.createElement(tag);
+    for (const [k, v] of Object.entries(props)) k === 'text' ? (n.textContent = v) : n.setAttribute(k, v);
+    for (const kid of kids) n.append(kid);
+    return n;
+  };
+  const safeUrl = (u) => (typeof u === 'string' && /^https:\/\//.test(u) ? u : REPO);
+
+  const cmd = (text) => el('div', { class: 'cmd' }, [el('code', { text }), el('button', { class: 'copy', type: 'button', text: 'Copy' })]);
+
+  document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('.copy');
+    if (!btn) return;
+    const text = btn.previousElementSibling.textContent;
+    try { await navigator.clipboard.writeText(text); btn.textContent = 'Copied'; status.textContent = 'Copied to clipboard'; }
+    catch { btn.textContent = 'Select it'; }
+    setTimeout(() => { btn.textContent = 'Copy'; }, 1600);
+  });
+
+  const card = (t) => {
+    const badges = el('div', { class: 'badges' }, [
+      el('span', { class: t.by === 'solenix' ? 'badge badge-solenix' : 'badge', text: t.by === 'solenix' ? 'By SolenixAI' : 'Curated' }),
+      el('span', { class: 'badge', text: String(t.kind || '') }),
+      el('span', { class: 'badge', text: String(t.license || '') }),
+    ]);
+    const kids = [badges, el('h3', { text: String(t.name || '') }), el('p', { text: String(t.description || '') })];
+    for (const [key, line] of Object.entries(t.install || {})) {
+      kids.push(el('p', { class: 'cmd-label', text: LABELS[key] || key }), cmd(String(line)));
+    }
+    kids.push(el('a', { href: safeUrl(t.repo), text: 'Source →' }));
+    return el('article', { class: 'card' }, kids);
+  };
+
+  const box = document.getElementById('tools');
+  const show = (...nodes) => box.replaceChildren(...nodes);
+
+  fetch(CATALOG, { cache: 'no-store' })
+    .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then((data) => {
+      const tools = Array.isArray(data.tools) ? data.tools : [];
+      if (!tools.length) {
+        show(el('article', { class: 'card empty' }, [
+          el('p', { class: 'tag', text: 'v0 · live and empty' }),
+          el('h3', { text: 'First tools landing soon' }),
+          el('p', { text: 'The marketplace works today. Tools get listed only after they pass a clean install and uninstall test, so the first ones are on the way.' }),
+          el('p', { class: 'muted-note' }, [el('a', { href: REPO + '/releases/latest', text: 'Latest release →' })]),
+        ]));
+        return;
+      }
+      show(...tools.map(card));
+    })
+    .catch(() => {
+      show(el('article', { class: 'card empty' }, [
+        el('h3', { text: "Couldn't load the list" }),
+        el('p', { class: 'muted-note' }, [el('a', { href: REPO + '/blob/main/catalog.json', text: 'See it on GitHub →' })]),
+      ]));
+    });
+})();
+</script>
+</body>
+</html>

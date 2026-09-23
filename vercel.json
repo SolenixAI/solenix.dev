@@ -1,8 +1,14 @@
 {
+  "cleanUrls": true,
   "redirects": [
     {
       "source": "/:path*",
-      "has": [{ "type": "host", "value": "www.solenix.dev" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "www.solenix.dev"
+        }
+      ],
       "destination": "https://solenix.dev/:path*",
       "permanent": true
     }
