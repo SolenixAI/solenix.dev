@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SolenixAI</title>
+<meta name="description" content="AI consulting and websites for small businesses, and open-source tools that make AI agents easy to set up.">
+<meta name="color-scheme" content="light dark">
+<meta property="og:title" content="SolenixAI">
+<meta property="og:description" content="AI consulting and websites for small businesses, and open-source tools that make AI agents easy to set up.">
+<meta property="og:url" content="https://solenix.dev">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='none' stroke='%23f97316' stroke-opacity='.45' stroke-width='1.5'/%3E%3Ccircle cx='16' cy='16' r='8' fill='%23f97316'/%3E%3Ccircle cx='27' cy='9' r='2.2' fill='%23f97316'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #fbfaf8; --bg2: #f3f1ed; --surface: rgba(255,255,255,.86);
+    --text: #1c1917; --muted: #57534e; --faint: #a8a29e; --line: rgba(28,25,23,.1);
+    --accent: #c2410c; --accent-ink: #fff; --sun1: #fbbf24; --sun2: #ea580c; --ring: #ea580c;
+    --shadow: 0 1px 2px rgba(28,25,23,.04), 0 8px 24px rgba(28,25,23,.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0b0d12; --bg2: #11141b; --surface: rgba(20,24,32,.84);
+      --text: #f4f2ee; --muted: #a39e97; --faint: #6b6660; --line: rgba(244,242,238,.09);
+      --accent: #f59e0b; --accent-ink: #1a1206; --sun1: #fbbf24; --sun2: #f97316; --ring: #f59e0b;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 32px rgba(0,0,0,.35);
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+    background: radial-gradient(120% 90% at 100% 100%, var(--bg2) 0%, var(--bg) 60%);
+    color: var(--text); min-height: 100vh; min-height: 100dvh;
+    display: flex; flex-direction: column; overflow-x: hidden; position: relative;
+    -webkit-font-smoothing: antialiased; line-height: 1.5;
+  }
+  a { color: inherit; }
+
+  /* Sun and orbits (same motif as the GitHub banners) */
+  .sky { position: fixed; right: -24vmax; bottom: -34vmax; width: 78vmax; height: 78vmax; pointer-events: none; z-index: 0; }
+  .sky .ring { fill: none; stroke: var(--ring); stroke-opacity: .16; stroke-width: 1; vector-effect: non-scaling-stroke; }
+    .sky .orbit { transform-origin: 350px 350px; animation: spin linear infinite; }
+  .sky .o1 { animation-duration: 90s; }
+  .sky .o2 { animation-duration: 140s; animation-direction: reverse; }
+  .sky .o3 { animation-duration: 200s; }
+  .sky .dot { fill: var(--ring); }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .sky .orbit { animation: none; } }
+
+  .wrap { position: relative; z-index: 1; width: 100%; max-width: 64rem; margin: 0 auto; padding: 0 16px; }
+  @media (min-width: 640px) { .wrap { padding: 0 32px; } }
+
+  header { position: relative; z-index: 1; }
+  header .wrap { display: flex; align-items: center; justify-content: space-between; height: 72px; }
+  .brand { display: inline-flex; align-items: center; gap: .6rem; font-weight: 650; letter-spacing: -.01em; text-decoration: none; }
+  .brand svg { width: 26px; height: 26px; }
+  .nav-link { font-size: .92rem; color: var(--muted); text-decoration: none; padding: .45rem .8rem; border-radius: 999px; transition: color .15s, background .15s; }
+  .nav-link:hover { color: var(--text); background: var(--line); }
+
+  main { flex: 1; position: relative; z-index: 1; }
+  .hero { padding: clamp(3.5rem, 12vh, 8rem) 0 clamp(2.5rem, 6vh, 4rem); max-width: 40rem; }
+  .eyebrow { display: inline-flex; align-items: center; gap: .5rem; font-size: .78rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+  .eyebrow::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; box-shadow: 0 0 0 4px color-mix(in srgb, currentColor 18%, transparent); }
+  h1 { font-size: clamp(2.4rem, 7.2vw, 4.25rem); line-height: 1.04; font-weight: 700; letter-spacing: -.035em; margin: 1.1rem 0 1.25rem; text-wrap: balance; }
+  h1 em { font-style: normal; background: linear-gradient(90deg, var(--sun2), var(--sun1)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .lede { font-size: clamp(1.05rem, 2.6vw, 1.25rem); color: var(--muted); max-width: 34rem; text-wrap: pretty; }
+  .actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 2rem; }
+  .btn { display: inline-flex; align-items: center; gap: .5rem; padding: .78rem 1.2rem; border-radius: 999px; font-weight: 600; font-size: .95rem; text-decoration: none; border: 1px solid var(--line); transition: transform .15s, box-shadow .15s, background .15s; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-primary { background: var(--accent); color: var(--accent-ink); border-color: transparent; box-shadow: 0 6px 20px color-mix(in srgb, var(--accent) 30%, transparent); }
+  .btn-ghost { background: var(--surface); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+  .btn svg { width: 18px; height: 18px; }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+  .cards { display: grid; gap: 1rem; grid-template-columns: 1fr; padding-bottom: clamp(3rem, 10vh, 6rem); }
+  @media (min-width: 720px) { .cards { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 980px) { .cards { grid-template-columns: repeat(3, 1fr); } }
+  .card { display: flex; flex-direction: column; } .card a { margin-top: auto; padding-top: 1rem; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 1.5rem; box-shadow: var(--shadow); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+  .card .tag { font-size: .75rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
+  .card h2 { font-size: 1.2rem; letter-spacing: -.015em; margin: .5rem 0 .45rem; }
+  .card p { color: var(--muted); font-size: .98rem; }
+  .card a { display: inline-block; font-weight: 600; font-size: .92rem; color: var(--accent); text-decoration: none; }
+  .card a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+  footer { position: relative; z-index: 1; border-top: 1px solid var(--line); background: color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; justify-content: space-between; padding-top: 1.25rem; padding-bottom: 1.25rem; font-size: .85rem; color: var(--faint); }
+  footer a { text-decoration: none; } footer a:hover { color: var(--text); }
+  ::selection { background: color-mix(in srgb, var(--accent) 30%, transparent); }
+  html { scroll-behavior: smooth; }
+  body::before { content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: .05; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  header nav { display: flex; align-items: center; gap: .25rem; }
+  .nav-hide { display: none; }
+  @media (min-width: 640px) { .nav-hide { display: inline-block; } }
+  .nav-cta { font-size: .9rem; font-weight: 600; text-decoration: none; padding: .45rem .95rem; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); margin-left: .35rem; }
+  .nav-cta:hover { border-color: color-mix(in srgb, var(--accent) 50%, transparent); }
+  .founder { display: flex; align-items: center; gap: .6rem; margin-top: 1.6rem; font-size: .9rem; color: var(--faint); }
+  .founder img { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--line); }
+  .founder a { color: var(--muted); font-weight: 600; text-decoration: none; }
+  .founder a:hover { color: var(--text); }
+  .card { transition: transform .2s ease, border-color .2s ease; }
+  .card:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--accent) 35%, var(--line)); }
+  .icon { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; margin-bottom: 1rem;
+    background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); }
+  .icon svg { width: 20px; height: 20px; }
+  .section-title { font-size: .78rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); margin-bottom: 1rem; }
+  .steps { list-style: none; display: grid; gap: 1rem; grid-template-columns: 1fr; padding-bottom: clamp(3rem, 10vh, 6rem); counter-reset: step; }
+  @media (min-width: 720px) { .steps { grid-template-columns: repeat(3, 1fr); } }
+  .steps li { counter-increment: step; padding: 1.1rem 0 0; border-top: 1px solid var(--line); }
+  .steps li::before { content: "0" counter(step); display: block; font-size: .8rem; font-weight: 700; color: var(--accent); margin-bottom: .5rem; font-variant-numeric: tabular-nums; }
+  .steps h3 { font-size: 1.02rem; letter-spacing: -.01em; margin-bottom: .3rem; }
+  .steps p { color: var(--muted); font-size: .95rem; }
+  .reveal { animation: rise .7s cubic-bezier(.2,.7,.2,1) both; }
+  .d1 { animation-delay: .06s; } .d2 { animation-delay: .14s; } .d3 { animation-delay: .22s; } .d4 { animation-delay: .32s; } .d5 { animation-delay: .42s; }
+  @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .reveal { animation: none; } .card, .btn { transition: none; } html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+  <svg class="sky" viewBox="0 0 700 700" aria-hidden="true">
+    <defs>
+      <radialGradient id="glow" cx=".5" cy=".5" r=".5">
+        <stop offset=".55" style="stop-color:var(--sun2);stop-opacity:.22"/>
+        <stop offset="1" style="stop-color:var(--sun2);stop-opacity:0"/>
+      </radialGradient>
+      <radialGradient id="sun" cx=".42" cy=".38" r=".62">
+        <stop offset="0" style="stop-color:var(--sun1)"/>
+        <stop offset="1" style="stop-color:var(--sun2)"/>
+      </radialGradient>
+    </defs>
+    <circle cx="350" cy="350" r="270" fill="url(#glow)"/>
+    <circle class="ring" cx="350" cy="350" r="215"/>
+    <circle class="ring" cx="350" cy="350" r="280"/>
+    <circle class="ring" cx="350" cy="350" r="345"/>
+    <g class="orbit o1"><circle class="dot" cx="350" cy="135" r="5"/></g>
+    <g class="orbit o2"><circle class="dot" cx="70" cy="350" r="6"/></g>
+    <g class="orbit o3"><circle class="dot" cx="595" cy="100" r="4"/></g>
+    <circle cx="350" cy="350" r="150" fill="url(#sun)"/>
+  </svg>
+
+  <header>
+    <div class="wrap">
+      <a class="brand" href="/" aria-label="SolenixAI home">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/><circle cx="16" cy="16" r="8" fill="url(#sun)"/><circle cx="27" cy="9" r="2.2" fill="var(--ring)"/></svg>
+        SolenixAI
+      </a>
+      <nav aria-label="Main">
+        <a class="nav-link nav-hide" href="#consulting">Consulting</a>
+        <a class="nav-link nav-hide" href="#websites">Websites</a>
+        <a class="nav-link nav-hide" href="#open-source">Open source</a>
+        <a class="nav-link" href="https://github.com/SolenixAI">GitHub</a>
+        <a class="nav-cta" href="mailto:hello@solenix.dev">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+      <section class="hero">
+        <p class="eyebrow reveal d1">AI · Websites · Open source</p>
+        <h1 class="reveal d2">AI and websites that work for your <em>small business.</em></h1>
+        <p class="lede reveal d3">We find the hours AI can save you and set it up so it keeps working. We build, launch and look after your website. And we make open-source tools that make AI agents easy to set up.</p>
+        <div class="actions reveal d4">
+          <a class="btn btn-primary" href="mailto:hello@solenix.dev">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+            hello@solenix.dev
+          </a>
+          <a class="btn btn-ghost" href="https://github.com/SolenixAI">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.25-1.28-5.25-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.43-2.7 5.4-5.27 5.69.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+            GitHub
+          </a>
+        </div>
+        <p class="founder reveal d5">
+          <img src="assets/jager.jpg" alt="" width="28" height="28" loading="lazy">
+          <span>Founded by <a href="https://github.com/JagerCooper">Jager Cooper</a>, software engineer, St. John's, NL</span>
+        </p>
+      </section>
+
+      <section class="cards" aria-label="What we do">
+        <article class="card" id="consulting">
+          <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/></svg></div>
+          <p class="tag">Consulting</p>
+          <h2>AI for small businesses</h2>
+          <p>A short look at how you work, the tasks AI can take off your plate, and a setup your team actually keeps using.</p>
+          <a href="mailto:hello@solenix.dev?subject=AI%20consulting">Start a conversation →</a>
+        </article>
+        <article class="card" id="websites">
+          <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M7 6.5h.01M10 6.5h.01"/></svg></div>
+          <p class="tag">Websites</p>
+          <h2>Websites, done for you</h2>
+          <p>We design and build your site, put it live on your own domain, and keep it fast, secure and up to date, so you never have to think about it.</p>
+          <a href="mailto:hello@solenix.dev?subject=Website">Get a website →</a>
+        </article>
+        <article class="card" id="open-source">
+          <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m8 9-4 3 4 3M16 9l4 3-4 3M13.5 5l-3 14"/></svg></div>
+          <p class="tag">Open source</p>
+          <h2>Agent tooling</h2>
+          <p>One command to give an AI agent a good set of tools and skills. One command to remove them, leaving no trace.</p>
+          <a href="https://github.com/SolenixAI">Follow on GitHub →</a>
+        </article>
+      </section>
+
+      <section aria-labelledby="how">
+        <h2 class="section-title" id="how">How we work</h2>
+        <ol class="steps">
+          <li><h3>Talk</h3><p>Tell us how your business runs, where the time goes, and what you need online.</p></li>
+          <li><h3>Plan &amp; build</h3><p>We pinpoint the tasks AI can take over and design your site, with a clear plan before any work starts.</p></li>
+          <li><h3>Launch &amp; look after</h3><p>We set it up in the tools you already use, put your site live, and keep both running.</p></li>
+        </ol>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span>© 2026 SolenixAI · St. John's, Newfoundland</span>
+      <a href="mailto:hello@solenix.dev">hello@solenix.dev</a>
+    </div>
+  </footer>
+</body>
+</html>
