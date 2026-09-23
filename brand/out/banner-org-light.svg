@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="340" viewBox="0 0 1200 340" role="img" aria-label="SolenixAI. AI and websites for small businesses. Open-source tools that make AI agents easy to set up.">
+  <defs><linearGradient id="bgl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fbfaf8"/><stop offset="1" stop-color="#f3f1ed"/></linearGradient><radialGradient id="sunl" cx=".42" cy=".38" r=".62"><stop offset="0" stop-color="#fbbf24"/><stop offset="1" stop-color="#ea580c"/></radialGradient><radialGradient id="glowl" cx=".5" cy=".5" r=".5"><stop offset=".55" stop-color="#ea580c" stop-opacity=".22"/><stop offset="1" stop-color="#ea580c" stop-opacity="0"/></radialGradient><clipPath id="cardl"><rect x="1" y="1" width="1198" height="338" rx="24"/></clipPath></defs>
+  <rect x="1" y="1" width="1198" height="338" rx="24" fill="url(#bgl)" stroke="#e4e0d9" stroke-width="2"/>
+  <g clip-path="url(#cardl)">
+    <circle cx="1030" cy="400" r="270" fill="url(#glowl)"/>
+    <g fill="none" stroke="#ea580c" stroke-opacity=".16" stroke-width="2">
+      <circle cx="1030" cy="400" r="215"/><circle cx="1030" cy="400" r="280"/><circle cx="1030" cy="400" r="345"/>
+    </g>
+    <circle cx="1030" cy="400" r="150" fill="url(#sunl)"/>
+    <g fill="#ea580c"><circle cx="829" cy="321" r="6"/><circle cx="1180" cy="140" r="5"/><circle cx="880" cy="104" r="4"/></g>
+  </g>
+  <g transform="translate(70 66) scale(0.9375)"><circle cx="16" cy="16" r="14" fill="none" stroke="#ea580c" stroke-opacity=".45" stroke-width="1.5"/><circle cx="16" cy="16" r="8" fill="url(#sunl)"/><circle cx="27" cy="9" r="2.2" fill="#ea580c"/></g>
+  <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif">
+    <text x="112" y="88" font-size="19" font-weight="600" letter-spacing="3" fill="#c2410c">AI · WEBSITES · OPEN SOURCE</text>
+    <text x="66" y="182" font-size="84" font-weight="700" letter-spacing="-2.5" fill="#1c1917">SolenixAI</text>
+    <text x="70" y="240" font-size="31" fill="#57534e">AI and websites for small businesses</text>
+    <text x="70" y="283" font-size="31" fill="#57534e">Open-source tools that make AI agents easy to set up</text>
+  </g>
+</svg>
