@@ -1,0 +1,934 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Design system · SolenixAI</title>
+<meta name="description" content="The SolenixAI design system: the logo, the palette, the type scale and every component, in dark and light.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="assets/brand/logo-dark.svg" type="image/svg+xml" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="assets/brand/logo-light.svg" type="image/svg+xml">
+<link rel="stylesheet" href="tokens.css">
+<style>
+/* ===========================================================================
+   Component layer. Tokens come from tokens.css — no hex below this line.
+   =========================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  font-family: var(--font-text);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--text);
+  background: radial-gradient(120% 90% at 100% 100%, var(--bg2) 0%, var(--bg) 60%);
+  min-height: 100dvh;
+  display: flex; flex-direction: column;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; }
+img, svg { display: block; max-width: 100%; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: 0; }
+p { text-wrap: pretty; }
+h1, h2, h3, h4 { text-wrap: balance; font-family: var(--font-display); }
+::selection { background: color-mix(in srgb, var(--accent) 30%, transparent); }
+
+/* ── ambient sky: sun + orbits, same motif as the banners ─────────────────── */
+.sky { position: fixed; right: -24vmax; bottom: -34vmax; width: 78vmax; height: 78vmax; pointer-events: none; z-index: 0; }
+.sky .ring { fill: none; stroke: var(--ring); stroke-opacity: .16; stroke-width: 1; vector-effect: non-scaling-stroke; }
+.sky .orbit { transform-origin: 350px 350px; animation: spin linear infinite; }
+.sky .o1 { animation-duration: var(--orbit-1); }
+.sky .o2 { animation-duration: var(--orbit-2); animation-direction: reverse; }
+.sky .o3 { animation-duration: var(--orbit-3); }
+.sky .dot { fill: var(--ring); }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .sky .orbit { animation: none; } }
+
+/* ── layout ───────────────────────────────────────────────────────────────── */
+.wrap { position: relative; z-index: 1; width: 100%; max-width: var(--container); margin-inline: auto; padding-inline: var(--gutter); }
+main { flex: 1; position: relative; z-index: 1; }
+.section { padding-block: var(--space-section); border-top: 1px solid var(--line); }
+.grid { display: grid; gap: var(--space-4); grid-template-columns: 1fr; }
+@media (min-width: 720px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 900px) { .grid-3 { grid-template-columns: repeat(3, 1fr); } }
+.stack { display: flex; flex-direction: column; gap: var(--space-4); }
+.cluster { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
+.skip { position: absolute; left: var(--space-4); top: calc(var(--space-2) * -6); z-index: 20;
+  background: var(--surface-solid); color: var(--text); border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill); padding: var(--space-3) var(--space-5); font-weight: var(--fw-semibold);
+  transition: top var(--dur-fast) var(--ease-out); }
+.skip:focus-visible { top: var(--space-2); }
+
+/* ── type roles ───────────────────────────────────────────────────────────── */
+.display { font-size: var(--fs-display); line-height: var(--lh-display); letter-spacing: var(--track-display); font-weight: var(--fw-bold); }
+.h1 { font-size: var(--fs-h1); line-height: var(--lh-heading); letter-spacing: var(--track-heading); font-weight: var(--fw-bold); }
+.h2 { font-size: var(--fs-h2); line-height: var(--lh-heading); letter-spacing: var(--track-heading); font-weight: var(--fw-brand); }
+.h3 { font-size: var(--fs-h3); line-height: var(--lh-heading); letter-spacing: var(--track-heading); font-weight: var(--fw-brand); }
+.h4 { font-size: var(--fs-h4); line-height: var(--lh-heading); letter-spacing: var(--track-heading); font-weight: var(--fw-semibold); }
+.lede { font-size: var(--fs-lede); color: var(--muted); max-width: var(--measure); }
+.body { max-width: var(--measure); }
+.small { font-size: var(--fs-sm); color: var(--muted); }
+.caption { font-size: var(--fs-xs); color: var(--faint); letter-spacing: 0; text-transform: none; font-family: var(--font-text); }
+.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.eyebrow { display: inline-flex; align-items: center; gap: var(--space-2); font-family: var(--font-mono);
+  font-size: var(--fs-xs); font-weight: var(--fw-semibold); letter-spacing: var(--track-eyebrow);
+  text-transform: uppercase; color: var(--accent); }
+.eyebrow::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor;
+  box-shadow: 0 0 0 4px color-mix(in srgb, currentColor 18%, transparent); }
+.label { font-family: var(--font-mono); font-size: var(--fs-xs); font-weight: var(--fw-semibold);
+  letter-spacing: var(--track-label); text-transform: uppercase; color: var(--faint); }
+.token { font-family: var(--font-mono); font-size: var(--fs-2xs); letter-spacing: 0; color: var(--faint); }
+em.sun { font-style: normal; background: linear-gradient(90deg, var(--sun2), var(--sun1));
+  -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+.section-head { display: flex; flex-wrap: wrap; gap: var(--space-3) var(--space-5); align-items: baseline;
+  justify-content: space-between; margin-bottom: var(--space-5); }
+.section-head .h2 { flex: 1 1 18ch; }
+
+/* ── nav ──────────────────────────────────────────────────────────────────── */
+.topnav { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+.topnav .wrap { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); min-height: var(--nav-height); }
+.brand { display: inline-flex; align-items: center; gap: var(--space-2); font-family: var(--font-display);
+  font-weight: var(--fw-brand); letter-spacing: -.01em; text-decoration: none; }
+.brand svg { width: 26px; height: 26px; flex: none; }
+.navlinks { display: flex; align-items: center; gap: var(--space-1); }
+.navlink { display: inline-flex; align-items: center; min-height: var(--tap-min); padding: 0 var(--space-3);
+  font-size: var(--fs-sm); color: var(--muted); text-decoration: none; border-radius: var(--radius-pill);
+  transition: color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out); }
+.navlink:hover { color: var(--text); background: var(--line); }
+.navlink[aria-current="page"] { color: var(--text); font-weight: var(--fw-semibold); background: var(--line); }
+.nav-sm { display: none; }
+@media (min-width: 640px) { .nav-sm { display: inline-flex; } }
+
+/* ── theme switch ─────────────────────────────────────────────────────────── */
+.themeswitch { display: inline-flex; gap: 2px; padding: 3px; border: 1px solid var(--line);
+  border-radius: var(--radius-pill); background: var(--surface); flex: none; }
+.themeswitch button { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%;
+  color: var(--muted); transition: color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out); }
+.themeswitch button svg { width: 17px; height: 17px; }
+.themeswitch button:hover { color: var(--text); background: var(--line); }
+.themeswitch button[aria-pressed="true"] { color: var(--accent-ink); background: var(--accent); }
+.themeswitch button[aria-pressed="true"]:hover { background: var(--accent-hover); color: var(--accent-ink); }
+
+/* ── buttons ──────────────────────────────────────────────────────────────── */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+  min-height: var(--tap-min); padding: 0 var(--space-5); border-radius: var(--radius-pill);
+  border: 1px solid var(--line); font-size: var(--fs-sm); font-weight: var(--fw-semibold);
+  text-decoration: none; white-space: nowrap;
+  transition: transform var(--dur-base) var(--ease-out), background var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-base) var(--ease-out); }
+.btn svg { width: 17px; height: 17px; flex: none; }
+.btn:hover { transform: translateY(var(--lift)); }
+.btn:active { transform: none; }
+.btn-primary { background: var(--accent); color: var(--accent-ink); border-color: transparent; box-shadow: var(--shadow-accent); }
+.btn-primary:hover { background: var(--accent-hover); color: var(--accent-ink); }
+.btn-secondary { background: var(--surface); color: var(--text); }
+.btn-secondary:hover { background: color-mix(in srgb, var(--text) 8%, var(--surface)); color: var(--text); border-color: var(--line-strong); }
+.btn-ghost { background: none; border-color: transparent; color: var(--text); }
+.btn-ghost:hover { background: color-mix(in srgb, var(--text) 8%, transparent); color: var(--text); }
+.btn[disabled], .btn[aria-disabled="true"] { opacity: .45; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn-sm { min-height: 36px; padding: 0 var(--space-4); font-size: var(--fs-xs); letter-spacing: 0;
+  font-family: var(--font-text); text-transform: none; }
+.link { color: var(--accent); font-weight: var(--fw-semibold); text-decoration: none; }
+.link:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+
+/* ── cards ────────────────────────────────────────────────────────────────── */
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-xl);
+  padding: var(--space-5); box-shadow: var(--shadow-md);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  display: flex; flex-direction: column; gap: var(--space-2); }
+.card-link { text-decoration: none; transition: transform var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out); }
+.card-link:hover { transform: translateY(var(--lift-card)); border-color: color-mix(in srgb, var(--accent) 35%, var(--line)); box-shadow: var(--shadow-lg); }
+.card-quiet { background: none; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; }
+.card .h3 + p, .card .h4 + p { color: var(--muted); font-size: var(--fs-sm); }
+.card .foot { margin-top: auto; padding-top: var(--space-3); }
+.chip { width: 40px; height: 40px; border-radius: var(--radius-md); display: grid; place-items: center;
+  background: var(--accent-quiet); color: var(--accent); margin-bottom: var(--space-2); flex: none; }
+.chip svg { width: 20px; height: 20px; }
+
+/* ── status badge ─────────────────────────────────────────────────────────── */
+.badge { display: inline-flex; align-items: center; gap: var(--space-2); padding: 5px var(--space-3);
+  border-radius: var(--radius-pill); font-family: var(--font-mono); font-size: var(--fs-2xs);
+  font-weight: var(--fw-semibold); letter-spacing: var(--track-label); text-transform: uppercase; white-space: nowrap; }
+.badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex: none; }
+.badge-live { color: var(--ok); background: var(--ok-tint); }
+.badge-building { color: var(--warn); background: var(--warn-tint); }
+.badge-building::before { animation: pulse 1.8s var(--ease-in-out) infinite; }
+.badge-down { color: var(--down); background: var(--down-tint); }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) { .badge-building::before { animation: none; } }
+.badge-neutral { color: var(--muted); background: var(--surface-sunken); }
+
+/* ── inputs ───────────────────────────────────────────────────────────────── */
+.field { display: flex; flex-direction: column; gap: var(--space-2); }
+.field > label { font-size: var(--fs-sm); font-weight: var(--fw-medium); }
+.input { width: 100%; min-height: var(--tap-min); padding: var(--space-3) var(--space-4);
+  background: var(--surface-solid); color: var(--text);
+  border: 1px solid var(--line-strong); border-radius: var(--radius-md); font-size: var(--fs-body);
+  transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out); }
+.input::placeholder { color: var(--faint); }
+.input:hover { border-color: color-mix(in srgb, var(--text) 40%, var(--line-strong)); }
+.input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); }
+.input:focus-visible { outline: none; }
+textarea.input { min-height: 96px; resize: vertical; line-height: var(--lh-body); }
+select.input { appearance: none; padding-right: var(--space-8);
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: right var(--space-5) center, calc(100% - var(--space-4)) center;
+  background-size: 6px 6px, 6px 6px; background-repeat: no-repeat; }
+.input[disabled] { background: var(--surface-sunken); color: var(--faint); border-color: var(--line); cursor: not-allowed; }
+.input[aria-invalid="true"] { border-color: var(--down); }
+.input[aria-invalid="true"]:focus { border-color: var(--down); box-shadow: 0 0 0 3px color-mix(in srgb, var(--down) 22%, transparent); }
+.hint { font-size: var(--fs-xs); color: var(--faint); }
+.hint-error { display: flex; align-items: center; gap: var(--space-1); font-size: var(--fs-xs); color: var(--down); font-weight: var(--fw-medium); }
+.hint-error svg { width: 14px; height: 14px; flex: none; }
+.check { display: flex; align-items: flex-start; gap: var(--space-3); font-size: var(--fs-sm); }
+.check input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--accent); flex: none; }
+
+/* ── table ────────────────────────────────────────────────────────────────── */
+.table { width: 100%; border-collapse: collapse; }
+.table th, .table td { text-align: left; padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--line); }
+.table th { font-family: var(--font-mono); font-size: var(--fs-2xs); font-weight: var(--fw-semibold);
+  letter-spacing: var(--track-label); text-transform: uppercase; color: var(--faint); }
+.table thead th { border-bottom-color: var(--line-strong); }
+.table tbody tr { transition: background var(--dur-fast) var(--ease-out); }
+.table tbody tr:hover { background: var(--surface-sunken); }
+.table tbody th { font-family: var(--font-text); font-size: var(--fs-body); font-weight: var(--fw-semibold);
+  letter-spacing: 0; text-transform: none; color: var(--text); }
+.table code { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--muted); }
+.table .end { text-align: right; }
+@media (max-width: 639px) {
+  .table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .table tr { display: block; padding: var(--space-4) 0; border-bottom: 1px solid var(--line); }
+  .table tbody tr:hover { background: none; }
+  .table th, .table td { display: flex; gap: var(--space-4); justify-content: space-between; align-items: center;
+    padding: var(--space-1) 0; border: 0; }
+  .table td::before { content: attr(data-label); font-family: var(--font-mono); font-size: var(--fs-2xs);
+    letter-spacing: var(--track-label); text-transform: uppercase; color: var(--faint); flex: none; }
+  .table .end { text-align: left; }
+}
+
+/* ── empty state ──────────────────────────────────────────────────────────── */
+.empty { border: 1px dashed var(--line-strong); border-radius: var(--radius-xl); padding: var(--space-7) var(--space-5);
+  text-align: center; display: flex; flex-direction: column; align-items: center; gap: var(--space-3); }
+.empty .mark { width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--surface-sunken); color: var(--faint); }
+.empty .mark svg { width: 24px; height: 24px; }
+.empty p { color: var(--muted); max-width: 40ch; font-size: var(--fs-sm); }
+
+/* ── sign-in ──────────────────────────────────────────────────────────────── */
+.signin { max-width: 25rem; margin-inline: auto; background: var(--surface-solid); border: 1px solid var(--line);
+  border-radius: var(--radius-xl); padding: var(--space-6) var(--space-5); box-shadow: var(--shadow-lg);
+  display: flex; flex-direction: column; gap: var(--space-4); }
+.signin header { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); text-align: center; }
+.signin header svg.mark { width: 34px; height: 34px; }
+.signin .divider { display: flex; align-items: center; gap: var(--space-3); color: var(--faint);
+  font-family: var(--font-mono); font-size: var(--fs-2xs); letter-spacing: var(--track-label); text-transform: uppercase; }
+.signin .divider::before, .signin .divider::after { content: ""; flex: 1; border-top: 1px solid var(--line); }
+.signin .row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; }
+
+/* ── specimen scaffolding ─────────────────────────────────────────────────── */
+.specimen { border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; }
+.specimen > figcaption { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); align-items: baseline;
+  justify-content: space-between; padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--line); background: var(--surface-sunken); }
+.specimen > .body-area { padding: var(--space-5) var(--space-4); }
+.swatches { display: grid; gap: var(--space-3); grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+.swatch { display: flex; flex-direction: column; gap: var(--space-1); }
+.swatch .chipbox { height: 60px; border-radius: var(--radius-md); border: 1px solid var(--line); }
+.swatch .name { font-size: var(--fs-xs); font-weight: var(--fw-semibold); }
+.ratio { font-family: var(--font-mono); font-size: var(--fs-2xs); font-variant-numeric: tabular-nums; color: var(--faint); }
+.typerow { display: grid; gap: var(--space-1) var(--space-5); grid-template-columns: 1fr; padding-block: var(--space-3); border-top: 1px solid var(--line); }
+.typerow:first-child { border-top: 0; padding-top: 0; }
+@media (min-width: 720px) { .typerow { grid-template-columns: 9rem 1fr; align-items: baseline; } }
+.scalebar { display: flex; align-items: center; gap: var(--space-3); padding-block: 5px; }
+.scalebar .bar { height: 12px; border-radius: 3px; background: var(--accent-quiet); border-inline-start: 2px solid var(--accent); flex: none; }
+.radiigrid { display: grid; gap: var(--space-3); grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); }
+.radiibox { aspect-ratio: 1; border: 1px solid var(--line-strong); background: var(--surface-sunken);
+  display: grid; place-items: end center; padding-bottom: 6px; }
+.shadowbox { height: 74px; border-radius: var(--radius-lg); background: var(--surface-solid); border: 1px solid var(--line);
+  display: grid; place-items: center; }
+.dos { display: grid; gap: var(--space-4); grid-template-columns: 1fr; }
+@media (min-width: 720px) { .dos { grid-template-columns: 1fr 1fr; } }
+.do, .dont { border-radius: var(--radius-md); padding: var(--space-4); background: var(--surface-sunken); }
+.do { box-shadow: inset 3px 0 0 var(--ok); }
+.dont { box-shadow: inset 3px 0 0 var(--down); }
+.do p, .dont p { font-size: var(--fs-sm); }
+.dont p.said { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--down); }
+
+/* ── logo showcase ────────────────────────────────────────────────────────── */
+.lockups { display: flex; flex-wrap: wrap; gap: var(--space-6); align-items: flex-end; }
+.lockup { display: flex; flex-direction: column; gap: var(--space-2); }
+.lockup .row { display: inline-flex; align-items: center; gap: var(--space-2); font-family: var(--font-display); font-weight: var(--fw-brand); letter-spacing: -.01em; }
+.construction { display: grid; gap: var(--space-5); grid-template-columns: 1fr; align-items: center; }
+@media (min-width: 720px) { .construction { grid-template-columns: 200px 1fr; } }
+.guide { fill: none; stroke: var(--line-strong); stroke-width: .4; }
+.guidetext { font-family: var(--font-mono); font-size: 2.1px; fill: var(--faint); letter-spacing: 0; }
+.avatar { border-radius: var(--radius-lg); border: 1px solid var(--line); width: 120px; height: 120px; }
+
+/* ── footer ───────────────────────────────────────────────────────────────── */
+footer { position: relative; z-index: 1; border-top: 1px solid var(--line);
+  background: color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  margin-top: var(--space-7); }
+footer .wrap { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); justify-content: space-between;
+  padding-block: var(--space-5); font-size: var(--fs-sm); color: var(--faint); }
+footer a { text-decoration: none; }
+footer a:hover { color: var(--text); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+</style>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+
+<svg class="sky" viewBox="0 0 700 700" aria-hidden="true">
+  <defs>
+    <radialGradient id="glow" cx=".5" cy=".5" r=".5">
+      <stop offset=".55" style="stop-color:var(--sun2);stop-opacity:.22"/>
+      <stop offset="1" style="stop-color:var(--sun2);stop-opacity:0"/>
+    </radialGradient>
+    <radialGradient id="sun" cx=".42" cy=".38" r=".62">
+      <stop offset="0" style="stop-color:var(--sun1)"/>
+      <stop offset="1" style="stop-color:var(--sun2)"/>
+    </radialGradient>
+  </defs>
+  <circle cx="350" cy="350" r="270" fill="url(#glow)"/>
+  <circle class="ring" cx="350" cy="350" r="215"/>
+  <circle class="ring" cx="350" cy="350" r="280"/>
+  <circle class="ring" cx="350" cy="350" r="345"/>
+  <g class="orbit o1"><circle class="dot" cx="350" cy="135" r="5"/></g>
+  <g class="orbit o2"><circle class="dot" cx="70" cy="350" r="6"/></g>
+  <g class="orbit o3"><circle class="dot" cx="595" cy="100" r="4"/></g>
+  <circle cx="350" cy="350" r="150" fill="url(#sun)"/>
+</svg>
+
+<!-- ═══ nav ═══════════════════════════════════════════════════════════════ -->
+<header class="topnav" data-od-id="topnav">
+  <div class="wrap">
+    <a class="brand" href="https://solenix.dev" aria-label="SolenixAI home">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/><circle cx="16" cy="16" r="8" fill="url(#sun)"/><circle cx="27" cy="9" r="2.2" fill="var(--ring)"/></svg>
+      SolenixAI
+    </a>
+    <nav class="navlinks" aria-label="Design system">
+      <a class="navlink nav-sm" href="#colour">Colour</a>
+      <a class="navlink nav-sm" href="#type">Type</a>
+      <a class="navlink" href="#components" aria-current="page">Components</a>
+      <a class="navlink nav-sm" href="#voice">Voice</a>
+    </nav>
+    <div class="themeswitch" role="group" aria-label="Theme">
+      <button type="button" data-theme-set="auto" aria-pressed="true" title="Match my device" aria-label="Match my device">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8 20h8"/></svg>
+      </button>
+      <button type="button" data-theme-set="light" aria-pressed="false" title="Light" aria-label="Light">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M18.7 5.3l-1.4 1.4M6.7 17.3l-1.4 1.4"/></svg>
+      </button>
+      <button type="button" data-theme-set="dark" aria-pressed="false" title="Dark" aria-label="Dark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="content">
+<div class="wrap">
+
+  <!-- ═══ hero ═════════════════════════════════════════════════════════════ -->
+  <section style="padding-block: var(--space-hero) var(--space-section);" data-od-id="hero">
+    <p class="eyebrow">Design system · v1</p>
+    <h1 class="display" style="margin-block: var(--space-4) var(--space-5);">One sun, written <em class="sun">down.</em></h1>
+    <p class="lede">The brand that's already live on solenix.dev, now with the parts it was missing: a type scale, status colours, a focus contract, and every component in both themes.</p>
+    <div class="cluster" style="margin-top: var(--space-6);">
+      <span class="badge badge-neutral">3 files</span>
+      <span class="badge badge-neutral">2 themes</span>
+      <span class="badge badge-neutral">375px floor</span>
+      <span class="badge badge-neutral">WCAG AA</span>
+    </div>
+  </section>
+
+  <!-- ═══ logo ═════════════════════════════════════════════════════════════ -->
+  <section class="section" id="logo" data-od-id="logo">
+    <div class="section-head">
+      <h2 class="h2">The mark</h2>
+      <p class="small" style="max-width: 32ch;">A sun, one orbit ring, one agent dot. Nothing else goes in.</p>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="specimen">
+        <figcaption><span class="label">Lockup</span><span class="token">--fw-brand · -0.01em</span></figcaption>
+        <div class="body-area stack">
+          <div class="lockups">
+            <div class="lockup">
+              <span class="row" style="font-size: 1.5rem;">
+                <svg viewBox="0 0 32 32" width="32" height="32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/><circle cx="16" cy="16" r="8" fill="url(#sun)"/><circle cx="27" cy="9" r="2.2" fill="var(--ring)"/></svg>
+                SolenixAI
+              </span>
+              <span class="token">32px</span>
+            </div>
+            <div class="lockup">
+              <span class="row" style="font-size: 1rem;">
+                <svg viewBox="0 0 32 32" width="22" height="22" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/><circle cx="16" cy="16" r="8" fill="url(#sun)"/><circle cx="27" cy="9" r="2.2" fill="var(--ring)"/></svg>
+                SolenixAI
+              </span>
+              <span class="token">22px</span>
+            </div>
+            <div class="lockup">
+              <svg viewBox="0 0 32 32" width="20" height="20" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/><circle cx="16" cy="16" r="8" fill="url(#sun)"/><circle cx="27" cy="9" r="2.2" fill="var(--ring)"/></svg>
+              <span class="token">20px min</span>
+            </div>
+          </div>
+          <p class="caption">Below 20px the dot stops resolving — use the sun alone.</p>
+        </div>
+      </div>
+
+      <div class="specimen">
+        <figcaption><span class="label">Construction</span><span class="token">32-unit grid</span></figcaption>
+        <div class="body-area">
+          <div class="construction">
+            <svg viewBox="-2 -2 36 36" aria-label="The mark on its grid: orbit ring at radius 14, sun at radius 8, agent dot radius 2.2 at 27,9." style="width: 100%; max-width: 200px; margin-inline: auto;">
+              <circle class="guide" cx="16" cy="16" r="14"/>
+              <path class="guide" d="M16 0v32M0 16h32"/>
+              <circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/>
+              <circle cx="16" cy="16" r="8" fill="url(#sun)"/>
+              <circle cx="27" cy="9" r="2.2" fill="var(--ring)"/>
+              <path class="guide" d="M16 16h8"/>
+              <text class="guidetext" x="18.4" y="15.2">r8</text>
+              <path class="guide" d="M16 16 6.1 6.1"/>
+              <text class="guidetext" x="7.4" y="9.6">r14</text>
+              <text class="guidetext" x="27" y="4.6" text-anchor="middle">27,9</text>
+            </svg>
+            <ul class="stack" style="gap: var(--space-2); list-style: none; font-size: var(--fs-sm);">
+              <li><strong>Ring</strong> <span class="token">r14 · --ring at 45% · 1.5 wide</span></li>
+              <li><strong>Sun</strong> <span class="token">r8 · --sun1 → --sun2 at 42% 38%</span></li>
+              <li><strong>Agent dot</strong> <span class="token">r2.2 at 27,9 — breaks the ring</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-2" style="margin-top: var(--space-4);">
+      <div class="specimen">
+        <figcaption><span class="label">Shipped assets</span><span class="token">/brand/out/</span></figcaption>
+        <div class="body-area cluster" style="gap: var(--space-5); align-items: flex-start;">
+          <div class="lockup">
+            <img class="avatar" src="assets/brand/avatar.png" width="512" height="512" alt="The SolenixAI org avatar: the sun mark centred on a dark field of orbit rings." loading="lazy">
+            <span class="token">avatar.png · 512²</span>
+          </div>
+          <div class="stack" style="gap: var(--space-2); flex: 1 1 14rem;">
+            <p class="small"><code class="token">brand/build.py</code> generates the avatar, the favicons and the four GitHub banners from the same values listed here.</p>
+            <p class="caption">Change a colour in this system and re-run it the same day, or the site and the banners drift apart.</p>
+          </div>
+        </div>
+      </div>
+      <div class="card card-quiet" style="border-style: dashed; justify-content: center;">
+        <p class="label">The rule</p>
+        <p class="h4">One ring, one dot.</p>
+        <p class="small">Two dots is a different mark. The dot always breaks the ring on the upper right — it is one agent in orbit, and it sits outside the sun so it stays visible at small sizes.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ colour ═══════════════════════════════════════════════════════════ -->
+  <section class="section" id="colour" data-od-id="colour">
+    <div class="section-head">
+      <h2 class="h2">Colour</h2>
+      <p class="small" style="max-width: 34ch;">Ratios are measured against each token's normal background. AA needs 4.5:1 for text, 3:1 for icons.</p>
+    </div>
+
+    <div class="stack">
+      <div class="specimen">
+        <figcaption><span class="label">Surfaces and ink</span><span class="token">--bg · --surface · --text</span></figcaption>
+        <div class="body-area">
+          <div class="swatches">
+            <div class="swatch"><div class="chipbox" style="background: var(--bg);"></div><span class="name">Page</span><span class="token">--bg</span></div>
+            <div class="swatch"><div class="chipbox" style="background: var(--bg2);"></div><span class="name">Far corner</span><span class="token">--bg2</span></div>
+            <div class="swatch"><div class="chipbox" style="background: var(--surface-solid);"></div><span class="name">Surface</span><span class="token">--surface-solid</span></div>
+            <div class="swatch"><div class="chipbox" style="background: var(--surface-sunken);"></div><span class="name">Sunken</span><span class="token">--surface-sunken</span></div>
+            <div class="swatch"><div class="chipbox" style="background: var(--text);"></div><span class="name">Text</span><span class="ratio">--text · 16.8:1</span></div>
+            <div class="swatch"><div class="chipbox" style="background: var(--muted);"></div><span class="name">Muted</span><span class="ratio">--muted · 7.3:1</span></div>
+            <div class="swatch"><div class="chipbox" style="background: var(--faint);"></div><span class="name">Faint</span><span class="ratio">--faint · 4.9:1</span></div>
+            <div class="swatch"><div class="chipbox" style="background: var(--line-solid);"></div><span class="name">Line</span><span class="token">--line-solid</span></div>
+          </div>
+          <p class="caption" style="margin-top: var(--space-4);">Ratios shown for light; dark runs equal or higher on every pair. <code class="token">--faint</code> at 4.9:1 is the floor — captions only, never something to act on.</p>
+        </div>
+      </div>
+
+      <div class="grid grid-2">
+        <div class="specimen">
+          <figcaption><span class="label">The ember</span><span class="token">one accent, twice per screen</span></figcaption>
+          <div class="body-area">
+            <div class="swatches">
+              <div class="swatch"><div class="chipbox" style="background: var(--accent);"></div><span class="name">Accent</span><span class="ratio">--accent · 5.0:1</span></div>
+              <div class="swatch"><div class="chipbox" style="background: var(--accent-hover);"></div><span class="name">Hover</span><span class="ratio">--accent-hover · 7.3:1</span></div>
+              <div class="swatch"><div class="chipbox" style="background: var(--accent-quiet); border-color: var(--line-strong);"></div><span class="name">Quiet fill</span><span class="token">--accent-quiet</span></div>
+            </div>
+            <p class="caption" style="margin-top: var(--space-4);">Hover moves the fill away from the ink, so contrast goes up, never down.</p>
+          </div>
+        </div>
+
+        <div class="specimen">
+          <figcaption><span class="label">The sun</span><span class="token">--sun1 → --sun2</span></figcaption>
+          <div class="body-area">
+            <div class="chipbox" style="height: 60px; background: linear-gradient(100deg, var(--sun1), var(--sun2));"></div>
+            <p class="caption" style="margin-top: var(--space-3);">The one gradient in this brand. It belongs to the mark and the ambient sky — never a text colour, never a page background.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="specimen">
+        <figcaption><span class="label">Status</span><span class="token">--ok · --warn · --down</span></figcaption>
+        <div class="body-area stack">
+          <div class="cluster" style="gap: var(--space-4);">
+            <span class="badge badge-live">Live</span>
+            <span class="badge badge-building">Building</span>
+            <span class="badge badge-down">Down</span>
+          </div>
+          <div class="swatches">
+            <div class="swatch"><div class="chipbox" style="background: var(--ok);"></div><span class="name">Live</span><span class="ratio">--ok · 6.5:1 on tint</span></div>
+            <div class="swatch"><div class="chipbox" style="background: var(--warn);"></div><span class="name">Building</span><span class="ratio">--warn · 6.2:1 on tint</span></div>
+            <div class="swatch"><div class="chipbox" style="background: var(--down);"></div><span class="name">Down</span><span class="ratio">--down · 5.4:1 on tint</span></div>
+          </div>
+          <p class="caption">Every badge carries a dot, a colour <em>and</em> a word. Colour alone is not a state. "Building" borrows the ember on purpose — work in flight is the sun coming up.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ type ═════════════════════════════════════════════════════════════ -->
+  <section class="section" id="type" data-od-id="type">
+    <div class="section-head">
+      <h2 class="h2">Type</h2>
+      <p class="small" style="max-width: 34ch;">Three roles, two visible faces. The grotesque carries display and text; mono does every label, number and command.</p>
+    </div>
+
+    <div class="specimen">
+      <figcaption><span class="label">Scale</span><span class="token">clamp() — 375px to 1920px, no media query</span></figcaption>
+      <div class="body-area">
+        <div class="typerow"><span class="token">--fs-display · 700 · -.035em</span><span class="display">Sun</span></div>
+        <div class="typerow"><span class="token">--fs-h1 · 700 · -.015em</span><span class="h1">Websites, done for you</span></div>
+        <div class="typerow"><span class="token">--fs-h2 · 650 · -.015em</span><span class="h2">AI for small businesses</span></div>
+        <div class="typerow"><span class="token">--fs-h3 · 650</span><span class="h3">Agents Marketplace</span></div>
+        <div class="typerow"><span class="token">--fs-h4 · 600</span><span class="h4">Launch &amp; look after</span></div>
+        <div class="typerow"><span class="token">--fs-lede · 400</span><span class="lede">We find the hours AI can save you and set it up so it keeps working.</span></div>
+        <div class="typerow"><span class="token">--fs-body · 400</span><span class="body">Tell us how your business runs, where the time goes, and what you need online. We'll come back with a plan before any work starts.</span></div>
+        <div class="typerow"><span class="token">--fs-sm · 400</span><span class="small">Nav links, secondary UI, captions with weight.</span></div>
+        <div class="typerow"><span class="token">--fs-xs · 600 · mono caps</span><span class="eyebrow">Open source</span></div>
+        <div class="typerow"><span class="token">--fs-2xs · 600 · the floor</span><span class="badge badge-neutral">Badge</span></div>
+      </div>
+    </div>
+
+    <div class="grid grid-2" style="margin-top: var(--space-4);">
+      <div class="specimen">
+        <figcaption><span class="label">Mono at work</span><span class="token">--font-mono</span></figcaption>
+        <div class="body-area stack" style="gap: var(--space-3);">
+          <p class="label">Section label</p>
+          <p class="num" style="font-size: var(--fs-h2); letter-spacing: var(--track-heading);">1,024 · 64rem · 4.5:1</p>
+          <div style="background: var(--surface-sunken); border: 1px solid var(--line); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); overflow-x: auto;">
+            <code class="token" style="font-size: var(--fs-xs); white-space: nowrap;">/plugin marketplace add SolenixAI/agents-marketplace</code>
+          </div>
+          <p class="caption">Numbers are always mono and tabular, so columns line up.</p>
+        </div>
+      </div>
+      <div class="specimen">
+        <figcaption><span class="label">Measure</span><span class="token">--measure · 34rem</span></figcaption>
+        <div class="body-area">
+          <p class="body">Prose is capped at 34rem. Long lines are the most common way to make plain words feel hard — a reader who has to track back across a wide column reads slower and trusts less, even when every word is simple.</p>
+          <p class="caption" style="margin-top: var(--space-3);">Headings balance; paragraphs wrap pretty. No headline is left with one word on its last line.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ space, radius, shadow, motion ════════════════════════════════════ -->
+  <section class="section" id="foundations" data-od-id="foundations">
+    <div class="section-head">
+      <h2 class="h2">Space, radius, shadow, motion</h2>
+      <p class="small" style="max-width: 34ch;">A 4px base, a pill-and-20px silhouette, two-layer shadows, and the house easing curve.</p>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="specimen">
+        <figcaption><span class="label">Space</span><span class="token">4px base · --space-1…10</span></figcaption>
+        <div class="body-area">
+          <div class="scalebar"><span class="bar" style="width: 4px;"></span><span class="token">--space-1 · 4</span></div>
+          <div class="scalebar"><span class="bar" style="width: 8px;"></span><span class="token">--space-2 · 8</span></div>
+          <div class="scalebar"><span class="bar" style="width: 12px;"></span><span class="token">--space-3 · 12</span></div>
+          <div class="scalebar"><span class="bar" style="width: 16px;"></span><span class="token">--space-4 · 16</span></div>
+          <div class="scalebar"><span class="bar" style="width: 24px;"></span><span class="token">--space-5 · 24</span></div>
+          <div class="scalebar"><span class="bar" style="width: 32px;"></span><span class="token">--space-6 · 32</span></div>
+          <div class="scalebar"><span class="bar" style="width: 48px;"></span><span class="token">--space-7 · 48</span></div>
+          <div class="scalebar"><span class="bar" style="width: 64px;"></span><span class="token">--space-8 · 64</span></div>
+          <div class="scalebar"><span class="bar" style="width: 96px;"></span><span class="token">--space-9 · 96</span></div>
+          <div class="scalebar"><span class="bar" style="width: 128px;"></span><span class="token">--space-10 · 128</span></div>
+          <p class="caption" style="margin-top: var(--space-3);">Use the steps. Adding one is how a system starts drifting.</p>
+        </div>
+      </div>
+
+      <div class="stack">
+        <div class="specimen">
+          <figcaption><span class="label">Radius</span><span class="token">--radius-xs…2xl · pill</span></figcaption>
+          <div class="body-area">
+            <div class="radiigrid">
+              <div class="radiibox" style="border-radius: var(--radius-xs);"><span class="token">8</span></div>
+              <div class="radiibox" style="border-radius: var(--radius-md);"><span class="token">12</span></div>
+              <div class="radiibox" style="border-radius: var(--radius-lg);"><span class="token">16</span></div>
+              <div class="radiibox" style="border-radius: var(--radius-xl);"><span class="token">20</span></div>
+              <div class="radiibox" style="border-radius: var(--radius-2xl);"><span class="token">28</span></div>
+              <div class="radiibox" style="border-radius: var(--radius-pill);"><span class="token">pill</span></div>
+            </div>
+            <p class="caption" style="margin-top: var(--space-3);">Buttons are pills, cards are 20px. That pairing is the brand's silhouette.</p>
+          </div>
+        </div>
+
+        <div class="specimen">
+          <figcaption><span class="label">Shadow</span><span class="token">contact layer + soft layer</span></figcaption>
+          <div class="body-area">
+            <div class="grid" style="grid-template-columns: repeat(3, 1fr); gap: var(--space-3);">
+              <div class="shadowbox" style="box-shadow: var(--shadow-sm);"><span class="token">sm</span></div>
+              <div class="shadowbox" style="box-shadow: var(--shadow-md);"><span class="token">md</span></div>
+              <div class="shadowbox" style="box-shadow: var(--shadow-lg);"><span class="token">lg</span></div>
+            </div>
+            <p class="caption" style="margin-top: var(--space-3);">Shadow signals height, never decoration. <code class="token">--shadow-accent</code> is reserved for the one primary button.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="specimen" style="margin-top: var(--space-4);">
+      <figcaption><span class="label">Motion</span><span class="token">--ease-out · cubic-bezier(.2,.7,.2,1)</span></figcaption>
+      <div class="body-area">
+        <table class="table">
+          <thead><tr><th scope="col">Token</th><th scope="col">Value</th><th scope="col">Used for</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">--dur-fast</th><td data-label="Value" class="num">120ms</td><td data-label="Used for" class="small">Colour, border</td></tr>
+            <tr><th scope="row">--dur-base</th><td data-label="Value" class="num">180ms</td><td data-label="Used for" class="small">Lift, shadow</td></tr>
+            <tr><th scope="row">--dur-slow</th><td data-label="Value" class="num">320ms</td><td data-label="Used for" class="small">Panels, disclosure</td></tr>
+            <tr><th scope="row">--dur-reveal</th><td data-label="Value" class="num">700ms</td><td data-label="Used for" class="small">Entrance, once per page</td></tr>
+            <tr><th scope="row">--orbit-1/2/3</th><td data-label="Value" class="num">90s / 140s / 200s</td><td data-label="Used for" class="small">Ambient orbits behind this page</td></tr>
+          </tbody>
+        </table>
+        <p class="caption" style="margin-top: var(--space-4);">Reduced motion collapses every duration to 1ms and both hover lifts to 0. Nothing here is load-bearing on animation.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ components ═══════════════════════════════════════════════════════ -->
+  <section class="section" id="components" data-od-id="components">
+    <div class="section-head">
+      <h2 class="h2">Components</h2>
+      <p class="small" style="max-width: 34ch;">Every state defined as a foreground and background pair. Contrast after a hover is never lower than at rest.</p>
+    </div>
+
+    <div class="stack">
+
+      <!-- buttons -->
+      <div class="specimen" data-od-id="spec-buttons">
+        <figcaption><span class="label">Buttons</span><span class="token">44px min · pill · hover lifts 1px</span></figcaption>
+        <div class="body-area stack">
+          <div class="cluster">
+            <button class="btn btn-primary" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+              Talk to us
+            </button>
+            <button class="btn btn-secondary" type="button">Get a website</button>
+            <button class="btn btn-ghost" type="button">Browse the marketplace</button>
+            <button class="btn btn-secondary" type="button" disabled>Not ready yet</button>
+          </div>
+          <div class="cluster">
+            <button class="btn btn-secondary btn-sm" type="button">Copy</button>
+            <button class="btn btn-ghost btn-sm" type="button">Undo</button>
+            <a class="link" href="#components">A link, inline in prose</a>
+          </div>
+          <p class="caption">One solid button per action, per screen. Every other entry point is secondary, ghost, or a text link — and never the same words twice. Ghost and secondary keep <code class="token">--text</code> on hover and move the background instead; the primary swaps fill and ink together.</p>
+        </div>
+      </div>
+
+      <!-- inputs -->
+      <div class="specimen" data-od-id="spec-inputs">
+        <figcaption><span class="label">Inputs</span><span class="token">--radius-md · 2px focus ring</span></figcaption>
+        <div class="body-area">
+          <div class="grid grid-2">
+            <div class="field">
+              <label for="f-name">Business name</label>
+              <input class="input" id="f-name" type="text" value="Duckworth Bakery">
+            </div>
+            <div class="field">
+              <label for="f-email">Email</label>
+              <input class="input" id="f-email" type="email" placeholder="you@yourshop.ca">
+              <p class="hint">A placeholder shows a real example, never an instruction.</p>
+            </div>
+            <div class="field">
+              <label for="f-what">What you need</label>
+              <select class="input" id="f-what">
+                <option>A website</option>
+                <option>Help with AI</option>
+                <option>Both</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="f-phone">Phone</label>
+              <input class="input" id="f-phone" type="tel" value="709 555 018" aria-invalid="true" aria-describedby="f-phone-err">
+              <p class="hint-error" id="f-phone-err">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4.5M12 16h.01"/></svg>
+                That's one digit short. Newfoundland numbers have 10.
+              </p>
+            </div>
+            <div class="field" style="grid-column: 1 / -1;">
+              <label for="f-notes">Anything else</label>
+              <textarea class="input" id="f-notes" placeholder="We're open six days and the phone never stops. I'd like the ordering to run itself."></textarea>
+            </div>
+            <div class="field">
+              <label for="f-locked">Domain</label>
+              <input class="input" id="f-locked" type="text" value="duckworthbakery.ca" disabled>
+              <p class="hint">Disabled is the only state allowed to lose contrast.</p>
+            </div>
+            <div class="stack" style="gap: var(--space-3); justify-content: center;">
+              <label class="check"><input type="checkbox" checked> Email me when the site goes live</label>
+              <label class="check"><input type="checkbox"> Send the monthly note about new agent tools</label>
+            </div>
+          </div>
+          <p class="caption" style="margin-top: var(--space-4);">Labels name the thing, with no colon. Errors say what happened and what to do next — never a code on its own.</p>
+        </div>
+      </div>
+
+      <!-- cards -->
+      <div class="specimen" data-od-id="spec-cards">
+        <figcaption><span class="label">Cards</span><span class="token">--radius-xl · --shadow-md · lifts 3px</span></figcaption>
+        <div class="body-area">
+          <div class="grid grid-3">
+            <a class="card card-link" href="#components">
+              <span class="chip" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/></svg></span>
+              <p class="label">Consulting</p>
+              <h3 class="h3">AI for small businesses</h3>
+              <p>A short look at how you work, the tasks AI can take off your plate, and a setup your team actually keeps using.</p>
+              <span class="foot link">Start a conversation →</span>
+            </a>
+            <article class="card">
+              <p class="label">Uptime</p>
+              <p class="num" style="font-size: 2.6rem; line-height: 1.05; letter-spacing: -.03em; color: var(--text);">—</p>
+              <p class="small">No monitoring connected yet. Numbers appear here once a site is live.</p>
+              <span class="foot"><span class="badge badge-neutral">Nothing to report</span></span>
+            </article>
+            <article class="card card-quiet" style="border-style: dashed;">
+              <p class="label">Quiet card</p>
+              <h3 class="h3">No fill, no shadow</h3>
+              <p>For grouping inside a section that already sits on a surface. Two stacked shadows read as a mistake.</p>
+            </article>
+          </div>
+          <p class="caption" style="margin-top: var(--space-4);">A whole card is the target when the whole card is the link. The stat card shows an em dash rather than a made-up number — we never print a figure we don't have.</p>
+        </div>
+      </div>
+
+      <!-- status + table -->
+      <div class="specimen" data-od-id="spec-table">
+        <figcaption>
+          <span class="label">Table and status</span>
+          <span class="badge badge-neutral">Specimen data</span>
+        </figcaption>
+        <div class="body-area">
+          <table class="table">
+            <caption class="sr-only">SolenixAI surfaces and their status. Statuses are specimen values shown to exercise all three badge states.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Surface</th>
+                <th scope="col">Lives at</th>
+                <th scope="col" class="end">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">Home</th><td data-label="Lives at"><code>solenix.dev</code></td><td data-label="Status" class="end"><span class="badge badge-live">Live</span></td></tr>
+              <tr><th scope="row">Agents Marketplace</th><td data-label="Lives at"><code>solenix.dev/agents</code></td><td data-label="Status" class="end"><span class="badge badge-live">Live</span></td></tr>
+              <tr><th scope="row">Design system</th><td data-label="Lives at"><code>/design</code></td><td data-label="Status" class="end"><span class="badge badge-building">Building</span></td></tr>
+              <tr><th scope="row">Brand assets</th><td data-label="Lives at"><code>/brand/out</code></td><td data-label="Status" class="end"><span class="badge badge-live">Live</span></td></tr>
+              <tr><th scope="row">Status page</th><td data-label="Lives at"><code>not built yet</code></td><td data-label="Status" class="end"><span class="badge badge-down">Down</span></td></tr>
+            </tbody>
+          </table>
+          <p class="caption" style="margin-top: var(--space-4);">Row headers are real <code class="token">&lt;th scope="row"&gt;</code>. Below 640px the head hides and each cell carries its own label, so the page never scrolls sideways. Statuses here are specimen values, shown to exercise all three badges.</p>
+        </div>
+      </div>
+
+      <!-- empty state -->
+      <div class="specimen" data-od-id="spec-empty">
+        <figcaption><span class="label">Empty state</span><span class="token">say what goes here · one action</span></figcaption>
+        <div class="body-area">
+          <div class="empty">
+            <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m8 9-4 3 4 3M16 9l4 3-4 3M13.5 5l-3 14"/></svg></span>
+            <h3 class="h4">No tools installed yet</h3>
+            <p>Add the SolenixAI marketplace once, and every tool we use and trust shows up here ready to install.</p>
+            <button class="btn btn-secondary" type="button" style="margin-top: var(--space-2);">Add the marketplace</button>
+          </div>
+          <p class="caption" style="margin-top: var(--space-4);">Never just "No data". Say what belongs here and give the one action that fills it.</p>
+        </div>
+      </div>
+
+      <!-- nav specimen -->
+      <div class="specimen" data-od-id="spec-nav">
+        <figcaption><span class="label">Nav</span><span class="token">sticky · frosted · 72px</span></figcaption>
+        <div class="body-area" style="padding: 0;">
+          <div style="border-bottom: 1px solid var(--line); background: var(--surface);">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); min-height: var(--nav-height); padding-inline: var(--space-4); flex-wrap: wrap;">
+              <span class="brand" aria-hidden="true">
+                <svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/><circle cx="16" cy="16" r="8" fill="url(#sun)"/><circle cx="27" cy="9" r="2.2" fill="var(--ring)"/></svg>
+                SolenixAI
+              </span>
+              <div class="navlinks" aria-hidden="true">
+                <span class="navlink">Consulting</span>
+                <span class="navlink">Websites</span>
+                <span class="navlink" aria-current="page">Agents</span>
+                <span class="navlink" style="background: var(--line); color: var(--text);">Hover</span>
+              </div>
+            </div>
+          </div>
+          <p class="caption" style="padding: var(--space-4);">The real one is at the top of this page. Current page and hover share a background — current adds weight, so the state survives when colour can't be seen. Below 640px only what a phone needs stays.</p>
+        </div>
+      </div>
+
+      <!-- sign-in -->
+      <div class="specimen" data-od-id="spec-signin">
+        <figcaption><span class="label">Sign in</span><span class="token">--shadow-lg · 25rem</span></figcaption>
+        <div class="body-area" style="background: var(--surface-sunken);">
+          <form class="signin" onsubmit="return false;">
+            <header>
+              <svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/><circle cx="16" cy="16" r="8" fill="url(#sun)"/><circle cx="27" cy="9" r="2.2" fill="var(--ring)"/></svg>
+              <h3 class="h3">Sign in to SolenixAI</h3>
+              <p class="small">See your site, your hours saved, and what we're working on.</p>
+            </header>
+            <div class="field">
+              <label for="s-email">Email</label>
+              <input class="input" id="s-email" type="email" autocomplete="email" placeholder="you@yourshop.ca" required>
+            </div>
+            <div class="field">
+              <label for="s-pass">Password</label>
+              <input class="input" id="s-pass" type="password" autocomplete="current-password" placeholder="••••••••" required>
+            </div>
+            <div class="row">
+              <label class="check"><input type="checkbox" checked> Keep me signed in</label>
+              <a class="link" style="font-size: var(--fs-sm);" href="#components">Forgot it?</a>
+            </div>
+            <button class="btn btn-primary" type="submit" style="width: 100%;">Sign in</button>
+            <p class="divider">or</p>
+            <button class="btn btn-secondary" type="button" style="width: 100%;">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.25-1.28-5.25-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.43-2.7 5.4-5.27 5.69.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+              Continue with GitHub
+            </button>
+            <p class="caption" style="text-align: center;">New here? <a class="link" href="#components">Talk to us first</a> — we set the account up with you.</p>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══ voice ════════════════════════════════════════════════════════════ -->
+  <section class="section" id="voice" data-od-id="voice">
+    <div class="section-head">
+      <h2 class="h2">Voice</h2>
+      <p class="small" style="max-width: 34ch;">Our reader runs a shop, a clinic, a trade. They're smart and busy, they're not technical, and they shouldn't have to be.</p>
+    </div>
+
+    <div class="dos">
+      <div class="do">
+        <p class="label" style="color: var(--ok); margin-bottom: var(--space-2);">We say</p>
+        <p>We find the hours AI can save you and set it up so it keeps working.</p>
+      </div>
+      <div class="dont">
+        <p class="label" style="color: var(--down); margin-bottom: var(--space-2);">Not</p>
+        <p class="said">Leveraging cutting-edge AI to unlock transformative operational efficiency.</p>
+      </div>
+      <div class="do">
+        <p class="label" style="color: var(--ok); margin-bottom: var(--space-2);">We say</p>
+        <p>Agent tools that install in one line.</p>
+      </div>
+      <div class="dont">
+        <p class="label" style="color: var(--down); margin-bottom: var(--space-2);">Not</p>
+        <p class="said">One-line MCP server provisioning for agentic workflows.</p>
+      </div>
+      <div class="do">
+        <p class="label" style="color: var(--ok); margin-bottom: var(--space-2);">We say</p>
+        <p>The site's been down since 9:40. We know why and we're fixing it. Next update by 11.</p>
+      </div>
+      <div class="dont">
+        <p class="label" style="color: var(--down); margin-bottom: var(--space-2);">Not</p>
+        <p class="said">We are currently experiencing intermittent service degradation.</p>
+      </div>
+    </div>
+
+    <div class="grid grid-2" style="margin-top: var(--space-5);">
+      <div class="specimen">
+        <figcaption><span class="label">Words</span><span class="token">use · not</span></figcaption>
+        <div class="body-area">
+          <table class="table">
+            <thead><tr><th scope="col">Use</th><th scope="col">Not</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">set up</th><td data-label="Not" class="small">provision, onboard, deploy</td></tr>
+              <tr><th scope="row">website</th><td data-label="Not" class="small">web presence, digital experience</td></tr>
+              <tr><th scope="row">we look after it</th><td data-label="Not" class="small">managed service, retainer</td></tr>
+              <tr><th scope="row">it's working / it's down</th><td data-label="Not" class="small">operational / degraded</td></tr>
+              <tr><th scope="row">what it costs</th><td data-label="Not" class="small">investment, pricing structure</td></tr>
+              <tr><th scope="row">talk to us</th><td data-label="Not" class="small">book a discovery call</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="specimen">
+        <figcaption><span class="label">In the interface</span><span class="token">the short rules</span></figcaption>
+        <div class="body-area">
+          <ul class="stack" style="gap: var(--space-3); list-style: none; font-size: var(--fs-sm);">
+            <li><strong>Buttons</strong> say the outcome. "Get a website", not "Learn more".</li>
+            <li><strong>Labels</strong> name the thing, no colon.</li>
+            <li><strong>Errors</strong> say what happened and what to do next.</li>
+            <li><strong>Status</strong> is a word beside a colour.</li>
+            <li><strong>Confirmations</strong> name the thing: "Website copied", not "Success!".</li>
+            <li><strong>Sentence case</strong> everywhere. Caps are for mono labels only.</li>
+            <li><strong>No invented numbers.</strong> If we don't know it, we don't print it.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+</main>
+
+<footer data-od-id="footer">
+  <div class="wrap">
+    <span>SolenixAI design system · <span class="num">v1</span> · St. John's, Newfoundland</span>
+    <a href="mailto:hello@solenix.dev">hello@solenix.dev</a>
+  </div>
+</footer>
+
+<p class="sr-only" role="status" id="theme-status"></p>
+
+<script>
+(() => {
+  const KEY = 'solenix-theme';
+  const root = document.documentElement;
+  const buttons = [...document.querySelectorAll('[data-theme-set]')];
+  const status = document.getElementById('theme-status');
+
+  const apply = (mode, announce) => {
+    if (mode === 'auto') root.removeAttribute('data-theme');
+    else root.setAttribute('data-theme', mode);
+    for (const b of buttons) b.setAttribute('aria-pressed', String(b.dataset.themeSet === mode));
+    if (announce) status.textContent = mode === 'auto' ? 'Theme follows your device' : 'Theme set to ' + mode;
+  };
+
+  let saved = 'auto';
+  try { saved = localStorage.getItem(KEY) || 'auto'; } catch {}
+  apply(['auto', 'light', 'dark'].includes(saved) ? saved : 'auto', false);
+
+  for (const b of buttons) {
+    b.addEventListener('click', () => {
+      const mode = b.dataset.themeSet;
+      apply(mode, true);
+      try { localStorage.setItem(KEY, mode); } catch {}
+    });
+  }
+})();
+</script>
+</body>
+</html>

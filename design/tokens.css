@@ -1,0 +1,315 @@
+/* ============================================================================
+   SolenixAI design tokens
+   ----------------------------------------------------------------------------
+   One source of truth for colour, type, space, radius, shadow and motion.
+
+   Evolved from the :root block already shipping in /assets/site.css — every
+   name that file uses (--bg, --bg2, --surface, --text, --muted, --faint,
+   --line, --accent, --accent-ink, --sun1, --sun2, --ring, --shadow) still
+   exists and still means the same thing, so site.css keeps working unchanged.
+
+   Theming
+     Light is the default. Dark arrives via prefers-color-scheme.
+     [data-theme="dark"] / [data-theme="light"] on <html> always wins, because
+     the media query is scoped to :root:not([data-theme]).
+
+   Rules
+     - Never write a raw hex outside this file.
+     - Derive tones with color-mix(in oklch, …), not new numbered tokens.
+     - One accent per screen, twice at most. Status colours are not the accent.
+   ========================================================================== */
+
+/* ── 1. Colour ────────────────────────────────────────────────────────────── */
+
+:root {
+  color-scheme: light;
+
+  /* Surfaces */
+  --bg: #fbfaf8;                      /* page floor */
+  --bg2: #f3f1ed;                     /* gradient far corner */
+  --surface: rgba(255, 255, 255, 0.86); /* cards, nav, raised areas */
+  --surface-solid: #ffffff;           /* when translucency is not an option */
+  --surface-sunken: rgba(28, 25, 23, 0.05); /* code wells, inset rows */
+
+  /* Ink */
+  --text: #1c1917;                    /* headings, body            16.8:1 */
+  --muted: #57534e;                   /* secondary prose            7.3:1 */
+  --faint: #736d67;                   /* captions, metadata         4.9:1 */
+
+  /* Lines */
+  --line: rgba(28, 25, 23, 0.1);      /* hairlines over a surface */
+  --line-solid: #e4e0d9;              /* hairlines in SVG exports */
+  --line-strong: rgba(28, 25, 23, 0.22);
+
+  /* Accent — the ember. One per screen, twice at most. */
+  --accent: #c2410c;                  /* on --bg                    5.0:1 */
+  --accent-hover: #9a3412;            /* darker: contrast goes up */
+  --accent-ink: #ffffff;              /* text on an --accent fill   5.2:1 */
+  --accent-text: #9a3412;             /* accent as small text on a tint 7.0:1 */
+  --accent-quiet: color-mix(in oklch, var(--accent) 12%, transparent);
+
+  /* Sun — the logo gradient. Decoration and the logo mark only, never text. */
+  --sun1: #fbbf24;
+  --sun2: #ea580c;
+  --ring: #ea580c;
+
+  /* Status — semantic, and deliberately not the accent hue except "building",
+     which borrows the ember on purpose: work in progress is the sun rising. */
+  --ok: #065f46;                      /* live       7.4:1 on --bg */
+  --ok-tint: color-mix(in oklch, var(--ok) 8%, transparent);
+  --warn: #9a3412;                    /* building   7.0:1 on --bg */
+  --warn-tint: color-mix(in oklch, var(--warn) 8%, transparent);
+  --down: #b91c1c;                    /* down       6.2:1 on --bg */
+  --down-tint: color-mix(in oklch, var(--down) 8%, transparent);
+
+  /* Elevation */
+  --shadow-sm: 0 1px 2px rgba(28, 25, 23, 0.05);
+  --shadow-md: 0 1px 2px rgba(28, 25, 23, 0.04), 0 8px 24px rgba(28, 25, 23, 0.06);
+  --shadow-lg: 0 2px 4px rgba(28, 25, 23, 0.05), 0 20px 48px rgba(28, 25, 23, 0.1);
+  --shadow-accent: 0 6px 20px color-mix(in srgb, var(--accent) 30%, transparent);
+  --shadow: var(--shadow-md);          /* alias kept for site.css */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    color-scheme: dark;
+
+    --bg: #0b0d12;
+    --bg2: #11141b;
+    --surface: rgba(20, 24, 32, 0.84);
+    --surface-solid: #141820;
+    --surface-sunken: rgba(244, 242, 238, 0.05);
+
+    --text: #f4f2ee;                  /* 17.4:1 */
+    --muted: #a39e97;                 /*  7.3:1 */
+    --faint: #8f8983;                 /*  5.6:1 */
+
+    --line: rgba(244, 242, 238, 0.09);
+    --line-solid: #1e222b;
+    --line-strong: rgba(244, 242, 238, 0.2);
+
+    --accent: #f59e0b;                /*  9.1:1 */
+    --accent-hover: #fbbf24;          /* lighter: contrast goes up */
+    --accent-ink: #1a1206;            /*  8.6:1 on an --accent fill */
+    --accent-text: #fbbf24;           /* 11.6:1 */
+
+    --sun1: #fbbf24;
+    --sun2: #f97316;
+    --ring: #f59e0b;
+
+    --ok: #34d399;                    /* 10.1:1 */
+    --warn: #fbbf24;                  /* 11.6:1 */
+    --down: #fb7185;                  /*  7.2:1 */
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 32px rgba(0, 0, 0, 0.35);
+    --shadow-lg: 0 2px 4px rgba(0, 0, 0, 0.35), 0 24px 56px rgba(0, 0, 0, 0.45);
+  }
+}
+
+/* Explicit override. Same values as the media query above — duplicated rather
+   than shared because a [data-theme] selector must outrank it in the cascade. */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: #0b0d12;
+  --bg2: #11141b;
+  --surface: rgba(20, 24, 32, 0.84);
+  --surface-solid: #141820;
+  --surface-sunken: rgba(244, 242, 238, 0.05);
+
+  --text: #f4f2ee;
+  --muted: #a39e97;
+  --faint: #8f8983;
+
+  --line: rgba(244, 242, 238, 0.09);
+  --line-solid: #1e222b;
+  --line-strong: rgba(244, 242, 238, 0.2);
+
+  --accent: #f59e0b;
+  --accent-hover: #fbbf24;
+  --accent-ink: #1a1206;
+  --accent-text: #fbbf24;
+
+  --sun1: #fbbf24;
+  --sun2: #f97316;
+  --ring: #f59e0b;
+
+  --ok: #34d399;
+  --warn: #fbbf24;
+  --down: #fb7185;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 32px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 2px 4px rgba(0, 0, 0, 0.35), 0 24px 56px rgba(0, 0, 0, 0.45);
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+
+  --bg: #fbfaf8;
+  --bg2: #f3f1ed;
+  --surface: rgba(255, 255, 255, 0.86);
+  --surface-solid: #ffffff;
+  --surface-sunken: rgba(28, 25, 23, 0.05);
+
+  --text: #1c1917;
+  --muted: #57534e;
+  --faint: #736d67;
+
+  --line: rgba(28, 25, 23, 0.1);
+  --line-solid: #e4e0d9;
+  --line-strong: rgba(28, 25, 23, 0.22);
+
+  --accent: #c2410c;
+  --accent-hover: #9a3412;
+  --accent-ink: #ffffff;
+  --accent-text: #9a3412;
+
+  --sun1: #fbbf24;
+  --sun2: #ea580c;
+  --ring: #ea580c;
+
+  --ok: #065f46;
+  --warn: #9a3412;
+  --down: #b91c1c;
+
+  --shadow-sm: 0 1px 2px rgba(28, 25, 23, 0.05);
+  --shadow-md: 0 1px 2px rgba(28, 25, 23, 0.04), 0 8px 24px rgba(28, 25, 23, 0.06);
+  --shadow-lg: 0 2px 4px rgba(28, 25, 23, 0.05), 0 20px 48px rgba(28, 25, 23, 0.1);
+}
+
+/* ── 2. Type ──────────────────────────────────────────────────────────────── */
+
+:root {
+  /* Three roles, two visible faces. The brand's grotesque carries display and
+     text — it is one family worked at two optical sizes and two tracking
+     settings, which is how every live SolenixAI surface and every generated
+     SVG banner is already set. Mono is the genuine second face and does real
+     work: eyebrows, labels, numbers, table headers, status, code. */
+  --font-display: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Noto Sans", Helvetica, Arial, sans-serif;
+  --font-text: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Noto Sans", Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono",
+    monospace;
+
+  /* Size. clamp() so 375px and 1920px both land without a media query. */
+  --fs-display: clamp(2.4rem, 7.2vw, 4.25rem);  /* page-owning headline */
+  --fs-h1: clamp(1.9rem, 5vw, 2.6rem);
+  --fs-h2: clamp(1.4rem, 3.4vw, 1.75rem);
+  --fs-h3: 1.2rem;
+  --fs-h4: 1.02rem;
+  --fs-lede: clamp(1.05rem, 2.6vw, 1.25rem);
+  --fs-body: 1rem;
+  --fs-sm: 0.92rem;
+  --fs-xs: 0.8rem;
+  --fs-2xs: 0.72rem;                  /* badges, floor — never below this */
+
+  /* Weight. 650 is the brand's lockup weight. */
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-brand: 650;
+  --fw-bold: 700;
+
+  /* Line height */
+  --lh-display: 1.04;
+  --lh-heading: 1.2;
+  --lh-body: 1.5;
+  --lh-relaxed: 1.6;
+
+  /* Tracking. Negative as type grows, positive as it shrinks into a label. */
+  --track-display: -0.035em;
+  --track-heading: -0.015em;
+  --track-body: 0;
+  --track-label: 0.12em;
+  --track-eyebrow: 0.14em;
+}
+
+/* ── 3. Space and layout ──────────────────────────────────────────────────── */
+
+:root {
+  /* 4px base. Skip no steps; add none. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+  --space-10: 128px;
+
+  /* Section rhythm breathes with the viewport. */
+  --space-section: clamp(2.5rem, 8vh, 4.5rem);
+  --space-hero: clamp(3.5rem, 12vh, 8rem);
+
+  --container: 64rem;                 /* 1024px — the live site's measure */
+  --measure: 34rem;                   /* max line length for prose */
+  --gutter: var(--space-4);           /* 16px, 32px from 640px up */
+  --nav-height: 72px;
+  --tap-min: 44px;                    /* every interactive target clears this */
+}
+
+@media (min-width: 640px) {
+  :root { --gutter: var(--space-6); }
+}
+
+/* ── 4. Radius ────────────────────────────────────────────────────────────── */
+
+:root {
+  --radius-xs: 8px;
+  --radius-sm: 10px;
+  --radius-md: 12px;                  /* icon chips, code wells, inputs */
+  --radius-lg: 16px;
+  --radius-xl: 20px;                  /* cards */
+  --radius-2xl: 28px;                 /* full-bleed panels */
+  --radius-pill: 999px;               /* buttons, badges, nav links */
+}
+
+/* ── 5. Motion ────────────────────────────────────────────────────────────── */
+
+:root {
+  --dur-fast: 120ms;                  /* colour, border */
+  --dur-base: 180ms;                  /* lift, shadow */
+  --dur-slow: 320ms;                  /* panels, disclosure */
+  --dur-reveal: 700ms;                /* entrance, once */
+
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);  /* the house curve */
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Orbit periods — slow enough to read as ambient, not as animation. */
+  --orbit-1: 90s;
+  --orbit-2: 140s;
+  --orbit-3: 200s;
+
+  --lift: -1px;                       /* buttons */
+  --lift-card: -3px;                  /* cards */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 1ms;
+    --dur-base: 1ms;
+    --dur-slow: 1ms;
+    --dur-reveal: 1ms;
+    --lift: 0px;
+    --lift-card: 0px;
+  }
+}
+
+/* ── 6. Focus ─────────────────────────────────────────────────────────────── */
+
+:root {
+  --focus-width: 2px;
+  --focus-offset: 3px;
+  --focus-color: var(--accent);
+}
+
+/* Every focusable element, no exceptions. Keyboard only. */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: var(--focus-width) solid var(--focus-color);
+  outline-offset: var(--focus-offset);
+}
