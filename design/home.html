@@ -274,6 +274,56 @@ main { flex: 1; }
   justify-content: space-between; margin-top: var(--space-4);
   padding-top: var(--space-3); border-top: 1px solid var(--line); }
 
+
+/* ── Sprawl, then calm ───────────────────────────────────────────────────────
+   The page's one argument, drawn. Left: what an owner actually has — tools at
+   odd angles, tangled together, none of it the same shape. Right: the same
+   work as one orbiting system. Both panels are bounded boxes with their own
+   aspect ratio, so nothing escapes at any width. */
+.panelpair { display: grid; gap: var(--space-5); align-items: stretch; }
+@media (min-width: 900px) { .panelpair { grid-template-columns: 1fr auto 1fr; gap: var(--space-6); align-items: center; } }
+.panelpair > .arrow { display: grid; place-items: center; color: var(--muted); }
+.panelpair > .arrow svg { width: 28px; height: 28px; }
+@media (max-width: 899px) { .panelpair > .arrow svg { rotate: 90deg; } }
+
+.stage { position: relative; isolation: isolate; overflow: hidden;
+  border-radius: var(--radius-2xl); border: 1px solid var(--line);
+  aspect-ratio: 4 / 3; min-height: 17rem; }
+/* Chips and pills live in the field, which stops short of the caption band —
+   percentage positions can then never collide with the caption at any width. */
+.stage-field { position: absolute; inset: 0 0 3.25rem 0; z-index: 2; }
+.stage-cap { position: absolute; left: var(--space-4); bottom: var(--space-4); z-index: 4;
+  font: var(--fw-semibold) var(--fs-2xs)/1.2 var(--font-mono); letter-spacing: var(--track-label);
+  text-transform: uppercase; padding: 4px 9px; border-radius: var(--radius-pill);
+  background: var(--surface-solid); border: 1px solid var(--line); color: var(--muted); }
+
+/* Before: the tangle */
+.stage-before { background: var(--surface-sunken); }
+.tangle { position: absolute; inset: 0; z-index: 1; }
+.tangle path { fill: none; stroke: var(--line-strong); stroke-width: 1.2; stroke-linecap: round; }
+.chip-lo { position: absolute; z-index: 2; max-width: 46%;
+  font: var(--fw-semibold) var(--fs-2xs)/1.25 var(--font-text);
+  padding: 5px 9px; border-radius: var(--radius-sm);
+  background: var(--surface-solid); border: 1px solid var(--line-strong);
+  color: var(--text); box-shadow: var(--shadow-sm); }
+.chip-lo.dim { color: var(--muted); border-style: dashed; box-shadow: none; }
+
+/* After: one system */
+.stage-after { background: var(--grad-sky); }
+.stage-after .sky-light { width: 15rem; left: 50%; top: 50%; opacity: .5; }
+.orbitsys { position: absolute; inset: 0; z-index: 2; }
+.orbitsys .ring { fill: none; stroke: var(--ring); stroke-opacity: .22; stroke-width: 1; vector-effect: non-scaling-stroke; }
+.orbitsys .spin { transform-origin: 200px 150px; animation: orbit var(--orbit-2) var(--ease-orbit) infinite; }
+.orbitsys .spin-b { animation-duration: var(--orbit-3); animation-direction: reverse; }
+.orbitsys .node { fill: var(--accent); }
+.orbitsys .core { fill: url(#sun); }
+@media (prefers-reduced-motion: reduce) { .orbitsys .spin { animation: none; } }
+.sysnode { position: absolute; z-index: 3; transform: translate(-50%, -50%); max-width: 46%;
+  font: var(--fw-semibold) var(--fs-2xs)/1.2 var(--font-mono); letter-spacing: var(--track-label);
+  text-transform: uppercase; padding: 4px 9px; border-radius: var(--radius-pill);
+  background: var(--surface-solid); border: 1px solid var(--line);
+  color: var(--accent-text); white-space: nowrap; box-shadow: var(--shadow-sm); }
+
 /* ── archetype 2: split with visual — prose first below 900px ─────────────── */
 .split { display: grid; gap: var(--space-6); }
 @media (min-width: 900px) { .split { grid-template-columns: 1fr 1fr; gap: var(--space-8); align-items: center; } }
@@ -447,21 +497,26 @@ footer a:hover { color: var(--text); }
 
   <div class="wrap wrap-wide">
     <p class="eyebrow reveal" style="--i:0">Your fractional software engineer</p>
-    <h1 class="display reveal" style="--i:1">We build it, ship it, <em class="lit-text">and keep it running.</em></h1>
+    <h1 class="display reveal" style="--i:1">Too many tools. Too many logins. <em class="lit-text">Nobody who knows.</em></h1>
     <p class="lede reveal" style="--i:2">
-      Solenix is the software team a small business cannot justify hiring. We build
-      your website, apps and automations, deploy them, host them, and run them from
-      then on — one fixed price, one place to see everything, no in-house engineer
-      to hire.
+      A website somewhere, a booking app, three spreadsheets, a pile of
+      subscriptions, and something your nephew set up in 2023 that nobody dares
+      touch. Every tool promised to help. None of them talk to each other, and
+      hiring an engineer to sort it out was never realistic.
     </p>
-    <div class="cluster reveal" style="--i:3; margin-top: var(--space-6);">
+    <p class="lede reveal" style="--i:3; margin-top: var(--space-4)">
+      <strong>That is the job we take on.</strong> One engineer who works out what
+      to keep, cuts the rest, builds what is actually needed, runs it, and gives you
+      one place to see all of it.
+    </p>
+    <div class="cluster reveal" style="--i:4; margin-top: var(--space-6);">
       <a class="btn btn-primary" href="mailto:hello@solenix.dev?subject=Book%20a%20call">
         Book a call
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </a>
-      <a class="btn btn-ghost" href="#portal">See the portal you get</a>
+      <a class="btn btn-ghost" href="#calm">Show me what that looks like</a>
     </div>
-    <ul class="promises reveal" style="--i:4">
+    <ul class="promises reveal" style="--i:5">
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Fixed price, agreed before we start</li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>You own everything</li>
       <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Updates in plain English</li>
@@ -470,171 +525,144 @@ footer a:hover { color: var(--text); }
   </div>
 </section>
 
-<!-- ═══ 2 · live demo panel ═══════════════════════════════════════════════ -->
-<section class="section" id="demo">
+<!-- ═══ 2 · sprawl → calm — split with visual ═════════════════════════════ -->
+<section class="section" id="calm" data-od-id="sprawl-to-calm">
   <div class="wrap wrap-wide">
     <div class="section-head">
-      <p class="eyebrow">One kind of thing we build</p>
-      <h2 class="h2" style="max-width: 32ch;">Software that does the job while you are closed</h2>
-      <p class="small body">An assistant wired into a bakery's real order book — one example of what
-      "custom software" means in practice. We build, deploy and run it; you never touch a server.</p>
+      <p class="eyebrow">Before and after</p>
+      <h2 class="h2" style="max-width: 34ch;">The same business, before and after someone takes it on</h2>
+      <p class="small body">Nothing on the left gets thrown away for the sake of it. We work out what earns
+        its place, replace what does not, and connect what is left into one thing you can actually see.</p>
     </div>
 
-    <div class="glass pad sweepable" data-demo>
-      <div class="chat">
-        <div class="chathead">
-          <div>
-            <p class="label">Maple &amp; Rye Bakery · after-hours messages</p>
-            <p class="caption" style="margin-top: var(--space-1);">Wednesday, 9:47pm</p>
-          </div>
-          <span class="badge badge-neutral">Example</span>
+    <div class="panelpair">
+      <!-- what an owner actually has -->
+      <div class="stage stage-before" data-od-id="stage-sprawl"
+           role="img" aria-label="What a small business usually has: a website, a booking app, spreadsheets, invoices in a separate tool, a dozen logins, monthly subscriptions, and something set up years ago that nobody understands — none of it connected.">
+        <svg class="tangle" viewBox="0 0 400 300" aria-hidden="true" preserveAspectRatio="none">
+          <path d="M70 60C140 90 120 150 200 130S300 90 330 150"/>
+          <path d="M90 210C150 180 210 240 300 200"/>
+          <path d="M60 140C110 160 90 220 160 250"/>
+          <path d="M240 70C280 110 230 140 300 230"/>
+          <path d="M120 100C180 120 150 190 230 170"/>
+        </svg>
+        <div class="stage-field">
+          <span class="chip-lo" style="left: 5%;  top: 4%;  rotate: -4deg;">Website</span>
+          <span class="chip-lo" style="right: 6%; top: 12%; rotate: 5deg;">Booking app</span>
+          <span class="chip-lo" style="left: 8%;  top: 32%; rotate: 3deg;">Three spreadsheets</span>
+          <span class="chip-lo" style="right: 5%; top: 42%; rotate: -6deg;">Invoices, elsewhere</span>
+          <span class="chip-lo dim" style="left: 6%; top: 62%; rotate: -2deg;">12 logins</span>
+          <span class="chip-lo dim" style="right: 8%; top: 70%; rotate: 4deg;">7 subscriptions</span>
+          <span class="chip-lo dim" style="left: 10%; bottom: 2%; rotate: 2deg;">That 2023 thing</span>
         </div>
+        <span class="stage-cap">What you have now</span>
+      </div>
 
-        <div class="thread" data-thread aria-live="polite">
-          <div class="msg msg-them" data-msg>
-            <span class="who" aria-hidden="true">AM</span>
-            <div class="bubble">
-              <span class="sr-only">Customer:</span>
-              <p>Hi! Do you do gluten-free birthday cakes? I'd need one for Saturday, about 20 people.</p>
-              <span class="when">9:47pm</span>
-            </div>
-          </div>
+      <div class="arrow" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15m0 0-5-5m5 5-5 5"/></svg>
+      </div>
 
-          <div class="msg msg-us" data-msg data-typing="1">
-            <span class="who" aria-hidden="true">
-              <svg viewBox="0 0 32 32" width="18" height="18" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-opacity=".5" stroke-width="2"/><circle cx="16" cy="16" r="7" fill="url(#sun)"/></svg>
-            </span>
-            <div class="bubble">
-              <span class="sr-only">Assistant:</span>
-              <p>We do. The gluten-free sponge comes in two sizes — 8 inch serves about 12, 10 inch serves 20 to 24. For Saturday we'd need the order by Thursday 5pm.</p>
-              <span class="when">9:47pm</span>
-            </div>
-          </div>
-
-          <div class="msg msg-them" data-msg>
-            <span class="who" aria-hidden="true">AM</span>
-            <div class="bubble">
-              <span class="sr-only">Customer:</span>
-              <p>The 10 inch then. Chocolate if you have it?</p>
-              <span class="when">9:48pm</span>
-            </div>
-          </div>
-
-          <div class="msg msg-us" data-msg data-typing="1">
-            <span class="who" aria-hidden="true">
-              <svg viewBox="0 0 32 32" width="18" height="18" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-opacity=".5" stroke-width="2"/><circle cx="16" cy="16" r="7" fill="url(#sun)"/></svg>
-            </span>
-            <div class="bubble">
-              <span class="sr-only">Assistant:</span>
-              <p>Chocolate gluten-free, 10 inch, Saturday pickup from 10am — I've put it in the book and flagged it for Anna. She'll confirm and take payment in the morning; I don't handle cards.</p>
-              <span class="when">9:48pm</span>
-            </div>
-          </div>
+      <!-- the same work, as one system -->
+      <div class="stage stage-after lit" data-od-id="stage-calm"
+           role="img" aria-label="The same work as one system: Solenix at the centre, with Software, Projects and Billing in orbit around it.">
+        <div class="sky" aria-hidden="true"><div class="sky-light"></div></div>
+        <svg class="orbitsys" viewBox="0 0 400 300" aria-hidden="true">
+          <circle class="ring" cx="200" cy="150" r="78"/>
+          <circle class="ring" cx="200" cy="150" r="115"/>
+          <g class="spin"><circle class="node" cx="200" cy="72" r="4.5"/></g>
+          <g class="spin spin-b"><circle class="node" cx="85" cy="150" r="3.5"/></g>
+          <circle class="core" cx="200" cy="150" r="26"/>
+        </svg>
+        <div class="stage-field">
+          <span class="sysnode" style="left: 50%; top: 11%;">Software</span>
+          <span class="sysnode" style="left: 22%; top: 78%;">Projects</span>
+          <span class="sysnode" style="left: 78%; top: 78%;">Billing</span>
         </div>
-
-        <div class="chatfoot">
-          <p class="caption" style="max-width: 44ch;">
-            Example conversation. A real one reads your own prices, your order book and
-            your opening hours. When it isn't sure, it says so and hands the message to you —
-            it never invents an answer.
-          </p>
-          <button class="btn btn-quiet btn-sm" type="button" data-replay>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg>
-            Play it again
-          </button>
-        </div>
+        <span class="stage-cap">One place to see it</span>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ═══ 3 · what we do — bento ════════════════════════════════════════════ -->
-<section class="section" id="what">
+<section class="section" id="what" data-od-id="what-we-do">
   <div class="wrap wrap-wide">
     <div class="section-head">
       <p class="eyebrow">What we do</p>
-      <h2 class="h2">End to end: built, deployed, hosted, run</h2>
+      <h2 class="h2" style="max-width: 30ch;">Five moves, in that order</h2>
+      <p class="small body">Most of the value is in the first two. Nobody sells you software you do not need.</p>
     </div>
 
     <div class="bento">
-      <div class="b-hero card-hover reveal" style="--i:0; justify-content: space-between;">
+      <div class="b-hero reveal" style="--i:0; justify-content: space-between;" data-od-id="move-sort">
         <div class="stack">
-          <span class="chip" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3.4"/><ellipse cx="12" cy="12" rx="10" ry="4.6"/><ellipse cx="12" cy="12" rx="10" ry="4.6" transform="rotate(60 12 12)"/></svg></span>
-          <h3 class="h3">Websites, apps and automations</h3>
+          <span class="chip" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M4 12h10M4 18h6"/><path d="M17 15l2.5 2.5L23 13"/></svg></span>
+          <h3 class="h3">1 &middot; Sort out what you have</h3>
           <p class="small">
-            Whatever the job needs: a site that brings people in, an app that takes
-            bookings or orders, an automation that moves information between the
-            tools you already use. AI where it earns its place, plain software where
-            it does not.
+            We go through every tool, login and subscription you are paying for and
+            write down what it does, what it costs, and whether anything depends on
+            it. Most owners have never seen that list. It is usually the most useful
+            hour of the whole engagement.
+          </p>
+          <p class="small">
+            You get the list whether or not you hire us for anything else.
           </p>
         </div>
-        <div class="mini" aria-label="A miniature of the same conversation shown in full above.">
-          <div class="mini-sky" aria-hidden="true"><div class="mini-light"></div></div>
-          <div class="mini-row mini-them">
-            <span class="mini-who" aria-hidden="true">AM</span>
-            <p class="mini-b">Are you open Monday?</p>
-          </div>
-          <div class="mini-row mini-us">
-            <span class="mini-who" aria-hidden="true">
-              <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-opacity=".5" stroke-width="2.5"/><circle cx="16" cy="16" r="7" fill="url(#sun)"/></svg>
-            </span>
-            <p class="mini-b">Closed Mondays — open Tuesday from 8am. Want me to hold something for Tuesday?</p>
-          </div>
-          <div class="mini-foot">
-            <span class="caption">Answered at 11pm, while you were closed</span>
-            <span class="badge badge-neutral">Example</span>
-          </div>
-        </div>
-        <p class="caption">We start with the one job costing you the most time or money.</p>
+        <p class="caption">No jargon, no audit theatre — a plain list you can read.</p>
       </div>
 
-      <div class="b-wide card-hover reveal" style="--i:1">
-        <span class="chip" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg></span>
-        <h3 class="h3">Deployed and hosted by us</h3>
-        <p class="small">We own the boring part: hosting, deploys, domains, certificates, backups. You get a URL and a status you can read.</p>
+      <div class="reveal" style="--i:1" data-od-id="move-simplify">
+        <p class="label">Move 2</p>
+        <h3 class="h3">Cut the sprawl</h3>
+        <p class="small">Cancel what nothing depends on, merge what overlaps, and keep what genuinely earns its place. Fewer logins, fewer bills.</p>
       </div>
-
-      <div class="card-hover reveal" style="--i:2">
-        <span class="chip" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M10 3.5 4 6.5v5c0 4 2.6 7 6 8.5 3.4-1.5 6-4.5 6-8.5v-5Z"/><path d="M7.6 11.5 9.6 13.5 13 9.8"/></svg></span>
-        <h3 class="h3">Run and looked after</h3>
-        <p class="small">Monitored, patched, and fixed before you notice. One monthly price, cancel whenever.</p>
+      <div class="reveal" style="--i:2" data-od-id="move-build">
+        <p class="label">Move 3</p>
+        <h3 class="h3">Build what is missing</h3>
+        <p class="small">Only the gap that is left after cutting — a site, a booking flow, an automation. Fixed price, agreed first.</p>
       </div>
-
-      <div class="reveal quietcell" style="--i:3; background: var(--surface-sunken); box-shadow: none; border-style: dashed; justify-content: center;">
-        <p class="label">Not sure what you need?</p>
-        <p class="small">That is what the first call is for. Describe the problem in your own words and we will tell you what it takes.</p>
+      <div class="reveal" style="--i:3" data-od-id="move-run">
+        <p class="label">Move 4</p>
+        <h3 class="h3">Run it</h3>
+        <p class="small">We host it, watch it, patch it and fix it. You do not get handed a server and a login.</p>
+      </div>
+      <div class="reveal b-wide" style="--i:4" data-od-id="move-see">
+        <p class="label">Move 5</p>
+        <h3 class="h3">One place to see all of it</h3>
+        <p class="small">Your portal: what is running, what we are building, what it costs. No chasing anyone for a status.</p>
       </div>
     </div>
   </div>
 </section>
+
 
 <!-- ═══ 4 · how we work — card grid ═══════════════════════════════════════ -->
 <section class="section">
   <div class="wrap wrap-wide">
     <div class="section-head">
       <p class="eyebrow">How we work</p>
-      <h2 class="h2">Four steps, and you know the price before step three</h2>
+      <h2 class="h2">How it starts, and how it stays calm</h2>
     </div>
     <div class="cards cards-4">
       <div class="card step reveal" style="--i:0">
         <span class="stepnum">Step 1</span>
         <h3 class="h3">A call</h3>
-        <p class="small">You describe the problem. We tell you whether we can help, and roughly what it takes. No charge and no pitch.</p>
+        <p class="small">You describe the mess. We go through what you are paying for and what it does. No charge and no pitch.</p>
       </div>
       <div class="card step reveal" style="--i:1">
         <span class="stepnum">Step 2</span>
         <h3 class="h3">A plan</h3>
-        <p class="small">What gets built, what it costs and when it is done — in writing, before anything starts.</p>
+        <p class="small">What to cut, what to keep, what to build, what it costs and when — in writing, before anything starts.</p>
       </div>
       <div class="card step reveal" style="--i:2">
         <span class="stepnum">Step 3</span>
         <h3 class="h3">The build</h3>
-        <p class="small">You watch it come together in your portal, with updates in words you already use.</p>
+        <p class="small">Only what survived the cut gets built. You watch it come together in your portal.</p>
       </div>
       <div class="card step reveal" style="--i:3">
         <span class="stepnum">Step 4</span>
         <h3 class="h3">Run</h3>
-        <p class="small">We host it, monitor it and keep it working. One monthly price, and you can leave whenever.</p>
+        <p class="small">We host it, watch it and keep it working. One monthly price, one login, nothing to chase.</p>
       </div>
     </div>
   </div>
@@ -650,7 +678,7 @@ footer a:hover { color: var(--text); }
     <div class="sky-light"></div>
   </div>
   <div class="wrap inner">
-    <p class="statement">You should always know what is running, what is next, and what it costs.</p>
+    <p class="statement">One place to see everything. Nothing to chase.</p>
   </div>
 </section>
 
@@ -660,10 +688,11 @@ footer a:hover { color: var(--text); }
     <div class="split">
       <div class="split-prose">
         <p class="eyebrow">Your portal</p>
-        <h2 class="h2">Three sections, and nothing you have to chase</h2>
+        <h2 class="h2">Twelve logins become one</h2>
         <p class="small">
-          Everything we run for you, in one sign-in. It is a calm surface over the
-          services doing the work, so you read a status instead of a dashboard.
+          Everything we run for you, behind a single sign-in. It is a calm surface over
+          the services doing the work, so you read a plain status instead of learning
+          another dashboard.
         </p>
         <ul class="stack" style="gap: var(--space-4); list-style: none;">
           <li class="small"><strong>Managed software</strong> &mdash; every site, app and automation
@@ -755,7 +784,85 @@ footer a:hover { color: var(--text); }
   </div>
 </section>
 
-<!-- ═══ 7 · what we put in writing — bento ═══════════════════════════════ -->
+<!-- ═══ 7 · live demo panel ═══════════════════════════════════════════════ -->
+<section class="section" id="demo">
+  <div class="wrap wrap-wide">
+    <div class="section-head">
+      <p class="eyebrow">One thing we built, still running</p>
+      <h2 class="h2" style="max-width: 32ch;">What "build what is missing" looks like in practice</h2>
+      <p class="small body">A bakery kept losing evening orders to voicemail, so move 3 was a booking
+      assistant wired into their real order book. It is one example, not the point of the business.</p>
+    </div>
+
+    <div class="glass pad sweepable" data-demo>
+      <div class="chat">
+        <div class="chathead">
+          <div>
+            <p class="label">Maple &amp; Rye Bakery · after-hours messages</p>
+            <p class="caption" style="margin-top: var(--space-1);">Wednesday, 9:47pm</p>
+          </div>
+          <span class="badge badge-neutral">Example</span>
+        </div>
+
+        <div class="thread" data-thread aria-live="polite">
+          <div class="msg msg-them" data-msg>
+            <span class="who" aria-hidden="true">AM</span>
+            <div class="bubble">
+              <span class="sr-only">Customer:</span>
+              <p>Hi! Do you do gluten-free birthday cakes? I'd need one for Saturday, about 20 people.</p>
+              <span class="when">9:47pm</span>
+            </div>
+          </div>
+
+          <div class="msg msg-us" data-msg data-typing="1">
+            <span class="who" aria-hidden="true">
+              <svg viewBox="0 0 32 32" width="18" height="18" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-opacity=".5" stroke-width="2"/><circle cx="16" cy="16" r="7" fill="url(#sun)"/></svg>
+            </span>
+            <div class="bubble">
+              <span class="sr-only">Assistant:</span>
+              <p>We do. The gluten-free sponge comes in two sizes — 8 inch serves about 12, 10 inch serves 20 to 24. For Saturday we'd need the order by Thursday 5pm.</p>
+              <span class="when">9:47pm</span>
+            </div>
+          </div>
+
+          <div class="msg msg-them" data-msg>
+            <span class="who" aria-hidden="true">AM</span>
+            <div class="bubble">
+              <span class="sr-only">Customer:</span>
+              <p>The 10 inch then. Chocolate if you have it?</p>
+              <span class="when">9:48pm</span>
+            </div>
+          </div>
+
+          <div class="msg msg-us" data-msg data-typing="1">
+            <span class="who" aria-hidden="true">
+              <svg viewBox="0 0 32 32" width="18" height="18" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-opacity=".5" stroke-width="2"/><circle cx="16" cy="16" r="7" fill="url(#sun)"/></svg>
+            </span>
+            <div class="bubble">
+              <span class="sr-only">Assistant:</span>
+              <p>Chocolate gluten-free, 10 inch, Saturday pickup from 10am — I've put it in the book and flagged it for Anna. She'll confirm and take payment in the morning; I don't handle cards.</p>
+              <span class="when">9:48pm</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="chatfoot">
+          <p class="caption" style="max-width: 44ch;">
+            Example conversation. A real one reads your own prices, your order book and
+            your opening hours. When it isn't sure, it says so and hands the message to you —
+            it never invents an answer.
+          </p>
+          <button class="btn btn-quiet btn-sm" type="button" data-replay>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg>
+            Play it again
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 8 · what we put in writing — bento ═══════════════════════════════ -->
 <section class="section" id="promises">
   <div class="wrap wrap-wide">
     <div class="section-head">
@@ -806,7 +913,7 @@ footer a:hover { color: var(--text); }
   </div>
 </section>
 
-<!-- ═══ 8 · founding clients — split ══════════════════════════════════════ -->
+<!-- ═══ 9 · founding clients — split ══════════════════════════════════════ -->
 <section class="section" id="founding">
   <div class="wrap wrap-wide">
     <div class="split">
@@ -852,7 +959,7 @@ footer a:hover { color: var(--text); }
   </div>
 </section>
 
-<!-- ═══ 9 · FAQ ═══════════════════════════════════════════════════════════ -->
+<!-- ═══ 10 · FAQ ═══════════════════════════════════════════════════════════ -->
 <section class="section" id="faq">
   <div class="wrap wrap-wide">
     <div class="section-head">
@@ -860,6 +967,18 @@ footer a:hover { color: var(--text); }
       <h2 class="h2">What owners ask first</h2>
     </div>
     <div class="faq">
+      <details>
+        <summary>I already pay for a lot of tools. Will this cost more?</summary>
+        <p class="answer">Often it costs less. The first thing we do is list what you are paying for and what
+          each thing actually does; cancelling the overlap usually covers a meaningful part of our fee. We will
+          tell you honestly if it does not in your case.</p>
+      </details>
+      <details>
+        <summary>Do I have to throw out what I already have?</summary>
+        <p class="answer">No. Anything that works and earns its place stays. We are looking for the tools
+          nothing depends on, the ones you pay for twice, and the ones nobody can log into — not a reason
+          to rebuild everything.</p>
+      </details>
       <details>
         <summary>What does it cost?</summary>
         <p class="answer">It depends what you need, so we will not guess on a web page. After one call you get a fixed price for the whole job, in writing. If you do not like the number, you have lost twenty minutes.</p>
@@ -888,7 +1007,7 @@ footer a:hover { color: var(--text); }
   </div>
 </section>
 
-<!-- ═══ 10 · closing CTA ══════════════════════════════════════════════════ -->
+<!-- ═══ 11 · closing CTA ══════════════════════════════════════════════════ -->
 <section class="lit section" style="--light-x: 20%; --light-y: 110%; --light-size: 32rem; --light-strength: .4; --orbit-size: 56rem;">
   <div class="sky" aria-hidden="true">
     <div class="sky-halo"></div>
@@ -900,10 +1019,10 @@ footer a:hover { color: var(--text); }
     </svg>
   </div>
   <div class="wrap inner" style="text-align: center;">
-    <h2 class="display" style="max-width: 26ch; margin-inline: auto;">Tell us what you need built.</h2>
+    <h2 class="display" style="max-width: 26ch; margin-inline: auto;">Send us the list of what you are paying for.</h2>
     <p class="lede" style="margin: var(--space-5) auto 0;">
-      One call, no charge, no pitch. If we are not the right fit for the job, we say so
-      and point you at who is.
+      One call, no charge, no pitch. You get the plain list of what you have either way,
+      and if we are not the right fit we say so and point you at who is.
     </p>
     <div class="cluster" style="justify-content: center; margin-top: var(--space-6);">
       <a class="btn btn-primary" href="mailto:hello@solenix.dev?subject=Book%20a%20call">

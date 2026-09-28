@@ -732,7 +732,7 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
         <div class="page-head">
           <p class="eyebrow" data-ov-date>Tuesday, 29 September</p>
           <h1 id="h-overview" data-ov-title>Maple &amp; Rye</h1>
-          <p class="muted" data-ov-lede>Everything Solenix runs for you, in one place.</p>
+          <p class="muted" data-ov-lede>Everything in one place. Nothing to chase.</p>
         </div>
 
         <!-- The one thing that matters right now -->
@@ -758,21 +758,21 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
           <button class="door" type="button" data-goto="#/software">
             <span class="od-fill od-stat" style="--od-gap: 2px">
               <span class="dtitle">Managed software</span>
-              <span class="dsum" data-ov-door-software>Websites, apps and automations we host and run.</span>
+              <span class="dsum" data-ov-door-software>Everything we host and run, in one list.</span>
             </span>
             <svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 5l5 5-5 5"/></svg>
           </button>
           <button class="door" type="button" data-goto="#/projects">
             <span class="od-fill od-stat" style="--od-gap: 2px">
               <span class="dtitle">Projects</span>
-              <span class="dsum" data-ov-door-projects>Work in progress, and what happens next.</span>
+              <span class="dsum" data-ov-door-projects>What we are building, and what happens next.</span>
             </span>
             <svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 5l5 5-5 5"/></svg>
           </button>
           <button class="door" type="button" data-goto="#/billing">
             <span class="od-fill od-stat" style="--od-gap: 2px">
               <span class="dtitle">Billing</span>
-              <span class="dsum" data-ov-door-billing>Invoices and your hosting plan.</span>
+              <span class="dsum" data-ov-door-billing>One bill, and every invoice beside it.</span>
             </span>
             <svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 5l5 5-5 5"/></svg>
           </button>
@@ -788,8 +788,8 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
       <section class="screen" id="screen-software" aria-labelledby="h-software" hidden>
         <div class="page-head">
           <p class="eyebrow">Managed software</p>
-          <h1 id="h-software">What we host and run for you</h1>
-          <p class="muted">Every site, app and automation Solenix looks after. Deploys, uptime and traffic come straight from the services that do the work.</p>
+          <h1 id="h-software">Everything we host and run</h1>
+          <p class="muted">One list instead of a dozen logins. Every site, app and automation we look after, with its status, its last change and its traffic — read from the services doing the work, so none of it is a number we typed.</p>
           <div class="od-cluster" style="--od-gap: var(--space-2)">
             <span class="vendor"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 3l7.5 13H2.5z"/></svg>Hosted on Vercel</span>
             <span class="vendor"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M3 16V9M8.3 16V4M13.6 16v-5M19 16v-9"/></svg>Analytics by PostHog</span>
@@ -805,7 +805,7 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
         <div class="page-head">
           <p class="eyebrow">Projects</p>
           <h1 id="h-projects">Work in progress</h1>
-          <p class="muted">Where each build is up to, what happens next, and anything waiting on you.</p>
+          <p class="muted">Where each build is up to and what happens next. Nothing to chase — if we need something from you, it appears here and we email you.</p>
           <div class="od-cluster" style="--od-gap: var(--space-2)">
             <span class="chip-example">Example</span>
           </div>
@@ -818,8 +818,8 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
       <section class="screen" id="screen-billing" aria-labelledby="h-billing" hidden>
         <div class="page-head">
           <p class="eyebrow">Billing</p>
-          <h1 id="h-billing">Invoices and your plan</h1>
-          <p class="muted">Payments, receipts and card details are handled by Stripe. We never store your card, and we never rebuild a receipt Stripe already sends you.</p>
+          <h1 id="h-billing">One bill, not seven</h1>
+          <p class="muted">Your hosting and care in one place, with every invoice beside it. Payments, receipts and card details are handled by Stripe — we never store your card and never rebuild a receipt Stripe already sends you.</p>
           <div class="od-cluster" style="--od-gap: var(--space-2)">
             <span class="vendor"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="2.5" y="5" width="15" height="10" rx="2"/><path d="M2.5 9h15"/></svg>Payments by Stripe</span>
             <span class="chip-example">Example</span>
@@ -1734,20 +1734,20 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
 
     const setTxt = (sel, v) => { const el = document.querySelector(sel); if (el) el.textContent = v; };
     setTxt("[data-ov-title]", c.biz);
-    setTxt("[data-ov-lede]", "Everything Solenix builds, hosts and runs for you, in one place.");
+    setTxt("[data-ov-lede]", "Everything we build, host and run for you — in one place, nothing to chase.");
 
     /* The hero states the single most important fact, worst news first. */
     let eyebrow = "Status", head, note, badge = ["ok", "Live"], actions = "";
     if (down.length) {
       eyebrow = "Needs attention";
       head = down[0].name + " is down";
-      note = "We found it and we are on it. You will get an email the moment it is back.";
+      note = "We found it before you did and we are on it. You will get an email the moment it is back.";
       badge = ["down", "Down"];
       actions = ext("See what we are doing", "the deploy log on Vercel", ICON_OUT);
     } else if (!sw.length) {
       eyebrow = "Not live yet";
       head = "Nothing hosted yet";
-      note = "Once we build and deploy your first site, it appears here with its status and traffic.";
+      note = "Once your first site is built and deployed, it appears here with its status and traffic.";
       badge = ["quiet", "Not live yet"];
     } else if (building.length) {
       eyebrow = "Status";
@@ -1757,7 +1757,7 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
       badge = ["warn", "Building"];
     } else {
       head = "Everything is running";
-      note = sw.length + (sw.length === 1 ? " item" : " items") + " responded on the last check.";
+      note = sw.length + (sw.length === 1 ? " thing" : " things") + " responded on the last check. Nothing needs you.";
     }
     setTxt("[data-ov-hero-eyebrow]", eyebrow);
     setTxt("[data-ov-hero-head]", head);
