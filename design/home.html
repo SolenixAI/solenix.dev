@@ -247,6 +247,33 @@ main { flex: 1; }
   border-radius: var(--radius-xl); border: 1px solid var(--line); background: var(--surface);
   box-shadow: var(--shadow-md); }
 
+/* The big bento cell carries a miniature of the thing it describes, so it is
+   not a large tile of empty space. Light and orbit at small scale. */
+.mini { position: relative; isolation: isolate; overflow: hidden; margin-top: auto;
+  border-radius: var(--radius-lg); border: 1px solid var(--line);
+  background: var(--surface-sunken); padding: var(--space-4); }
+.mini-sky { position: absolute; inset: 0; z-index: var(--z-sky); pointer-events: none; }
+.mini-light { position: absolute; width: 13rem; aspect-ratio: 1; right: -4.5rem; top: -7rem;
+  border-radius: 50%; background: var(--grad-sun); opacity: .18; filter: blur(1px); }
+.mini > * { position: relative; z-index: var(--z-content); }
+.mini-row { display: flex; gap: var(--space-2); align-items: flex-start; }
+.mini-row + .mini-row { margin-top: var(--space-3); }
+.mini-them { justify-content: flex-start; }
+.mini-us { flex-direction: row-reverse; }
+.mini-who { display: grid; place-items: center; width: 24px; height: 24px; flex: none; border-radius: 50%;
+  font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); }
+.mini-them .mini-who { background: var(--surface-solid); color: var(--muted); border: 1px solid var(--line); }
+.mini-us .mini-who { background: var(--accent-quiet); color: var(--accent-text); }
+.mini-who svg { width: 15px; height: 15px; }
+.mini-b { font-size: var(--fs-xs); line-height: 1.45; padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md); max-width: 21rem; min-width: 0; overflow-wrap: anywhere; }
+.mini-them .mini-b { background: var(--surface-solid); border: 1px solid var(--line); border-top-left-radius: var(--radius-xs); }
+.mini-us .mini-b { background: var(--surface-solid); border: 1px solid var(--line-strong);
+  border-top-right-radius: var(--radius-xs); box-shadow: var(--shadow-sm); }
+.mini-foot { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center;
+  justify-content: space-between; margin-top: var(--space-4);
+  padding-top: var(--space-3); border-top: 1px solid var(--line); }
+
 /* ── archetype 2: split with visual — prose first below 900px ─────────────── */
 .split { display: grid; gap: var(--space-6); }
 @media (min-width: 900px) { .split { grid-template-columns: 1fr 1fr; gap: var(--space-8); align-items: center; } }
@@ -537,6 +564,23 @@ footer a:hover { color: var(--text); }
             information between the tools you already use — at 2am, on a Sunday,
             while you're doing something else.
           </p>
+        </div>
+        <div class="mini" aria-label="A miniature of the same conversation shown in full above.">
+          <div class="mini-sky" aria-hidden="true"><div class="mini-light"></div></div>
+          <div class="mini-row mini-them">
+            <span class="mini-who" aria-hidden="true">AM</span>
+            <p class="mini-b">Are you open Monday?</p>
+          </div>
+          <div class="mini-row mini-us">
+            <span class="mini-who" aria-hidden="true">
+              <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-opacity=".5" stroke-width="2.5"/><circle cx="16" cy="16" r="7" fill="url(#sun)"/></svg>
+            </span>
+            <p class="mini-b">Closed Mondays — open Tuesday from 8am. Want me to hold something for Tuesday?</p>
+          </div>
+          <div class="mini-foot">
+            <span class="caption">Answered at 11pm, while you were closed</span>
+            <span class="badge badge-neutral">Example</span>
+          </div>
         </div>
         <p class="caption">Starts with the one job that wastes the most of your week.</p>
       </div>

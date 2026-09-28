@@ -243,7 +243,7 @@ input[aria-invalid="true"] { border-color: var(--down); }
 .notice strong { color: var(--text); font-weight: var(--fw-semibold); }
 
 /* ══ Screens ══════════════════════════════════════════════════════════════ */
-.screen[hidden] { display: none; }
+.screen[hidden], .app[hidden] { display: none; }
 @media (prefers-reduced-motion: no-preference) {
   .screen:not([hidden]) { animation: enter var(--dur-slow) var(--ease-out) both; }
   @keyframes enter { from { opacity: 0; transform: translateY(8px); } }
@@ -254,9 +254,7 @@ input[aria-invalid="true"] { border-color: var(--down); }
   margin-bottom: var(--space-4); }
 .section-head h2 { font-size: var(--fs-h3); }
 
-/* Summary cards on Overview */
-.summary { display: grid; gap: var(--space-4); }
-@media (min-width: 768px) { .summary { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+/* Overview's three equal summary cards are gone — one hero carries the screen. */
 a.card, button.card { display: block; width: 100%; text-align: left; text-decoration: none; color: inherit;
   cursor: pointer; transition: transform var(--dur-base) var(--ease-out), border-color var(--dur-base); }
 @media (hover: hover) {
@@ -426,9 +424,114 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
 
 /* Sheet form fields */
 .sheet-fields { display: grid; gap: var(--space-4); margin-top: var(--space-5); }
+
+/* ── v2 light and data-viz, added for Portal v2 ──────────────────────────────
+   The portal was functional but flat: three equal cards and no dominant
+   element. These components give each screen one thing that carries it. */
+
+/* A hero card: the dominant element on a screen. Glass over its own light. */
+.hero { position: relative; isolation: isolate; overflow: hidden;
+  background: var(--glass-bg); backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--line); border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-lg), var(--glass-inset); padding: var(--space-5); }
+@media (min-width: 640px) { .hero { padding: var(--space-6); } }
+.hero > * { position: relative; z-index: var(--z-content); }
+.hero-sky { position: absolute; inset: 0; z-index: var(--z-sky); pointer-events: none; }
+.hero-light { position: absolute; width: 22rem; aspect-ratio: 1; right: -6rem; top: -11rem;
+  border-radius: 50%; background: var(--grad-sun); opacity: .16; filter: blur(2px); }
+.hero-grid { position: absolute; inset: 0; z-index: var(--z-texture); pointer-events: none;
+  background-image: var(--texture-grid); background-size: var(--grid-size) var(--grid-size);
+  mask-image: radial-gradient(90% 90% at 100% 0%, black, transparent 70%);
+  -webkit-mask-image: radial-gradient(90% 90% at 100% 0%, black, transparent 70%); }
+.hero-top { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between;
+  gap: var(--space-3) var(--space-4); }
+.hero-split { display: grid; gap: var(--space-5); margin-top: var(--space-5); }
+@media (min-width: 720px) { .hero-split { grid-template-columns: auto minmax(0, 1fr); gap: var(--space-7); align-items: end; } }
+
+/* Stat with trend */
+.stat-v { font: var(--fw-bold) var(--fs-stat)/1.05 var(--font-display);
+  letter-spacing: var(--track-stat); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.stat-v .unit { font-size: .46em; font-weight: var(--fw-semibold); color: var(--muted); white-space: nowrap; }
+.trend { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: var(--radius-pill);
+  font: var(--fw-semibold) var(--fs-2xs)/1.2 var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.trend svg { width: 11px; height: 11px; }
+.trend.up { color: var(--trend-up); background: var(--trend-up-tint); }
+.trend.down { color: var(--trend-down); background: var(--trend-down-tint); }
+.trend.flat { color: var(--trend-flat); background: var(--trend-flat-tint); }
+
+/* Sparkline. The end point is a zero-length path, not a circle: the svg is
+   stretched, which would turn a circle into an ellipse. DESIGN.md §10. */
+.spark { display: block; width: 100%; height: 52px; overflow: visible; }
+.spark .line { fill: none; stroke: var(--spark-line); stroke-width: 2; stroke-linejoin: round;
+  stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.spark .area { fill: url(#sparkfill); stroke: none; }
+.spark .last { fill: none; stroke: var(--spark-point); stroke-width: 7; stroke-linecap: round;
+  vector-effect: non-scaling-stroke; }
+/* --muted, not --faint: the axis labels sit on glass with the hero light behind
+   them, where --faint measures 4.15:1 in light and 4.19:1 in dark — under AA. */
+.sparkaxis { display: flex; justify-content: space-between; margin-top: var(--space-2);
+  font: var(--fs-2xs)/1.2 var(--font-mono); color: var(--muted); }
+/* row-sized sparkline for the admin list */
+.rowspark { width: 76px; height: 26px; flex: none; overflow: visible; }
+.rowspark .line { fill: none; stroke: var(--spark-line); stroke-width: 1.75; stroke-linejoin: round;
+  stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.rowspark .last { fill: none; stroke: var(--spark-point); stroke-width: 5; stroke-linecap: round;
+  vector-effect: non-scaling-stroke; }
+.rowspark-none { width: 76px; flex: none; font: var(--fs-2xs)/1.2 var(--font-mono); color: var(--muted);
+  text-align: right; }
+@media (max-width: 639px) { .rowspark, .rowspark-none { width: 52px; } }
+
+/* Horizontal project timeline. The current stage is fill + glow + the word Now. */
+.tl { list-style: none; display: grid; gap: var(--space-4); }
+@media (min-width: 640px) { .tl { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-3); } }
+.tl-i { display: grid; grid-template-columns: 16px minmax(0, 1fr); gap: var(--space-3); align-items: start; }
+@media (min-width: 640px) { .tl-i { grid-template-columns: minmax(0, 1fr); gap: var(--space-2); } }
+.tl-dot { width: 15px; height: 15px; border-radius: 50%; margin-top: 3px; flex: none;
+  background: var(--chart-track); border: 2px solid var(--line-strong); }
+@media (min-width: 640px) { .tl-dot { margin-top: 0; } }
+.tl-i[data-s="done"] .tl-dot { background: var(--accent); border-color: transparent; }
+.tl-i[data-s="now"] .tl-dot { background: var(--accent); border-color: transparent;
+  box-shadow: var(--glow-point); animation: tlpulse var(--pulse-period) var(--ease-in-out) infinite; }
+@keyframes tlpulse { 0%, 100% { opacity: 1; } 50% { opacity: .45; } }
+@media (prefers-reduced-motion: reduce) { .tl-i[data-s="now"] .tl-dot { animation: none; } }
+.tl-name { font-size: var(--fs-sm); font-weight: var(--fw-semibold); }
+.tl-i[data-s="next"] .tl-name { color: var(--muted); font-weight: var(--fw-regular); }
+.tl-when { font: var(--fs-2xs)/1.3 var(--font-mono); color: var(--muted); }
+.tl-now { font: var(--fw-semibold) var(--fs-2xs)/1.2 var(--font-mono); letter-spacing: var(--track-label);
+  text-transform: uppercase; color: var(--accent-text); }
+
+/* What we're working on — a dated feed with a state dot */
+.feed { list-style: none; display: grid; }
+.feed li { display: grid; grid-template-columns: 14px minmax(0, 1fr) auto; gap: var(--space-3) var(--space-4);
+  align-items: start; padding: var(--space-4) 0; border-top: 1px solid var(--line); }
+.feed li:first-child { border-top: 0; padding-top: 0; }
+.feed .fdot { width: 9px; height: 9px; border-radius: 50%; margin-top: 7px;
+  background: var(--chart-track); border: 1px solid var(--line-strong); }
+.feed li[data-s="doing"] .fdot { background: var(--accent); border-color: transparent; box-shadow: var(--glow-point); }
+.feed li[data-s="done"] .fdot { background: var(--ok); border-color: transparent; }
+.feed .ftitle { font-weight: var(--fw-semibold); }
+.feed .fnote { font-size: var(--fs-sm); color: var(--muted); margin-top: 2px; }
+.feed .fwhen { font: var(--fs-2xs)/1.4 var(--font-mono); color: var(--muted); white-space: nowrap; text-align: right; }
+.feed .fstate { font: var(--fw-semibold) var(--fs-2xs)/1.2 var(--font-mono); letter-spacing: var(--track-label);
+  text-transform: uppercase; color: var(--accent-text); }
+
+/* Money summary — the Pay action lives here */
+.owe { display: grid; gap: var(--space-4); }
+@media (min-width: 640px) { .owe { grid-template-columns: minmax(0, 1fr) auto; align-items: center; } }
+.owe-amt { font: var(--fw-bold) clamp(1.5rem, 4vw, 2rem)/1.1 var(--font-display);
+  letter-spacing: -0.02em; font-variant-numeric: tabular-nums; white-space: nowrap; }
 </style>
 </head>
 <body>
+<svg aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden">
+  <defs>
+    <linearGradient id="sparkfill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" style="stop-color:var(--spark-line);stop-opacity:.20"/>
+      <stop offset="1" style="stop-color:var(--spark-line);stop-opacity:0"/>
+    </linearGradient>
+  </defs>
+</svg>
 
 <a class="skip" href="#main">Skip to content</a>
 
@@ -586,33 +689,56 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
           <p class="muted" data-ov-lede>Your online ordering is in the build step. One thing is waiting on you.</p>
         </div>
 
-        <div class="summary">
-          <a class="card" href="#/project">
-            <div class="card-top"><span class="eyebrow">Your project</span><span class="badge warn" data-ov-proj-badge>Building</span></div>
-            <p class="card-key" data-ov-proj-key>Step 3 of 4</p>
-            <p class="card-note" data-ov-proj-note>Online ordering for pickup. On track for 17 October.</p>
-            <span class="card-go">See the plan
-              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10h11m0 0-4-4m4 4-4 4"/></svg>
-            </span>
-          </a>
+        <!-- The dominant element: is my site working, and is anyone visiting. -->
+        <div class="hero" data-ov-hero>
+          <div class="hero-sky" aria-hidden="true"><div class="hero-light"></div></div>
+          <div class="hero-grid" aria-hidden="true"></div>
 
-          <a class="card" href="#/website">
-            <div class="card-top"><span class="eyebrow">Your website</span><span class="badge ok" data-ov-site-badge>Live</span></div>
-            <p class="card-key" data-ov-site-key>Working</p>
-            <p class="card-note" data-ov-site-note>mapleandrye.ca · checked 4 minutes ago.</p>
-            <span class="card-go">See the details
-              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10h11m0 0-4-4m4 4-4 4"/></svg>
+          <div class="hero-top">
+            <span class="od-stat" style="--od-gap: var(--space-2)">
+              <span class="eyebrow">Your website</span>
+              <span data-ov-site-addr style="font: var(--fw-bold) var(--fs-h2)/1.15 var(--font-display); letter-spacing: var(--track-heading)">mapleandrye.ca</span>
+              <span class="sm muted" data-ov-site-note>Checked 4 minutes ago.</span>
             </span>
-          </a>
+            <span class="od-cluster od-fixed" style="--od-gap: var(--space-2)">
+              <span class="badge ok" data-ov-site-badge>Live</span>
+              <span class="chip-example">Example</span>
+            </span>
+          </div>
 
-          <a class="card" href="#/invoices">
-            <div class="card-top"><span class="eyebrow">Your invoices</span><span class="badge warn" data-due-badge>Due</span></div>
-            <p class="card-key mono od-nowrap" data-due-amount>$1,850.00</p>
-            <p class="card-note" data-due-note>Invoice 0042, due 10 October.</p>
-            <span class="card-go">Open invoices
-              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10h11m0 0-4-4m4 4-4 4"/></svg>
+          <div class="hero-split" data-ov-visits-block>
+            <span class="od-stat" style="--od-gap: var(--space-2)">
+              <span class="eyebrow">Visitors · 30 days</span>
+              <span class="stat-v" data-ov-visits>0<span class="unit">visits</span></span>
+              <span data-ov-trend></span>
             </span>
-          </a>
+            <div>
+              <svg class="spark" viewBox="0 0 300 52" preserveAspectRatio="none" role="img" data-ov-spark aria-label="">
+                <path class="area" d=""/>
+                <path class="line" d=""/>
+                <path class="last" d=""/>
+              </svg>
+              <p class="sparkaxis"><span>30 days ago</span><span>Today</span></p>
+            </div>
+          </div>
+
+          <p class="sm muted" data-ov-hero-note style="margin-top: var(--space-5)"></p>
+        </div>
+
+        <!-- Where the work is up to, and what happens next -->
+        <div class="section">
+          <div class="section-head">
+            <h2>Your project</h2>
+            <a class="sm" href="#/project" style="color:var(--accent-text);text-decoration:none;font-weight:var(--fw-semibold)">See the plan</a>
+          </div>
+          <div class="card card-lg">
+            <div class="od-row" style="--od-gap: var(--space-3); flex-wrap: wrap; margin-bottom: var(--space-5)">
+              <span class="od-fill" style="font-weight:var(--fw-semibold)" data-ov-proj-title>Online ordering for pickup</span>
+              <span class="badge warn od-fixed" data-ov-proj-badge>Building</span>
+            </div>
+            <ol class="tl" data-ov-tl></ol>
+            <p class="sm muted" data-ov-next style="margin-top: var(--space-5)"></p>
+          </div>
         </div>
 
         <div class="section" data-ask-section>
@@ -624,7 +750,7 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
                 <p>We have written the pickup window as “Ready in 30 minutes, Tuesday to Saturday, 8am–4pm.” Say yes and we build it in, or tell us the wording you want.</p>
               </div>
               <div class="od-cluster" style="--od-gap: var(--space-3)">
-                <button class="btn btn-primary btn-sm" type="button" data-approve>
+                <button class="btn btn-ghost btn-sm" type="button" data-approve>
                   <span class="spin" aria-hidden="true"></span>
                   <span class="label-idle">Looks right</span>
                   <span class="label-busy">Sending…</span>
@@ -642,31 +768,20 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
           </template>
         </div>
 
+        <!-- What you owe, with the Pay action — the one solid button on this screen -->
+        <div class="section" data-ov-owe-section>
+          <div class="section-head">
+            <h2>Your invoices</h2>
+            <a class="sm" href="#/invoices" style="color:var(--accent-text);text-decoration:none;font-weight:var(--fw-semibold)">All invoices</a>
+          </div>
+          <div class="card card-lg owe" data-ov-owe></div>
+        </div>
+
         <div class="section">
-          <div class="section-head"><h2>Latest from us</h2><a class="sm" href="#/project" style="color:var(--accent-text);text-decoration:none;font-weight:var(--fw-semibold)">All updates</a></div>
-          <ul class="rows">
-            <li class="row">
-              <span class="od-fill od-stat" style="--od-gap: var(--space-1)">
-                <span class="v">Order form built and tested</span>
-                <span class="k">Customers can pick items, choose a pickup time and pay. Card payments go live once Stripe finishes checking your business.</span>
-              </span>
-              <span class="mono xs faint od-fixed od-nowrap">26 Sep</span>
-            </li>
-            <li class="row">
-              <span class="od-fill od-stat" style="--od-gap: var(--space-1)">
-                <span class="v">Menu photos swapped in</span>
-                <span class="k">The eleven photos you sent are in, cropped and sized so the page still loads fast on a phone.</span>
-              </span>
-              <span class="mono xs faint od-fixed od-nowrap">23 Sep</span>
-            </li>
-            <li class="row">
-              <span class="od-fill od-stat" style="--od-gap: var(--space-1)">
-                <span class="v">Plan approved</span>
-                <span class="k">You approved the written plan and the fixed price. Build started the next morning.</span>
-              </span>
-              <span class="mono xs faint od-fixed od-nowrap">15 Sep</span>
-            </li>
-          </ul>
+          <div class="section-head"><h2>What we're working on</h2><span class="chip-example">Example</span></div>
+          <div class="card card-lg">
+            <ul class="feed" data-ov-feed></ul>
+          </div>
         </div>
 
         <div class="section">
@@ -1069,6 +1184,7 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
   /* ── Who is signed in ──────────────────────────────────────────────────── */
   const ADMIN_EMAIL = "jager@solenix.dev";
   let role = "client";     // "client" | "admin"
+  let signedIn = false;    // gates the portal: route() never reveals it before sign-in
   let viewing = null;      // the client an admin has opened, or null on the list
 
   /* ── Navigation ────────────────────────────────────────────────────────────
@@ -1126,7 +1242,15 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
       proj: { stage: 3, title: "Online ordering for pickup",
               meta: "Started 15 September · on track for 17 October",
               note: "Online ordering for pickup. On track for 17 October." },
-      ask: true, invoices: null },   // null = the detailed set below
+      ask: true, invoices: null,   // null = the detailed set below
+      visits: { series: [31,36,33,41,38,47,44,52,49,58,55,64,61,69,74], total: 1248, delta: 12 },
+      next: { label: "You see the order form working", when: "Thursday 2 October" },
+      feed: [
+        { s: "doing", t: "Wiring up card payments", n: "Stripe is checking your business. Once that clears, customers can pay on the site.", w: "Now" },
+        { s: "done", t: "Order form built and tested", n: "Pick items, choose a pickup time, done.", w: "26 Sep" },
+        { s: "done", t: "Menu photos swapped in", n: "All eleven, cropped so the page still loads fast on a phone.", w: "23 Sep" },
+        { s: "done", t: "Plan approved", n: "You approved the written plan and the fixed price.", w: "15 Sep" }
+      ] },
 
     { id: "cedar", biz: "Cedar Yoga", owner: "Marta Lund", email: "marta@cedaryoga.ca",
       greeting: "Good morning, Marta.",
@@ -1136,6 +1260,12 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
               meta: "Live since 4 June · we look after it from here",
               note: "Your timetable page stopped loading this morning. We are on it." },
       ask: false,
+      visits: { series: [44,41,47,45,50,48,52,49,54,51,47,38,22,9,2], total: 862, delta: -34 },
+      next: { label: "We tell you the timetable page is back", when: "Today, as soon as it is fixed" },
+      feed: [
+        { s: "doing", t: "Fixing the timetable page", n: "It stopped loading at 8:10 this morning. We found the cause and are putting it back.", w: "Now" },
+        { s: "done", t: "September care done", n: "Updates, backups, and two wording changes you asked for.", w: "28 Sep" }
+      ],
       invoices: [
         { id: "0038", title: "Looking after your site — September", total: 180, status: "paid",
           issued: "1 Sep 2026", due: "15 Sep 2026", paid: "3 Sep 2026",
@@ -1150,7 +1280,12 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
       proj: { stage: 1, title: "A website for the shop",
               meta: "First call booked for 2 October",
               note: "Nothing built yet. We start with a call about what you need." },
-      ask: false, invoices: [] },
+      ask: false, invoices: [],
+      visits: null,
+      next: { label: "Our first call", when: "2 October, 10:00" },
+      feed: [
+        { s: "doing", t: "Getting ready for our call", n: "Have a think about what you want the site to do. No homework beyond that.", w: "Now" }
+      ] },
 
     { id: "quidi", biz: "Quidi Vidi Cycles", owner: "Sam Doyle", email: "sam@quidividicycles.ca",
       greeting: "Good morning, Sam.",
@@ -1160,6 +1295,12 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
               meta: "Live since 11 March · we look after it from here",
               note: "Nothing in flight. We are looking after the site." },
       ask: false,
+      visits: { series: [58,61,59,64,62,66,63,68,65,70,67,72,69,73,71], total: 2104, delta: 4 },
+      next: { label: "October care", when: "1 October" },
+      feed: [
+        { s: "done", t: "New opening hours on every page", n: "You asked on 12 August; done the same day.", w: "12 Aug" },
+        { s: "done", t: "August care done", n: "Updates, backups, and a check that everything still loads fast.", w: "31 Aug" }
+      ],
       invoices: [
         { id: "0036", title: "Looking after your site — August", total: 420, status: "overdue",
           issued: "1 Aug 2026", due: "15 Aug 2026",
@@ -1176,6 +1317,12 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
               meta: "Plan agreed 22 September · build starts 6 October",
               note: "The booking flow is agreed. Build starts 6 October." },
       ask: false,
+      visits: { series: [12,14,11,16,13,18,15,19,17,21,19,24,22,26,24], total: 271, delta: 9 },
+      next: { label: "Build starts", when: "6 October" },
+      feed: [
+        { s: "doing", t: "Getting the build ready", n: "Your booking flow is agreed and written down. Nothing for you to do until 6 October.", w: "Now" },
+        { s: "done", t: "Plan agreed", n: "Fixed price and dates, in writing.", w: "22 Sep" }
+      ],
       invoices: [
         { id: "0044", title: "Online booking — deposit", total: 2400, status: "draft",
           issued: "Not sent yet", due: "Not sent yet",
@@ -1285,35 +1432,10 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
         + (overdue.length ? " " + (overdue.length === 1 ? "One is" : overdue.length + " are") + " past the due date." : "");
     }
 
-    // The Overview card reads the same data, so the two screens never disagree.
-    const amountEl = document.querySelector("[data-due-amount]");
-    const noteEl = document.querySelector("[data-due-note]");
-    const badgeEl = document.querySelector("[data-due-badge]");
-    const setTile = (badgeCls, badgeWord, amount, mono, note) => {
-      badgeEl.className = "badge " + badgeCls;
-      badgeEl.textContent = badgeWord;
-      amountEl.textContent = amount;
-      amountEl.classList.toggle("mono", mono);
-      noteEl.textContent = note;
-    };
-
-    if (activeInvoices.length === 0) {
-      setTile("quiet", "None", "No invoices yet", false,
-        "Nothing invoiced yet. The first one follows your plan.");
-    } else if (outstanding.length === 0 && drafts.length) {
-      setTile("quiet", "Draft", "Nothing to pay", false,
-        "Invoice " + drafts[0].id + " is a draft and has not been sent to you.");
-    } else if (outstanding.length === 0) {
-      setTile("ok", "Paid", "All paid", false,
-        "Nothing due. Your next invoice arrives at the end of the month.");
-    } else {
-      const first = outstanding[0];
-      setTile(overdue.length ? "down" : "warn", overdue.length ? "Overdue" : "Due",
-        money(owed), true,
-        "Invoice " + first.id + (first.status === "overdue"
-          ? ", overdue since " + first.due.replace(" 2026", "") + "."
-          : ", due " + first.due.replace(" 2026", "") + "."));
-    }
+    // The Overview's invoice summary is [data-ov-owe], filled by renderOverviewViz
+    // from this same list, so the two screens cannot disagree. It used to be a
+    // third summary card here whose elements the v2 hero replaced — the lookups
+    // outlived the markup and threw on every load.
   }
 
   function renderInvoice(id) {
@@ -1564,15 +1686,15 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
     // Overview
     set("[data-ov-title]", c.greeting);
     set("[data-ov-lede]", c.proj.note);
+    set("[data-ov-proj-title]", c.proj.title);
     setBadge("[data-ov-proj-badge]", c.proj.stage === 4 ? "ok" : "warn",
              c.proj.stage === 4 ? "Looked after" : stageWord);
-    set("[data-ov-proj-key]", "Step " + c.proj.stage + " of 4");
-    set("[data-ov-proj-note]", c.proj.note);
     setBadge("[data-ov-site-badge]", site.cls, site.word);
-    set("[data-ov-site-key]", c.site.key);
-    set("[data-ov-site-note]", c.site.addr
-      ? c.site.addr + (c.site.checked ? " · " + c.site.checked.toLowerCase() + "." : ".")
-      : "Nothing to show yet — your site has not been built.");
+    set("[data-ov-site-addr]", c.site.addr || "Not live yet");
+    set("[data-ov-site-note]", c.site.checked
+      ? c.site.checked + "."
+      : (c.site.addr ? "Being built — not serving visitors yet." : "Nothing to check yet."));
+    renderOverviewViz(c);
 
     // The one open question belongs to Maple & Rye's example, so it only shows there.
     const ask = document.querySelector("[data-ask-section]");
@@ -1639,6 +1761,17 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
     return { cls: "quiet", word: "No invoices" };
   }
 
+  /* A 30-day visitors shape per row, so the list reads at a glance. */
+  function rowSpark(c) {
+    if (!c.visits) return `<span class="rowspark-none od-fixed">not live</span>`;
+    const g = sparkGeom(c.visits.series, 76, 26, 3);
+    const dir = c.visits.delta > 0 ? "rising" : c.visits.delta < 0 ? "falling" : "steady";
+    return `<svg class="rowspark" viewBox="0 0 76 26" preserveAspectRatio="none" role="img"
+        aria-label="Visitors over 30 days, example data: ${dir}.">
+        <path class="line" d="${g.line}"/><path class="last" d="${g.last}"/>
+      </svg>`;
+  }
+
   function clientRow(c) {
     const site = SITE_STATE[c.site.state];
     const inv = invoiceChip(c);
@@ -1651,8 +1784,141 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
             <span class="badge ${inv.cls}">${inv.word}</span>
           </span>
         </span>
+        ${rowSpark(c)}
         <svg class="row-chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 5l5 5-5 5"/></svg>
       </button></li>`;
+  }
+
+
+  /* ── Sparkline geometry ──────────────────────────────────────────────────
+     Baselined at zero rather than at the series minimum: a floating baseline
+     exaggerates a small change, and this system does not print a shape it
+     cannot stand behind. The end point is a zero-length path because the svg
+     is stretched and a circle would render as an ellipse. DESIGN.md §10. */
+  function sparkGeom(series, w, h, pad) {
+    const max = Math.max(...series, 1);
+    const pts = series.map((v, i) => [
+      (i / (series.length - 1)) * w,
+      h - pad - (v / max) * (h - pad * 2)
+    ]);
+    const d = "M" + pts.map(p => p[0].toFixed(1) + "," + p[1].toFixed(1)).join(" L");
+    const last = pts[pts.length - 1];
+    return {
+      line: d,
+      area: d + ` L${w},${h} L0,${h} Z`,
+      last: `M${last[0].toFixed(1)},${last[1].toFixed(1)} l0 0`
+    };
+  }
+
+  const trendChip = d => {
+    const cls = d > 0 ? "up" : d < 0 ? "down" : "flat";
+    const arrow = d > 0 ? "M5 17 12 9l3 3 5-6" : d < 0 ? "M5 7 12 15l3-3 5 6" : "M5 12h14";
+    const word = d > 0 ? `${d}% more than the month before`
+      : d < 0 ? `${Math.abs(d)}% fewer than the month before`
+      : "about the same as the month before";
+    return `<span class="trend ${cls}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${arrow}"/></svg>${word}</span>`;
+  };
+
+  const STAGE_WHENS = c => {
+    const done = "Done", now = "Now";
+    return [
+      { name: "Call", w: c.proj.stage > 1 ? done : "Booked" },
+      { name: "Plan", w: c.proj.stage > 2 ? done : c.proj.stage === 2 ? now : "Not started" },
+      { name: "Build", w: c.proj.stage > 3 ? done : c.proj.stage === 3 ? now : "Not started" },
+      { name: "Care", w: c.proj.stage === 4 ? now : "Not started" }
+    ];
+  };
+
+  function renderOverviewViz(c) {
+    /* the visitors hero */
+    const block = document.querySelector("[data-ov-visits-block]");
+    const svg = document.querySelector("[data-ov-spark]");
+    const note = document.querySelector("[data-ov-hero-note]");
+    if (c.visits) {
+      if (block) block.hidden = false;
+      const g = sparkGeom(c.visits.series, 300, 52, 5);
+      svg.querySelector(".line").setAttribute("d", g.line);
+      svg.querySelector(".area").setAttribute("d", g.area);
+      svg.querySelector(".last").setAttribute("d", g.last);
+      const dir = c.visits.delta > 0 ? "rising" : c.visits.delta < 0 ? "falling" : "steady";
+      svg.setAttribute("aria-label",
+        `Visitors over the last 30 days, example data: ${dir}, ending around ${c.visits.series[c.visits.series.length - 1]} a day.`);
+      const v = document.querySelector("[data-ov-visits]");
+      if (v) v.innerHTML = c.visits.total.toLocaleString("en-CA") + '<span class="unit">visits</span>';
+      const t = document.querySelector("[data-ov-trend]");
+      if (t) t.innerHTML = trendChip(c.visits.delta);
+      if (note) note.textContent = c.site.state === "down"
+        ? "Visits drop while the site is down. That is the gap you can see on the right."
+        : "Counted once per person per day, not per page. No tracking of individuals.";
+    } else {
+      if (block) block.hidden = true;
+      if (note) note.textContent = "Once your site is live, your visitor numbers appear here.";
+    }
+
+    /* the project timeline */
+    const tl = document.querySelector("[data-ov-tl]");
+    if (tl) {
+      tl.innerHTML = STAGE_WHENS(c).map((st, idx) => {
+        const n = idx + 1;
+        const state = n < c.proj.stage ? "done" : n === c.proj.stage ? "now" : "next";
+        return `<li class="tl-i" data-s="${state}"${state === "now" ? ' aria-current="step"' : ""}>
+            <span class="tl-dot" aria-hidden="true"></span>
+            <span class="od-stat" style="--od-gap: 2px">
+              <span class="tl-name">${st.name}</span>
+              ${state === "now" ? '<span class="tl-now">Now</span>' : ""}
+              <span class="tl-when">${esc(st.w)}</span>
+            </span>
+          </li>`;
+      }).join("");
+    }
+    const next = document.querySelector("[data-ov-next]");
+    if (next) next.innerHTML = c.next
+      ? `<strong>Next:</strong> ${esc(c.next.label)} — <span class="mono">${esc(c.next.when)}</span>`
+      : "";
+
+    /* what you owe, with the Pay action */
+    const owe = document.querySelector("[data-ov-owe]");
+    if (owe) {
+      const list = invoicesFor(c);
+      const open_ = list.filter(i => i.status === "due" || i.status === "overdue")
+        .sort((a, b) => (a.status === "overdue" ? -1 : 1));
+      if (open_.length) {
+        const inv = open_[0];
+        const total = open_.reduce((sum, i) => sum + i.total, 0);
+        owe.innerHTML = `<span class="od-stat" style="--od-gap: var(--space-2)">
+            <span class="eyebrow">${open_.length > 1 ? open_.length + " invoices open" : "One invoice open"}</span>
+            <span class="owe-amt">${money(total)}</span>
+            <span class="sm muted">Invoice ${esc(inv.id)} · ${esc(invWhen(inv).toLowerCase())}. ${esc(inv.title)}.</span>
+          </span>
+          <span class="od-cluster od-fixed" style="--od-gap: var(--space-3)">
+            <button class="btn btn-primary" type="button" data-pay="${esc(inv.id)}">Pay ${money(inv.total)}</button>
+            <a class="btn btn-ghost" href="#/invoices">See the detail</a>
+          </span>`;
+      } else {
+        const paid = list.filter(i => i.status === "paid").length;
+        owe.innerHTML = `<span class="od-stat" style="--od-gap: var(--space-2)">
+            <span class="eyebrow">Nothing to pay</span>
+            <span class="owe-amt">${money(0)}</span>
+            <span class="sm muted">${paid ? "Every invoice is paid. The next one appears here when we send it."
+              : "No invoices yet. The first one comes with your plan, and never before."}</span>
+          </span>
+          <span class="od-fixed"><a class="btn btn-quiet" href="#/invoices">See invoices</a></span>`;
+      }
+    }
+
+    /* what we're working on */
+    const feed = document.querySelector("[data-ov-feed]");
+    if (feed) {
+      feed.innerHTML = (c.feed || []).map(f => `<li data-s="${f.s}">
+          <span class="fdot" aria-hidden="true"></span>
+          <span>
+            <span class="ftitle">${esc(f.t)}</span>
+            <span class="fnote">${esc(f.n)}</span>
+          </span>
+          <span class="${f.w === "Now" ? "fstate" : "fwhen"}">${esc(f.w)}</span>
+        </li>`).join("");
+    }
   }
 
   function renderClients() {
@@ -1793,6 +2059,7 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
     renderNav();
     renderAsBar();
 
+    signedIn = true;
     signedout.hidden = true;
     signedin.hidden = false;
 
@@ -1850,6 +2117,16 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
     scrollMemory[lastRoute] = window.scrollY;
 
     Object.entries(screens).forEach(([k, el]) => { if (el) el.hidden = k !== key; });
+
+    /* Once signed in, a visible portal screen means a hidden sign-in screen.
+       Holding the invariant here means no caller can leave both on at once —
+       the bug that made the sign-in card float over the portal. Before sign-in
+       this must not fire, or a #/ hash would expose the portal to a visitor. */
+    if (signedIn) {
+      signedout.hidden = true;
+      signedin.hidden = false;
+    }
+
     markCurrentNav(name);
 
     if (!scrim.hidden) closeSheet();
@@ -1859,12 +2136,27 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
     lastRoute = key;
   }
 
-  document.querySelector("[data-back]").addEventListener("click", () => { location.hash = "#/invoices"; });
-  window.addEventListener("hashchange", route);
+  document.querySelector("[data-back]")
+    ?.addEventListener("click", () => { location.hash = "#/invoices"; });
+  window.addEventListener("hashchange", () => {
+    if (!signedIn && location.hash.startsWith("#/")) { signIn(); return; }
+    route();
+  });
 
-  renderNav();
-  renderInvoiceList();
-  if (location.hash.startsWith("#/")) signIn(); else email.focus();
+  /* Init runs each step in isolation. Before this, one throwing renderer took
+     down everything after it — including signIn(), which is why the sign-in
+     screen stayed visible over the portal. A step that fails now says so and
+     the rest still run. */
+  function step(name, fn) {
+    try { fn(); }
+    catch (err) { console.error("[portal] " + name + " failed:", err); }
+  }
+
+  step("renderNav", renderNav);
+  step("renderInvoiceList", renderInvoiceList);
+  step("start", () => {
+    if (location.hash.startsWith("#/")) signIn(); else email.focus();
+  });
 })();
 </script>
 
