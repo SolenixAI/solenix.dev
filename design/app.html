@@ -1978,7 +1978,7 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
     setActiveClient(c, true);
     renderNav();
     renderAsBar();
-    if (location.hash === "#/overview") route(); else location.hash = "#/overview";
+    go("#/overview");
     say("Viewing " + c.biz + " as they see it.");
   }
 
@@ -1986,11 +1986,13 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
     viewing = null;
     renderNav();
     renderAsBar();
-    if (location.hash === "#/clients") route(); else location.hash = "#/clients";
+    go("#/clients");
     say("Back to your clients.");
   }
 
   document.addEventListener("click", e => {
+    const link = e.target.closest('a[href^="#/"]');
+    if (link && signedIn) { e.preventDefault(); go(link.getAttribute("href")); return; }
     const open = e.target.closest("[data-open-client]");
     if (open) { openClient(open.dataset.openClient); return; }
     if (e.target.closest("[data-leave-client]")) { leaveClient(); return; }
@@ -2064,7 +2066,7 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
     signedin.hidden = false;
 
     const home = role === "admin" ? "#/clients" : "#/overview";
-    if (location.hash === home) route(); else location.hash = home;
+    go(home);
 
     say(role === "admin" ? "Signed in as Solenix admin." : "Signed in to your Solenix portal.");
     const main = document.getElementById("main");
@@ -2099,10 +2101,21 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
   const scrollMemory = {};
   let lastRoute = "overview";
 
+  /* Navigate without depending on hashchange. Inside a sandboxed preview
+     (Open Design, iframes) setting location.hash can fail or never fire
+     hashchange, so route() is always called directly as well. */
+  let routeOverride = null;
+  function go(hash) {
+    routeOverride = hash;
+    try { if (location.hash !== hash) history.replaceState(null, "", hash); } catch { /* sandboxed */ }
+    route();
+  }
+
   function route() {
     if (signedin.hidden) return;
     const home = role === "admin" ? "clients" : "overview";
-    const parts = location.hash.replace(/^#\/?/, "").split("/").filter(Boolean);
+    const parts = (routeOverride || location.hash).replace(/^#\/?/, "").split("/").filter(Boolean);
+    routeOverride = null;
     let name = parts[0] || home;
     let detail = parts[1] || null;
 
@@ -2137,7 +2150,7 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
   }
 
   document.querySelector("[data-back]")
-    ?.addEventListener("click", () => { location.hash = "#/invoices"; });
+    ?.addEventListener("click", () => { go("#/invoices"); });
   window.addEventListener("hashchange", () => {
     if (!signedIn && location.hash.startsWith("#/")) { signIn(); return; }
     route();
