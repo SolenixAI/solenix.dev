@@ -1,0 +1,1307 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Solenix · the tech person your business does not have</title>
+<meta name="description" content="The hardest part of running a small business is knowing. Solenix finds the better options and the integrations you already pay for, connects your AI to the tools you already have, trains your team, and runs the lot from one place.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="assets/brand/logo-dark.svg" type="image/svg+xml" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="assets/brand/logo-light.svg" type="image/svg+xml">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400..800&display=swap">
+
+<link rel="stylesheet" href="tokens.css">
+<style>
+/* OD-LAYOUT-PRIMITIVES v1 — structure only: display, flex/grid, overflow, wrapping, ratio.
+   Put this @layer first; product CSS outside the layer always wins. */
+@layer od-layout {
+  :where(.od-stack,.od-row,.od-row-top,.od-cluster,.od-grid,.od-field,.od-stat,.od-cell,.od-tile) > :where(*) { min-width: 0; }
+  .od-stack   { display: flex; flex-direction: column; gap: var(--od-gap, 8px); }
+  .od-row     { display: flex; align-items: center; gap: var(--od-gap, 8px); }
+  .od-row-top { display: flex; align-items: flex-start; gap: var(--od-gap, 8px); }
+  .od-cluster { display: flex; flex-wrap: wrap; align-items: center; gap: var(--od-gap, 8px); }
+  .od-fill    { flex: 1 1 0; min-width: 0; }
+  .od-fixed   { flex: none; }
+  .od-grid    { display: grid; gap: var(--od-gap, 12px); grid-template-columns: repeat(var(--od-cols, 3), minmax(0, 1fr)); }
+  .od-stat, .od-field, .od-cell { display: grid; gap: var(--od-gap, 2px); }
+  :where(.od-stat,.od-field,.od-cell) > :where(*) { display: block; }
+  .od-tile { display: grid; grid-template-rows: auto 1fr; }
+  :where(.od-tile) > :where(*) { display: block; }
+  .od-media { display: block; width: 100%; height: auto; aspect-ratio: var(--od-ratio, auto); }
+  .od-media-cover { object-fit: cover; }
+  .od-truncate { display: block; max-width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .od-clamp-2, .od-clamp-3 { display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+  .od-clamp-2 { -webkit-line-clamp: 2; }
+  .od-clamp-3 { -webkit-line-clamp: 3; }
+  .od-lines-2 { min-height: calc(2 * 1.4em); }
+  .od-nowrap  { white-space: nowrap; }
+  .od-keep    { word-break: keep-all; overflow-wrap: anywhere; }
+  .od-screen { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; height: 100%; }
+  .od-scroll { overflow-y: auto; overscroll-behavior: contain; min-height: 0; }
+  .od-rail { display: flex; gap: var(--od-gap, 8px); overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none;
+             padding-inline: var(--od-rail-pad, 16px); scroll-padding-inline: var(--od-rail-pad, 16px); }
+  .od-rail::-webkit-scrollbar { display: none; }
+  :where(.od-rail) > :where(*) { flex: none; scroll-snap-align: start; }
+  :where(.od-rail) > :where(:last-child) { margin-inline-end: var(--od-rail-pad, 16px); }
+  .od-spacer { flex: none; visibility: hidden; pointer-events: none; }
+  .od-touch  { min-width: 44px; min-height: 44px; }
+}
+/* /OD-LAYOUT-PRIMITIVES v1 */
+
+/* ===========================================================================
+   solenix.dev homepage · built on design system v2 (tokens.css).
+   No hex below this line — every value is a token.
+   =========================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; background: var(--bg); color: var(--text); }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  font-family: var(--font-text); font-size: var(--fs-body); line-height: var(--lh-body);
+  color: var(--text); background: var(--grad-sky); min-height: 100dvh;
+  display: flex; flex-direction: column; overflow-x: hidden; -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; }
+img, svg { display: block; max-width: 100%; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: 0; }
+p { text-wrap: pretty; }
+h1, h2, h3 { text-wrap: balance; font-family: var(--font-display); }
+::selection { background: color-mix(in srgb, var(--accent) 30%, transparent); }
+
+/* ── layout ───────────────────────────────────────────────────────────────── */
+.wrap { width: 100%; max-width: var(--container); margin-inline: auto; padding-inline: var(--gutter); }
+.wrap-wide { max-width: var(--container-wide); }
+main { flex: 1; }
+.section { padding-block: var(--space-section); }
+.stack { display: flex; flex-direction: column; gap: var(--space-4); }
+.cluster { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
+.skip { position: absolute; left: var(--space-4); top: -6rem; z-index: var(--z-skip);
+  background: var(--surface-solid); border: 1px solid var(--line-strong); border-radius: var(--radius-pill);
+  padding: var(--space-3) var(--space-5); font-weight: var(--fw-semibold); text-decoration: none;
+  transition: top var(--dur-fast) var(--ease-out); }
+.skip:focus-visible { top: var(--space-2); }
+
+/* ── the ambient layer: scoped to its section, never fixed ────────────────── */
+.lit { position: relative; isolation: isolate; overflow: hidden; }
+.lit > .sky { position: absolute; inset: 0; z-index: var(--z-sky); pointer-events: none; }
+.lit > .texture { position: absolute; inset: 0; z-index: var(--z-texture); pointer-events: none;
+  background-image: var(--texture-grid); background-size: var(--grid-size) var(--grid-size);
+  mask-image: radial-gradient(120% 100% at var(--light-x, 78%) var(--light-y, -18%), black 0%, transparent 72%);
+  -webkit-mask-image: radial-gradient(120% 100% at var(--light-x, 78%) var(--light-y, -18%), black 0%, transparent 72%); }
+.lit > .wrap, .lit > .inner { position: relative; z-index: var(--z-content); }
+.sky-light { position: absolute; width: var(--light-size, 46rem); aspect-ratio: 1;
+  left: var(--light-x, 78%); top: var(--light-y, -18%); translate: -50% -50%;
+  background: var(--grad-sun); border-radius: 50%; filter: blur(1px);
+  opacity: var(--light-strength, .5); box-shadow: var(--glow-soft); }
+.sky-halo { position: absolute; width: calc(var(--light-size, 46rem) * 2); aspect-ratio: 1;
+  left: var(--light-x, 78%); top: var(--light-y, -18%); translate: -50% -50%; border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--sun2) 22%, transparent) 0%, transparent 62%); }
+.sky-stars { position: absolute; inset: 0; background-image: var(--texture-stars); background-size: 100% 100%; }
+.sky-veil { position: absolute; inset: 0; background: var(--grad-veil); }
+.sky-orbit { position: absolute; width: var(--orbit-size, 74rem); aspect-ratio: 1;
+  left: var(--light-x, 78%); top: var(--light-y, -18%); translate: -50% -50%; }
+.sky-orbit .ring { fill: none; stroke: var(--ring); stroke-opacity: .17; stroke-width: 1; vector-effect: non-scaling-stroke; }
+.sky-orbit .ring-faint { stroke-opacity: .1; }
+.sky-orbit .arc { fill: none; stroke: var(--ring); stroke-opacity: .34; stroke-width: 1.5; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.sky-orbit .track { transform-origin: 400px 400px; animation: orbit var(--orbit-1) var(--ease-orbit) infinite; }
+.sky-orbit .t2 { animation-duration: var(--orbit-2); animation-direction: reverse; }
+.sky-orbit .t3 { animation-duration: var(--orbit-3); }
+.sky-orbit .dot { fill: var(--ring); }
+@keyframes orbit { to { rotate: 360deg; } }
+@media (prefers-reduced-motion: reduce) { .sky-orbit .track { animation: none; } }
+
+/* ── type roles ───────────────────────────────────────────────────────────── */
+.display { font-size: var(--fs-display); line-height: var(--lh-display); letter-spacing: var(--track-display); font-weight: var(--fw-bold); }
+.statement { font-family: var(--font-display); font-size: var(--fs-statement); line-height: var(--lh-display);
+  letter-spacing: var(--track-statement); font-weight: var(--fw-bold); }
+.h2 { font-size: var(--fs-h2); line-height: var(--lh-heading); letter-spacing: var(--track-heading); font-weight: var(--fw-brand); }
+.h3 { font-size: var(--fs-h3); line-height: var(--lh-heading); letter-spacing: var(--track-heading); font-weight: var(--fw-brand); }
+.lede { font-size: var(--fs-lede); color: var(--muted); max-width: var(--measure); }
+.body { max-width: var(--measure); }
+.small { font-size: var(--fs-sm); color: var(--muted); }
+.caption { font-size: var(--fs-xs); color: var(--faint); }
+.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.eyebrow { display: inline-flex; align-items: center; gap: var(--space-2); font-family: var(--font-mono);
+  font-size: var(--fs-xs); font-weight: var(--fw-semibold); letter-spacing: var(--track-eyebrow);
+  text-transform: uppercase; color: var(--accent); }
+.eyebrow::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor;
+  box-shadow: 0 0 0 4px color-mix(in srgb, currentColor 18%, transparent); }
+.label { font-family: var(--font-mono); font-size: var(--fs-xs); font-weight: var(--fw-semibold);
+  letter-spacing: var(--track-label); text-transform: uppercase; color: var(--faint); }
+/* --grad-headline is display-size only: its light stop is 3.41:1, which clears
+   the 3:1 large-text floor and would fail as body text. DESIGN.md §4. */
+.lit-text { background-image: var(--grad-headline); -webkit-background-clip: text; background-clip: text;
+  color: transparent; font-style: normal; }
+@supports not ((background-clip: text) or (-webkit-background-clip: text)) {
+  .lit-text { color: var(--accent-text); }
+}
+.section-head { display: flex; flex-direction: column; gap: var(--space-3); margin-bottom: var(--space-6); }
+
+/* ── nav ──────────────────────────────────────────────────────────────────── */
+.topnav { position: sticky; top: 0; z-index: var(--z-nav);
+  background: color-mix(in srgb, var(--bg) 80%, transparent);
+  backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-bottom: 1px solid var(--line); }
+.topnav .wrap { display: flex; align-items: center; gap: var(--space-4); min-height: var(--nav-height); }
+.brand { display: inline-flex; align-items: center; gap: var(--space-2); font-family: var(--font-display);
+  font-weight: var(--fw-brand); letter-spacing: -.01em; text-decoration: none; flex: none; }
+.brand svg { width: 26px; height: 26px; flex: none; }
+.navlinks { display: none; margin-left: auto; align-items: center; gap: var(--space-1); }
+@media (min-width: 900px) { .navlinks { display: flex; } }
+.navlink { display: inline-flex; align-items: center; min-height: var(--tap-min); padding: 0 var(--space-3);
+  font-size: var(--fs-sm); color: var(--muted); text-decoration: none; border-radius: var(--radius-pill);
+  transition: color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out); }
+.navlink:hover { color: var(--text); background: var(--line); }
+.navsignin { margin-left: auto; }
+@media (min-width: 900px) { .navsignin { margin-left: 0; } }
+
+/* ── buttons ──────────────────────────────────────────────────────────────── */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+  min-height: var(--tap-min); padding: 0 var(--space-5); border-radius: var(--radius-pill);
+  font-size: var(--fs-sm); font-weight: var(--fw-semibold); text-decoration: none; white-space: nowrap;
+  border: 1px solid transparent; position: relative;
+  transition: background var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-out), translate var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out); }
+.btn svg { width: 16px; height: 16px; flex: none; }
+/* action ember — one solid fill per screen, always Book a call */
+.btn-primary { background: var(--grad-ember); color: var(--accent-ink); box-shadow: var(--glow-ember); }
+.btn-primary:hover { background: var(--accent-hover); color: var(--accent-ink);
+  translate: 0 var(--lift); box-shadow: var(--glow-ember), var(--shadow-accent); }
+.btn-primary:active { translate: 0 0; }
+.btn-ghost { border-color: var(--line-strong); color: var(--text); }
+.btn-ghost:hover { background: color-mix(in srgb, var(--text) 8%, transparent); color: var(--text); }
+.btn-quiet { background: var(--surface); border-color: var(--line); color: var(--text); }
+.btn-quiet:hover { background: color-mix(in srgb, var(--text) 8%, transparent); color: var(--text); }
+/* 44px floor: the review measured "Client sign in" and "Play it again" at 38px.
+   They stay visually small through padding and type size, not a small target. */
+.btn-sm { min-height: var(--tap-min); padding: 0 var(--space-4); font-size: var(--fs-xs); }
+
+/* ── glass, cards, badges ─────────────────────────────────────────────────── */
+.glass { background: var(--glass-bg); backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur)); border: 1px solid var(--line);
+  border-radius: var(--radius-2xl); box-shadow: var(--shadow-lg), var(--glass-inset); overflow: hidden; }
+.pad { padding: var(--space-5); }
+@media (min-width: 720px) { .pad { padding: var(--space-6); } }
+.card { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-5);
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  transition: translate var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out),
+              border-color var(--dur-base) var(--ease-out); }
+.card-hover:hover { translate: 0 var(--lift-card);
+  border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+  box-shadow: var(--shadow-lg), var(--glow-hover); }
+.chip { display: grid; place-items: center; width: 40px; height: 40px; flex: none;
+  border-radius: var(--radius-md); background: var(--accent-quiet); color: var(--accent-text); }
+.chip svg { width: 20px; height: 20px; }
+.badge { display: inline-flex; align-items: center; gap: var(--space-2); padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill); font-family: var(--font-mono); font-size: var(--fs-2xs);
+  font-weight: var(--fw-semibold); letter-spacing: var(--track-label); text-transform: uppercase; white-space: nowrap; }
+.badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex: none; }
+.badge-ok { background: var(--ok-tint); color: var(--ok); }
+.badge-warn { background: var(--warn-tint); color: var(--warn); }
+.badge-neutral { background: var(--surface-sunken); color: var(--muted); border: 1px solid var(--line); }
+.badge-neutral::before { background: var(--faint); }
+.badge-live::before { box-shadow: var(--glow-point); animation: pulse var(--pulse-period) var(--ease-in-out) infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .4; } }
+@media (prefers-reduced-motion: reduce) { .badge-live::before { animation: none; } }
+/* a value Jager still has to fill in — visibly unfilled, never a fake number */
+.tbd { font-family: var(--font-mono); font-size: .92em; font-weight: var(--fw-semibold);
+  color: var(--accent-text); background: var(--accent-quiet); border: 1px dashed color-mix(in srgb, var(--accent) 45%, transparent);
+  border-radius: var(--radius-xs); padding: 0 var(--space-2); white-space: nowrap; }
+
+/* ── motion: reveal, sweep ────────────────────────────────────────────────── */
+.js .reveal { opacity: 0; translate: 0 var(--reveal-rise);
+  transition: opacity var(--dur-reveal) var(--ease-out), translate var(--dur-reveal) var(--ease-out);
+  transition-delay: calc(var(--i, 0) * var(--stagger)); }
+.js .reveal.in { opacity: 1; translate: 0 0; }
+@media (prefers-reduced-motion: reduce) { .js .reveal { opacity: 1; translate: 0 0; } }
+.sweepable { position: relative; overflow: hidden; }
+.sweepable::after { content: ""; position: absolute; inset: 0; background: var(--grad-sweep);
+  translate: -110% 0; pointer-events: none; }
+.sweepable.sweeping::after { animation: sweep var(--dur-sweep) var(--ease-out) 1; }
+@keyframes sweep { to { translate: 110% 0; } }
+@media (prefers-reduced-motion: reduce) { .sweepable::after { content: none; } }
+
+/* ── archetype 1: full-bleed hero ─────────────────────────────────────────── */
+.hero { padding-block: var(--space-hero) var(--space-section); }
+.hero .display { margin-block: var(--space-4) var(--space-5); max-width: 22ch; }
+.promises { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); margin-top: var(--space-7);
+  padding-top: var(--space-5); border-top: 1px solid var(--line); }
+.promises li { display: flex; align-items: center; gap: var(--space-2); font-size: var(--fs-sm);
+  color: var(--muted); list-style: none; }
+.promises svg { width: 15px; height: 15px; flex: none; color: var(--accent-text); }
+
+/* ── archetype 3: bento grid ──────────────────────────────────────────────── */
+.bento { display: grid; gap: var(--space-4); grid-template-columns: 1fr; }
+@media (min-width: 480px) { .bento { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1000px) {
+  .bento { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: minmax(var(--bento-min), auto); }
+  .bento .b-hero { grid-column: span 2; grid-row: span 2; }
+  .bento .b-wide { grid-column: span 2; }
+}
+.bento > * { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-5);
+  border-radius: var(--radius-xl); border: 1px solid var(--line); background: var(--surface);
+  box-shadow: var(--shadow-md); }
+
+/* The big bento cell carries a miniature of the thing it describes, so it is
+   not a large tile of empty space. Light and orbit at small scale. */
+.mini { position: relative; isolation: isolate; overflow: hidden; margin-top: auto;
+  border-radius: var(--radius-lg); border: 1px solid var(--line);
+  background: var(--surface-sunken); padding: var(--space-4); }
+.mini-sky { position: absolute; inset: 0; z-index: var(--z-sky); pointer-events: none; }
+.mini-light { position: absolute; width: 13rem; aspect-ratio: 1; right: -4.5rem; top: -7rem;
+  border-radius: 50%; background: var(--grad-sun); opacity: .18; filter: blur(1px); }
+.mini > * { position: relative; z-index: var(--z-content); }
+.mini-row { display: flex; gap: var(--space-2); align-items: flex-start; }
+.mini-row + .mini-row { margin-top: var(--space-3); }
+.mini-them { justify-content: flex-start; }
+.mini-us { flex-direction: row-reverse; }
+.mini-who { display: grid; place-items: center; width: 24px; height: 24px; flex: none; border-radius: 50%;
+  font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); }
+.mini-them .mini-who { background: var(--surface-solid); color: var(--muted); border: 1px solid var(--line); }
+.mini-us .mini-who { background: var(--accent-quiet); color: var(--accent-text); }
+.mini-who svg { width: 15px; height: 15px; }
+.mini-b { font-size: var(--fs-xs); line-height: 1.45; padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md); max-width: 21rem; min-width: 0; overflow-wrap: anywhere; }
+.mini-them .mini-b { background: var(--surface-solid); border: 1px solid var(--line); border-top-left-radius: var(--radius-xs); }
+.mini-us .mini-b { background: var(--surface-solid); border: 1px solid var(--line-strong);
+  border-top-right-radius: var(--radius-xs); box-shadow: var(--shadow-sm); }
+.mini-foot { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center;
+  justify-content: space-between; margin-top: var(--space-4);
+  padding-top: var(--space-3); border-top: 1px solid var(--line); }
+
+
+/* ── Sprawl, then calm ───────────────────────────────────────────────────────
+   The page's one argument, drawn. Left: what an owner actually has — tools at
+   odd angles, tangled together, none of it the same shape. Right: the same
+   work as one orbiting system. Both panels are bounded boxes with their own
+   aspect ratio, so nothing escapes at any width. */
+.panelpair { display: grid; gap: var(--space-5); align-items: stretch; }
+@media (min-width: 900px) { .panelpair { grid-template-columns: 1fr auto 1fr; gap: var(--space-6); align-items: center; } }
+.panelpair > .arrow { display: grid; place-items: center; color: var(--muted); }
+.panelpair > .arrow svg { width: 28px; height: 28px; }
+@media (max-width: 899px) { .panelpair > .arrow svg { rotate: 90deg; } }
+
+.stage { position: relative; isolation: isolate; overflow: hidden;
+  border-radius: var(--radius-2xl); border: 1px solid var(--line);
+  aspect-ratio: 4 / 3; min-height: 17rem; }
+/* Chips and pills live in the field, which stops short of the caption band —
+   percentage positions can then never collide with the caption at any width. */
+.stage-field { position: absolute; inset: 0 0 3.25rem 0; z-index: 2; }
+.stage-cap { position: absolute; left: var(--space-4); bottom: var(--space-4); z-index: 4;
+  font: var(--fw-semibold) var(--fs-2xs)/1.2 var(--font-mono); letter-spacing: var(--track-label);
+  text-transform: uppercase; padding: 4px 9px; border-radius: var(--radius-pill);
+  background: var(--surface-solid); border: 1px solid var(--line); color: var(--muted); }
+
+/* Before: the tangle */
+.stage-before { background: var(--surface-sunken); }
+.tangle { position: absolute; inset: 0; z-index: 1; }
+.tangle path { fill: none; stroke: var(--line-strong); stroke-width: 1.2; stroke-linecap: round; }
+.chip-lo { position: absolute; z-index: 2; max-width: 46%;
+  font: var(--fw-semibold) var(--fs-2xs)/1.25 var(--font-text);
+  padding: 5px 9px; border-radius: var(--radius-sm);
+  background: var(--surface-solid); border: 1px solid var(--line-strong);
+  color: var(--text); box-shadow: var(--shadow-sm); }
+.chip-lo.dim { color: var(--muted); border-style: dashed; box-shadow: none; }
+
+/* After: one system */
+.stage-after { background: var(--grad-sky); }
+.stage-after .sky-light { width: 15rem; left: 50%; top: 50%; opacity: .5; }
+.orbitsys { position: absolute; inset: 0; z-index: 2; }
+.orbitsys .ring { fill: none; stroke: var(--ring); stroke-opacity: .22; stroke-width: 1; vector-effect: non-scaling-stroke; }
+.orbitsys .spin { transform-origin: 200px 150px; animation: orbit var(--orbit-2) var(--ease-orbit) infinite; }
+.orbitsys .spin-b { animation-duration: var(--orbit-3); animation-direction: reverse; }
+.orbitsys .node { fill: var(--accent); }
+.orbitsys .core { fill: url(#sun); }
+@media (prefers-reduced-motion: reduce) { .orbitsys .spin { animation: none; } }
+.sysnode { position: absolute; z-index: 3; transform: translate(-50%, -50%); max-width: 46%;
+  font: var(--fw-semibold) var(--fs-2xs)/1.2 var(--font-mono); letter-spacing: var(--track-label);
+  text-transform: uppercase; padding: 4px 9px; border-radius: var(--radius-pill);
+  background: var(--surface-solid); border: 1px solid var(--line);
+  color: var(--accent-text); white-space: nowrap; box-shadow: var(--shadow-sm); }
+
+/* ── archetype 2: split with visual — prose first below 900px ─────────────── */
+.split { display: grid; gap: var(--space-6); }
+@media (min-width: 900px) { .split { grid-template-columns: 1fr 1fr; gap: var(--space-8); align-items: center; } }
+.split-prose { display: flex; flex-direction: column; gap: var(--space-4); max-width: var(--measure); }
+
+
+/* How pricing works. MSP research is consistent that owners distrust "as needed"
+   and want flat, itemised, written deliverables — so this is a table of what is
+   included, not a range. Figures stay blank until Jager sets them. */
+.pricecols { display: grid; gap: var(--space-5); }
+@media (min-width: 860px) { .pricecols { grid-template-columns: 1fr 1fr; gap: var(--space-6); } }
+.pricecard { display: flex; flex-direction: column; gap: var(--space-4); padding: var(--space-6);
+  border: 1px solid var(--line); border-radius: var(--radius-xl); background: var(--surface);
+  box-shadow: var(--shadow-md); }
+.priceamt { font-family: var(--font-display); font-size: var(--fs-stat); font-weight: var(--fw-bold);
+  line-height: 1.05; letter-spacing: var(--track-stat); }
+.priceamt .per { font-size: .4em; font-weight: var(--fw-semibold); color: var(--muted); white-space: nowrap; }
+.included { list-style: none; display: grid; gap: var(--space-3); margin-top: auto; }
+.included li { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: var(--space-3);
+  font-size: var(--fs-sm); align-items: start; }
+.included svg { width: 16px; height: 16px; margin-top: 3px; color: var(--accent-text); }
+.included .no svg { color: var(--muted); }
+.included .no { color: var(--muted); }
+
+/* Reviews slot. Built to hold real Google Business Profile reviews and to say
+   plainly that there are none yet — never a placeholder that looks like proof. */
+.reviewslot { display: grid; gap: var(--space-4); padding: var(--space-6);
+  border: 1px dashed var(--line-strong); border-radius: var(--radius-xl);
+  background: var(--surface-sunken); }
+/* --faint measures 4.44:1 on --surface-sunken in light theme, so metadata on the
+   sunken slot steps up one level. */
+.reviewslot .caption { color: var(--muted); }
+.reviewslot .stars { display: inline-flex; gap: 3px; color: var(--muted); }
+.reviewslot .stars svg { width: 15px; height: 15px; }
+
+/* ── archetype 4: big statement ───────────────────────────────────────────── */
+.statementblock { text-align: center; padding-block: var(--space-9); }
+.statementblock .statement { max-width: 26ch; margin-inline: auto; }
+
+/* ── archetype 6: card grid ───────────────────────────────────────────────── */
+.cards { display: grid; gap: var(--space-4); grid-template-columns: 1fr; }
+@media (min-width: 640px) { .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1000px) { .cards-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+/* Five steps read as a sequence when they sit on one row; below that the last
+   one spans so the grid never ends on a lonely half-width card. */
+@media (min-width: 640px) and (max-width: 1079.98px) { .cards-5 > :last-child { grid-column: 1 / -1; } }
+@media (min-width: 1080px) { .cards-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+.step { counter-increment: step; }
+.stepnum { font-family: var(--font-mono); font-size: var(--fs-2xs); font-weight: var(--fw-semibold);
+  letter-spacing: var(--track-label); color: var(--accent-text); }
+
+/* ── archetype 5: the live demo panel — the chat ──────────────────────────── */
+.chat { display: flex; flex-direction: column; gap: var(--space-4); }
+/* What the assistant is allowed to read, named in the owner's own words. */
+.sources { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-3); list-style: none; margin: 0; padding: 0; }
+.sources li { display: inline-flex; align-items: center; gap: var(--space-2); min-width: 0;
+  padding: 5px var(--space-3); border-radius: var(--radius-pill);
+  border: 1px solid var(--line); background: var(--surface-sunken);
+  font: var(--fw-semibold) var(--fs-2xs)/1.3 var(--font-mono);
+  letter-spacing: var(--track-label); text-transform: uppercase; color: var(--muted); }
+.sources .dot { flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--ok); }
+.chathead { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); align-items: center;
+  justify-content: space-between; padding-bottom: var(--space-4); border-bottom: 1px solid var(--line); }
+.thread { display: flex; flex-direction: column; gap: var(--space-4); min-height: 22rem; }
+@media (min-width: 640px) { .thread { min-height: 19rem; } }
+.msg { display: flex; gap: var(--space-3); align-items: flex-start; max-width: 34rem; }
+.msg-them { align-self: flex-start; }
+.msg-us { align-self: flex-end; flex-direction: row-reverse; }
+.msg .who { display: grid; place-items: center; width: 32px; height: 32px; flex: none; border-radius: 50%;
+  font-family: var(--font-mono); font-size: var(--fs-2xs); font-weight: var(--fw-semibold); }
+.msg-them .who { background: var(--surface-sunken); color: var(--muted); border: 1px solid var(--line); }
+.msg-us .who { background: var(--accent-quiet); color: var(--accent-text); }
+.msg .bubble { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; overflow-wrap: anywhere; padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg); font-size: var(--fs-sm); }
+.msg-them .bubble { background: var(--surface-sunken); border: 1px solid var(--line); border-top-left-radius: var(--radius-xs); }
+.msg-us .bubble { background: var(--surface-solid); border: 1px solid var(--line-strong);
+  border-top-right-radius: var(--radius-xs); box-shadow: var(--shadow-sm); }
+/* --faint measures 4.44:1 on --surface-sunken in light theme, so metadata on a
+   sunken surface steps up one level. */
+.msg .when { font-family: var(--font-mono); font-size: var(--fs-2xs); color: var(--muted); }
+.quietcell .label { color: var(--muted); }
+.js .msg { opacity: 0; translate: 0 var(--reveal-rise);
+  transition: opacity var(--dur-slow) var(--ease-out), translate var(--dur-slow) var(--ease-out); }
+.js .msg.shown { opacity: 1; translate: 0 0; }
+@media (prefers-reduced-motion: reduce) { .js .msg { opacity: 1; translate: 0 0; } }
+.typing { display: inline-flex; gap: 4px; align-items: center; padding: var(--space-1) 0; }
+.typing i { width: 6px; height: 6px; border-radius: 50%; background: var(--faint);
+  animation: blink 1.2s var(--ease-in-out) infinite; }
+.typing i:nth-child(2) { animation-delay: .15s; }
+.typing i:nth-child(3) { animation-delay: .3s; }
+@keyframes blink { 0%, 60%, 100% { opacity: .3; } 30% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .typing { display: none; } }
+.chatfoot { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; justify-content: space-between;
+  padding-top: var(--space-4); border-top: 1px solid var(--line); }
+
+/* ── data visualisation (DESIGN.md §10) ───────────────────────────────────── */
+.panelrow { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; justify-content: space-between; }
+.spark { display: block; width: 100%; height: 46px; overflow: visible; }
+.spark .line { fill: none; stroke: var(--spark-line); stroke-width: 2; stroke-linejoin: round;
+  stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.spark .area { fill: url(#sparkfill); }
+/* the end point is a zero-length path, not a circle: a stretched svg turns a
+   circle into an ellipse. DESIGN.md §10. */
+.spark .last { fill: none; stroke: var(--spark-point); stroke-width: 7; stroke-linecap: round;
+  vector-effect: non-scaling-stroke; }
+.sparkaxis { display: flex; justify-content: space-between; font-family: var(--font-mono);
+  font-size: var(--fs-2xs); color: var(--faint); }
+.stat .value { font-family: var(--font-display); font-size: var(--fs-stat); font-weight: var(--fw-bold);
+  line-height: 1.05; letter-spacing: var(--track-stat); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.stat .value .unit { font-size: .5em; font-weight: var(--fw-semibold); color: var(--muted); white-space: nowrap; }
+.trend { display: inline-flex; align-items: center; gap: var(--space-1); padding: 2px var(--space-2);
+  border-radius: var(--radius-pill); font-family: var(--font-mono); font-size: var(--fs-2xs);
+  font-weight: var(--fw-semibold); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.trend svg { width: 11px; height: 11px; }
+.trend[data-sentiment="good"] { color: var(--trend-up); background: var(--trend-up-tint); }
+.trend[data-sentiment="bad"] { color: var(--trend-down); background: var(--trend-down-tint); }
+/* progress timeline: stacked below 640px, left to right above it */
+.timeline { list-style: none; display: grid; gap: var(--space-4); }
+@media (min-width: 640px) { .timeline { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-3); } }
+.tstep { display: grid; grid-template-columns: 14px 1fr; gap: var(--space-3); align-items: start; }
+@media (min-width: 640px) { .tstep { grid-template-columns: 1fr; gap: var(--space-2); } }
+.tnode { width: 14px; height: 14px; border-radius: 50%; margin-top: 4px; flex: none;
+  background: var(--chart-track); border: 1.5px solid var(--line-strong); }
+@media (min-width: 640px) { .tnode { margin-top: 0; } }
+.tstep[data-state="done"] .tnode { background: var(--accent); border-color: transparent; }
+.tstep[data-state="now"] .tnode { background: var(--accent); border-color: transparent;
+  box-shadow: var(--glow-point); animation: pulse var(--pulse-period) var(--ease-in-out) infinite; }
+@media (prefers-reduced-motion: reduce) { .tstep[data-state="now"] .tnode { animation: none; } }
+.tbody { display: grid; gap: 2px; }
+.tname { font-size: var(--fs-sm); font-weight: var(--fw-semibold); }
+.tmeta { font-family: var(--font-mono); font-size: var(--fs-2xs); color: var(--faint); }
+.tstep[data-state="next"] .tname { color: var(--muted); font-weight: var(--fw-regular); }
+.tnow { font-family: var(--font-mono); font-size: var(--fs-2xs); font-weight: var(--fw-semibold);
+  letter-spacing: var(--track-label); text-transform: uppercase; color: var(--accent-text); }
+.invoice { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-3); align-items: center;
+  justify-content: space-between; padding: var(--space-3) 0; border-top: 1px solid var(--line); }
+.invoice .amt { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: var(--fs-sm); white-space: nowrap; }
+
+/* ── FAQ ──────────────────────────────────────────────────────────────────── */
+.faq { display: grid; gap: var(--space-3); max-width: 46rem; }
+.faq details { border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); }
+.faq details[open] { border-color: var(--line-strong); }
+.faq summary { display: flex; align-items: center; gap: var(--space-3); justify-content: space-between;
+  min-height: var(--tap-min); padding: var(--space-4) var(--space-5); cursor: pointer;
+  font-weight: var(--fw-semibold); list-style: none; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: ""; width: 9px; height: 9px; flex: none; border-right: 2px solid var(--faint);
+  border-bottom: 2px solid var(--faint); rotate: 45deg; transition: rotate var(--dur-fast) var(--ease-out); }
+.faq details[open] summary::after { rotate: -135deg; }
+.faq .answer { padding: 0 var(--space-5) var(--space-5); color: var(--muted); max-width: var(--measure); }
+
+/* ── footer ───────────────────────────────────────────────────────────────── */
+footer { border-top: 1px solid var(--line); margin-top: var(--space-section); padding-block: var(--space-7); }
+footer .wrap { display: flex; flex-wrap: wrap; gap: var(--space-5); justify-content: space-between; align-items: flex-start; }
+footer a { text-decoration: none; color: var(--muted); }
+footer a:hover { color: var(--text); }
+/* Inline footer links take the 24px-plus-spacing route rather than becoming
+   44px blocks: each link is 24px tall with 24px of clear space around it. */
+.footlinks { display: flex; flex-wrap: wrap; gap: var(--space-3) var(--space-6); font-size: var(--fs-sm); }
+.footlinks a { display: inline-flex; align-items: center; min-height: 24px; }
+.footcontact { display: inline-flex; align-items: center; gap: var(--space-2);
+  min-height: var(--tap-min); font-weight: var(--fw-semibold); text-decoration: none; }
+.footcontact svg { width: 16px; height: 16px; flex: none; }
+@media (hover: hover) { .footcontact:hover { text-decoration: underline; text-underline-offset: 3px; } }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+</style>
+</head>
+<body>
+<a class="skip" href="#content">Skip to content</a>
+
+<svg aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden">
+  <defs>
+    <radialGradient id="sun" cx=".42" cy=".38" r=".62">
+      <stop offset="0" style="stop-color:var(--sun1)"/>
+      <stop offset="1" style="stop-color:var(--sun2)"/>
+    </radialGradient>
+    <linearGradient id="sparkfill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" style="stop-color:var(--spark-line);stop-opacity:.22"/>
+      <stop offset="1" style="stop-color:var(--spark-line);stop-opacity:0"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<header class="topnav">
+  <div class="wrap wrap-wide">
+    <a class="brand" href="/" aria-label="Solenix home">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/><circle cx="16" cy="16" r="8" fill="url(#sun)"/><circle cx="27" cy="9" r="2.2" fill="var(--ring)"/></svg>
+      Solenix
+    </a>
+    <nav class="navlinks" aria-label="Sections">
+      <a class="navlink" href="#demo">See it work</a>
+      <a class="navlink" href="#what">What we do</a>
+      <a class="navlink" href="#portal">Your portal</a>
+      <a class="navlink" href="#faq">Questions</a>
+    </nav>
+    <a class="btn btn-ghost btn-sm navsignin" href="/app">Client sign in</a>
+  </div>
+</header>
+
+<main id="content">
+
+<!-- ═══ 1 · hero — full-bleed feature ═════════════════════════════════════ -->
+<section class="lit hero" style="--light-x: 84%; --light-y: -6%; --light-size: 30rem; --light-strength: .55; --orbit-size: 60rem;">
+  <div class="sky" aria-hidden="true">
+    <div class="sky-halo"></div>
+    <div class="sky-light"></div>
+    <div class="sky-stars"></div>
+    <svg class="sky-orbit" viewBox="0 0 800 800">
+      <circle class="ring" cx="400" cy="400" r="250"/>
+      <circle class="ring ring-faint" cx="400" cy="400" r="330"/>
+      <circle class="ring ring-faint" cx="400" cy="400" r="395"/>
+      <path class="arc" d="M150 400a250 250 0 0 1 250-250"/>
+      <g class="track"><circle class="dot" cx="400" cy="150" r="6"/></g>
+      <g class="track t2"><circle class="dot" cx="70" cy="400" r="5"/></g>
+      <g class="track t3"><circle class="dot" cx="400" cy="795" r="4"/></g>
+    </svg>
+    <div class="sky-veil"></div>
+  </div>
+  <div class="texture" aria-hidden="true"></div>
+
+  <div class="wrap wrap-wide">
+    <p class="eyebrow reveal" style="--i:0">The tech person your business does not have</p>
+    <h1 class="display reveal" style="--i:1">Too many tools. Too many logins. <em class="lit-text">Nobody who knows.</em></h1>
+    <p class="lede reveal" style="--i:2">
+      A website somewhere, a booking app, three spreadsheets, a pile of
+      subscriptions, and something your nephew set up in 2023 that nobody dares
+      touch. Every tool promised to help. None of them talk to each other, and
+      hiring an engineer to sort it out was never realistic.
+    </p>
+    <p class="lede reveal" style="--i:3; margin-top: var(--space-4)">
+      <strong>The hard part is not the work. It is knowing.</strong> Knowing which of
+      those tools already talk to each other, which ones can be handed to AI, and which
+      route gets you a result this week. That is the job we take on: one person who knows
+      the way, sets it up, teaches your team, and stays. More money in, less spent on
+      software, and hours back every week.
+    </p>
+    <div class="cluster reveal" style="--i:4; margin-top: var(--space-6);">
+      <a class="btn btn-primary" href="mailto:hello@solenix.dev?subject=Book%20a%20call">
+        Book a call
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <a class="btn btn-ghost" href="#calm">Show me what that looks like</a>
+    </div>
+    <ul class="promises reveal" style="--i:5">
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Fixed price, agreed before we start</li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>You own everything</li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Updates in plain English</li>
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>No lock-in</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ═══ 2 · sprawl → calm — split with visual ═════════════════════════════ -->
+<section class="section" id="calm" data-od-id="sprawl-to-calm">
+  <div class="wrap wrap-wide">
+    <div class="section-head">
+      <p class="eyebrow">Before and after</p>
+      <h2 class="h2" style="max-width: 34ch;">The same business, before and after someone takes it on</h2>
+      <p class="small body">Nothing on the left gets thrown away for the sake of it. We work out what earns
+        its place, replace what does not, and connect what is left into one thing you can actually see.</p>
+    </div>
+
+    <div class="panelpair">
+      <!-- what an owner actually has -->
+      <div class="stage stage-before" data-od-id="stage-sprawl"
+           role="img" aria-label="What a small business usually has: a website, a booking app, spreadsheets, invoices in a separate tool, a dozen logins, monthly subscriptions, and something set up years ago that nobody understands — none of it connected.">
+        <svg class="tangle" viewBox="0 0 400 300" aria-hidden="true" preserveAspectRatio="none">
+          <path d="M70 60C140 90 120 150 200 130S300 90 330 150"/>
+          <path d="M90 210C150 180 210 240 300 200"/>
+          <path d="M60 140C110 160 90 220 160 250"/>
+          <path d="M240 70C280 110 230 140 300 230"/>
+          <path d="M120 100C180 120 150 190 230 170"/>
+        </svg>
+        <div class="stage-field">
+          <span class="chip-lo" style="left: 5%;  top: 4%;  rotate: -4deg;">Website</span>
+          <span class="chip-lo" style="right: 6%; top: 12%; rotate: 5deg;">Booking app</span>
+          <span class="chip-lo" style="left: 8%;  top: 32%; rotate: 3deg;">Three spreadsheets</span>
+          <span class="chip-lo" style="right: 5%; top: 42%; rotate: -6deg;">Invoices, elsewhere</span>
+          <span class="chip-lo dim" style="left: 6%; top: 62%; rotate: -2deg;">12 logins</span>
+          <span class="chip-lo dim" style="right: 8%; top: 70%; rotate: 4deg;">7 subscriptions</span>
+          <span class="chip-lo dim" style="left: 10%; bottom: 2%; rotate: 2deg;">That 2023 thing</span>
+        </div>
+        <span class="stage-cap">What you have now</span>
+      </div>
+
+      <div class="arrow" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15m0 0-5-5m5 5-5 5"/></svg>
+      </div>
+
+      <!-- the same work, as one system -->
+      <div class="stage stage-after lit" data-od-id="stage-calm"
+           role="img" aria-label="The same work as one system: Solenix at the centre, with Your tech, Projects and Billing in orbit around it.">
+        <div class="sky" aria-hidden="true"><div class="sky-light"></div></div>
+        <svg class="orbitsys" viewBox="0 0 400 300" aria-hidden="true">
+          <circle class="ring" cx="200" cy="150" r="78"/>
+          <circle class="ring" cx="200" cy="150" r="115"/>
+          <g class="spin"><circle class="node" cx="200" cy="72" r="4.5"/></g>
+          <g class="spin spin-b"><circle class="node" cx="85" cy="150" r="3.5"/></g>
+          <circle class="core" cx="200" cy="150" r="26"/>
+        </svg>
+        <div class="stage-field">
+          <span class="sysnode" style="left: 50%; top: 11%;">Your tech</span>
+          <span class="sysnode" style="left: 22%; top: 78%;">Projects</span>
+          <span class="sysnode" style="left: 78%; top: 78%;">Billing</span>
+        </div>
+        <span class="stage-cap">One place to see it</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 3 · what we do — bento ════════════════════════════════════════════ -->
+<section class="section" id="what" data-od-id="what-we-do">
+  <div class="wrap wrap-wide">
+    <div class="section-head">
+      <p class="eyebrow">What we do</p>
+      <h2 class="h2" style="max-width: 32ch;">Mostly we switch on what you already pay for</h2>
+      <p class="small body">Shopify, Google Workspace, QuickBooks, Square, Canva, your booking app — most
+        of them already connect to each other, and most of them can now be handed to AI. Almost nobody
+        tells owners that. Finding those connections and switching them on is most of the job. Building
+        something new is the last resort — the fastest route to a result you can see wins.</p>
+    </div>
+
+    <div class="bento">
+      <div class="b-hero reveal" style="--i:0; justify-content: space-between;" data-od-id="move-sort">
+        <div class="stack">
+          <span class="chip" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M4 12h10M4 18h6"/><path d="M17 15l2.5 2.5L23 13"/></svg></span>
+          <h3 class="h3">First: the list</h3>
+          <p class="small">
+            We go through every tool, login and subscription you pay for and write down
+            what it does, what it costs, what depends on it, and — the part nobody ever
+            shows you — what it already connects to. Most owners have never seen that list.
+            Cancelling the overlap often pays for the work.
+          </p>
+          <p class="small">You get the list whether or not you hire us for anything else.</p>
+        </div>
+        <p class="caption">Then we switch on what is already there, set up what is missing, and retire what is not earning its keep.</p>
+      </div>
+
+      <div class="reveal" style="--i:1" data-od-id="move-ai">
+        <p class="label">More time</p>
+        <h3 class="h3">AI wired into your own tools</h3>
+        <p class="small">A Claude or ChatGPT workspace connected to your store, your files and your inbox,
+          so it works from your real numbers — then we sit with your staff until they use it daily.</p>
+      </div>
+      <div class="reveal" style="--i:2" data-od-id="move-google">
+        <p class="label">Look professional</p>
+        <h3 class="h3">Email on your own domain</h3>
+        <p class="small">Google Workspace set up properly — email at your own address, shared files and
+          calendars — plus your Google Business Profile kept current so people can find you.</p>
+      </div>
+      <div class="reveal" style="--i:3" data-od-id="move-store">
+        <p class="label">More money</p>
+        <h3 class="h3">Website and store, looked after</h3>
+        <p class="small">Your Shopify store and website managed and updated — products, prices, hours,
+          pages — so nothing sits stale and nothing needs your evening.</p>
+      </div>
+      <div class="reveal b-wide" style="--i:4" data-od-id="move-build">
+        <p class="label">Last resort</p>
+        <h3 class="h3">Build something new only when nothing fits</h3>
+        <p class="small">Sometimes the off-the-shelf answer genuinely does not exist — a bakery needed
+          20-minute pickup holds no booking tool offered. Then we build it, at a fixed price, and run it
+          alongside everything else.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 4 · the sequence — card grid ═══════════════════════════ -->
+<section class="section" id="sequence" data-od-id="the-sequence">
+  <div class="wrap wrap-wide">
+    <div class="section-head">
+      <p class="eyebrow">How it goes</p>
+      <h2 class="h2" style="max-width: 30ch;">The same five steps, in the same order, every time</h2>
+      <p class="small body">No discovery phase that never ends, no rebuild before we have understood what
+        you have. Steps one and two are the ones almost nobody does for you.</p>
+    </div>
+    <div class="cards cards-5">
+      <div class="card step reveal" style="--i:0">
+        <span class="stepnum">Step 1</span>
+        <h3 class="h3">Look</h3>
+        <p class="small">We go through everything you use — every tool, login and subscription — and write down what each one does and costs.</p>
+      </div>
+      <div class="card step reveal" style="--i:1">
+        <span class="stepnum">Step 2</span>
+        <h3 class="h3">Find</h3>
+        <p class="small">We find the better options, and the connections you are already paying for and were never told about.</p>
+      </div>
+      <div class="card step reveal" style="--i:2">
+        <span class="stepnum">Step 3</span>
+        <h3 class="h3">Connect</h3>
+        <p class="small">We set up your AI assistant and connect it to those tools, so it works from your real orders, files and inbox.</p>
+      </div>
+      <div class="card step reveal" style="--i:3">
+        <span class="stepnum">Step 4</span>
+        <h3 class="h3">Teach</h3>
+        <p class="small">We sit with you and your team until you are using it on real work — not trying it once and going back to the old way.</p>
+      </div>
+      <div class="card step reveal" style="--i:4">
+        <span class="stepnum">Step 5</span>
+        <h3 class="h3">Keep it running</h3>
+        <p class="small">We look after all of it and watch it, and you see the whole lot in one place. One monthly price, nothing to chase.</p>
+      </div>
+    </div>
+    <p class="caption" style="margin-top: var(--space-5);">Building something new only happens when steps one and two
+      turn up nothing that fits. It is the last resort, not the plan.</p>
+  </div>
+</section>
+
+<!-- ═══ 5 · big statement ═════════════════════════════════════════════════ -->
+<section class="lit statementblock" style="--light-x: 50%; --light-y: 120%; --light-size: 26rem; --light-strength: .32; --orbit-size: 52rem;">
+  <div class="sky" aria-hidden="true">
+    <svg class="sky-orbit" viewBox="0 0 800 800">
+      <path class="arc" d="M120 400a280 280 0 0 1 560 0"/>
+      <circle class="ring ring-faint" cx="400" cy="400" r="340"/>
+    </svg>
+    <div class="sky-light"></div>
+  </div>
+  <div class="wrap inner">
+    <p class="statement">You do not need an expert in everything.
+      <em class="lit-text">You need one who knows the way.</em></p>
+    <p class="small body" style="max-width: 46ch; margin: var(--space-6) auto 0; text-align: center;">
+      AI can now do most of the everyday work — the spreadsheets, the analytics, the storefront,
+      the paperwork, and the first draft of the legal, accounting and ad work. What a small business
+      needs is not a specialist in each of those. It is one person who knows which path is shorter.
+    </p>
+  </div>
+</section>
+
+<!-- ═══ 6 · your portal — split with visual ═══════════════════════════════ -->
+<section class="section" id="portal">
+  <div class="wrap wrap-wide">
+    <div class="split">
+      <div class="split-prose">
+        <p class="eyebrow">Your portal</p>
+        <h2 class="h2">Twelve logins become one</h2>
+        <p class="small">
+          Everything we run for you, behind a single sign-in. It is a calm surface over
+          the services doing the work, so you read a plain status instead of learning
+          another dashboard.
+        </p>
+        <ul class="stack" style="gap: var(--space-4); list-style: none;">
+          <li class="small"><strong>Your tech</strong> &mdash; every account and service we run for you:
+            AI workspace, email, domain, website, store, local listing. What each costs a month, when it
+            renews, and who on your team can get in.</li>
+          <li class="small"><strong>Projects</strong> &mdash; what stage the work is at, what happens
+            next and when, and anything waiting on your approval.</li>
+          <li class="small"><strong>Billing</strong> &mdash; open and past invoices and your care plan.
+            Payments and receipts are handled by Stripe.</li>
+        </ul>
+        <div class="cluster">
+          <a class="btn btn-quiet btn-sm" href="/app">Client sign in</a>
+        </div>
+      </div>
+
+      <div class="glass pad" data-panel>
+        <div class="panelrow" style="margin-bottom: var(--space-5);">
+          <p class="label">Maple &amp; Rye · your portal</p>
+          <span class="badge badge-neutral">Example</span>
+        </div>
+
+        <!-- site health -->
+        <div class="panelrow">
+          <div>
+            <p class="label">Your website</p>
+            <p class="small" style="margin-top: var(--space-1);">maple-and-rye.ca</p>
+          </div>
+          <span class="badge badge-ok badge-live">Live</span>
+        </div>
+
+        <div class="od-stat stat" style="margin-top: var(--space-4);">
+          <span class="value od-nowrap" data-count-to="1248">1,248<span class="unit">visits</span></span>
+          <span class="caption">Last 30 days</span>
+          <span><span class="trend" data-sentiment="good">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 17 12 9l3 3 5-6"/></svg>
+            12% more than the month before
+          </span></span>
+        </div>
+
+        <svg class="spark" viewBox="0 0 300 46" preserveAspectRatio="none" role="img"
+             aria-label="Visits over the last 30 days, example data: rising from about 38 a day to about 78 a day.">
+          <path class="area" d="M0,37.6 L27.3,34.3 L54.5,36 L81.8,29.9 L109.1,31.6 L136.4,26.6 L163.6,28.3 L190.9,23.3 L218.2,25 L245.5,18.9 L272.7,20.6 L300,15.6 L300,46 L0,46 Z"/>
+          <path class="line" d="M0,37.6 L27.3,34.3 L54.5,36 L81.8,29.9 L109.1,31.6 L136.4,26.6 L163.6,28.3 L190.9,23.3 L218.2,25 L245.5,18.9 L272.7,20.6 L300,15.6"/>
+          <path class="last" d="M300,15.6 l0 0"/>
+        </svg>
+        <p class="sparkaxis"><span>30 days ago</span><span>Today</span></p>
+
+        <!-- project timeline -->
+        <p class="label" style="margin-top: var(--space-6);">Your project</p>
+        <ol class="timeline" style="margin-top: var(--space-3);">
+          <li class="tstep" data-state="done">
+            <span class="tnode" aria-hidden="true"></span>
+            <span class="tbody"><span class="tname">Call</span><span class="tmeta">Done · 2 Sep</span></span>
+          </li>
+          <li class="tstep" data-state="done">
+            <span class="tnode" aria-hidden="true"></span>
+            <span class="tbody"><span class="tname">Plan</span><span class="tmeta">Done · 11 Sep</span></span>
+          </li>
+          <li class="tstep" data-state="now" aria-current="step">
+            <span class="tnode" aria-hidden="true"></span>
+            <span class="tbody"><span class="tname">Build</span><span class="tnow">Now</span><span class="tmeta">You'll see it Thursday</span></span>
+          </li>
+          <li class="tstep" data-state="next">
+            <span class="tnode" aria-hidden="true"></span>
+            <span class="tbody"><span class="tname">Care</span><span class="tmeta">Not started</span></span>
+          </li>
+        </ol>
+
+        <!-- invoices -->
+        <p class="label" style="margin-top: var(--space-6);">Your invoices</p>
+        <div style="margin-top: var(--space-2);">
+          <div class="invoice">
+            <span class="small">Website build · final</span>
+            <span class="cluster" style="gap: var(--space-3);">
+              <span class="badge badge-ok">Paid</span>
+              <span class="amt">$1,850.00</span>
+            </span>
+          </div>
+          <div class="invoice">
+            <span class="small">Ordering assistant</span>
+            <span class="cluster" style="gap: var(--space-3);">
+              <span class="badge badge-warn">Due 8 Oct</span>
+              <span class="amt">$920.00</span>
+            </span>
+          </div>
+        </div>
+        <p class="caption" style="margin-top: var(--space-4);">Example figures for a made-up bakery. Your portal shows your own.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 7 · one honest example — full-bleed-ish demo panel ══════════════ -->
+<section class="section" id="demo" data-od-id="connected-example">
+  <div class="wrap wrap-wide">
+    <div class="section-head">
+      <p class="eyebrow">One honest example</p>
+      <h2 class="h2" style="max-width: 32ch;">Nothing new was built here. It just got connected.</h2>
+      <p class="small body">A Claude workspace, a Shopify store and a Google account — all three already
+      paid for by the owner, none of them talking to each other until someone connected them. This is
+      the whole of what step three looks like.</p>
+    </div>
+
+    <div class="glass pad sweepable" data-demo>
+      <div class="chat">
+        <div class="chathead">
+          <div>
+            <p class="label">Maple &amp; Rye Bakery · Monday, 7:20am</p>
+            <p class="caption" style="margin-top: var(--space-1);">Anna asking her own assistant, before opening</p>
+          </div>
+          <span class="badge badge-neutral">Example</span>
+        </div>
+
+        <ul class="sources" aria-label="What this assistant can read">
+          <li><span class="dot" aria-hidden="true"></span>Shopify orders</li>
+          <li><span class="dot" aria-hidden="true"></span>Google Docs and Sheets</li>
+          <li><span class="dot" aria-hidden="true"></span>The shop inbox</li>
+        </ul>
+
+        <div class="thread" data-thread aria-live="polite">
+          <div class="msg msg-them" data-msg>
+            <span class="who" aria-hidden="true">AM</span>
+            <div class="bubble">
+              <span class="sr-only">Anna:</span>
+              <p>What should I order in for next week?</p>
+              <span class="when">7:20am</span>
+            </div>
+          </div>
+
+          <div class="msg msg-us" data-msg data-typing="1">
+            <span class="who" aria-hidden="true">
+              <svg viewBox="0 0 32 32" width="18" height="18" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-opacity=".5" stroke-width="2"/><circle cx="16" cy="16" r="7" fill="url(#sun)"/></svg>
+            </span>
+            <div class="bubble">
+              <span class="sr-only">Assistant:</span>
+              <p>I went through last month in your Shopify orders. Sourdough sold out six days in eight. The gluten-free sponge sold four. Chelsea buns barely moved — fourteen all month, and you baked forty.</p>
+              <span class="when">7:20am</span>
+            </div>
+          </div>
+
+          <div class="msg msg-them" data-msg>
+            <span class="who" aria-hidden="true">AM</span>
+            <div class="bubble">
+              <span class="sr-only">Anna:</span>
+              <p>So more sourdough, fewer buns.</p>
+              <span class="when">7:21am</span>
+            </div>
+          </div>
+
+          <div class="msg msg-us" data-msg data-typing="1">
+            <span class="who" aria-hidden="true">
+              <svg viewBox="0 0 32 32" width="18" height="18" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-opacity=".5" stroke-width="2"/><circle cx="16" cy="16" r="7" fill="url(#sun)"/></svg>
+            </span>
+            <div class="bubble">
+              <span class="sr-only">Assistant:</span>
+              <p>That is what the numbers say. I have put a draft order in your Google Drive against your supplier's current price list — more flour, same on the gluten-free, buns halved. Read it and change what you like. I have not sent it; I do not send orders or spend money.</p>
+              <span class="when">7:21am</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="chatfoot">
+          <p class="caption" style="max-width: 46ch;">
+            Example figures for a made-up bakery. A real one reads your own orders, your own
+            files and your own inbox. It does the reading, the sums and the first draft —
+            you check it and you decide. It never sends, buys or commits to anything on its own.
+          </p>
+          <button class="btn btn-quiet btn-sm" type="button" data-replay>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg>
+            Play it again
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 8 · what we put in writing — bento ═══════════════════════════════ -->
+<section class="section" id="promises">
+  <div class="wrap wrap-wide">
+    <div class="section-head">
+      <p class="eyebrow">What we put in writing</p>
+      <h2 class="h2">The four things that usually go wrong, closed off up front</h2>
+    </div>
+
+    <div class="bento">
+      <div class="b-hero reveal" style="--i:0; justify-content: space-between;">
+        <div class="stack">
+          <p class="eyebrow">How it works</p>
+          <p class="h3">One person who knows the way, not an agency and not a hire</p>
+          <p class="small">
+            You get one tech expert on the hook for choosing the tools, connecting them,
+            teaching your team and keeping the lot running — at a fraction of the cost of
+            employing someone, and without the layers an agency puts between you and the
+            person doing the work.
+          </p>
+          <p class="small">
+            Solenix is small and new, and says so. What does not change is the part that
+            usually goes wrong: you always know the price, what is running, and what
+            happens next.
+          </p>
+        </div>
+        <p class="caption">Based in St. John's, Newfoundland. Working with businesses anywhere.</p>
+      </div>
+
+      <div class="reveal" style="--i:1">
+        <p class="label">Promise 1</p>
+        <h3 class="h3">Fixed price up front</h3>
+        <p class="small">Agreed in writing before work starts. A wrong estimate is ours to absorb, not yours to cover.</p>
+      </div>
+      <div class="reveal" style="--i:2">
+        <p class="label">Promise 2</p>
+        <h3 class="h3">You own everything</h3>
+        <p class="small">Code, accounts, domain and data, in your name from day one — not ours.</p>
+      </div>
+      <div class="reveal" style="--i:3">
+        <p class="label">Promise 3</p>
+        <h3 class="h3">Plain-English updates</h3>
+        <p class="small">Every change described in words you already use. No jargon, no status theatre.</p>
+      </div>
+      <div class="reveal" style="--i:4">
+        <p class="label">Promise 4</p>
+        <h3 class="h3">No lock-in</h3>
+        <p class="small">Leave whenever you like and take all of it. We help you move it out.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 9 · how pricing works — card grid ═════════════════════════════════ -->
+<section class="section" id="pricing" data-od-id="how-pricing-works">
+  <div class="wrap wrap-wide">
+    <div class="section-head">
+      <p class="eyebrow">How pricing works</p>
+      <h2 class="h2" style="max-width: 32ch;">Two numbers, both agreed before anything starts</h2>
+      <p class="small body">No hourly billing, no "as needed", no surprise invoice. A fixed price for the
+        work, and a flat monthly amount to keep it all running. Both written down before you commit.</p>
+    </div>
+
+    <div class="pricecols">
+      <div class="pricecard" data-od-id="price-project">
+        <div class="stack" style="gap: var(--space-2);">
+          <p class="label">One-off</p>
+          <h3 class="h3">The project price</h3>
+          <p class="priceamt"><span class="tbd">amount to confirm</span></p>
+          <p class="small">Quoted as one number for the whole job after the first call. If the estimate
+            was wrong, that is ours to absorb.</p>
+        </div>
+        <ul class="included">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>The written list of what you have, what it costs and what to cut</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Setting up and connecting every account in the plan</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Training sessions with you and your staff, recorded so new hires can watch them</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Anything built from scratch, when nothing existing fits</span></li>
+        </ul>
+      </div>
+
+      <div class="pricecard" data-od-id="price-care">
+        <div class="stack" style="gap: var(--space-2);">
+          <p class="label">Monthly, flat</p>
+          <h3 class="h3">The care plan</h3>
+          <p class="priceamt"><span class="tbd">amount to confirm</span><span class="per"> /month</span></p>
+          <p class="small">The same amount every month regardless of how much we do. Cancel any month
+            and keep everything.</p>
+        </div>
+        <ul class="included">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Hosting, domains, certificates and backups</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Monitoring, and fixing what breaks — usually before you notice</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Content and price updates on your site, store and listing</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Your portal, and a person who answers</span></li>
+          <li class="no"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg><span>Not included: what each vendor bills you directly — you see those amounts in your portal</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="caption" style="margin-top: var(--space-5);">
+      Both figures are still to be set — we do not print a number we have not committed to.
+      The list of what is included does not change once it is in writing.
+    </p>
+  </div>
+</section>
+
+<!-- ═══ 10 · reviews — slot, empty until real ═════════════════════════════ -->
+<section class="section" id="reviews" data-od-id="reviews">
+  <div class="wrap wrap-wide">
+    <div class="reviewslot">
+      <div class="cluster" style="justify-content: space-between;">
+        <p class="label">Reviews</p>
+        <span class="stars" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 3.5 2.6 5.5 6 .8-4.4 4.2 1.1 6-5.3-3-5.3 3 1.1-6L3.4 9.8l6-.8z"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 3.5 2.6 5.5 6 .8-4.4 4.2 1.1 6-5.3-3-5.3 3 1.1-6L3.4 9.8l6-.8z"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 3.5 2.6 5.5 6 .8-4.4 4.2 1.1 6-5.3-3-5.3 3 1.1-6L3.4 9.8l6-.8z"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 3.5 2.6 5.5 6 .8-4.4 4.2 1.1 6-5.3-3-5.3 3 1.1-6L3.4 9.8l6-.8z"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 3.5 2.6 5.5 6 .8-4.4 4.2 1.1 6-5.3-3-5.3 3 1.1-6L3.4 9.8l6-.8z"/></svg>
+        </span>
+      </div>
+      <p class="h3" style="max-width: 34ch;">No reviews yet, and we will not invent any</p>
+      <p class="small body">This is where our Google Business Profile reviews will appear, pulled from
+        Google rather than retyped by us. Until a real client has left one, it stays empty on purpose —
+        an empty slot is worth more than a testimonial you cannot check.</p>
+      <p class="caption">We ask every client for an honest review at the end, good or bad.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 11 · FAQ ═══════════════════════════════════════════════════════════ -->
+<section class="section" id="faq">
+  <div class="wrap wrap-wide">
+    <div class="section-head">
+      <p class="eyebrow">Questions</p>
+      <h2 class="h2">What owners ask first</h2>
+    </div>
+    <div class="faq">
+      <details>
+        <summary>I already pay for a lot of tools. Will this cost more?</summary>
+        <p class="answer">Often it costs less. The first thing we do is list what you are paying for and what
+          each thing actually does; cancelling the overlap usually covers a meaningful part of our fee. We will
+          tell you honestly if it does not in your case.</p>
+      </details>
+      <details>
+        <summary>Do I have to throw out what I already have?</summary>
+        <p class="answer">No. Anything that works and earns its place stays. We are looking for the tools
+          nothing depends on, the ones you pay for twice, and the ones nobody can log into — not a reason
+          to rebuild everything.</p>
+      </details>
+      <details>
+        <summary>Will AI replace my staff?</summary>
+        <p class="answer">Not in the way people mean when they ask. What it takes over is the hour someone
+          spends retyping an order, hunting for a price, tidying a spreadsheet or writing the same email for
+          the tenth time. Your staff still decide things, still talk to customers, still do the work that
+          needs a person who knows your business. Every draft it produces is checked by someone before it
+          goes anywhere. If your goal is to cut your team, we are honestly not the right fit — we are good
+          at making the people you already have go further.</p>
+      </details>
+      <details>
+        <summary>Is it safe to connect AI to my accounts?</summary>
+        <p class="answer">It is, if it is set up properly — which is most of the reason to have someone do
+          it rather than clicking "allow" yourself. Every account stays in your name. We give the assistant
+          the narrowest access that does the job: read your orders, yes; move money or send on your behalf,
+          no. The business plans we set up on Claude and ChatGPT do not use your data to train their models,
+          and we show you the terms and the setting that say so rather than asking you to take our word.
+          Your portal lists who and what has access to every account, and we show you where to switch any
+          of it off.</p>
+      </details>
+      <details>
+        <summary>What does it cost?</summary>
+        <p class="answer">Two numbers, both agreed before anything starts: a fixed price for the work and a flat monthly amount to keep it running. What each one includes is listed under <a href="#pricing" style="color: var(--accent-text)">how pricing works</a>. No hourly billing and no "as needed".</p>
+      </details>
+      <details>
+        <summary>How long does it take?</summary>
+        <p class="answer">Setting up accounts that already exist is usually days, not weeks — that is most of the work and why we start there. Anything genuinely built from scratch takes longer, and the plan gives you an actual date rather than a range.</p>
+      </details>
+      <details>
+        <summary>I'm not technical. Is that a problem?</summary>
+        <p class="answer">No. You are the one who knows how the business runs, which is the part we cannot work out on our own. Everything gets explained in plain words, and we will not ask you to decide something you do not have the information for.</p>
+      </details>
+      <details>
+        <summary>I already have a website. Do I have to start over?</summary>
+        <p class="answer">Usually not. If your site, store or email already works, we keep it and take over looking after it. Replacing something is a decision we argue for in writing, not a default.</p>
+      </details>
+      <details>
+        <summary>Who owns the code and the accounts?</summary>
+        <p class="answer">You do. Everything is set up in your name from the start — domain, hosting, accounts, code. If we stop working together, nothing needs to be handed over, because it was never mine.</p>
+      </details>
+      <details>
+        <summary>What happens if it breaks?</summary>
+        <p class="answer">We monitor it, so usually we know first and it is fixed before you ask. When something is down you get told it is down, what we are doing and when we will know more — not a status page dressing it up.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 12 · closing CTA ══════════════════════════════════════════════════ -->
+<section class="lit section" style="--light-x: 20%; --light-y: 110%; --light-size: 32rem; --light-strength: .4; --orbit-size: 56rem;">
+  <div class="sky" aria-hidden="true">
+    <div class="sky-halo"></div>
+    <div class="sky-light"></div>
+    <svg class="sky-orbit" viewBox="0 0 800 800">
+      <circle class="ring ring-faint" cx="400" cy="400" r="300"/>
+      <path class="arc" d="M400 100a300 300 0 0 1 300 300"/>
+      <g class="track"><circle class="dot" cx="400" cy="100" r="5"/></g>
+    </svg>
+  </div>
+  <div class="wrap inner" style="text-align: center;">
+    <h2 class="display" style="max-width: 26ch; margin-inline: auto;">Send us the list of what you are paying for.</h2>
+    <p class="lede" style="margin: var(--space-5) auto 0;">
+      One call, no charge, no pitch. You get the plain list of what you have either way,
+      and if we are not the right fit we say so and point you at who is.
+    </p>
+    <div class="cluster" style="justify-content: center; margin-top: var(--space-6);">
+      <a class="btn btn-primary" href="mailto:hello@solenix.dev?subject=Book%20a%20call">
+        Book a call
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+    <p class="caption" style="margin-top: var(--space-4);">Or email <a href="mailto:hello@solenix.dev" style="color: var(--accent-text);">hello@solenix.dev</a></p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap wrap-wide">
+    <div class="stack" style="gap: var(--space-2);">
+      <a class="brand" href="/" aria-label="Solenix home">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/><circle cx="16" cy="16" r="8" fill="url(#sun)"/><circle cx="27" cy="9" r="2.2" fill="var(--ring)"/></svg>
+        Solenix
+      </a>
+      <p class="caption">The tech person your business does not have · St. John's, Newfoundland</p>
+    </div>
+    <div class="stack" style="gap: var(--space-3);">
+      <a class="footcontact" href="mailto:hello@solenix.dev">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+        hello@solenix.dev
+      </a>
+      <nav class="footlinks" aria-label="Footer">
+        <a href="/app">Client sign in</a>
+        <a href="/agents">Tools we use</a>
+      </nav>
+      <p class="caption">&copy; <span data-year>2026</span> Solenix</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+document.documentElement.classList.add('js');
+/* The year fills itself, so a stale copyright can never ship. */
+document.querySelectorAll('[data-year]').forEach(el => {
+  el.textContent = String(new Date().getFullYear());
+});
+(() => {
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ── scroll-linked reveals: once per element, never on the way back up ── */
+  const reveals = [...document.querySelectorAll('.reveal')];
+  const counters = [...document.querySelectorAll('[data-count-to]')];
+  if (still || !('IntersectionObserver' in window)) {
+    reveals.forEach(el => el.classList.add('in'));
+    counters.forEach(setFinal);
+  } else {
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (!e.isIntersecting) continue;
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+        if (e.target.hasAttribute('data-count-to')) countUp(e.target);
+      }
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.15 });
+    [...reveals, ...counters].forEach(el => io.observe(el));
+  }
+
+  function setFinal(el) {
+    const n = Number(el.dataset.countTo);
+    const unit = el.querySelector('.unit');
+    el.innerHTML = n.toLocaleString('en-CA') + (unit ? unit.outerHTML : '');
+  }
+  function countUp(el) {
+    const target = Number(el.dataset.countTo);
+    if (!Number.isFinite(target)) return;
+    const unit = el.querySelector('.unit');
+    const suffix = unit ? unit.outerHTML : '';
+    const t0 = performance.now();
+    const tick = (now) => {
+      const p = Math.min(1, (now - t0) / 1200);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.innerHTML = Math.round(target * eased).toLocaleString('en-CA') + suffix;
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+
+  /* ── the assistant demo ─────────────────────────────────────────────────
+     Every message is in the markup, so with JavaScript off or reduced motion
+     on, the whole conversation is simply already there. */
+  const demo = document.querySelector('[data-demo]');
+  const thread = document.querySelector('[data-thread]');
+  if (!demo || !thread) return;
+  const msgs = [...thread.querySelectorAll('[data-msg]')];
+  const replay = demo.querySelector('[data-replay]');
+  let timers = [];
+
+  const showAll = () => msgs.forEach(m => m.classList.add('shown'));
+  const clearTimers = () => { timers.forEach(clearTimeout); timers = []; };
+  const dropTyping = () => thread.querySelectorAll('[data-typingrow]').forEach(n => n.remove());
+
+  function typingRow() {
+    const row = document.createElement('div');
+    row.className = 'msg msg-us shown';
+    row.setAttribute('data-typingrow', '');
+    row.setAttribute('aria-hidden', 'true');
+    row.innerHTML = '<span class="who"><svg viewBox="0 0 32 32" width="18" height="18">'
+      + '<circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-opacity=".5" stroke-width="2"/>'
+      + '<circle cx="16" cy="16" r="7" fill="url(#sun)"/></svg></span>'
+      + '<div class="bubble"><span class="typing"><i></i><i></i><i></i></span></div>';
+    return row;
+  }
+
+  function play() {
+    clearTimers(); dropTyping();
+    if (still) { showAll(); return; }
+    msgs.forEach(m => m.classList.remove('shown'));
+    let t = 400;
+    msgs.forEach((m) => {
+      if (m.hasAttribute('data-typing')) {
+        timers.push(setTimeout(() => { dropTyping(); thread.appendChild(typingRow()); }, t));
+        t += 1500;
+        timers.push(setTimeout(() => { dropTyping(); thread.appendChild(m); m.classList.add('shown'); }, t));
+      } else {
+        timers.push(setTimeout(() => { dropTyping(); thread.appendChild(m); m.classList.add('shown'); }, t));
+      }
+      t += 1100;
+    });
+  }
+
+  if (still || !('IntersectionObserver' in window)) {
+    showAll();
+  } else {
+    const dio = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (!e.isIntersecting) continue;
+        dio.unobserve(e.target);
+        demo.classList.add('sweeping');
+        demo.addEventListener('animationend', () => demo.classList.remove('sweeping'), { once: true });
+        play();
+      }
+    }, { threshold: 0.3 });
+    dio.observe(demo);
+  }
+
+  replay?.addEventListener('click', () => {
+    demo.classList.remove('sweeping');
+    void demo.offsetWidth;
+    demo.classList.add('sweeping');
+    demo.addEventListener('animationend', () => demo.classList.remove('sweeping'), { once: true });
+    play();
+  });
+})();
+</script>
+</body>
+</html>
