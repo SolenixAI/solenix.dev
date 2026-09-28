@@ -128,7 +128,8 @@ button { font: inherit; color: inherit; }
 .badge.ok { color: var(--ok); background: var(--ok-tint); }
 .badge.warn { color: var(--warn); background: var(--warn-tint); }
 .badge.down { color: var(--down); background: var(--down-tint); }
-.badge.quiet { color: var(--faint); background: var(--surface-sunken); }
+.badge.quiet { color: var(--muted); background: var(--surface-sunken); }  /* --muted, not --faint: a status word is something the reader acts on,
+     and --faint on a sunken fill measures 4.44:1 in light — under AA. */
 .chip-example { font-family: var(--font-mono); font-size: var(--fs-2xs); font-weight: var(--fw-semibold);
   letter-spacing: var(--track-label); text-transform: uppercase; color: var(--faint);
   border: 1px solid var(--line); border-radius: var(--radius-pill); padding: 3px 8px; }
@@ -542,10 +543,40 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
   <main class="main" id="main">
     <div class="page">
 
+      <!-- Filled only while an admin is viewing a client. -->
+      <div id="asbar-slot"></div>
+
       <p class="notice">
         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M10 9v4.5M10 6.4v.1"/></svg>
         <span data-notice><strong>This is an example account.</strong> Everything below is sample content for a bakery called Maple &amp; Rye, so you can see how the portal reads. Your own project, website and invoices appear here once you are set up.</span>
       </p>
+
+      <!-- ─────────────── CLIENTS · admin only ─────────────── -->
+      <section class="screen" id="screen-clients" aria-labelledby="h-clients" hidden>
+        <div class="page-head">
+          <p class="eyebrow">Your clients</p>
+          <h1 id="h-clients">Clients</h1>
+          <p class="muted" data-clients-summary>Five businesses. One site is down and two invoices need chasing.</p>
+        </div>
+
+        <div class="od-row" style="--od-gap: var(--space-4); flex-wrap: wrap; margin-bottom: var(--space-5)">
+          <div class="od-field od-fill" style="--od-gap: var(--space-2); flex-basis: 14rem">
+            <label class="lbl" for="client-filter">Find a client</label>
+            <input type="text" id="client-filter" autocomplete="off"
+                   placeholder="Start typing a business name" aria-describedby="filter-help">
+            <p class="xs faint" id="filter-help">Filters the list as you type.</p>
+          </div>
+          <button class="btn btn-primary od-fixed" type="button" data-invite>
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 4.5v11M4.5 10h11"/></svg>
+            Invite a client
+          </button>
+        </div>
+
+        <ul class="rows" data-clients-list></ul>
+        <div data-clients-empty hidden></div>
+
+        <p class="sm faint" style="margin-top:var(--space-5)">Opening a client shows you exactly what they see when they sign in.</p>
+      </section>
 
       <!-- ─────────────── OVERVIEW ─────────────── -->
       <section class="screen" id="screen-overview" aria-labelledby="h-overview">
@@ -905,24 +936,72 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
   </nav>
 </div>
 
-<!-- Confirm sheet -->
+<!-- One sheet, swappable contents. Both flows share the scrim, the focus trap
+     and the Escape path, so there is only ever one modal mechanism in here. -->
 <div class="scrim" id="scrim" hidden>
-  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title" aria-describedby="sheet-body" id="sheet">
-    <span class="icon-chip" aria-hidden="true">
-      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5h15M2.5 5.5A2 2 0 0 1 4.5 3.5h11a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-11a2 2 0 0 1-2-2z"/><path d="M5.5 12h3"/></svg>
-    </span>
-    <h2 id="sheet-title">Pay $1,850.00 now?</h2>
-    <p id="sheet-body">This charges the card ending 4242 for invoice 0042. You get a receipt by email straight away, and nothing else changes.</p>
-    <div class="sheet-actions">
-      <button class="btn btn-ghost" type="button" data-sheet-cancel>Not now</button>
-      <button class="btn btn-primary" type="button" data-sheet-confirm>
-        <span class="spin" aria-hidden="true"></span>
-        <span class="label-idle">Pay now</span>
-        <span class="label-busy">Paying…</span>
-      </button>
-    </div>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title" id="sheet">
+    <div data-sheet-content></div>
   </div>
 </div>
+
+<template id="tpl-sheet-pay">
+  <span class="icon-chip" aria-hidden="true">
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5h15M2.5 5.5A2 2 0 0 1 4.5 3.5h11a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-11a2 2 0 0 1-2-2z"/><path d="M5.5 12h3"/></svg>
+  </span>
+  <h2 id="sheet-title" data-pay-title>Pay now?</h2>
+  <p data-pay-body>This charges the card on file.</p>
+  <div class="sheet-actions">
+    <button class="btn btn-ghost" type="button" data-sheet-cancel>Not now</button>
+    <button class="btn btn-primary" type="button" data-sheet-confirm>
+      <span class="spin" aria-hidden="true"></span>
+      <span class="label-idle">Pay now</span>
+      <span class="label-busy">Paying…</span>
+    </button>
+  </div>
+</template>
+
+<template id="tpl-sheet-invite">
+  <span class="icon-chip" aria-hidden="true">
+    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5.5h14v9H3zM3 6l7 5 7-5"/></svg>
+  </span>
+  <h2 id="sheet-title">Invite a client</h2>
+  <p>We email them a sign-in link. They see their project, their website and their invoices — nothing else.</p>
+  <div class="sheet-fields">
+    <div class="od-field" style="--od-gap: var(--space-2)">
+      <label class="lbl" for="inv-biz">Business name <span class="req">(required)</span></label>
+      <input type="text" id="inv-biz" data-inv-field autocomplete="organization" aria-describedby="inv-biz-err">
+      <p class="err" id="inv-biz-err" role="alert">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M10 6.5v4M10 13.6v.1"/></svg>
+        <span>Enter the business name as they would write it themselves.</span>
+      </p>
+    </div>
+    <div class="od-field" style="--od-gap: var(--space-2)">
+      <label class="lbl" for="inv-owner">Who runs it <span class="req">(required)</span></label>
+      <input type="text" id="inv-owner" data-inv-field autocomplete="name" aria-describedby="inv-owner-err">
+      <p class="err" id="inv-owner-err" role="alert">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M10 6.5v4M10 13.6v.1"/></svg>
+        <span>Enter the name of the person who will sign in.</span>
+      </p>
+    </div>
+    <div class="od-field" style="--od-gap: var(--space-2)">
+      <label class="lbl" for="inv-email">Their email <span class="req">(required)</span></label>
+      <input type="email" id="inv-email" data-inv-field autocomplete="email" inputmode="email"
+             placeholder="ruth@harbourviewbooks.ca" aria-describedby="inv-email-err">
+      <p class="err" id="inv-email-err" role="alert">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M10 6.5v4M10 13.6v.1"/></svg>
+        <span data-inv-email-msg>That does not look like an email address. Check for a missing @ or a typo in the domain.</span>
+      </p>
+    </div>
+  </div>
+  <div class="sheet-actions">
+    <button class="btn btn-ghost" type="button" data-sheet-cancel>Cancel</button>
+    <button class="btn btn-primary" type="button" data-sheet-confirm>
+      <span class="spin" aria-hidden="true"></span>
+      <span class="label-idle">Send the invite</span>
+      <span class="label-busy">Sending…</span>
+    </button>
+  </div>
+</template>
 
 <!-- Toast -->
 <div class="toast" id="toast" hidden>
@@ -987,21 +1066,123 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
     else btn.removeAttribute("aria-disabled");
   }
 
-  /* ── Navigation ────────────────────────────────────────────────────────── */
-  const NAV = [
+  /* ── Who is signed in ──────────────────────────────────────────────────── */
+  const ADMIN_EMAIL = "jager@solenix.dev";
+  let role = "client";     // "client" | "admin"
+  let viewing = null;      // the client an admin has opened, or null on the list
+
+  /* ── Navigation ────────────────────────────────────────────────────────────
+     The admin gets one extra item. The four client items are always present —
+     disabled until a client is open — so nothing ever moves position. */
+  const CLIENT_NAV = [
     { id: "overview", label: "Overview", icon: '<path d="M3.5 8.5 10 3l6.5 5.5V16a1 1 0 0 1-1 1H12v-5H8v5H4.5a1 1 0 0 1-1-1z"/>' },
     { id: "project",  label: "Project",  icon: '<path d="M4 4.5h12M4 10h12M4 15.5h7"/>' },
     { id: "website",  label: "Website",  icon: '<circle cx="10" cy="10" r="7"/><path d="M3 10h14M10 3c2 2.2 2 11.8 0 14M10 3c-2 2.2-2 11.8 0 14"/>' },
     { id: "invoices", label: "Invoices", icon: '<path d="M5 3h10v14l-2.5-1.6L10 17l-2.5-1.6L5 17z"/><path d="M8 7.5h4M8 11h4"/>' }
   ];
+  const CLIENTS_NAV_ITEM = { id: "clients", label: "Clients",
+    icon: '<circle cx="7.5" cy="7" r="2.8"/><path d="M2.5 16c0-2.6 2.2-4.2 5-4.2s5 1.6 5 4.2"/><path d="M13.5 5.4a2.6 2.6 0 0 1 0 5M15 15.6c0-1.8-.7-3-2-3.7"/>' };
 
-  document.querySelectorAll("[data-nav]").forEach(ul => {
-    ul.innerHTML = NAV.map(n => `
-      <li><a class="navlink" href="#/${n.id}" data-navid="${n.id}">
-        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${n.icon}</svg>
-        <span class="n">${n.label}</span>
-      </a></li>`).join("");
-  });
+  const navItems = () => role === "admin" ? [CLIENTS_NAV_ITEM, ...CLIENT_NAV] : CLIENT_NAV;
+  const navEnabled = id => role !== "admin" || id === "clients" || !!viewing;
+
+  function currentRouteName() {
+    const parts = location.hash.replace(/^#\/?/, "").split("/").filter(Boolean);
+    return parts[0] || (role === "admin" ? "clients" : "overview");
+  }
+
+  function renderNav() {
+    const items = navItems();
+    document.querySelectorAll("[data-nav]").forEach(ul => {
+      ul.style.setProperty("--nav-count", items.length);
+      ul.innerHTML = items.map(n => {
+        const glyph = `<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${n.icon}</svg><span class="n">${n.label}</span>`;
+        return navEnabled(n.id)
+          ? `<li><a class="navlink" href="#/${n.id}" data-navid="${n.id}">${glyph}</a></li>`
+          : `<li><button class="navlink" type="button" data-navid="${n.id}" disabled
+                 title="Open a client to see their ${n.label.toLowerCase()}">${glyph}</button></li>`;
+      }).join("");
+    });
+    markCurrentNav(currentRouteName());
+  }
+
+  function markCurrentNav(name) {
+    document.querySelectorAll(".navlink").forEach(el => {
+      if (el.dataset.navid === name) el.setAttribute("aria-current", "page");
+      else el.removeAttribute("aria-current");
+    });
+  }
+
+  /* ── The clients, as example businesses ────────────────────────────────────
+     Every status a reader can meet is reachable here on purpose: one site down,
+     one not built yet, one invoice overdue, one invoice still a draft. */
+  const STAGES = ["Call", "Plan", "Build", "Care"];
+
+  const CLIENTS = [
+    { id: "maple", biz: "Maple & Rye", owner: "Anna Whelan", email: "anna@mapleandrye.ca",
+      greeting: "Good morning, Anna.",
+      site: { state: "live", word: "Live", addr: "mapleandrye.ca", checked: "Checked 4 minutes ago",
+              key: "Working" },
+      proj: { stage: 3, title: "Online ordering for pickup",
+              meta: "Started 15 September · on track for 17 October",
+              note: "Online ordering for pickup. On track for 17 October." },
+      ask: true, invoices: null },   // null = the detailed set below
+
+    { id: "cedar", biz: "Cedar Yoga", owner: "Marta Lund", email: "marta@cedaryoga.ca",
+      greeting: "Good morning, Marta.",
+      site: { state: "down", word: "Down", addr: "cedaryoga.ca", checked: "Checked 2 minutes ago",
+              key: "Not loading" },
+      proj: { stage: 4, title: "Looking after your site",
+              meta: "Live since 4 June · we look after it from here",
+              note: "Your timetable page stopped loading this morning. We are on it." },
+      ask: false,
+      invoices: [
+        { id: "0038", title: "Looking after your site — September", total: 180, status: "paid",
+          issued: "1 Sep 2026", due: "15 Sep 2026", paid: "3 Sep 2026",
+          lines: [["Looking after your site — September", "Monitoring, backups, small changes.", 171],
+                  ["GST", "5% on the above.", 9]] }
+      ] },
+
+    { id: "harbourview", biz: "Harbourview Books", owner: "Ruth Pike", email: "ruth@harbourviewbooks.ca",
+      greeting: "Good morning, Ruth.",
+      site: { state: "none", word: "Not live yet", addr: null, checked: null,
+              key: "Not built yet" },
+      proj: { stage: 1, title: "A website for the shop",
+              meta: "First call booked for 2 October",
+              note: "Nothing built yet. We start with a call about what you need." },
+      ask: false, invoices: [] },
+
+    { id: "quidi", biz: "Quidi Vidi Cycles", owner: "Sam Doyle", email: "sam@quidividicycles.ca",
+      greeting: "Good morning, Sam.",
+      site: { state: "live", word: "Live", addr: "quidividicycles.ca", checked: "Checked 6 minutes ago",
+              key: "Working" },
+      proj: { stage: 4, title: "Looking after your site",
+              meta: "Live since 11 March · we look after it from here",
+              note: "Nothing in flight. We are looking after the site." },
+      ask: false,
+      invoices: [
+        { id: "0036", title: "Looking after your site — August", total: 420, status: "overdue",
+          issued: "1 Aug 2026", due: "15 Aug 2026",
+          lines: [["Looking after your site — August", "Monitoring, backups, small changes.", 260],
+                  ["Extra work — new opening hours on every page", "Asked for on 12 August.", 140],
+                  ["GST", "5% on the above.", 20]] }
+      ] },
+
+    { id: "salt", biz: "Salt & Sage Clinic", owner: "Aisha Noor", email: "aisha@saltandsage.ca",
+      greeting: "Good morning, Aisha.",
+      site: { state: "building", word: "Building", addr: "saltandsage.ca", checked: null,
+              key: "Being built" },
+      proj: { stage: 2, title: "Online booking for appointments",
+              meta: "Plan agreed 22 September · build starts 6 October",
+              note: "The booking flow is agreed. Build starts 6 October." },
+      ask: false,
+      invoices: [
+        { id: "0044", title: "Online booking — deposit", total: 2400, status: "draft",
+          issued: "Not sent yet", due: "Not sent yet",
+          lines: [["Online booking build — deposit", "Half the fixed price, due before we start.", 2286],
+                  ["GST", "5% on the above.", 114]] }
+      ] }
+  ];
 
   /* ── Invoices ──────────────────────────────────────────────────────────── */
   const money = n => "$" + n.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -1047,12 +1228,27 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
   const invList = document.querySelector("[data-inv-list]");
   const invSummary = document.querySelector("[data-inv-summary]");
 
-  const statusBadge = inv => inv.status === "paid"
-    ? '<span class="badge ok od-fixed">Paid</span>'
-    : '<span class="badge warn od-fixed">Due</span>';
+  /* Maple & Rye keeps the detailed set above; every client has their own. */
+  let activeClient = CLIENTS[0];
+  let activeInvoices = INVOICES;
+  const invoicesFor = c => c.invoices === null ? INVOICES : c.invoices;
+
+  const INV_STATE = {
+    paid:    { cls: "ok",    word: "Paid" },
+    due:     { cls: "warn",  word: "Due" },
+    overdue: { cls: "down",  word: "Overdue" },
+    draft:   { cls: "quiet", word: "Draft" }
+  };
+  const statusBadge = inv => {
+    const st = INV_STATE[inv.status] || INV_STATE.due;
+    return `<span class="badge ${st.cls} od-fixed">${st.word}</span>`;
+  };
+  const invWhen = inv => inv.status === "paid" ? "Paid " + inv.paid
+    : inv.status === "draft" ? "Not sent yet"
+    : (inv.status === "overdue" ? "Overdue since " : "Due ") + inv.due;
 
   function renderInvoiceList() {
-    invList.innerHTML = INVOICES.map(inv => `
+    invList.innerHTML = activeInvoices.map(inv => `
       <li><a class="row" href="#/invoices/${inv.id}">
         <span class="od-fill od-stat" style="--od-gap: var(--space-1)">
           <span class="v od-truncate">Invoice ${inv.id}</span>
@@ -1060,40 +1256,68 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
         </span>
         <span class="od-fixed od-stat" style="--od-gap: var(--space-1); text-align: right">
           <span class="v mono od-nowrap">${money(inv.total)}</span>
-          <span class="xs faint mono od-nowrap">${inv.status === "paid" ? "Paid " + inv.paid : "Due " + inv.due}</span>
+          <span class="xs faint mono od-nowrap">${invWhen(inv)}</span>
         </span>
         ${statusBadge(inv)}
         <svg class="row-chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 5l5 5-5 5"/></svg>
       </a></li>`).join("");
 
-    const due = INVOICES.filter(i => i.status === "due");
-    const owed = due.reduce((s, i) => s + i.total, 0);
-    invSummary.textContent = due.length === 0
-      ? "Nothing due. Everything is paid — thank you."
-      : (due.length === 1 ? "One invoice is due, " : due.length + " invoices are due, ")
-        + money(owed) + " in total. Everything else is paid.";
+    const outstanding = activeInvoices.filter(i => i.status === "due" || i.status === "overdue");
+    const overdue = activeInvoices.filter(i => i.status === "overdue");
+    const drafts = activeInvoices.filter(i => i.status === "draft");
+    const owed = outstanding.reduce((sum, i) => sum + i.total, 0);
 
-    // The Overview card reads from the same data, so the two screens never disagree.
+    // An empty list is a real state, not a blank screen.
+    if (activeInvoices.length === 0) {
+      invList.innerHTML = `<li class="row"><span class="od-fill od-stat" style="--od-gap: var(--space-1)">
+          <span class="v">No invoices yet</span>
+          <span class="k">The first one arrives after we agree a plan on your first call.</span>
+        </span></li>`;
+      invSummary.textContent = "Nothing invoiced yet.";
+    } else if (outstanding.length === 0) {
+      invSummary.textContent = drafts.length
+        ? "Nothing to pay. One invoice is still a draft and has not been sent."
+        : "Nothing due. Everything is paid — thank you.";
+    } else {
+      invSummary.textContent =
+        (outstanding.length === 1 ? "One invoice is waiting, " : outstanding.length + " invoices are waiting, ")
+        + money(owed) + " in total."
+        + (overdue.length ? " " + (overdue.length === 1 ? "One is" : overdue.length + " are") + " past the due date." : "");
+    }
+
+    // The Overview card reads the same data, so the two screens never disagree.
     const amountEl = document.querySelector("[data-due-amount]");
     const noteEl = document.querySelector("[data-due-note]");
     const badgeEl = document.querySelector("[data-due-badge]");
-    if (due.length === 0) {
-      amountEl.textContent = "All paid";
-      amountEl.classList.remove("mono");
-      noteEl.textContent = "Nothing due. Your next invoice arrives at the end of October.";
-      badgeEl.className = "badge ok";
-      badgeEl.textContent = "Paid";
+    const setTile = (badgeCls, badgeWord, amount, mono, note) => {
+      badgeEl.className = "badge " + badgeCls;
+      badgeEl.textContent = badgeWord;
+      amountEl.textContent = amount;
+      amountEl.classList.toggle("mono", mono);
+      noteEl.textContent = note;
+    };
+
+    if (activeInvoices.length === 0) {
+      setTile("quiet", "None", "No invoices yet", false,
+        "Nothing invoiced yet. The first one follows your plan.");
+    } else if (outstanding.length === 0 && drafts.length) {
+      setTile("quiet", "Draft", "Nothing to pay", false,
+        "Invoice " + drafts[0].id + " is a draft and has not been sent to you.");
+    } else if (outstanding.length === 0) {
+      setTile("ok", "Paid", "All paid", false,
+        "Nothing due. Your next invoice arrives at the end of the month.");
     } else {
-      amountEl.textContent = money(owed);
-      amountEl.classList.add("mono");
-      noteEl.textContent = "Invoice " + due[0].id + ", due " + due[0].due.replace(" 2026", "") + ".";
-      badgeEl.className = "badge warn";
-      badgeEl.textContent = "Due";
+      const first = outstanding[0];
+      setTile(overdue.length ? "down" : "warn", overdue.length ? "Overdue" : "Due",
+        money(owed), true,
+        "Invoice " + first.id + (first.status === "overdue"
+          ? ", overdue since " + first.due.replace(" 2026", "") + "."
+          : ", due " + first.due.replace(" 2026", "") + "."));
     }
   }
 
   function renderInvoice(id) {
-    const inv = INVOICES.find(i => i.id === id);
+    const inv = activeInvoices.find(i => i.id === id);
     if (!inv) return false;
     document.querySelector("[data-inv-eyebrow]").textContent = "Invoice " + inv.id;
     document.querySelector("[data-inv-title]").textContent = inv.title;
@@ -1123,44 +1347,74 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
   let payingId = null;
   let lastFocus = null;
 
-  function openSheet(id) {
-    const inv = INVOICES.find(i => i.id === id);
-    if (!inv) return;
-    payingId = id;
+  const sheetContent = sheet.querySelector("[data-sheet-content]");
+  let sheetKind = null;
+
+  const focusables = () =>
+    [...sheet.querySelectorAll('a[href], button:not([disabled]), input, select, textarea')]
+      .filter(el => el.getAttribute("aria-disabled") !== "true");
+
+  function openSheet(kind, payload) {
+    const tpl = document.getElementById("tpl-sheet-" + kind);
+    if (!tpl) return;
+
+    if (kind === "pay") {
+      const inv = activeInvoices.find(i => i.id === payload);
+      if (!inv) return;
+      payingId = payload;
+    }
+
+    sheetKind = kind;
     lastFocus = document.activeElement;
-    document.getElementById("sheet-title").textContent = "Pay " + money(inv.total) + " now?";
-    document.getElementById("sheet-body").textContent =
-      "This charges the card ending 4242 for invoice " + inv.id +
-      ". You get a receipt by email straight away, and nothing else changes.";
+    sheetContent.replaceChildren(tpl.content.cloneNode(true));
+
+    if (kind === "pay") {
+      const inv = activeInvoices.find(i => i.id === payload);
+      sheetContent.querySelector("[data-pay-title]").textContent = "Pay " + money(inv.total) + " now?";
+      sheetContent.querySelector("[data-pay-body]").textContent =
+        "This charges the card ending 4242 for invoice " + inv.id +
+        ". You get a receipt by email straight away, and nothing else changes.";
+    }
+    if (kind === "invite") wireInviteFields();
+
     scrim.hidden = false;
     document.body.style.overflow = "hidden";
-    sheet.querySelector("[data-sheet-cancel]").focus();
+    (focusables()[0] || sheet).focus();
   }
 
   function closeSheet() {
     scrim.hidden = true;
+    sheetKind = null;
     document.body.style.overflow = "";
-    busy(sheet.querySelector("[data-sheet-confirm]"), false);
+    const confirmBtn = sheet.querySelector("[data-sheet-confirm]");
+    if (confirmBtn) busy(confirmBtn, false);
     if (lastFocus && document.contains(lastFocus)) lastFocus.focus();
   }
 
-  sheet.querySelector("[data-sheet-cancel]").addEventListener("click", closeSheet);
+  // Delegated, because the sheet's contents are swapped in from a template.
+  sheet.addEventListener("click", e => {
+    if (e.target.closest("[data-sheet-cancel]")) { closeSheet(); return; }
+    const confirmBtn = e.target.closest("[data-sheet-confirm]");
+    if (!confirmBtn) return;
+    if (sheetKind === "pay") confirmPay(confirmBtn);
+    else if (sheetKind === "invite") confirmInvite(confirmBtn);
+  });
   scrim.addEventListener("mousedown", e => { if (e.target === scrim) closeSheet(); });
   document.addEventListener("keydown", e => {
     if (scrim.hidden) return;
     if (e.key === "Escape") { closeSheet(); return; }
     if (e.key !== "Tab") return;
-    const f = sheet.querySelectorAll("button:not([aria-disabled='true'])");
+    const f = focusables();
     if (!f.length) return;
     const first = f[0], last = f[f.length - 1];
     if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
     else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
   });
 
-  sheet.querySelector("[data-sheet-confirm]").addEventListener("click", e => {
-    busy(e.currentTarget, true);
+  function confirmPay(btn) {
+    busy(btn, true);
     setTimeout(() => {
-      const inv = INVOICES.find(i => i.id === payingId);
+      const inv = activeInvoices.find(i => i.id === payingId);
       inv.status = "paid";
       inv.paid = "29 Sep 2026";
       closeSheet();
@@ -1169,11 +1423,74 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
       document.querySelector("[data-inv-actions] [data-download]")?.focus();
       showToast("Invoice " + inv.id + " paid. Receipt on its way to your email.");
     }, 900);
-  });
+  }
+
+  /* ── Invite a client ─────────────────────────────────────────────────────
+     Same sheet, same trap, same Escape path. Three fields, checked on blur. */
+  const INVITE_RULES = {
+    "inv-biz":   v => v ? "" : "Enter the business name as they would write it themselves.",
+    "inv-owner": v => v ? "" : "Enter the name of the person who will sign in.",
+    "inv-email": v => !v ? "Enter the address we should send their sign-in link to."
+      : /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v) ? ""
+      : "That does not look like an email address. Check for a missing @ or a typo in the domain."
+  };
+
+  function checkInviteField(input, show) {
+    const msg = INVITE_RULES[input.id](input.value.trim());
+    const err = document.getElementById(input.id + "-err");
+    if (msg && show) {
+      const slot = err.querySelector("[data-inv-email-msg]") || err.querySelector("span");
+      if (slot) slot.textContent = msg;
+      err.classList.add("is-shown");
+      input.setAttribute("aria-invalid", "true");
+    } else if (!msg) {
+      err.classList.remove("is-shown");
+      input.removeAttribute("aria-invalid");
+    }
+    return !msg;
+  }
+
+  function wireInviteFields() {
+    sheetContent.querySelectorAll("[data-inv-field]").forEach(input => {
+      input.addEventListener("blur", () => checkInviteField(input, true));
+      input.addEventListener("input", () => {
+        if (input.getAttribute("aria-invalid")) checkInviteField(input, true);
+      });
+    });
+  }
+
+  function confirmInvite(btn) {
+    const fields = [...sheetContent.querySelectorAll("[data-inv-field]")];
+    const ok = fields.map(f => checkInviteField(f, true)).every(Boolean);
+    if (!ok) { fields.find(f => f.getAttribute("aria-invalid"))?.focus(); return; }
+
+    const biz = fields[0].value.trim();
+    const owner = fields[1].value.trim();
+    const mail = fields[2].value.trim();
+
+    busy(btn, true);
+    setTimeout(() => {
+      CLIENTS.push({
+        id: "c" + (CLIENTS.length + 1),
+        biz, owner, email: mail,
+        greeting: "Good morning, " + owner.split(" ")[0] + ".",
+        site: { state: "none", word: "Not live yet", addr: null, checked: null, key: "Not built yet" },
+        proj: { stage: 1, title: "Getting started",
+                meta: "Invited " + INVITE_DATE + " · first call to book",
+                note: "Nothing built yet. We start with a call about what you need." },
+        ask: false, invoices: []
+      });
+      closeSheet();
+      if (filterInput) filterInput.value = "";
+      renderClients();
+      showToast(biz + " invited. We emailed " + mail + " a sign-in link.");
+    }, 900);
+  }
+  const INVITE_DATE = "29 September";
 
   /* ── A real file, written from the same data the screen shows ──────────── */
   function downloadInvoice(id) {
-    const inv = INVOICES.find(i => i.id === id);
+    const inv = activeInvoices.find(i => i.id === id);
     if (!inv) return;
     const paid = inv.status === "paid";
     const body = [
@@ -1182,7 +1499,7 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
       (paid ? "RECEIPT " : "INVOICE ") + inv.id,
       inv.title,
       "",
-      "Bill to   Maple & Rye Bakery, dana@mapleandrye.ca",
+      "Bill to   " + activeClient.biz + ", " + activeClient.email,
       "Sent      " + inv.issued,
       (paid ? "Paid      " + inv.paid : "Due       " + inv.due),
       "",
@@ -1205,6 +1522,78 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
     showToast((paid ? "Receipt " : "Invoice ") + inv.id + " saved to your downloads.");
   }
 
+  /* ── One record drives every client screen ─────────────────────────────── */
+  const SITE_STATE = {
+    live:     { cls: "ok",    word: "Live" },
+    building: { cls: "warn",  word: "Building" },
+    down:     { cls: "down",  word: "Down" },
+    none:     { cls: "quiet", word: "Not live yet" }
+  };
+  const set = (sel, text) => { const el = document.querySelector(sel); if (el) el.textContent = text; };
+  const setBadge = (sel, cls, word) => {
+    const el = document.querySelector(sel);
+    if (!el) return;
+    el.className = "badge " + cls + (el.classList.contains("od-fixed") ? " od-fixed" : "");
+    el.textContent = word;
+  };
+
+  function setActiveClient(c, asAdmin) {
+    activeClient = c;
+    activeInvoices = invoicesFor(c);
+
+    const site = SITE_STATE[c.site.state];
+    const stageWord = STAGES[c.proj.stage - 1];
+
+    // Chrome
+    set("[data-who-biz]", c.biz);
+    set("[data-who-email]", c.email);
+    set("[data-who-sub]", c.biz);
+
+    set("[data-notice]", "");
+    const notice = document.querySelector("[data-notice]");
+    if (notice) {
+      notice.innerHTML = asAdmin
+        ? "<strong>You are looking at " + esc(c.biz) + ".</strong> This is the same portal " +
+          esc(c.owner.split(" ")[0]) + " sees when they sign in — the same screens, the same wording, " +
+          "the same buttons. The businesses and figures in this prototype are examples."
+        : "<strong>This is an example account.</strong> Everything below is sample content for " +
+          esc(c.biz) + ", so you can see how the portal reads. Your own project, website and " +
+          "invoices appear here once you are set up.";
+    }
+
+    // Overview
+    set("[data-ov-title]", c.greeting);
+    set("[data-ov-lede]", c.proj.note);
+    setBadge("[data-ov-proj-badge]", c.proj.stage === 4 ? "ok" : "warn",
+             c.proj.stage === 4 ? "Looked after" : stageWord);
+    set("[data-ov-proj-key]", "Step " + c.proj.stage + " of 4");
+    set("[data-ov-proj-note]", c.proj.note);
+    setBadge("[data-ov-site-badge]", site.cls, site.word);
+    set("[data-ov-site-key]", c.site.key);
+    set("[data-ov-site-note]", c.site.addr
+      ? c.site.addr + (c.site.checked ? " · " + c.site.checked.toLowerCase() + "." : ".")
+      : "Nothing to show yet — your site has not been built.");
+
+    // The one open question belongs to Maple & Rye's example, so it only shows there.
+    const ask = document.querySelector("[data-ask-section]");
+    if (ask) ask.hidden = !c.ask;
+
+    // Project
+    set("[data-proj-title]", c.proj.title);
+    setBadge("[data-proj-badge]", c.proj.stage === 4 ? "ok" : "warn",
+             c.proj.stage === 4 ? "Looked after" : stageWord);
+    set("[data-proj-meta]", c.proj.meta);
+
+    // Website
+    set("[data-site-title]", c.site.addr || "Not live yet");
+    setBadge("[data-site-badge]", site.cls, site.word);
+    set("[data-site-checked]", c.site.checked || "Nothing to check yet");
+
+    renderInvoiceList();
+  }
+
+  const esc = t => String(t).replace(/[&<>]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[ch]));
+
   /* ── Clicks that are not links ─────────────────────────────────────────── */
   document.addEventListener("click", e => {
     const pay = e.target.closest("[data-pay]");
@@ -1226,6 +1615,124 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
           .replaceChildren(document.getElementById("ask-empty").content.cloneNode(true));
         showToast("Pickup times approved. Jager has it.");
       }, 800);
+    }
+  });
+
+  /* ── The clients list ──────────────────────────────────────────────────── */
+  const clientsList = document.querySelector("[data-clients-list]");
+  const clientsEmpty = document.querySelector("[data-clients-empty]");
+  const clientsSummary = document.querySelector("[data-clients-summary]");
+  const filterInput = document.getElementById("client-filter");
+
+  /* What the admin needs at a glance: is it up, where is it, is it paid. */
+  function invoiceChip(c) {
+    const invs = invoicesFor(c);
+    const outstanding = invs.filter(i => i.status === "due" || i.status === "overdue");
+    const overdue = outstanding.filter(i => i.status === "overdue");
+    if (outstanding.length) {
+      const owed = outstanding.reduce((sum, i) => sum + i.total, 0);
+      return { cls: overdue.length ? "down" : "warn",
+               word: (overdue.length ? "Overdue " : "Due ") + money(owed) };
+    }
+    if (invs.some(i => i.status === "draft")) return { cls: "quiet", word: "Draft" };
+    if (invs.length) return { cls: "ok", word: "Paid" };
+    return { cls: "quiet", word: "No invoices" };
+  }
+
+  function clientRow(c) {
+    const site = SITE_STATE[c.site.state];
+    const inv = invoiceChip(c);
+    return `<li><button class="row clientrow" type="button" data-open-client="${c.id}">
+        <span class="cr-main">
+          <span class="cr-name od-truncate">${esc(c.biz)}</span>
+          <span class="cr-meta">
+            <span class="badge ${site.cls}">${site.word}</span>
+            <span class="badge quiet">${STAGES[c.proj.stage - 1]} · step ${c.proj.stage} of 4</span>
+            <span class="badge ${inv.cls}">${inv.word}</span>
+          </span>
+        </span>
+        <svg class="row-chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 5l5 5-5 5"/></svg>
+      </button></li>`;
+  }
+
+  function renderClients() {
+    if (!clientsList) return;
+    const typed = (filterInput?.value || "").trim();
+    const q = typed.toLowerCase();
+    const shown = q
+      ? CLIENTS.filter(c => c.biz.toLowerCase().includes(q) || c.owner.toLowerCase().includes(q))
+      : CLIENTS;
+
+    clientsList.innerHTML = shown.map(clientRow).join("");
+    clientsList.hidden = shown.length === 0;
+    clientsEmpty.hidden = shown.length !== 0;
+
+    if (shown.length === 0) {
+      clientsEmpty.innerHTML = `<div class="empty">
+          <p><strong>No client matches “${esc(typed)}”</strong></p>
+          <p class="sm muted">Check the spelling, or clear the filter to see all ${CLIENTS.length} clients again.</p>
+          <button class="btn btn-quiet btn-sm" type="button" data-clear-filter>Clear the filter</button>
+        </div>`;
+    }
+
+    const down = CLIENTS.filter(c => c.site.state === "down").length;
+    const waiting = CLIENTS.filter(c =>
+      invoicesFor(c).some(i => i.status === "due" || i.status === "overdue")).length;
+    clientsSummary.textContent = CLIENTS.length + " businesses. "
+      + (down ? (down === 1 ? "One site is down" : down + " sites are down") : "Every site is working")
+      + (waiting
+          ? " and " + (waiting === 1 ? "one invoice is waiting" : waiting + " invoices are waiting") + "."
+          : ".");
+  }
+
+  if (filterInput) filterInput.addEventListener("input", renderClients);
+
+  /* ── Viewing a client as the client sees it ─────────────────────────────── */
+  function renderAsBar() {
+    const slot = document.getElementById("asbar-slot");
+    if (!slot) return;
+    if (!viewing) { slot.innerHTML = ""; return; }
+    slot.innerHTML = `<div class="asbar">
+        <span class="asbar-text od-stat" style="--od-gap: 2px">
+          <span class="asbar-eyebrow">Viewing as client</span>
+          <span style="font-weight:var(--fw-semibold)">${esc(viewing.biz)} · ${esc(viewing.owner)}</span>
+        </span>
+        <button class="btn btn-ghost btn-sm od-fixed" type="button" data-leave-client>
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5l-5 5 5 5"/></svg>
+          Back to clients
+        </button>
+      </div>`;
+  }
+
+  function openClient(id) {
+    if (role !== "admin") return;
+    const c = CLIENTS.find(x => x.id === id);
+    if (!c) return;
+    viewing = c;
+    setActiveClient(c, true);
+    renderNav();
+    renderAsBar();
+    if (location.hash === "#/overview") route(); else location.hash = "#/overview";
+    say("Viewing " + c.biz + " as they see it.");
+  }
+
+  function leaveClient() {
+    viewing = null;
+    renderNav();
+    renderAsBar();
+    if (location.hash === "#/clients") route(); else location.hash = "#/clients";
+    say("Back to your clients.");
+  }
+
+  document.addEventListener("click", e => {
+    const open = e.target.closest("[data-open-client]");
+    if (open) { openClient(open.dataset.openClient); return; }
+    if (e.target.closest("[data-leave-client]")) { leaveClient(); return; }
+    if (e.target.closest("[data-invite]")) { openSheet("invite"); return; }
+    if (e.target.closest("[data-clear-filter]")) {
+      filterInput.value = "";
+      renderClients();
+      filterInput.focus();
     }
   });
 
@@ -1265,11 +1772,34 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
   });
 
   function signIn() {
+    const typed = (email.value || "").trim().toLowerCase();
+    role = typed === ADMIN_EMAIL ? "admin" : "client";
+    viewing = null;
+
+    if (role === "admin") {
+      set("[data-who-biz]", "Solenix");
+      set("[data-who-email]", ADMIN_EMAIL);
+      set("[data-who-sub]", "Admin");
+      const notice = document.querySelector("[data-notice]");
+      if (notice) notice.innerHTML = "<strong>This is an example admin account.</strong> " +
+        "The businesses below are sample clients, so you can see how the list reads. " +
+        "Opening one shows you exactly what that client sees.";
+      renderClients();
+    } else {
+      // Any address signs in as a client; a known one signs in as themselves.
+      setActiveClient(CLIENTS.find(c => c.email === typed) || CLIENTS[0], false);
+    }
+
+    renderNav();
+    renderAsBar();
+
     signedout.hidden = true;
     signedin.hidden = false;
-    if (!location.hash.startsWith("#/")) location.hash = "#/overview";
-    else route();
-    say("Signed in to your Solenix portal.");
+
+    const home = role === "admin" ? "#/clients" : "#/overview";
+    if (location.hash === home) route(); else location.hash = home;
+
+    say(role === "admin" ? "Signed in as Solenix admin." : "Signed in to your Solenix portal.");
     const main = document.getElementById("main");
     main.setAttribute("tabindex", "-1");
     main.focus({ preventScroll: true });
@@ -1278,6 +1808,10 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
   document.querySelectorAll("[data-signout]").forEach(b => b.addEventListener("click", () => {
     signedin.hidden = true;
     signedout.hidden = false;
+    role = "client";
+    viewing = null;
+    renderAsBar();
+    if (!scrim.hidden) closeSheet();
     document.body.style.overflow = "";
     email.value = "";
     emailErr.classList.remove("is-shown");
@@ -1288,6 +1822,7 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
 
   /* ── Router ────────────────────────────────────────────────────────────── */
   const screens = {
+    clients: document.getElementById("screen-clients"),
     overview: document.getElementById("screen-overview"),
     project: document.getElementById("screen-project"),
     website: document.getElementById("screen-website"),
@@ -1299,21 +1834,23 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
 
   function route() {
     if (signedin.hidden) return;
+    const home = role === "admin" ? "clients" : "overview";
     const parts = location.hash.replace(/^#\/?/, "").split("/").filter(Boolean);
-    let name = parts[0] || "overview";
+    let name = parts[0] || home;
     let detail = parts[1] || null;
-    if (!NAV.some(n => n.id === name)) { name = "overview"; detail = null; }
+
+    // A screen you cannot be on sends you to the one you can.
+    if (!navItems().some(item => item.id === name)) { name = home; detail = null; }
+    if (role !== "admin" && name === "clients") { name = "overview"; detail = null; }
+    if (role === "admin" && !viewing && name !== "clients") { name = "clients"; detail = null; }
 
     let key = name;
     if (name === "invoices" && detail && renderInvoice(detail)) key = "invoice";
 
     scrollMemory[lastRoute] = window.scrollY;
 
-    Object.entries(screens).forEach(([k, el]) => { el.hidden = k !== key; });
-    document.querySelectorAll(".navlink").forEach(a => {
-      if (a.dataset.navid === name) a.setAttribute("aria-current", "page");
-      else a.removeAttribute("aria-current");
-    });
+    Object.entries(screens).forEach(([k, el]) => { if (el) el.hidden = k !== key; });
+    markCurrentNav(name);
 
     if (!scrim.hidden) closeSheet();
 
@@ -1325,6 +1862,7 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
   document.querySelector("[data-back]").addEventListener("click", () => { location.hash = "#/invoices"; });
   window.addEventListener("hashchange", route);
 
+  renderNav();
   renderInvoiceList();
   if (location.hash.startsWith("#/")) signIn(); else email.focus();
 })();
