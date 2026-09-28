@@ -544,6 +544,14 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
 .item-name { font-weight: var(--fw-semibold); overflow-wrap: anywhere; }
 .item-kind { font: var(--fs-2xs)/1.3 var(--font-mono); color: var(--muted);
   letter-spacing: var(--track-label); text-transform: uppercase; }
+/* The audit line. Low-contrast furniture around normal-weight text: an
+   opportunity should read as calm information, never as an alert. */
+.ailine { display: grid; grid-template-columns: 8px minmax(0, 1fr); gap: var(--space-3);
+  align-items: start; font-size: var(--fs-sm); color: var(--muted); }
+.ailine .aidot { width: 8px; height: 8px; margin-top: .45em; border-radius: 50%;
+  background: var(--ok); }
+.ailine[data-ai="can"] .aidot { background: none; box-shadow: inset 0 0 0 1.5px var(--accent); }
+.ailine strong { color: var(--text); font-weight: var(--fw-semibold); }
 .item-grid { display: grid; gap: var(--space-4); }
 @media (min-width: 720px) { .item-grid { grid-template-columns: minmax(0, 1fr) 13rem; align-items: end; } }
 .deploy { display: grid; gap: var(--space-2); padding: var(--space-4);
@@ -811,7 +819,7 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
         <div class="page-head">
           <p class="eyebrow">Your tech</p>
           <h1 id="h-software">Every account and service we run for you</h1>
-          <p class="muted">One list instead of a dozen logins: your AI workspace, email, domain, website, store and local listing. What each one costs, when it renews, and who on your team can get in. The real controls stay in each vendor's own admin — we just make them findable.</p>
+          <p class="muted">One list instead of a dozen logins: your AI workspace, email, domain, website, store and local listing. What each one costs, when it renews, who on your team can get in — and which of them your AI is connected to. Where a line says <em>can connect</em>, that is something we have spotted and not done yet. The real controls stay in each vendor's own admin; we just make them findable.</p>
           <div class="od-cluster" style="--od-gap: var(--space-2)">
             <span class="vendor"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 3l7.5 13H2.5z"/></svg>Hosted on Vercel</span>
             <span class="vendor"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M3 16V9M8.3 16V4M13.6 16v-5M19 16v-9"/></svg>Analytics by PostHog</span>
@@ -1164,34 +1172,41 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
       { name: "Claude Team workspace", kind: "AI workspace", vendor: "Anthropic", state: "live",
         cost: 150, renews: "Renews 14 Oct", seats: ["Anna", "Dev", "Kitchen iPad"],
         note: "Connected to the order inbox and the supplier price list",
+        ai: "hub", aiNote: "the workspace your other accounts connect to",
         when: "Checked 4 minutes ago", visits: null },
       { name: "Google Workspace · 4 mailboxes", kind: "Email and files", vendor: "Google", state: "live",
         cost: 96, renews: "Renews 1 Nov", seats: ["Anna", "Dev", "Orders", "Accounts"],
         note: "Email on mapleandrye.ca, shared drive, calendars",
+        ai: "connected", aiNote: "it reads the order inbox and drafts in your shared drive",
         when: "Checked 4 minutes ago", visits: null },
       { name: "mapleandrye.ca", kind: "Website and domain", vendor: "Vercel", state: "live",
         cost: 24, renews: "Domain renews 3 Mar", seats: ["Anna"],
         note: "Last change: pickup slots hold for 20 minutes",
+        ai: null, aiNote: null,
         when: "Deployed 26 Sep, 4:12pm",
         visits: { series: [31,36,33,41,38,47,44,52,49,58,55,64,61,69,74], total: 1248, delta: 12 } },
       { name: "Google Business Profile", kind: "Local listing", vendor: "Google", state: "live",
         cost: 0, renews: "No charge", seats: ["Anna"],
         note: "Hours, photos and replies to reviews kept current",
+        ai: "can", aiNote: "it could draft replies to new reviews for you to approve",
         when: "Updated 22 Sep", visits: null },
       { name: "Pickup order form", kind: "Built for you", vendor: "Vercel", state: "building",
         cost: 0, renews: "In the project price", seats: ["Anna", "Orders"],
         note: "Nothing off the shelf handled 20-minute pickup holds",
+        ai: "connected", aiNote: "it reads the pickup book when answering questions",
         when: "Deployed 26 Sep, 4:12pm", visits: null }
     ],
     cedar: [
       { name: "cedaryoga.ca", kind: "Website and domain", vendor: "Vercel", state: "down",
         cost: 24, renews: "Domain renews 18 Jun", seats: ["Marta"],
         note: "Timetable page stopped responding at 8:10 this morning",
+        ai: null, aiNote: null,
         when: "Deploying a fix now",
         visits: { series: [44,41,47,45,50,48,52,49,54,51,47,38,22,9,2], total: 862, delta: -34 } },
       { name: "Google Workspace · 2 mailboxes", kind: "Email and files", vendor: "Google", state: "live",
         cost: 48, renews: "Renews 4 Dec", seats: ["Marta", "Studio"],
         note: "Email on cedaryoga.ca and the shared class calendar",
+        ai: "can", aiNote: "it could answer timetable questions from the class calendar",
         when: "Checked 2 minutes ago", visits: null }
     ],
     harbourview: [],
@@ -1199,33 +1214,51 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
       { name: "ChatGPT Team workspace", kind: "AI workspace", vendor: "OpenAI", state: "live",
         cost: 180, renews: "Renews 9 Oct", seats: ["Sam", "Front desk", "Workshop"],
         note: "Drafts service quotes from the workshop notes",
+        ai: "hub", aiNote: "the workspace your other accounts connect to",
         when: "Checked 6 minutes ago", visits: null },
       { name: "Quidi Vidi Cycles · Shopify", kind: "Online store", vendor: "Shopify", state: "live",
         cost: 105, renews: "Renews 21 Oct", seats: ["Sam", "Front desk"],
         note: "Products, prices and shipping rules kept current",
+        ai: "connected", aiNote: "it reads your orders and stock levels",
         when: "Updated 24 Sep", visits: null },
       { name: "quidividicycles.ca", kind: "Website and domain", vendor: "Vercel", state: "live",
         cost: 24, renews: "Domain renews 11 Mar", seats: ["Sam"],
         note: "Last change: new opening hours on every page",
+        ai: null, aiNote: null,
         when: "Deployed 12 Aug, 10:40am",
         visits: { series: [58,61,59,64,62,66,63,68,65,70,67,72,69,73,71], total: 2104, delta: 4 } },
       { name: "Google Business Profile", kind: "Local listing", vendor: "Google", state: "live",
         cost: 0, renews: "No charge", seats: ["Sam"],
         note: "Hours, photos and replies to reviews kept current",
+        ai: "can", aiNote: "it could draft replies to new reviews for you to approve",
         when: "Updated 19 Sep", visits: null }
     ],
     salt: [
       { name: "Google Workspace · 3 mailboxes", kind: "Email and files", vendor: "Google", state: "live",
         cost: 72, renews: "Renews 12 Jan", seats: ["Aisha", "Reception", "Accounts"],
         note: "Email on saltandsage.ca and the shared booking calendar",
+        ai: "can", aiNote: "you have no AI workspace yet, and this is where it would start",
         when: "Checked 9 minutes ago", visits: null },
       { name: "saltandsage.ca", kind: "Website and domain", vendor: "Vercel", state: "building",
         cost: 24, renews: "Domain renews 2 Feb", seats: ["Aisha"],
         note: "First pass of the booking flow, ready to look at",
+        ai: null, aiNote: null,
         when: "Deployed 24 Sep, 11:18am",
         visits: { series: [12,14,11,16,13,18,15,19,17,21,19,24,22,26,24], total: 271, delta: 9 } }
     ]
   };
+
+  /* The audit made visible: where each account stands with the client's AI.
+     "can" is an opportunity we spotted, not a warning — it stays quiet. */
+  const AI_STATE = {
+    hub:       "This is your AI",
+    connected: "Connected to your AI",
+    can:       "Can connect to your AI"
+  };
+  const aiLine = it => it.ai && AI_STATE[it.ai]
+    ? `<p class="ailine" data-ai="${it.ai}"><span class="aidot" aria-hidden="true"></span><span><strong>${
+        AI_STATE[it.ai]}</strong>${it.aiNote ? " &mdash; " + esc(it.aiNote) : ""}</span></p>`
+    : "";
 
   /* Each vendor's own admin is where the real controls live. */
   const VENDOR_ADMIN = {
@@ -1367,10 +1400,11 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
         + (overdue.length ? " " + (overdue.length === 1 ? "One is" : overdue.length + " are") + " past the due date." : "");
     }
 
-    // The Overview's invoice summary is [data-ov-owe], filled by renderOverviewViz
-    // from this same list, so the two screens cannot disagree. It used to be a
-    // third summary card here whose elements the v2 hero replaced — the lookups
-    // outlived the markup and threw on every load.
+    // The Overview states the same figure on its Billing door, from this same
+    // list, so the two screens cannot disagree. There used to be a third summary
+    // card here whose elements the v2 hero replaced — the lookups outlived the
+    // markup and threw on every load, which is why nothing here reads back a
+    // hook it did not just write.
   }
 
   function renderInvoice(id) {
@@ -1827,9 +1861,11 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
     if (act) act.innerHTML = actions;
 
     const monthly = sw.reduce((t, i) => t + (i.cost || 0), 0);
+    const wiredSw = sw.filter(i => i.ai === "connected" || i.ai === "hub").length;
     setTxt("[data-ov-door-software]", sw.length
       ? sw.length + (sw.length === 1 ? " account" : " accounts")
         + (monthly > 0 ? " · " + money(monthly) + " a month" : "")
+        + (wiredSw ? " · " + wiredSw + " on your AI" : "")
       : "Nothing set up yet");
     setTxt("[data-ov-door-projects]", proj
       ? proj.title + " — " + STAGES[proj.stage - 1].toLowerCase() + " stage"
@@ -1872,7 +1908,7 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
       list.innerHTML = "";
       if (empty) empty.innerHTML = `<div class="empty">
           <h3>Nothing hosted yet</h3>
-          <p>As we set up each account — your AI workspace, email, domain, website, store or local listing — it appears here with what it costs, when it renews and who can get in.</p>
+          <p>As we set up each account — your AI workspace, email, domain, website, store or local listing — it appears here with what it costs, when it renews, who can get in, and whether your AI is connected to it.</p>
           <button class="btn btn-quiet btn-sm" type="button" data-goto="#/projects">See the project instead</button>
         </div>`;
       return;
@@ -1899,6 +1935,7 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
             </span>
             <span class="badge ${st.cls} od-fixed">${st.word}</span>
           </div>
+          ${aiLine(it)}
 
           <dl class="facts">
             <div><dt>Costs you</dt><dd class="mono od-nowrap">${esc(money_)}${it.cost > 0 ? " <span class=\"per\">/mo</span>" : ""}</dd></div>
@@ -1918,13 +1955,21 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
         </article>`;
     }).join("");
 
-    /* What the whole stack costs, added from the same records the rows show. */
+    /* What the whole stack costs, and how much of it your AI can see — both
+       added up from the same records the rows above show. */
     const total = sw.reduce((t, i) => t + (i.cost || 0), 0);
+    const wired = sw.filter(i => i.ai === "connected").length;
+    const could = sw.filter(i => i.ai === "can").length;
+    const audit = wired && could
+      ? ` ${wired} ${wired === 1 ? "is" : "are"} connected to your AI, and ${could} more could be — marked above.`
+      : wired ? ` ${wired} ${wired === 1 ? "is" : "are"} connected to your AI.`
+      : could ? ` None of them are connected to your AI yet. ${could} ${could === 1 ? "could be" : "could be"} — marked above.`
+      : "";
     const foot = document.querySelector("[data-sw-total]");
     if (foot) foot.innerHTML = total > 0
       ? `<strong>${money(total)} a month</strong> across ${sw.length} ${sw.length === 1 ? "account" : "accounts"},
          billed by each vendor to you — not through us. Our care plan is separate and on
-         <button class="linkish" type="button" data-goto="#/billing">Billing</button>.`
+         <button class="linkish" type="button" data-goto="#/billing">Billing</button>.${audit}`
       : "";
   }
 
