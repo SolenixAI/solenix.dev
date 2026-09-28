@@ -386,9 +386,6 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
 }
 
 /* Contact card */
-.contact { display: grid; gap: var(--space-4); align-items: center; }
-@media (min-width: 560px) { .contact { grid-template-columns: 72px minmax(0, 1fr) auto; } }
-.contact img { border-radius: 50%; border: 1px solid var(--line); }
 
 /* ══ Admin ════════════════════════════════════════════════════════════════ */
 
@@ -521,6 +518,54 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
 @media (min-width: 640px) { .owe { grid-template-columns: minmax(0, 1fr) auto; align-items: center; } }
 .owe-amt { font: var(--fw-bold) clamp(1.5rem, 4vw, 2rem)/1.1 var(--font-display);
   letter-spacing: -0.02em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* ── Vendor surfaces ─────────────────────────────────────────────────────────
+   Solenix does not rebuild what Vercel, PostHog or Stripe already do well. The
+   portal is the calm surface over them, and every crossing is labelled so the
+   client is never surprised by where a click lands. */
+.vendor { display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px;
+  border-radius: var(--radius-pill); border: 1px solid var(--line);
+  background: var(--surface-sunken); color: var(--muted);
+  font: var(--fw-semibold) var(--fs-2xs)/1.2 var(--font-mono); letter-spacing: var(--track-label);
+  text-transform: uppercase; white-space: nowrap; }
+.vendor svg { width: 11px; height: 11px; flex: none; }
+.extlink { display: inline-flex; align-items: center; gap: 6px; color: var(--accent-text);
+  font-size: var(--fs-sm); font-weight: var(--fw-semibold); text-decoration: none; }
+.extlink svg { width: 13px; height: 13px; flex: none; }
+@media (hover: hover) { .extlink:hover { text-decoration: underline; text-underline-offset: 3px; } }
+
+/* A managed item: one thing Solenix hosts and runs */
+.item { display: grid; gap: var(--space-4); padding: var(--space-5);
+  border: 1px solid var(--line); border-radius: var(--radius-xl); background: var(--surface); }
+.item-top { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4);
+  align-items: flex-start; justify-content: space-between; }
+.item-name { font-weight: var(--fw-semibold); overflow-wrap: anywhere; }
+.item-kind { font: var(--fs-2xs)/1.3 var(--font-mono); color: var(--muted);
+  letter-spacing: var(--track-label); text-transform: uppercase; }
+.item-grid { display: grid; gap: var(--space-4); }
+@media (min-width: 720px) { .item-grid { grid-template-columns: minmax(0, 1fr) 13rem; align-items: end; } }
+.deploy { display: grid; gap: var(--space-2); padding: var(--space-4);
+  border-radius: var(--radius-lg); background: var(--surface-sunken); border: 1px solid var(--line); }
+.deploy-msg { font-size: var(--fs-sm); overflow-wrap: anywhere; }
+.deploy-when { font: var(--fs-2xs)/1.3 var(--font-mono); color: var(--muted); }
+.deploy-links { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); margin-top: var(--space-1); }
+
+/* Plan / subscription card */
+.plan { display: grid; gap: var(--space-4); }
+@media (min-width: 640px) { .plan { grid-template-columns: minmax(0, 1fr) auto; align-items: center; } }
+.plan-amt { font: var(--fw-bold) clamp(1.35rem, 3.4vw, 1.7rem)/1.1 var(--font-display);
+  letter-spacing: -0.02em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* Overview: one hero line, then three quiet doors */
+.doors { display: grid; gap: var(--space-3); margin-top: var(--space-5); }
+.door { display: flex; align-items: center; gap: var(--space-4); width: 100%; text-align: left;
+  padding: var(--space-4) var(--space-5); border: 1px solid var(--line); border-radius: var(--radius-xl);
+  background: var(--surface); text-decoration: none; color: inherit; cursor: pointer;
+  transition: border-color var(--dur-base) var(--ease-out), background var(--dur-fast) var(--ease-out); }
+@media (hover: hover) { .door:hover { border-color: var(--line-strong); background: var(--surface-sunken); } }
+.door .dtitle { font-weight: var(--fw-semibold); }
+.door .dsum { font-size: var(--fs-sm); color: var(--muted); }
+.door .chev { width: 18px; height: 18px; flex: none; color: var(--muted); }
 </style>
 </head>
 <body>
@@ -682,342 +727,123 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
       </section>
 
       <!-- ─────────────── OVERVIEW ─────────────── -->
+      <!-- ─────────────── OVERVIEW · a short landing over the three ─────────────── -->
       <section class="screen" id="screen-overview" aria-labelledby="h-overview">
         <div class="page-head">
-          <p class="eyebrow">Tuesday, 29 September</p>
-          <h1 id="h-overview" data-ov-title>Good morning, Dana.</h1>
-          <p class="muted" data-ov-lede>Your online ordering is in the build step. One thing is waiting on you.</p>
+          <p class="eyebrow" data-ov-date>Tuesday, 29 September</p>
+          <h1 id="h-overview" data-ov-title>Maple &amp; Rye</h1>
+          <p class="muted" data-ov-lede>Everything Solenix runs for you, in one place.</p>
         </div>
 
-        <!-- The dominant element: is my site working, and is anyone visiting. -->
+        <!-- The one thing that matters right now -->
         <div class="hero" data-ov-hero>
           <div class="hero-sky" aria-hidden="true"><div class="hero-light"></div></div>
           <div class="hero-grid" aria-hidden="true"></div>
-
           <div class="hero-top">
             <span class="od-stat" style="--od-gap: var(--space-2)">
-              <span class="eyebrow">Your website</span>
-              <span data-ov-site-addr style="font: var(--fw-bold) var(--fs-h2)/1.15 var(--font-display); letter-spacing: var(--track-heading)">mapleandrye.ca</span>
-              <span class="sm muted" data-ov-site-note>Checked 4 minutes ago.</span>
+              <span class="eyebrow" data-ov-hero-eyebrow>Status</span>
+              <span data-ov-hero-head style="font: var(--fw-bold) var(--fs-h2)/1.15 var(--font-display); letter-spacing: var(--track-heading)">Everything is running</span>
+              <span class="sm muted" data-ov-hero-note>All three sites and automations responded on the last check.</span>
             </span>
             <span class="od-cluster od-fixed" style="--od-gap: var(--space-2)">
-              <span class="badge ok" data-ov-site-badge>Live</span>
+              <span class="badge ok" data-ov-hero-badge>Live</span>
               <span class="chip-example">Example</span>
             </span>
           </div>
-
-          <div class="hero-split" data-ov-visits-block>
-            <span class="od-stat" style="--od-gap: var(--space-2)">
-              <span class="eyebrow">Visitors · 30 days</span>
-              <span class="stat-v" data-ov-visits>0<span class="unit">visits</span></span>
-              <span data-ov-trend></span>
-            </span>
-            <div>
-              <svg class="spark" viewBox="0 0 300 52" preserveAspectRatio="none" role="img" data-ov-spark aria-label="">
-                <path class="area" d=""/>
-                <path class="line" d=""/>
-                <path class="last" d=""/>
-              </svg>
-              <p class="sparkaxis"><span>30 days ago</span><span>Today</span></p>
-            </div>
-          </div>
-
-          <p class="sm muted" data-ov-hero-note style="margin-top: var(--space-5)"></p>
+          <div class="od-cluster" style="--od-gap: var(--space-3); margin-top: var(--space-5)" data-ov-hero-actions></div>
         </div>
 
-        <!-- Where the work is up to, and what happens next -->
-        <div class="section">
-          <div class="section-head">
-            <h2>Your project</h2>
-            <a class="sm" href="#/project" style="color:var(--accent-text);text-decoration:none;font-weight:var(--fw-semibold)">See the plan</a>
-          </div>
-          <div class="card card-lg">
-            <div class="od-row" style="--od-gap: var(--space-3); flex-wrap: wrap; margin-bottom: var(--space-5)">
-              <span class="od-fill" style="font-weight:var(--fw-semibold)" data-ov-proj-title>Online ordering for pickup</span>
-              <span class="badge warn od-fixed" data-ov-proj-badge>Building</span>
-            </div>
-            <ol class="tl" data-ov-tl></ol>
-            <p class="sm muted" data-ov-next style="margin-top: var(--space-5)"></p>
-          </div>
+        <!-- Three doors, in the order a client cares about them -->
+        <div class="doors">
+          <button class="door" type="button" data-goto="#/software">
+            <span class="od-fill od-stat" style="--od-gap: 2px">
+              <span class="dtitle">Managed software</span>
+              <span class="dsum" data-ov-door-software>Websites, apps and automations we host and run.</span>
+            </span>
+            <svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 5l5 5-5 5"/></svg>
+          </button>
+          <button class="door" type="button" data-goto="#/projects">
+            <span class="od-fill od-stat" style="--od-gap: 2px">
+              <span class="dtitle">Projects</span>
+              <span class="dsum" data-ov-door-projects>Work in progress, and what happens next.</span>
+            </span>
+            <svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 5l5 5-5 5"/></svg>
+          </button>
+          <button class="door" type="button" data-goto="#/billing">
+            <span class="od-fill od-stat" style="--od-gap: 2px">
+              <span class="dtitle">Billing</span>
+              <span class="dsum" data-ov-door-billing>Invoices and your hosting plan.</span>
+            </span>
+            <svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 5l5 5-5 5"/></svg>
+          </button>
         </div>
 
         <div class="section" data-ask-section>
           <div class="section-head"><h2>Waiting on you</h2></div>
-          <div id="ask-wrap">
-            <div class="ask">
-              <div>
-                <h3>Approve the pickup times</h3>
-                <p>We have written the pickup window as “Ready in 30 minutes, Tuesday to Saturday, 8am–4pm.” Say yes and we build it in, or tell us the wording you want.</p>
-              </div>
-              <div class="od-cluster" style="--od-gap: var(--space-3)">
-                <button class="btn btn-ghost btn-sm" type="button" data-approve>
-                  <span class="spin" aria-hidden="true"></span>
-                  <span class="label-idle">Looks right</span>
-                  <span class="label-busy">Sending…</span>
-                </button>
-                <a class="btn btn-ghost btn-sm" href="mailto:jager@solenix.dev?subject=Pickup%20times%20wording">Change it</a>
-              </div>
-            </div>
-          </div>
-          <template id="ask-empty">
-            <div class="empty">
-              <h3>Nothing waiting on you</h3>
-              <p>When we need a decision or a photo from you, it appears here and we email you about it. Until then, we are building.</p>
-              <a class="btn btn-ghost btn-sm" href="#/project">See what we are building</a>
-            </div>
-          </template>
-        </div>
-
-        <!-- What you owe, with the Pay action — the one solid button on this screen -->
-        <div class="section" data-ov-owe-section>
-          <div class="section-head">
-            <h2>Your invoices</h2>
-            <a class="sm" href="#/invoices" style="color:var(--accent-text);text-decoration:none;font-weight:var(--fw-semibold)">All invoices</a>
-          </div>
-          <div class="card card-lg owe" data-ov-owe></div>
-        </div>
-
-        <div class="section">
-          <div class="section-head"><h2>What we're working on</h2><span class="chip-example">Example</span></div>
-          <div class="card card-lg">
-            <ul class="feed" data-ov-feed></ul>
-          </div>
-        </div>
-
-        <div class="section">
-          <div class="card card-lg contact">
-            <img src="assets/brand/avatar.png" alt="Jager Cooper" width="512" height="512" class="od-media" style="--od-ratio: 1 / 1; width: 64px">
-            <div class="od-stat" style="--od-gap: var(--space-1)">
-              <span style="font-weight:var(--fw-semibold)">Jager is building this himself</span>
-              <span class="sm muted">Questions, changes, or something not working? Email him directly — no ticket queue.</span>
-            </div>
-            <a class="btn btn-ghost btn-sm od-fixed" href="mailto:jager@solenix.dev">Email Jager</a>
-          </div>
+          <div id="ask-wrap"></div>
         </div>
       </section>
 
-      <!-- ─────────────── PROJECT ─────────────── -->
-      <section class="screen" id="screen-project" aria-labelledby="h-project" hidden>
+      <!-- ─────────────── MANAGED SOFTWARE ─────────────── -->
+      <section class="screen" id="screen-software" aria-labelledby="h-software" hidden>
         <div class="page-head">
-          <p class="eyebrow">Your project</p>
-          <h1 id="h-project" data-proj-title>Online ordering for pickup</h1>
-          <div class="od-cluster" style="--od-gap: var(--space-3)">
-            <span class="badge warn" data-proj-badge>Building</span>
-            <span class="sm muted" data-proj-meta>Started 15 September · on track for 17 October</span>
-          </div>
-        </div>
-
-        <div class="card card-lg">
-          <h2 class="visually-hidden">The four steps</h2>
-          <div class="steps">
-            <div class="stepitem done">
-              <span class="stepdot" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 10.5l3 3 7-7"/></svg></span>
-              <div>
-                <h3>Call <span class="visually-hidden">— done</span></h3>
-                <p class="when">Done · 8 September</p>
-                <p>Thirty minutes on your Saturday queue and the phone orders you were writing on paper.</p>
-              </div>
-            </div>
-            <div class="stepitem done">
-              <span class="stepdot" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 10.5l3 3 7-7"/></svg></span>
-              <div>
-                <h3>Plan <span class="visually-hidden">— done</span></h3>
-                <p class="when">Done · 15 September</p>
-                <p>You approved the written plan: online ordering for pickup, a fixed build price, and a monthly price to look after it.</p>
-              </div>
-            </div>
-            <div class="stepitem now">
-              <span class="stepdot" aria-hidden="true">03</span>
-              <div>
-                <h3>Build <span class="visually-hidden">— happening now</span></h3>
-                <p class="when">Now · since 16 September</p>
-                <p>Six of eight pieces are finished. What is left is card payments and the printed slip for your kitchen.</p>
-              </div>
-            </div>
-            <div class="stepitem">
-              <span class="stepdot" aria-hidden="true">04</span>
-              <div>
-                <h3>Care <span class="visually-hidden">— not started</span></h3>
-                <p class="when">Starts 17 October</p>
-                <p>Once it is live we watch it, fix what breaks, and change it as your menu changes.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="section">
-          <div class="section-head"><h2>Working on now</h2></div>
-          <ul class="tasks">
-            <li class="task">
-              <svg class="dash" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="7.5" stroke-dasharray="3 3"/></svg>
-              <span class="od-fill od-stat" style="--od-gap: var(--space-1)">
-                <span class="t">Card payments</span>
-                <span class="d">Waiting on Stripe to finish checking your business. Nothing for you to do — they email you if they need a document.</span>
-              </span>
-              <span class="badge quiet od-fixed">Waiting</span>
-            </li>
-            <li class="task">
-              <svg class="dash" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="7.5" stroke-dasharray="3 3"/></svg>
-              <span class="od-fill od-stat" style="--od-gap: var(--space-1)">
-                <span class="t">Kitchen order slip</span>
-                <span class="d">A printed slip with the items, the name and the pickup time, so the counter does not need to read a screen.</span>
-              </span>
-              <span class="badge warn od-fixed">Building</span>
-            </li>
-          </ul>
-        </div>
-
-        <div class="section">
-          <div class="section-head"><h2>Next up</h2></div>
-          <ul class="tasks">
-            <li class="task">
-              <svg class="dash" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M10 4.5v11M4.5 10h11"/></svg>
-              <span class="od-fill od-stat" style="--od-gap: var(--space-1)">
-                <span class="t">A day of real orders with you</span>
-                <span class="d">We sit with you through one morning of real orders and fix anything awkward on the spot.</span>
-              </span>
-              <span class="mono xs faint od-fixed od-nowrap">10 Oct</span>
-            </li>
-            <li class="task">
-              <svg class="dash" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M10 4.5v11M4.5 10h11"/></svg>
-              <span class="od-fill od-stat" style="--od-gap: var(--space-1)">
-                <span class="t">Go live</span>
-                <span class="d">Ordering turns on for customers, and we watch it closely for the first two weeks.</span>
-              </span>
-              <span class="mono xs faint od-fixed od-nowrap">17 Oct</span>
-            </li>
-          </ul>
-        </div>
-
-        <div class="section">
-          <details class="card card-lg" style="padding-block: var(--space-4)">
-            <summary style="list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);min-height:var(--tap-min);font-weight:var(--fw-semibold)">
-              Finished — 6 pieces
-              <span class="mark" aria-hidden="true">+</span>
-            </summary>
-            <ul class="rows" style="margin-top:var(--space-4)">
-              <li class="row"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;flex:none;color:var(--ok)" aria-hidden="true"><path d="M5 10.5l3 3 7-7"/></svg><span class="od-fill">Menu and prices, matching your printed board</span><span class="mono xs faint od-nowrap">19 Sep</span></li>
-              <li class="row"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;flex:none;color:var(--ok)" aria-hidden="true"><path d="M5 10.5l3 3 7-7"/></svg><span class="od-fill">Photos cropped and sized for phones</span><span class="mono xs faint od-nowrap">23 Sep</span></li>
-              <li class="row"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;flex:none;color:var(--ok)" aria-hidden="true"><path d="M5 10.5l3 3 7-7"/></svg><span class="od-fill">Basket and pickup-time picker</span><span class="mono xs faint od-nowrap">24 Sep</span></li>
-              <li class="row"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;flex:none;color:var(--ok)" aria-hidden="true"><path d="M5 10.5l3 3 7-7"/></svg><span class="od-fill">Order confirmation email to the customer</span><span class="mono xs faint od-nowrap">25 Sep</span></li>
-              <li class="row"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;flex:none;color:var(--ok)" aria-hidden="true"><path d="M5 10.5l3 3 7-7"/></svg><span class="od-fill">Daily order list you can read on your phone</span><span class="mono xs faint od-nowrap">26 Sep</span></li>
-              <li class="row"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;flex:none;color:var(--ok)" aria-hidden="true"><path d="M5 10.5l3 3 7-7"/></svg><span class="od-fill">Sold-out switch for each item</span><span class="mono xs faint od-nowrap">26 Sep</span></li>
-            </ul>
-          </details>
-        </div>
-      </section>
-
-      <!-- ─────────────── WEBSITE ─────────────── -->
-      <section class="screen" id="screen-website" aria-labelledby="h-website" hidden>
-        <div class="page-head">
-          <p class="eyebrow">Your website</p>
-          <h1 id="h-website" data-site-title>mapleandrye.ca</h1>
-        </div>
-
-        <div class="card card-lg">
-          <div class="card-top">
-            <span class="od-row" style="--od-gap: var(--space-3)">
-              <span class="badge ok" data-site-badge>Live</span>
-              <span class="sm muted" data-site-checked>Checked 4 minutes ago</span>
-            </span>
-            <button class="btn btn-ghost btn-sm" type="button" data-visit>Visit site
-              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 4.5H15v7.5M15 4.5 6 13.5"/></svg>
-            </button>
-          </div>
-          <p class="muted">Your site is loading normally and your contact form is reaching your inbox. We check every five minutes. If it stops working we usually know before you do, and we email you.</p>
-        </div>
-
-        <div class="section">
-          <div class="section-head"><h2>The details</h2></div>
-          <ul class="rows">
-            <li class="row">
-              <span class="od-fill k">Last change</span>
-              <span class="od-fixed od-stat" style="--od-gap:0;text-align:right">
-                <span class="v od-nowrap">Menu photos</span>
-                <span class="xs faint mono od-nowrap">23 Sep 2026</span>
-              </span>
-            </li>
-            <li class="row">
-              <span class="od-fill k">Loads in</span>
-              <span class="od-fixed od-row" style="--od-gap: var(--space-3)">
-                <span class="chip-example">Example</span>
-                <span class="v mono od-nowrap">1.2 s</span>
-              </span>
-            </li>
-            <li class="row">
-              <span class="od-fill k">Contact form</span>
-              <span class="badge ok od-fixed">Working</span>
-            </li>
-            <li class="row">
-              <span class="od-fill k">Security certificate</span>
-              <span class="od-fixed od-stat" style="--od-gap:0;text-align:right">
-                <span class="v od-nowrap">Valid</span>
-                <span class="xs faint mono od-nowrap">Renews 4 Dec</span>
-              </span>
-            </li>
-            <li class="row">
-              <span class="od-fill k">Backups</span>
-              <span class="od-fixed od-stat" style="--od-gap:0;text-align:right">
-                <span class="v od-nowrap">Daily</span>
-                <span class="xs faint mono od-nowrap">Last 4:12 am</span>
-              </span>
-            </li>
-          </ul>
-        </div>
-
-        <div class="section">
-          <div class="section-head">
-            <h2>Visitors</h2>
+          <p class="eyebrow">Managed software</p>
+          <h1 id="h-software">What we host and run for you</h1>
+          <p class="muted">Every site, app and automation Solenix looks after. Deploys, uptime and traffic come straight from the services that do the work.</p>
+          <div class="od-cluster" style="--od-gap: var(--space-2)">
+            <span class="vendor"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 3l7.5 13H2.5z"/></svg>Hosted on Vercel</span>
+            <span class="vendor"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M3 16V9M8.3 16V4M13.6 16v-5M19 16v-9"/></svg>Analytics by PostHog</span>
             <span class="chip-example">Example</span>
           </div>
-          <div class="card card-lg">
-            <div class="od-cluster" style="--od-gap: var(--space-4); justify-content: space-between">
-              <span class="od-stat" style="--od-gap: var(--space-1)">
-                <span class="card-key mono od-nowrap">1,284</span>
-                <span class="sm muted">people in the last 30 days</span>
-              </span>
-              <span class="od-stat" style="--od-gap: var(--space-1); text-align: right">
-                <span class="v mono od-nowrap">62%</span>
-                <span class="sm muted">came on a phone</span>
-              </span>
-            </div>
-            <div class="bars" role="img" aria-label="Example daily visitors over the last 30 days, ranging from about 20 to about 70 people a day, highest on Saturdays.">
-              <span style="height:34%"></span><span style="height:41%"></span><span style="height:38%"></span><span style="height:52%"></span><span style="height:47%"></span><span style="height:88%"></span><span style="height:61%"></span>
-              <span style="height:36%"></span><span style="height:44%"></span><span style="height:40%"></span><span style="height:49%"></span><span style="height:55%"></span><span style="height:92%"></span><span style="height:64%"></span>
-              <span style="height:39%"></span><span style="height:43%"></span><span style="height:46%"></span><span style="height:51%"></span><span style="height:58%"></span><span style="height:96%"></span><span style="height:67%"></span>
-              <span style="height:42%"></span><span style="height:48%"></span><span style="height:45%"></span><span style="height:57%"></span><span style="height:62%"></span><span style="height:100%"></span><span style="height:71%"></span>
-              <span style="height:44%"></span><span style="height:53%"></span>
-            </div>
-            <p class="barlabels"><span>30 days ago</span><span>Today</span></p>
-            <p class="sm muted" style="margin-top:var(--space-4)">Saturdays are your busiest day online, which matches your counter. These are example numbers — your real ones appear here once your site is connected.</p>
+        </div>
+        <div class="od-stack" style="--od-gap: var(--space-4)" data-sw-list></div>
+        <div id="sw-empty" hidden></div>
+      </section>
+
+      <!-- ─────────────── PROJECTS ─────────────── -->
+      <section class="screen" id="screen-projects" aria-labelledby="h-projects" hidden>
+        <div class="page-head">
+          <p class="eyebrow">Projects</p>
+          <h1 id="h-projects">Work in progress</h1>
+          <p class="muted">Where each build is up to, what happens next, and anything waiting on you.</p>
+          <div class="od-cluster" style="--od-gap: var(--space-2)">
+            <span class="chip-example">Example</span>
           </div>
+        </div>
+        <div class="od-stack" style="--od-gap: var(--space-6)" data-pj-list></div>
+        <div id="pj-empty" hidden></div>
+      </section>
+
+      <!-- ─────────────── BILLING ─────────────── -->
+      <section class="screen" id="screen-billing" aria-labelledby="h-billing" hidden>
+        <div class="page-head">
+          <p class="eyebrow">Billing</p>
+          <h1 id="h-billing">Invoices and your plan</h1>
+          <p class="muted">Payments, receipts and card details are handled by Stripe. We never store your card, and we never rebuild a receipt Stripe already sends you.</p>
+          <div class="od-cluster" style="--od-gap: var(--space-2)">
+            <span class="vendor"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="2.5" y="5" width="15" height="10" rx="2"/><path d="M2.5 9h15"/></svg>Payments by Stripe</span>
+            <span class="chip-example">Example</span>
+          </div>
+        </div>
+
+        <div class="hero" data-bill-hero>
+          <div class="hero-sky" aria-hidden="true"><div class="hero-light"></div></div>
+          <div class="hero-grid" aria-hidden="true"></div>
+          <div data-bill-open></div>
         </div>
 
         <div class="section">
-          <div class="section-head"><h2>Google listing</h2></div>
-          <div class="empty">
-            <span class="icon-chip" aria-hidden="true">
-              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="5.5"/><path d="M13 13l4 4"/></svg>
-            </span>
-            <h3>Not connected yet</h3>
-            <p>Connect your Google Business profile and this shows how many people found you through search, plus your opening hours as Google has them.</p>
-            <a class="btn btn-ghost btn-sm" href="mailto:jager@solenix.dev?subject=Connect%20our%20Google%20listing">Ask us to connect it</a>
-          </div>
+          <div class="section-head"><h2>Hosting and care</h2></div>
+          <div class="card card-lg plan" data-bill-plan></div>
+        </div>
+
+        <div class="section">
+          <div class="section-head"><h2>All invoices</h2></div>
+          <ul class="rows" data-inv-list></ul>
+          <p class="sm muted" style="margin-top: var(--space-3)" data-inv-summary></p>
         </div>
       </section>
 
-      <!-- ─────────────── INVOICES ─────────────── -->
-      <section class="screen" id="screen-invoices" aria-labelledby="h-invoices" hidden>
-        <div class="page-head">
-          <p class="eyebrow">Your invoices</p>
-          <h1 id="h-invoices">Invoices</h1>
-          <p class="muted" data-inv-summary>One invoice is due. Everything else is paid.</p>
-        </div>
-        <ul class="rows" data-inv-list></ul>
-        <p class="sm faint" style="margin-top:var(--space-5)">Invoices are in Canadian dollars and include GST. Paying by e-transfer instead? Send it to <a href="mailto:hello@solenix.dev" style="color:var(--accent-text)">hello@solenix.dev</a> and we will mark it paid.</p>
-      </section>
-
-      <!-- ─────────────── INVOICE DETAIL ─────────────── -->
       <section class="screen" id="screen-invoice" aria-labelledby="h-invoice" hidden>
         <button class="backlink" type="button" data-back>
           <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 10H5m0 0 4-4m-4 4 4 4"/></svg>
@@ -1191,10 +1017,10 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
      The admin gets one extra item. The four client items are always present —
      disabled until a client is open — so nothing ever moves position. */
   const CLIENT_NAV = [
-    { id: "overview", label: "Overview", icon: '<path d="M3.5 8.5 10 3l6.5 5.5V16a1 1 0 0 1-1 1H12v-5H8v5H4.5a1 1 0 0 1-1-1z"/>' },
-    { id: "project",  label: "Project",  icon: '<path d="M4 4.5h12M4 10h12M4 15.5h7"/>' },
-    { id: "website",  label: "Website",  icon: '<circle cx="10" cy="10" r="7"/><path d="M3 10h14M10 3c2 2.2 2 11.8 0 14M10 3c-2 2.2-2 11.8 0 14"/>' },
-    { id: "invoices", label: "Invoices", icon: '<path d="M5 3h10v14l-2.5-1.6L10 17l-2.5-1.6L5 17z"/><path d="M8 7.5h4M8 11h4"/>' }
+    { id: "overview", label: "Overview", icon: '<path d="M3.5 10.5 10 4l6.5 6.5"/><path d="M5.5 9.5V16h9V9.5"/>' },
+    { id: "software", label: "Software", icon: '<rect x="2.5" y="4" width="15" height="10" rx="1.6"/><path d="M7 17h6"/>' },
+    { id: "projects", label: "Projects", icon: '<path d="M4 4.5h12M4 10h12M4 15.5h7"/>' },
+    { id: "billing",  label: "Billing",  icon: '<rect x="2.5" y="5" width="15" height="10" rx="2"/><path d="M2.5 9h15"/>' }
   ];
   const CLIENTS_NAV_ITEM = { id: "clients", label: "Clients",
     icon: '<circle cx="7.5" cy="7" r="2.8"/><path d="M2.5 16c0-2.6 2.2-4.2 5-4.2s5 1.6 5 4.2"/><path d="M13.5 5.4a2.6 2.6 0 0 1 0 5M15 15.6c0-1.8-.7-3-2-3.7"/>' };
@@ -1202,10 +1028,10 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
   const navItems = () => role === "admin" ? [CLIENTS_NAV_ITEM, ...CLIENT_NAV] : CLIENT_NAV;
   const navEnabled = id => role !== "admin" || id === "clients" || !!viewing;
 
-  function currentRouteName() {
-    const parts = location.hash.replace(/^#\/?/, "").split("/").filter(Boolean);
-    return parts[0] || (role === "admin" ? "clients" : "overview");
-  }
+  /* Tracked, not read back from location.hash: a sandboxed preview may refuse
+     the history write, and the nav must still highlight the right item. */
+  let currentName = "overview";
+  function currentRouteName() { return currentName; }
 
   function renderNav() {
     const items = navItems();
@@ -1243,14 +1069,7 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
               meta: "Started 15 September · on track for 17 October",
               note: "Online ordering for pickup. On track for 17 October." },
       ask: true, invoices: null,   // null = the detailed set below
-      visits: { series: [31,36,33,41,38,47,44,52,49,58,55,64,61,69,74], total: 1248, delta: 12 },
-      next: { label: "You see the order form working", when: "Thursday 2 October" },
-      feed: [
-        { s: "doing", t: "Wiring up card payments", n: "Stripe is checking your business. Once that clears, customers can pay on the site.", w: "Now" },
-        { s: "done", t: "Order form built and tested", n: "Pick items, choose a pickup time, done.", w: "26 Sep" },
-        { s: "done", t: "Menu photos swapped in", n: "All eleven, cropped so the page still loads fast on a phone.", w: "23 Sep" },
-        { s: "done", t: "Plan approved", n: "You approved the written plan and the fixed price.", w: "15 Sep" }
-      ] },
+      next: { label: "You see the order form working", when: "Thursday 2 October" } },
 
     { id: "cedar", biz: "Cedar Yoga", owner: "Marta Lund", email: "marta@cedaryoga.ca",
       greeting: "Good morning, Marta.",
@@ -1260,12 +1079,7 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
               meta: "Live since 4 June · we look after it from here",
               note: "Your timetable page stopped loading this morning. We are on it." },
       ask: false,
-      visits: { series: [44,41,47,45,50,48,52,49,54,51,47,38,22,9,2], total: 862, delta: -34 },
       next: { label: "We tell you the timetable page is back", when: "Today, as soon as it is fixed" },
-      feed: [
-        { s: "doing", t: "Fixing the timetable page", n: "It stopped loading at 8:10 this morning. We found the cause and are putting it back.", w: "Now" },
-        { s: "done", t: "September care done", n: "Updates, backups, and two wording changes you asked for.", w: "28 Sep" }
-      ],
       invoices: [
         { id: "0038", title: "Looking after your site — September", total: 180, status: "paid",
           issued: "1 Sep 2026", due: "15 Sep 2026", paid: "3 Sep 2026",
@@ -1281,11 +1095,7 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
               meta: "First call booked for 2 October",
               note: "Nothing built yet. We start with a call about what you need." },
       ask: false, invoices: [],
-      visits: null,
-      next: { label: "Our first call", when: "2 October, 10:00" },
-      feed: [
-        { s: "doing", t: "Getting ready for our call", n: "Have a think about what you want the site to do. No homework beyond that.", w: "Now" }
-      ] },
+      next: { label: "Our first call", when: "2 October, 10:00" } },
 
     { id: "quidi", biz: "Quidi Vidi Cycles", owner: "Sam Doyle", email: "sam@quidividicycles.ca",
       greeting: "Good morning, Sam.",
@@ -1295,12 +1105,7 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
               meta: "Live since 11 March · we look after it from here",
               note: "Nothing in flight. We are looking after the site." },
       ask: false,
-      visits: { series: [58,61,59,64,62,66,63,68,65,70,67,72,69,73,71], total: 2104, delta: 4 },
       next: { label: "October care", when: "1 October" },
-      feed: [
-        { s: "done", t: "New opening hours on every page", n: "You asked on 12 August; done the same day.", w: "12 Aug" },
-        { s: "done", t: "August care done", n: "Updates, backups, and a check that everything still loads fast.", w: "31 Aug" }
-      ],
       invoices: [
         { id: "0036", title: "Looking after your site — August", total: 420, status: "overdue",
           issued: "1 Aug 2026", due: "15 Aug 2026",
@@ -1317,12 +1122,7 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
               meta: "Plan agreed 22 September · build starts 6 October",
               note: "The booking flow is agreed. Build starts 6 October." },
       ask: false,
-      visits: { series: [12,14,11,16,13,18,15,19,17,21,19,24,22,26,24], total: 271, delta: 9 },
       next: { label: "Build starts", when: "6 October" },
-      feed: [
-        { s: "doing", t: "Getting the build ready", n: "Your booking flow is agreed and written down. Nothing for you to do until 6 October.", w: "Now" },
-        { s: "done", t: "Plan agreed", n: "Fixed price and dates, in writing.", w: "22 Sep" }
-      ],
       invoices: [
         { id: "0044", title: "Online booking — deposit", total: 2400, status: "draft",
           issued: "Not sent yet", due: "Not sent yet",
@@ -1330,6 +1130,81 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
                   ["GST", "5% on the above.", 114]] }
       ] }
   ];
+
+
+  /* ── What Solenix hosts and runs, per client ────────────────────────────────
+     Example fixtures. Deploys, uptime and traffic would come from Vercel and
+     PostHog; the plan and invoices from Stripe. Nothing here is a measurement,
+     and every screen that shows it carries an Example chip. */
+  const MANAGED = {
+    maple: [
+      { name: "mapleandrye.ca", kind: "Website", state: "live",
+        prod: "https://mapleandrye.ca", preview: "https://maple-and-rye-git-order-form.vercel.app",
+        deploy: "Order form: hold pickup slots for 20 minutes", when: "Deployed 26 Sep, 4:12pm",
+        visits: { series: [31,36,33,41,38,47,44,52,49,58,55,64,61,69,74], total: 1248, delta: 12 } },
+      { name: "Pickup order form", kind: "App", state: "building",
+        prod: null, preview: "https://maple-and-rye-git-order-form.vercel.app",
+        deploy: "Card payments behind a flag until Stripe finishes checks", when: "Deployed 26 Sep, 4:12pm",
+        visits: null },
+      { name: "Nightly order digest", kind: "Automation", state: "live",
+        prod: null, preview: null,
+        deploy: "Emails Anna the next day's pickups at 9pm", when: "Ran 28 Sep, 9:00pm",
+        visits: null }
+    ],
+    cedar: [
+      { name: "cedaryoga.ca", kind: "Website", state: "down",
+        prod: "https://cedaryoga.ca", preview: "https://cedar-yoga-git-timetable-fix.vercel.app",
+        deploy: "Timetable page: fix the class feed that stopped responding", when: "Deploying now",
+        visits: { series: [44,41,47,45,50,48,52,49,54,51,47,38,22,9,2], total: 862, delta: -34 } }
+    ],
+    harbourview: [],
+    quidi: [
+      { name: "quidividicycles.ca", kind: "Website", state: "live",
+        prod: "https://quidividicycles.ca", preview: null,
+        deploy: "New opening hours on every page", when: "Deployed 12 Aug, 10:40am",
+        visits: { series: [58,61,59,64,62,66,63,68,65,70,67,72,69,73,71], total: 2104, delta: 4 } },
+      { name: "Service booking form", kind: "App", state: "live",
+        prod: "https://quidividicycles.ca/service", preview: null,
+        deploy: "Blocks double-booking the same mechanic slot", when: "Deployed 3 Jul, 2:05pm",
+        visits: null }
+    ],
+    salt: [
+      { name: "saltandsage.ca", kind: "Website", state: "building",
+        prod: null, preview: "https://salt-and-sage-git-main.vercel.app",
+        deploy: "First pass of the booking flow, ready to look at", when: "Deployed 24 Sep, 11:18am",
+        visits: { series: [12,14,11,16,13,18,15,19,17,21,19,24,22,26,24], total: 271, delta: 9 } }
+    ]
+  };
+
+  /* Hosting-and-care plans, as Stripe subscriptions would report them. */
+  const PLANS = {
+    maple: { name: "Hosting and care · monthly", amount: 180, since: "Since 4 June 2026" },
+    cedar: { name: "Hosting and care · monthly", amount: 180, since: "Since 4 June 2026" },
+    harbourview: null,
+    quidi: { name: "Hosting and care · monthly", amount: 260, since: "Since 11 March 2026" },
+    salt: null
+  };
+
+  /* Approvals waiting on the client, per project. */
+  const WAITING = {
+    maple: [{ title: "Approve the pickup wording",
+              note: "We have written the pickup window as “Ready in 30 minutes, Tuesday to Saturday, 8am–4pm.” Say yes and it goes in, or tell us the wording you want." }],
+    salt: [{ title: "Check the booking questions",
+             note: "The booking form asks for name, phone, and which treatment. Tell us if you need anything else before we build it." }]
+  };
+
+  const softwareFor = c => MANAGED[c.id] || [];
+  const projectsFor = c => c.proj
+    ? [{ title: c.proj.title, stage: c.proj.stage, next: c.next,
+         waiting: WAITING[c.id] || [],
+         preview: (MANAGED[c.id] || []).some(i => i.preview) }]
+    : [];
+  const planFor = c => PLANS[c.id] || null;
+
+  /* Every crossing to a vendor is labelled and inert in the prototype. */
+  const STRIPE_INVOICE = "the Stripe invoice page";
+  const STRIPE_PORTAL = "the Stripe billing portal";
+  const POSTHOG_DASH = "your PostHog dashboard";
 
   /* ── Invoices ──────────────────────────────────────────────────────────── */
   const money = n => "$" + n.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -1396,7 +1271,7 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
 
   function renderInvoiceList() {
     invList.innerHTML = activeInvoices.map(inv => `
-      <li><a class="row" href="#/invoices/${inv.id}">
+      <li><a class="row" href="#/billing/${inv.id}">
         <span class="od-fill od-stat" style="--od-gap: var(--space-1)">
           <span class="v od-truncate">Invoice ${inv.id}</span>
           <span class="k od-truncate">${inv.title}</span>
@@ -1679,39 +1554,15 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
           esc(c.owner.split(" ")[0]) + " sees when they sign in — the same screens, the same wording, " +
           "the same buttons. The businesses and figures in this prototype are examples."
         : "<strong>This is an example account.</strong> Everything below is sample content for " +
-          esc(c.biz) + ", so you can see how the portal reads. Your own project, website and " +
-          "invoices appear here once you are set up.";
+          esc(c.biz) + ", so you can see how the portal reads. Your own software, projects " +
+          "and billing appear here once you are set up.";
     }
 
-    // Overview
-    set("[data-ov-title]", c.greeting);
-    set("[data-ov-lede]", c.proj.note);
-    set("[data-ov-proj-title]", c.proj.title);
-    setBadge("[data-ov-proj-badge]", c.proj.stage === 4 ? "ok" : "warn",
-             c.proj.stage === 4 ? "Looked after" : stageWord);
-    setBadge("[data-ov-site-badge]", site.cls, site.word);
-    set("[data-ov-site-addr]", c.site.addr || "Not live yet");
-    set("[data-ov-site-note]", c.site.checked
-      ? c.site.checked + "."
-      : (c.site.addr ? "Being built — not serving visitors yet." : "Nothing to check yet."));
-    renderOverviewViz(c);
-
-    // The one open question belongs to Maple & Rye's example, so it only shows there.
-    const ask = document.querySelector("[data-ask-section]");
-    if (ask) ask.hidden = !c.ask;
-
-    // Project
-    set("[data-proj-title]", c.proj.title);
-    setBadge("[data-proj-badge]", c.proj.stage === 4 ? "ok" : "warn",
-             c.proj.stage === 4 ? "Looked after" : stageWord);
-    set("[data-proj-meta]", c.proj.meta);
-
-    // Website
-    set("[data-site-title]", c.site.addr || "Not live yet");
-    setBadge("[data-site-badge]", site.cls, site.word);
-    set("[data-site-checked]", c.site.checked || "Nothing to check yet");
-
-    renderInvoiceList();
+    // The three sections
+    renderOverview(c);
+    renderSoftware(c);
+    renderProjects(c);
+    renderBilling(c);
   }
 
   const esc = t => String(t).replace(/[&<>]/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[ch]));
@@ -1724,8 +1575,23 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
     const dl = e.target.closest("[data-download]");
     if (dl) { e.preventDefault(); downloadInvoice(dl.dataset.download); return; }
 
-    if (e.target.closest("[data-visit]")) {
-      showToast("This is an example account, so mapleandrye.ca is not a real site to open.");
+    /* In-portal navigation never relies on hashchange: a sandboxed preview can
+       refuse the history write, so every internal jump calls go() directly. */
+    const goto = e.target.closest("[data-goto]");
+    if (goto) { e.preventDefault(); go(goto.dataset.goto); return; }
+
+    const nav = e.target.closest(".navlink[href^='#/']");
+    if (nav) { e.preventDefault(); go(nav.getAttribute("href")); return; }
+
+    const row = e.target.closest("a.row[href^='#/']");
+    if (row) { e.preventDefault(); go(row.getAttribute("href")); return; }
+
+    /* A crossing to a vendor. In the prototype it names the destination rather
+       than opening an account that is not yours. */
+    const x = e.target.closest("[data-ext]");
+    if (x) {
+      e.preventDefault();
+      showToast("This is an example account, so " + x.dataset.ext + " does not open here.");
       return;
     }
 
@@ -1733,9 +1599,17 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
     if (approve) {
       busy(approve, true);
       setTimeout(() => {
-        document.getElementById("ask-wrap")
-          .replaceChildren(document.getElementById("ask-empty").content.cloneNode(true));
-        showToast("Pickup times approved. Jager has it.");
+        const card = approve.closest(".ask");
+        if (card) card.remove();
+        const wrap = document.getElementById("ask-wrap");
+        if (wrap && !wrap.querySelector(".ask")) {
+          wrap.innerHTML = `<div class="empty">
+              <h3>Nothing waiting on you</h3>
+              <p>When we need a decision or a file from you, it appears here and we email you about it. Until then we are building.</p>
+              <button class="btn btn-quiet btn-sm" type="button" data-goto="#/projects">See what we are building</button>
+            </div>`;
+        }
+        showToast("Approved. It goes into the next deploy.");
       }, 800);
     }
   });
@@ -1763,9 +1637,12 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
 
   /* A 30-day visitors shape per row, so the list reads at a glance. */
   function rowSpark(c) {
-    if (!c.visits) return `<span class="rowspark-none od-fixed">not live</span>`;
-    const g = sparkGeom(c.visits.series, 76, 26, 3);
-    const dir = c.visits.delta > 0 ? "rising" : c.visits.delta < 0 ? "falling" : "steady";
+    /* Reads the managed item, not a second copy on the client record: the admin
+       list and Managed software must never disagree about the same number. */
+    const v = softwareFor(c).map(i => i.visits).find(Boolean);
+    if (!v) return `<span class="rowspark-none od-fixed">not live</span>`;
+    const g = sparkGeom(v.series, 76, 26, 3);
+    const dir = v.delta > 0 ? "rising" : v.delta < 0 ? "falling" : "steady";
     return `<svg class="rowspark" viewBox="0 0 76 26" preserveAspectRatio="none" role="img"
         aria-label="Visitors over 30 days, example data: ${dir}.">
         <path class="line" d="${g.line}"/><path class="last" d="${g.last}"/>
@@ -1830,95 +1707,265 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
     ];
   };
 
-  function renderOverviewViz(c) {
-    /* the visitors hero */
-    const block = document.querySelector("[data-ov-visits-block]");
-    const svg = document.querySelector("[data-ov-spark]");
-    const note = document.querySelector("[data-ov-hero-note]");
-    if (c.visits) {
-      if (block) block.hidden = false;
-      const g = sparkGeom(c.visits.series, 300, 52, 5);
-      svg.querySelector(".line").setAttribute("d", g.line);
-      svg.querySelector(".area").setAttribute("d", g.area);
-      svg.querySelector(".last").setAttribute("d", g.last);
-      const dir = c.visits.delta > 0 ? "rising" : c.visits.delta < 0 ? "falling" : "steady";
-      svg.setAttribute("aria-label",
-        `Visitors over the last 30 days, example data: ${dir}, ending around ${c.visits.series[c.visits.series.length - 1]} a day.`);
-      const v = document.querySelector("[data-ov-visits]");
-      if (v) v.innerHTML = c.visits.total.toLocaleString("en-CA") + '<span class="unit">visits</span>';
-      const t = document.querySelector("[data-ov-trend]");
-      if (t) t.innerHTML = trendChip(c.visits.delta);
-      if (note) note.textContent = c.site.state === "down"
-        ? "Visits drop while the site is down. That is the gap you can see on the right."
-        : "Counted once per person per day, not per page. No tracking of individuals.";
-    } else {
-      if (block) block.hidden = true;
-      if (note) note.textContent = "Once your site is live, your visitor numbers appear here.";
-    }
+  /* An external crossing: looks like a link, says where it goes, and in this
+     prototype explains itself instead of opening a page that is not yours. */
+  function ext(label, dest, icon) {
+    return `<button class="extlink" type="button" data-ext="${esc(dest)}">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icon}</svg>
+        ${esc(label)}</button>`;
+  }
+  const ICON_OUT = '<path d="M11 4h5v5M16 4l-7 7M9 4H4v12h12v-5"/>';
+  const ICON_CHART = '<path d="M3 16V9M8.3 16V4M13.6 16v-5M19 16v-9"/>';
 
-    /* the project timeline */
-    const tl = document.querySelector("[data-ov-tl]");
-    if (tl) {
-      tl.innerHTML = STAGE_WHENS(c).map((st, idx) => {
+  function sparkSvg(v, w, h, label) {
+    const g = sparkGeom(v.series, w, h, 5);
+    return `<svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="${esc(label)}">
+        <path class="area" d="${g.area}"/><path class="line" d="${g.line}"/><path class="last" d="${g.last}"/>
+      </svg>`;
+  }
+
+  /* ── Overview: one hero, three doors ─────────────────────────────────────── */
+  function renderOverview(c) {
+    const sw = softwareFor(c);
+    const down = sw.filter(i => i.state === "down");
+    const building = sw.filter(i => i.state === "building");
+    const open_ = invoicesFor(c).filter(i => i.status === "due" || i.status === "overdue");
+    const proj = projectsFor(c).find(p => p.stage < 4);
+
+    const setTxt = (sel, v) => { const el = document.querySelector(sel); if (el) el.textContent = v; };
+    setTxt("[data-ov-title]", c.biz);
+    setTxt("[data-ov-lede]", "Everything Solenix builds, hosts and runs for you, in one place.");
+
+    /* The hero states the single most important fact, worst news first. */
+    let eyebrow = "Status", head, note, badge = ["ok", "Live"], actions = "";
+    if (down.length) {
+      eyebrow = "Needs attention";
+      head = down[0].name + " is down";
+      note = "We found it and we are on it. You will get an email the moment it is back.";
+      badge = ["down", "Down"];
+      actions = ext("See what we are doing", "the deploy log on Vercel", ICON_OUT);
+    } else if (!sw.length) {
+      eyebrow = "Not live yet";
+      head = "Nothing hosted yet";
+      note = "Once we build and deploy your first site, it appears here with its status and traffic.";
+      badge = ["quiet", "Not live yet"];
+    } else if (building.length) {
+      eyebrow = "Status";
+      head = "Everything is running";
+      note = building.length + (building.length === 1 ? " item is" : " items are")
+        + " still being built. The rest responded on the last check.";
+      badge = ["warn", "Building"];
+    } else {
+      head = "Everything is running";
+      note = sw.length + (sw.length === 1 ? " item" : " items") + " responded on the last check.";
+    }
+    setTxt("[data-ov-hero-eyebrow]", eyebrow);
+    setTxt("[data-ov-hero-head]", head);
+    setTxt("[data-ov-hero-note]", note);
+    setBadge("[data-ov-hero-badge]", badge[0], badge[1]);
+    const act = document.querySelector("[data-ov-hero-actions]");
+    if (act) act.innerHTML = actions;
+
+    setTxt("[data-ov-door-software]", sw.length
+      ? sw.length + (sw.length === 1 ? " thing" : " things") + " we host and run"
+      : "Nothing hosted yet");
+    setTxt("[data-ov-door-projects]", proj
+      ? proj.title + " — " + STAGES[proj.stage - 1].toLowerCase() + " stage"
+      : "No work in progress");
+    setTxt("[data-ov-door-billing]", open_.length
+      ? money(open_.reduce((t, i) => t + i.total, 0)) + " open"
+      : (planFor(c) ? "Nothing to pay · plan active" : "Nothing to pay"));
+
+    /* Waiting on you */
+    const askSection = document.querySelector("[data-ask-section]");
+    const askWrap = document.getElementById("ask-wrap");
+    const waiting = projectsFor(c).flatMap(p => (p.waiting || []).map(w => ({ ...w, project: p.title })));
+    if (askSection) askSection.hidden = waiting.length === 0;
+    if (askWrap) {
+      askWrap.innerHTML = waiting.map((w, idx) => `<div class="ask">
+          <div>
+            <h3>${esc(w.title)}</h3>
+            <p>${esc(w.note)}</p>
+          </div>
+          <div class="od-cluster" style="--od-gap: var(--space-3)">
+            <button class="btn btn-ghost btn-sm" type="button" data-approve="${idx}">
+              <span class="spin" aria-hidden="true"></span>
+              <span class="label-idle">Looks right</span>
+              <span class="label-busy">Sending…</span>
+            </button>
+            <button class="btn btn-quiet btn-sm" type="button" data-ext="an email to Solenix">Ask for a change</button>
+          </div>
+        </div>`).join("");
+    }
+  }
+
+  /* ── Managed software: the surface over Vercel and PostHog ───────────────── */
+  function renderSoftware(c) {
+    const list = document.querySelector("[data-sw-list]");
+    const empty = document.getElementById("sw-empty");
+    if (!list) return;
+    const sw = softwareFor(c);
+    if (empty) empty.hidden = sw.length > 0;
+    if (!sw.length) {
+      list.innerHTML = "";
+      if (empty) empty.innerHTML = `<div class="empty">
+          <h3>Nothing hosted yet</h3>
+          <p>When we deploy your first site or app, it appears here with its status, its last deploy and its traffic.</p>
+          <button class="btn btn-quiet btn-sm" type="button" data-goto="#/projects">See the project instead</button>
+        </div>`;
+      return;
+    }
+    list.innerHTML = sw.map(it => {
+      const st = SITE_STATE[it.state] || SITE_STATE.building;
+      const links = [
+        it.prod ? ext("Production", "the live site at " + it.prod, ICON_OUT) : "",
+        it.preview ? ext("Preview", "the preview deployment on Vercel", ICON_OUT) : ""
+      ].filter(Boolean).join("");
+      const traffic = it.visits
+        ? `<div class="od-stat" style="--od-gap: var(--space-2)">
+             <span class="eyebrow">Visitors · 30 days</span>
+             <span class="stat-v od-nowrap">${it.visits.total.toLocaleString("en-CA")}<span class="unit">visits</span></span>
+             <span>${trendChip(it.visits.delta)}</span>
+             ${sparkSvg(it.visits, 300, 46, "Visitors over 30 days, example data: " +
+                (it.visits.delta > 0 ? "rising" : it.visits.delta < 0 ? "falling" : "steady") + ".")}
+             <span>${ext("View full analytics", POSTHOG_DASH, ICON_CHART)}</span>
+           </div>`
+        : `<div class="od-stat" style="--od-gap: var(--space-2)">
+             <span class="eyebrow">Visitors</span>
+             <span class="sm muted">${it.kind === "Automation"
+                ? "Automations do not get visitors. This one reports each run instead."
+                : "No traffic yet — this is not serving visitors."}</span>
+           </div>`;
+      return `<article class="item">
+          <div class="item-top">
+            <span class="od-stat" style="--od-gap: 2px">
+              <span class="item-kind">${esc(it.kind)}</span>
+              <span class="item-name">${esc(it.name)}</span>
+            </span>
+            <span class="badge ${st.cls} od-fixed">${st.word}</span>
+          </div>
+          <div class="item-grid">
+            <div class="deploy">
+              <span class="eyebrow">Last deploy</span>
+              <span class="deploy-msg">${esc(it.deploy)}</span>
+              <span class="deploy-when">${esc(it.when)}</span>
+              ${links ? `<span class="deploy-links">${links}</span>` : ""}
+            </div>
+            ${traffic}
+          </div>
+        </article>`;
+    }).join("");
+  }
+
+  /* ── Projects: stage, what is next, what is waiting ──────────────────────── */
+  function renderProjects(c) {
+    const list = document.querySelector("[data-pj-list]");
+    const empty = document.getElementById("pj-empty");
+    if (!list) return;
+    const pjs = projectsFor(c);
+    if (empty) empty.hidden = pjs.length > 0;
+    if (!pjs.length) {
+      list.innerHTML = "";
+      if (empty) empty.innerHTML = `<div class="empty">
+          <h3>No work in progress</h3>
+          <p>Everything we have built for you is live and looked after. When a new build starts, its stages appear here.</p>
+          <button class="btn btn-quiet btn-sm" type="button" data-goto="#/software">See what we run</button>
+        </div>`;
+      return;
+    }
+    list.innerHTML = pjs.map(p => {
+      const tl = STAGES.map((name, idx) => {
         const n = idx + 1;
-        const state = n < c.proj.stage ? "done" : n === c.proj.stage ? "now" : "next";
+        const state = n < p.stage ? "done" : n === p.stage ? "now" : "next";
+        const when = n < p.stage ? "Done" : n === p.stage ? "" : "Not started";
         return `<li class="tl-i" data-s="${state}"${state === "now" ? ' aria-current="step"' : ""}>
             <span class="tl-dot" aria-hidden="true"></span>
             <span class="od-stat" style="--od-gap: 2px">
-              <span class="tl-name">${st.name}</span>
+              <span class="tl-name">${name}</span>
               ${state === "now" ? '<span class="tl-now">Now</span>' : ""}
-              <span class="tl-when">${esc(st.w)}</span>
+              ${when ? `<span class="tl-when">${when}</span>` : ""}
             </span>
           </li>`;
       }).join("");
-    }
-    const next = document.querySelector("[data-ov-next]");
-    if (next) next.innerHTML = c.next
-      ? `<strong>Next:</strong> ${esc(c.next.label)} — <span class="mono">${esc(c.next.when)}</span>`
-      : "";
+      const waiting = (p.waiting || []).map(w => `<div class="ask" style="margin-top: var(--space-4)">
+          <div><h3>${esc(w.title)}</h3><p>${esc(w.note)}</p></div>
+          <div class="od-cluster" style="--od-gap: var(--space-3)">
+            <button class="btn btn-ghost btn-sm" type="button" data-goto="#/overview">Approve on the Overview</button>
+          </div>
+        </div>`).join("");
+      return `<div class="card card-lg">
+          <div class="od-row" style="--od-gap: var(--space-3); flex-wrap: wrap; margin-bottom: var(--space-5)">
+            <span class="od-fill od-stat" style="--od-gap: 2px">
+              <span class="eyebrow">${p.stage === 4 ? "Looked after" : "In progress"}</span>
+              <span style="font-weight: var(--fw-semibold)">${esc(p.title)}</span>
+            </span>
+            <span class="badge ${p.stage === 4 ? "ok" : "warn"} od-fixed">${p.stage === 4 ? "Looked after" : STAGES[p.stage - 1]}</span>
+          </div>
+          <ol class="tl">${tl}</ol>
+          <p class="sm muted" style="margin-top: var(--space-5)">
+            <strong>Next:</strong> ${esc(p.next.label)} — <span class="mono">${esc(p.next.when)}</span>
+          </p>
+          ${p.preview ? `<p style="margin-top: var(--space-3)">${ext("Open the preview deployment", "the preview deployment on Vercel", ICON_OUT)}</p>` : ""}
+          ${waiting}
+        </div>`;
+    }).join("");
+  }
 
-    /* what you owe, with the Pay action */
-    const owe = document.querySelector("[data-ov-owe]");
-    if (owe) {
-      const list = invoicesFor(c);
-      const open_ = list.filter(i => i.status === "due" || i.status === "overdue")
-        .sort((a, b) => (a.status === "overdue" ? -1 : 1));
+  /* ── Billing: the surface over Stripe ────────────────────────────────────── */
+  function renderBilling(c) {
+    const openEl = document.querySelector("[data-bill-open]");
+    const planEl = document.querySelector("[data-bill-plan]");
+    const list = invoicesFor(c);
+    const open_ = list.filter(i => i.status === "due" || i.status === "overdue")
+      .sort((a, b) => (a.status === "overdue" ? -1 : 1));
+
+    if (openEl) {
       if (open_.length) {
         const inv = open_[0];
-        const total = open_.reduce((sum, i) => sum + i.total, 0);
-        owe.innerHTML = `<span class="od-stat" style="--od-gap: var(--space-2)">
-            <span class="eyebrow">${open_.length > 1 ? open_.length + " invoices open" : "One invoice open"}</span>
-            <span class="owe-amt">${money(total)}</span>
-            <span class="sm muted">Invoice ${esc(inv.id)} · ${esc(invWhen(inv).toLowerCase())}. ${esc(inv.title)}.</span>
-          </span>
-          <span class="od-cluster od-fixed" style="--od-gap: var(--space-3)">
-            <button class="btn btn-primary" type="button" data-pay="${esc(inv.id)}">Pay ${money(inv.total)}</button>
-            <a class="btn btn-ghost" href="#/invoices">See the detail</a>
-          </span>`;
+        const total = open_.reduce((t, i) => t + i.total, 0);
+        openEl.innerHTML = `<div class="od-row" style="--od-gap: var(--space-5); flex-wrap: wrap; align-items: flex-end">
+            <span class="od-fill od-stat" style="--od-gap: var(--space-2)">
+              <span class="eyebrow">${open_.length > 1 ? open_.length + " invoices open" : "One invoice open"}</span>
+              <span class="owe-amt">${money(total)}</span>
+              <span class="sm muted">Invoice ${esc(inv.id)} · ${esc(invWhen(inv).toLowerCase())}. ${esc(inv.title)}.</span>
+            </span>
+            <span class="od-cluster od-fixed" style="--od-gap: var(--space-3)">
+              <button class="btn btn-primary" type="button" data-ext="${esc(STRIPE_INVOICE)} for invoice ${esc(inv.id)}">Pay ${money(inv.total)}</button>
+              <button class="btn btn-ghost" type="button" data-goto="#/billing/${esc(inv.id)}">See the detail</button>
+            </span>
+          </div>
+          <p class="xs muted" style="margin-top: var(--space-4)">Pay opens Stripe's own invoice page. Solenix never sees or stores your card.</p>`;
       } else {
         const paid = list.filter(i => i.status === "paid").length;
-        owe.innerHTML = `<span class="od-stat" style="--od-gap: var(--space-2)">
+        openEl.innerHTML = `<div class="od-stat" style="--od-gap: var(--space-2)">
             <span class="eyebrow">Nothing to pay</span>
             <span class="owe-amt">${money(0)}</span>
-            <span class="sm muted">${paid ? "Every invoice is paid. The next one appears here when we send it."
-              : "No invoices yet. The first one comes with your plan, and never before."}</span>
-          </span>
-          <span class="od-fixed"><a class="btn btn-quiet" href="#/invoices">See invoices</a></span>`;
+            <span class="sm muted">${paid ? "Every invoice is paid. Stripe emails the receipt each time."
+              : "No invoices yet. The first one follows your written plan, never before it."}</span>
+          </div>`;
       }
     }
 
-    /* what we're working on */
-    const feed = document.querySelector("[data-ov-feed]");
-    if (feed) {
-      feed.innerHTML = (c.feed || []).map(f => `<li data-s="${f.s}">
-          <span class="fdot" aria-hidden="true"></span>
-          <span>
-            <span class="ftitle">${esc(f.t)}</span>
-            <span class="fnote">${esc(f.n)}</span>
-          </span>
-          <span class="${f.w === "Now" ? "fstate" : "fwhen"}">${esc(f.w)}</span>
-        </li>`).join("");
+    if (planEl) {
+      const p = planFor(c);
+      planEl.innerHTML = p
+        ? `<span class="od-stat" style="--od-gap: var(--space-2)">
+             <span class="eyebrow">Your plan</span>
+             <span style="font-weight: var(--fw-semibold)">${esc(p.name)}</span>
+             <span class="sm muted">${esc(p.since)} · cancel whenever you like, and you keep everything.</span>
+             <span>${ext("Manage payment method and billing details", STRIPE_PORTAL, ICON_OUT)}</span>
+           </span>
+           <span class="od-fixed od-stat" style="--od-gap: 2px; text-align: right">
+             <span class="plan-amt">${money(p.amount)}</span>
+             <span class="xs muted">per month</span>
+           </span>`
+        : `<span class="od-stat" style="--od-gap: var(--space-2)">
+             <span class="eyebrow">Your plan</span>
+             <span style="font-weight: var(--fw-semibold)">No hosting plan yet</span>
+             <span class="sm muted">A plan starts when your first site goes live, and covers hosting, updates, backups and small changes.</span>
+           </span>`;
     }
+    renderInvoiceList();
   }
 
   function renderClients() {
@@ -2093,9 +2140,9 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
   const screens = {
     clients: document.getElementById("screen-clients"),
     overview: document.getElementById("screen-overview"),
-    project: document.getElementById("screen-project"),
-    website: document.getElementById("screen-website"),
-    invoices: document.getElementById("screen-invoices"),
+    software: document.getElementById("screen-software"),
+    projects: document.getElementById("screen-projects"),
+    billing: document.getElementById("screen-billing"),
     invoice: document.getElementById("screen-invoice")
   };
   const scrollMemory = {};
@@ -2125,7 +2172,7 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
     if (role === "admin" && !viewing && name !== "clients") { name = "clients"; detail = null; }
 
     let key = name;
-    if (name === "invoices" && detail && renderInvoice(detail)) key = "invoice";
+    if (name === "billing" && detail && renderInvoice(detail)) key = "invoice";
 
     scrollMemory[lastRoute] = window.scrollY;
 
@@ -2140,6 +2187,7 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
       signedin.hidden = false;
     }
 
+    currentName = name;
     markCurrentNav(name);
 
     if (!scrim.hidden) closeSheet();
@@ -2150,7 +2198,7 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
   }
 
   document.querySelector("[data-back]")
-    ?.addEventListener("click", () => { go("#/invoices"); });
+    ?.addEventListener("click", () => { go("#/billing"); });
   window.addEventListener("hashchange", () => {
     if (!signedIn && location.hash.startsWith("#/")) { signIn(); return; }
     route();
@@ -2166,7 +2214,7 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
   }
 
   step("renderNav", renderNav);
-  step("renderInvoiceList", renderInvoiceList);
+
   step("start", () => {
     if (location.hash.startsWith("#/")) signIn(); else email.focus();
   });
