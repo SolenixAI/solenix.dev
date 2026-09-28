@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Solenix · your fractional software engineer</title>
-<meta name="description" content="Solenix builds, deploys, hosts and runs websites, apps and automations for small businesses — a fractional software engineer, at a fixed price agreed before work starts.">
+<title>Solenix · the tech person your business does not have</title>
+<meta name="description" content="Solenix sets up and runs the tech a small business already needs — AI workspace, email on your domain, website, store and local listing — and builds something new only when nothing existing fits.">
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="assets/brand/logo-dark.svg" type="image/svg+xml" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="assets/brand/logo-light.svg" type="image/svg+xml">
@@ -178,7 +178,9 @@ main { flex: 1; }
 .btn-ghost:hover { background: color-mix(in srgb, var(--text) 8%, transparent); color: var(--text); }
 .btn-quiet { background: var(--surface); border-color: var(--line); color: var(--text); }
 .btn-quiet:hover { background: color-mix(in srgb, var(--text) 8%, transparent); color: var(--text); }
-.btn-sm { min-height: 38px; padding: 0 var(--space-4); font-size: var(--fs-xs); }
+/* 44px floor: the review measured "Client sign in" and "Play it again" at 38px.
+   They stay visually small through padding and type size, not a small target. */
+.btn-sm { min-height: var(--tap-min); padding: 0 var(--space-4); font-size: var(--fs-xs); }
 
 /* ── glass, cards, badges ─────────────────────────────────────────────────── */
 .glass { background: var(--glass-bg); backdrop-filter: blur(var(--glass-blur));
@@ -329,6 +331,36 @@ main { flex: 1; }
 @media (min-width: 900px) { .split { grid-template-columns: 1fr 1fr; gap: var(--space-8); align-items: center; } }
 .split-prose { display: flex; flex-direction: column; gap: var(--space-4); max-width: var(--measure); }
 
+
+/* How pricing works. MSP research is consistent that owners distrust "as needed"
+   and want flat, itemised, written deliverables — so this is a table of what is
+   included, not a range. Figures stay blank until Jager sets them. */
+.pricecols { display: grid; gap: var(--space-5); }
+@media (min-width: 860px) { .pricecols { grid-template-columns: 1fr 1fr; gap: var(--space-6); } }
+.pricecard { display: flex; flex-direction: column; gap: var(--space-4); padding: var(--space-6);
+  border: 1px solid var(--line); border-radius: var(--radius-xl); background: var(--surface);
+  box-shadow: var(--shadow-md); }
+.priceamt { font-family: var(--font-display); font-size: var(--fs-stat); font-weight: var(--fw-bold);
+  line-height: 1.05; letter-spacing: var(--track-stat); }
+.priceamt .per { font-size: .4em; font-weight: var(--fw-semibold); color: var(--muted); white-space: nowrap; }
+.included { list-style: none; display: grid; gap: var(--space-3); margin-top: auto; }
+.included li { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: var(--space-3);
+  font-size: var(--fs-sm); align-items: start; }
+.included svg { width: 16px; height: 16px; margin-top: 3px; color: var(--accent-text); }
+.included .no svg { color: var(--muted); }
+.included .no { color: var(--muted); }
+
+/* Reviews slot. Built to hold real Google Business Profile reviews and to say
+   plainly that there are none yet — never a placeholder that looks like proof. */
+.reviewslot { display: grid; gap: var(--space-4); padding: var(--space-6);
+  border: 1px dashed var(--line-strong); border-radius: var(--radius-xl);
+  background: var(--surface-sunken); }
+/* --faint measures 4.44:1 on --surface-sunken in light theme, so metadata on the
+   sunken slot steps up one level. */
+.reviewslot .caption { color: var(--muted); }
+.reviewslot .stars { display: inline-flex; gap: 3px; color: var(--muted); }
+.reviewslot .stars svg { width: 15px; height: 15px; }
+
 /* ── archetype 4: big statement ───────────────────────────────────────────── */
 .statementblock { text-align: center; padding-block: var(--space-9); }
 .statementblock .statement { max-width: 26ch; margin-inline: auto; }
@@ -438,7 +470,14 @@ footer { border-top: 1px solid var(--line); margin-top: var(--space-section); pa
 footer .wrap { display: flex; flex-wrap: wrap; gap: var(--space-5); justify-content: space-between; align-items: flex-start; }
 footer a { text-decoration: none; color: var(--muted); }
 footer a:hover { color: var(--text); }
-.footlinks { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); font-size: var(--fs-sm); }
+/* Inline footer links take the 24px-plus-spacing route rather than becoming
+   44px blocks: each link is 24px tall with 24px of clear space around it. */
+.footlinks { display: flex; flex-wrap: wrap; gap: var(--space-3) var(--space-6); font-size: var(--fs-sm); }
+.footlinks a { display: inline-flex; align-items: center; min-height: 24px; }
+.footcontact { display: inline-flex; align-items: center; gap: var(--space-2);
+  min-height: var(--tap-min); font-weight: var(--fw-semibold); text-decoration: none; }
+.footcontact svg { width: 16px; height: 16px; flex: none; }
+@media (hover: hover) { .footcontact:hover { text-decoration: underline; text-underline-offset: 3px; } }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 </style>
 </head>
@@ -496,7 +535,7 @@ footer a:hover { color: var(--text); }
   <div class="texture" aria-hidden="true"></div>
 
   <div class="wrap wrap-wide">
-    <p class="eyebrow reveal" style="--i:0">Your fractional software engineer</p>
+    <p class="eyebrow reveal" style="--i:0">The tech person your business does not have</p>
     <h1 class="display reveal" style="--i:1">Too many tools. Too many logins. <em class="lit-text">Nobody who knows.</em></h1>
     <p class="lede reveal" style="--i:2">
       A website somewhere, a booking app, three spreadsheets, a pile of
@@ -505,9 +544,10 @@ footer a:hover { color: var(--text); }
       hiring an engineer to sort it out was never realistic.
     </p>
     <p class="lede reveal" style="--i:3; margin-top: var(--space-4)">
-      <strong>That is the job we take on.</strong> One engineer who works out what
-      to keep, cuts the rest, builds what is actually needed, runs it, and gives you
-      one place to see all of it.
+      <strong>That is the job we take on.</strong> One person who works out what to
+      keep, sets up the tools that already do the job properly, trains your team to
+      use them, and runs the whole lot from then on. More money in, less spent on
+      software, and hours back every week.
     </p>
     <div class="cluster reveal" style="--i:4; margin-top: var(--space-6);">
       <a class="btn btn-primary" href="mailto:hello@solenix.dev?subject=Book%20a%20call">
@@ -589,52 +629,55 @@ footer a:hover { color: var(--text); }
   <div class="wrap wrap-wide">
     <div class="section-head">
       <p class="eyebrow">What we do</p>
-      <h2 class="h2" style="max-width: 30ch;">Five moves, in that order</h2>
-      <p class="small body">Most of the value is in the first two. Nobody sells you software you do not need.</p>
+      <h2 class="h2" style="max-width: 32ch;">Mostly we set up what already exists, properly</h2>
+      <p class="small body">The tools your business needs mostly already exist and are cheap. What is
+        missing is someone to choose them, wire them together and teach your team to use them. Building
+        something new is the last resort — the fastest route to a result you can see wins.</p>
     </div>
 
     <div class="bento">
       <div class="b-hero reveal" style="--i:0; justify-content: space-between;" data-od-id="move-sort">
         <div class="stack">
           <span class="chip" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M4 12h10M4 18h6"/><path d="M17 15l2.5 2.5L23 13"/></svg></span>
-          <h3 class="h3">1 &middot; Sort out what you have</h3>
+          <h3 class="h3">First: the list</h3>
           <p class="small">
-            We go through every tool, login and subscription you are paying for and
-            write down what it does, what it costs, and whether anything depends on
-            it. Most owners have never seen that list. It is usually the most useful
-            hour of the whole engagement.
+            We go through every tool, login and subscription you pay for and write down
+            what it does, what it costs and whether anything depends on it. Most owners
+            have never seen that list. Cancelling the overlap often pays for the work.
           </p>
-          <p class="small">
-            You get the list whether or not you hire us for anything else.
-          </p>
+          <p class="small">You get the list whether or not you hire us for anything else.</p>
         </div>
-        <p class="caption">No jargon, no audit theatre — a plain list you can read.</p>
+        <p class="caption">Then we set up what is missing and retire what is not earning its keep.</p>
       </div>
 
-      <div class="reveal" style="--i:1" data-od-id="move-simplify">
-        <p class="label">Move 2</p>
-        <h3 class="h3">Cut the sprawl</h3>
-        <p class="small">Cancel what nothing depends on, merge what overlaps, and keep what genuinely earns its place. Fewer logins, fewer bills.</p>
+      <div class="reveal" style="--i:1" data-od-id="move-ai">
+        <p class="label">More time</p>
+        <h3 class="h3">AI your team actually uses</h3>
+        <p class="small">We set up your Claude or ChatGPT workspace, connect it to your own tools and files,
+          and sit with you and your staff until they are using it on real work every day.</p>
       </div>
-      <div class="reveal" style="--i:2" data-od-id="move-build">
-        <p class="label">Move 3</p>
-        <h3 class="h3">Build what is missing</h3>
-        <p class="small">Only the gap that is left after cutting — a site, a booking flow, an automation. Fixed price, agreed first.</p>
+      <div class="reveal" style="--i:2" data-od-id="move-google">
+        <p class="label">Look professional</p>
+        <h3 class="h3">Email on your own domain</h3>
+        <p class="small">Google Workspace set up properly — email at your own address, shared files and
+          calendars — plus your Google Business Profile kept current so people can find you.</p>
       </div>
-      <div class="reveal" style="--i:3" data-od-id="move-run">
-        <p class="label">Move 4</p>
-        <h3 class="h3">Run it</h3>
-        <p class="small">We host it, watch it, patch it and fix it. You do not get handed a server and a login.</p>
+      <div class="reveal" style="--i:3" data-od-id="move-store">
+        <p class="label">More money</p>
+        <h3 class="h3">Website and store, looked after</h3>
+        <p class="small">Your Shopify store and website managed and updated — products, prices, hours,
+          pages — so nothing sits stale and nothing needs your evening.</p>
       </div>
-      <div class="reveal b-wide" style="--i:4" data-od-id="move-see">
-        <p class="label">Move 5</p>
-        <h3 class="h3">One place to see all of it</h3>
-        <p class="small">Your portal: what is running, what we are building, what it costs. No chasing anyone for a status.</p>
+      <div class="reveal b-wide" style="--i:4" data-od-id="move-build">
+        <p class="label">Last resort</p>
+        <h3 class="h3">Build something new only when nothing fits</h3>
+        <p class="small">Sometimes the off-the-shelf answer genuinely does not exist — a bakery needed
+          20-minute pickup holds no booking tool offered. Then we build it, at a fixed price, and run it
+          alongside everything else.</p>
       </div>
     </div>
   </div>
 </section>
-
 
 <!-- ═══ 4 · how we work — card grid ═══════════════════════════════════════ -->
 <section class="section">
@@ -656,8 +699,8 @@ footer a:hover { color: var(--text); }
       </div>
       <div class="card step reveal" style="--i:2">
         <span class="stepnum">Step 3</span>
-        <h3 class="h3">The build</h3>
-        <p class="small">Only what survived the cut gets built. You watch it come together in your portal.</p>
+        <h3 class="h3">The setup</h3>
+        <p class="small">We set up the accounts, connect them, and train your team. Anything genuinely missing gets built. You watch it in your portal.</p>
       </div>
       <div class="card step reveal" style="--i:3">
         <span class="stepnum">Step 4</span>
@@ -678,7 +721,7 @@ footer a:hover { color: var(--text); }
     <div class="sky-light"></div>
   </div>
   <div class="wrap inner">
-    <p class="statement">One place to see everything. Nothing to chase.</p>
+    <p class="statement">More money in, less spent on software, hours back every week.</p>
   </div>
 </section>
 
@@ -695,12 +738,13 @@ footer a:hover { color: var(--text); }
           another dashboard.
         </p>
         <ul class="stack" style="gap: var(--space-4); list-style: none;">
-          <li class="small"><strong>Managed software</strong> &mdash; every site, app and automation
-            we host, with its status, its last deploy and its traffic.</li>
-          <li class="small"><strong>Projects</strong> &mdash; what stage the build is at, what happens
+          <li class="small"><strong>Your tech</strong> &mdash; every account and service we run for you:
+            AI workspace, email, domain, website, store, local listing. What each costs a month, when it
+            renews, and who on your team can get in.</li>
+          <li class="small"><strong>Projects</strong> &mdash; what stage the work is at, what happens
             next and when, and anything waiting on your approval.</li>
-          <li class="small"><strong>Billing</strong> &mdash; open and past invoices, and your hosting
-            plan. Payments and receipts are handled by Stripe.</li>
+          <li class="small"><strong>Billing</strong> &mdash; open and past invoices and your care plan.
+            Payments and receipts are handled by Stripe.</li>
         </ul>
         <div class="cluster">
           <a class="btn btn-quiet btn-sm" href="/app">Client sign in</a>
@@ -788,10 +832,10 @@ footer a:hover { color: var(--text); }
 <section class="section" id="demo">
   <div class="wrap wrap-wide">
     <div class="section-head">
-      <p class="eyebrow">One thing we built, still running</p>
-      <h2 class="h2" style="max-width: 32ch;">What "build what is missing" looks like in practice</h2>
-      <p class="small body">A bakery kept losing evening orders to voicemail, so move 3 was a booking
-      assistant wired into their real order book. It is one example, not the point of the business.</p>
+      <p class="eyebrow">The last-resort case</p>
+      <h2 class="h2" style="max-width: 32ch;">When nothing off the shelf fits, this is what we build</h2>
+      <p class="small body">A bakery needed 20-minute pickup holds and no booking tool offered them, so
+      we built it and wired it into their real order book. Most clients never need this step.</p>
     </div>
 
     <div class="glass pad sweepable" data-demo>
@@ -913,7 +957,82 @@ footer a:hover { color: var(--text); }
   </div>
 </section>
 
-<!-- ═══ 9 · founding clients — split ══════════════════════════════════════ -->
+<!-- ═══ 9 · how pricing works — card grid ═════════════════════════════════ -->
+<section class="section" id="pricing" data-od-id="how-pricing-works">
+  <div class="wrap wrap-wide">
+    <div class="section-head">
+      <p class="eyebrow">How pricing works</p>
+      <h2 class="h2" style="max-width: 32ch;">Two numbers, both agreed before anything starts</h2>
+      <p class="small body">No hourly billing, no "as needed", no surprise invoice. A fixed price for the
+        work, and a flat monthly amount to keep it all running. Both written down before you commit.</p>
+    </div>
+
+    <div class="pricecols">
+      <div class="pricecard" data-od-id="price-project">
+        <div class="stack" style="gap: var(--space-2);">
+          <p class="label">One-off</p>
+          <h3 class="h3">The project price</h3>
+          <p class="priceamt"><span class="tbd">amount to confirm</span></p>
+          <p class="small">Quoted as one number for the whole job after the first call. If the estimate
+            was wrong, that is ours to absorb.</p>
+        </div>
+        <ul class="included">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>The written list of what you have, what it costs and what to cut</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Setting up and connecting every account in the plan</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Training sessions with you and your staff, recorded so new hires can watch them</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Anything built from scratch, when nothing existing fits</span></li>
+        </ul>
+      </div>
+
+      <div class="pricecard" data-od-id="price-care">
+        <div class="stack" style="gap: var(--space-2);">
+          <p class="label">Monthly, flat</p>
+          <h3 class="h3">The care plan</h3>
+          <p class="priceamt"><span class="tbd">amount to confirm</span><span class="per"> /month</span></p>
+          <p class="small">The same amount every month regardless of how much we do. Cancel any month
+            and keep everything.</p>
+        </div>
+        <ul class="included">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Hosting, domains, certificates and backups</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Monitoring, and fixing what breaks — usually before you notice</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Content and price updates on your site, store and listing</span></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Your portal, and a person who answers</span></li>
+          <li class="no"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg><span>Not included: what each vendor bills you directly — you see those amounts in your portal</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="caption" style="margin-top: var(--space-5);">
+      Both figures are still to be set — we do not print a number we have not committed to.
+      The list of what is included does not change once it is in writing.
+    </p>
+  </div>
+</section>
+
+<!-- ═══ 10 · reviews — slot, empty until real ═════════════════════════════ -->
+<section class="section" id="reviews" data-od-id="reviews">
+  <div class="wrap wrap-wide">
+    <div class="reviewslot">
+      <div class="cluster" style="justify-content: space-between;">
+        <p class="label">Reviews</p>
+        <span class="stars" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 3.5 2.6 5.5 6 .8-4.4 4.2 1.1 6-5.3-3-5.3 3 1.1-6L3.4 9.8l6-.8z"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 3.5 2.6 5.5 6 .8-4.4 4.2 1.1 6-5.3-3-5.3 3 1.1-6L3.4 9.8l6-.8z"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 3.5 2.6 5.5 6 .8-4.4 4.2 1.1 6-5.3-3-5.3 3 1.1-6L3.4 9.8l6-.8z"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 3.5 2.6 5.5 6 .8-4.4 4.2 1.1 6-5.3-3-5.3 3 1.1-6L3.4 9.8l6-.8z"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 3.5 2.6 5.5 6 .8-4.4 4.2 1.1 6-5.3-3-5.3 3 1.1-6L3.4 9.8l6-.8z"/></svg>
+        </span>
+      </div>
+      <p class="h3" style="max-width: 34ch;">No reviews yet, and we will not invent any</p>
+      <p class="small body">This is where our Google Business Profile reviews will appear, pulled from
+        Google rather than retyped by us. Until a real client has left one, it stays empty on purpose —
+        an empty slot is worth more than a testimonial you cannot check.</p>
+      <p class="caption">Founding clients are asked for an honest review at the end, good or bad.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ 11 · founding clients — split ═════════════════════════════════════ -->
 <section class="section" id="founding">
   <div class="wrap wrap-wide">
     <div class="split">
@@ -959,7 +1078,7 @@ footer a:hover { color: var(--text); }
   </div>
 </section>
 
-<!-- ═══ 10 · FAQ ═══════════════════════════════════════════════════════════ -->
+<!-- ═══ 12 · FAQ ═══════════════════════════════════════════════════════════ -->
 <section class="section" id="faq">
   <div class="wrap wrap-wide">
     <div class="section-head">
@@ -981,11 +1100,11 @@ footer a:hover { color: var(--text); }
       </details>
       <details>
         <summary>What does it cost?</summary>
-        <p class="answer">It depends what you need, so we will not guess on a web page. After one call you get a fixed price for the whole job, in writing. If you do not like the number, you have lost twenty minutes.</p>
+        <p class="answer">Two numbers, both agreed before anything starts: a fixed price for the work and a flat monthly amount to keep it running. What each one includes is listed under <a href="#pricing" style="color: var(--accent-text)">how pricing works</a>. No hourly billing and no "as needed".</p>
       </details>
       <details>
         <summary>How long does it take?</summary>
-        <p class="answer">A straightforward site or a small app is usually a matter of weeks, not months — but the plan gives you an actual date rather than a range. You watch progress in your portal as it happens.</p>
+        <p class="answer">Setting up accounts that already exist is usually days, not weeks — that is most of the work and why we start there. Anything genuinely built from scratch takes longer, and the plan gives you an actual date rather than a range.</p>
       </details>
       <details>
         <summary>I'm not technical. Is that a problem?</summary>
@@ -993,7 +1112,7 @@ footer a:hover { color: var(--text); }
       </details>
       <details>
         <summary>I already have a website. Do I have to start over?</summary>
-        <p class="answer">Usually not. Often the quickest win is leaving the site where it is and putting something behind it. If the existing site is genuinely holding you back, we say so.</p>
+        <p class="answer">Usually not. If your site, store or email already works, we keep it and take over looking after it. Replacing something is a decision we argue for in writing, not a default.</p>
       </details>
       <details>
         <summary>Who owns the code and the accounts?</summary>
@@ -1007,7 +1126,7 @@ footer a:hover { color: var(--text); }
   </div>
 </section>
 
-<!-- ═══ 11 · closing CTA ══════════════════════════════════════════════════ -->
+<!-- ═══ 13 · closing CTA ══════════════════════════════════════════════════ -->
 <section class="lit section" style="--light-x: 20%; --light-y: 110%; --light-size: 32rem; --light-strength: .4; --orbit-size: 56rem;">
   <div class="sky" aria-hidden="true">
     <div class="sky-halo"></div>
@@ -1043,19 +1162,28 @@ footer a:hover { color: var(--text); }
         <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/><circle cx="16" cy="16" r="8" fill="url(#sun)"/><circle cx="27" cy="9" r="2.2" fill="var(--ring)"/></svg>
         Solenix
       </a>
-      <p class="caption">Your fractional software engineer · St. John's, Newfoundland</p>
+      <p class="caption">The tech person your business does not have · St. John's, Newfoundland</p>
     </div>
-    <nav class="footlinks" aria-label="Footer">
-      <a href="mailto:hello@solenix.dev">hello@solenix.dev</a>
-      <a href="/app">Client sign in</a>
-      <a href="/agents">Tools we use</a>
-      <a href="https://github.com/SolenixAI">GitHub</a>
-    </nav>
+    <div class="stack" style="gap: var(--space-3);">
+      <a class="footcontact" href="mailto:hello@solenix.dev">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+        hello@solenix.dev
+      </a>
+      <nav class="footlinks" aria-label="Footer">
+        <a href="/app">Client sign in</a>
+        <a href="/agents">Tools we use</a>
+      </nav>
+      <p class="caption">&copy; <span data-year>2026</span> Solenix</p>
+    </div>
   </div>
 </footer>
 
 <script>
 document.documentElement.classList.add('js');
+/* The year fills itself, so a stale copyright can never ship. */
+document.querySelectorAll('[data-year]').forEach(el => {
+  el.textContent = String(new Date().getFullYear());
+});
 (() => {
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
 

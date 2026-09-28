@@ -96,7 +96,9 @@ button { font: inherit; color: inherit; }
 .btn-primary { background: var(--accent); color: var(--accent-ink); box-shadow: var(--shadow-accent); }
 .btn-ghost { color: var(--text); border-color: var(--line-strong); }
 .btn-quiet { color: var(--muted); }
-.btn-sm { min-height: 40px; padding: 0 var(--space-4); font-size: var(--fs-sm); }
+/* 44px floor: the review measured these at 40px. Small buttons stay visually
+   small through padding and type size, not by shrinking the touch target. */
+.btn-sm { min-height: var(--tap-min); padding: 0 var(--space-4); font-size: var(--fs-sm); }
 .btn svg { width: 18px; height: 18px; flex: none; }
 @media (hover: hover) {
   .btn-primary:hover { background: var(--accent-hover); transform: translateY(var(--lift)); }
@@ -566,6 +568,26 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
 .door .dtitle { font-weight: var(--fw-semibold); }
 .door .dsum { font-size: var(--fs-sm); color: var(--muted); }
 .door .chev { width: 18px; height: 18px; flex: none; color: var(--muted); }
+
+/* Facts strip on a tech item: what it costs, when it renews, who can get in. */
+.facts { display: grid; gap: var(--space-3); padding: var(--space-4) 0;
+  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+@media (min-width: 620px) { .facts { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); } }
+.facts > div { display: grid; gap: 2px; min-width: 0; }
+.facts dt { font: var(--fw-semibold) var(--fs-2xs)/1.2 var(--font-mono); letter-spacing: var(--track-label);
+  text-transform: uppercase; color: var(--muted); }
+.facts dd { font-size: var(--fs-sm); overflow-wrap: anywhere; }
+.facts .per { font-size: var(--fs-2xs); color: var(--muted); }
+/* Headings inside cards carry the document outline; these rules keep them
+   visually small so structure and scale stay independent. */
+.cardh { font-size: var(--fs-h4); font-weight: var(--fw-semibold); }
+.askh { font-size: var(--fs-h4); }
+/* An inline text button inside a sentence: WCAG 2.5.8 exempts inline targets
+   from the minimum size, and forcing a box here would break the line. */
+.linkish { display: inline; }
+/* A text-styled button that sits inside a sentence. */
+.linkish { font: inherit; color: var(--accent-text); font-weight: var(--fw-semibold);
+  text-decoration: underline; text-underline-offset: 3px; padding: 0; }
 </style>
 </head>
 <body>
@@ -757,8 +779,8 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
         <div class="doors">
           <button class="door" type="button" data-goto="#/software">
             <span class="od-fill od-stat" style="--od-gap: 2px">
-              <span class="dtitle">Managed software</span>
-              <span class="dsum" data-ov-door-software>Everything we host and run, in one list.</span>
+              <span class="dtitle">Your tech</span>
+              <span class="dsum" data-ov-door-software>Every account and service we run for you.</span>
             </span>
             <svg class="chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 5l5 5-5 5"/></svg>
           </button>
@@ -787,9 +809,9 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
       <!-- ─────────────── MANAGED SOFTWARE ─────────────── -->
       <section class="screen" id="screen-software" aria-labelledby="h-software" hidden>
         <div class="page-head">
-          <p class="eyebrow">Managed software</p>
-          <h1 id="h-software">Everything we host and run</h1>
-          <p class="muted">One list instead of a dozen logins. Every site, app and automation we look after, with its status, its last change and its traffic — read from the services doing the work, so none of it is a number we typed.</p>
+          <p class="eyebrow">Your tech</p>
+          <h1 id="h-software">Every account and service we run for you</h1>
+          <p class="muted">One list instead of a dozen logins: your AI workspace, email, domain, website, store and local listing. What each one costs, when it renews, and who on your team can get in. The real controls stay in each vendor's own admin — we just make them findable.</p>
           <div class="od-cluster" style="--od-gap: var(--space-2)">
             <span class="vendor"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 3l7.5 13H2.5z"/></svg>Hosted on Vercel</span>
             <span class="vendor"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M3 16V9M8.3 16V4M13.6 16v-5M19 16v-9"/></svg>Analytics by PostHog</span>
@@ -797,6 +819,7 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
           </div>
         </div>
         <div class="od-stack" style="--od-gap: var(--space-4)" data-sw-list></div>
+        <p class="sm muted" style="margin-top: var(--space-5)" data-sw-total></p>
         <div id="sw-empty" hidden></div>
       </section>
 
@@ -805,7 +828,7 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
         <div class="page-head">
           <p class="eyebrow">Projects</p>
           <h1 id="h-projects">Work in progress</h1>
-          <p class="muted">Where each build is up to and what happens next. Nothing to chase — if we need something from you, it appears here and we email you.</p>
+          <p class="muted">Where each piece of work is up to and what happens next — setting accounts up, training your team, or building the thing nothing off the shelf covered. Nothing to chase: if we need you, it appears here and we email you.</p>
           <div class="od-cluster" style="--od-gap: var(--space-2)">
             <span class="chip-example">Example</span>
           </div>
@@ -819,7 +842,7 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
         <div class="page-head">
           <p class="eyebrow">Billing</p>
           <h1 id="h-billing">One bill, not seven</h1>
-          <p class="muted">Your hosting and care in one place, with every invoice beside it. Payments, receipts and card details are handled by Stripe — we never store your card and never rebuild a receipt Stripe already sends you.</p>
+          <p class="muted">Your care plan and every invoice in one place. What each vendor bills you directly is on <button class="linkish" type="button" data-goto="#/software">Your tech</button>. Payments, receipts and card details are handled by Stripe — we never store your card.</p>
           <div class="od-cluster" style="--od-gap: var(--space-2)">
             <span class="vendor"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="2.5" y="5" width="15" height="10" rx="2"/><path d="M2.5 9h15"/></svg>Payments by Stripe</span>
             <span class="chip-example">Example</span>
@@ -1018,7 +1041,7 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
      disabled until a client is open — so nothing ever moves position. */
   const CLIENT_NAV = [
     { id: "overview", label: "Overview", icon: '<path d="M3.5 10.5 10 4l6.5 6.5"/><path d="M5.5 9.5V16h9V9.5"/>' },
-    { id: "software", label: "Software", icon: '<rect x="2.5" y="4" width="15" height="10" rx="1.6"/><path d="M7 17h6"/>' },
+    { id: "software", label: "Your tech", icon: '<rect x="2.5" y="4" width="15" height="10" rx="1.6"/><path d="M7 17h6"/>' },
     { id: "projects", label: "Projects", icon: '<path d="M4 4.5h12M4 10h12M4 15.5h7"/>' },
     { id: "billing",  label: "Billing",  icon: '<rect x="2.5" y="5" width="15" height="10" rx="2"/><path d="M2.5 9h15"/>' }
   ];
@@ -1138,42 +1161,79 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
      and every screen that shows it carries an Example chip. */
   const MANAGED = {
     maple: [
-      { name: "mapleandrye.ca", kind: "Website", state: "live",
-        prod: "https://mapleandrye.ca", preview: "https://maple-and-rye-git-order-form.vercel.app",
-        deploy: "Order form: hold pickup slots for 20 minutes", when: "Deployed 26 Sep, 4:12pm",
+      { name: "Claude Team workspace", kind: "AI workspace", vendor: "Anthropic", state: "live",
+        cost: 150, renews: "Renews 14 Oct", seats: ["Anna", "Dev", "Kitchen iPad"],
+        note: "Connected to the order inbox and the supplier price list",
+        when: "Checked 4 minutes ago", visits: null },
+      { name: "Google Workspace · 4 mailboxes", kind: "Email and files", vendor: "Google", state: "live",
+        cost: 96, renews: "Renews 1 Nov", seats: ["Anna", "Dev", "Orders", "Accounts"],
+        note: "Email on mapleandrye.ca, shared drive, calendars",
+        when: "Checked 4 minutes ago", visits: null },
+      { name: "mapleandrye.ca", kind: "Website and domain", vendor: "Vercel", state: "live",
+        cost: 24, renews: "Domain renews 3 Mar", seats: ["Anna"],
+        note: "Last change: pickup slots hold for 20 minutes",
+        when: "Deployed 26 Sep, 4:12pm",
         visits: { series: [31,36,33,41,38,47,44,52,49,58,55,64,61,69,74], total: 1248, delta: 12 } },
-      { name: "Pickup order form", kind: "App", state: "building",
-        prod: null, preview: "https://maple-and-rye-git-order-form.vercel.app",
-        deploy: "Card payments behind a flag until Stripe finishes checks", when: "Deployed 26 Sep, 4:12pm",
-        visits: null },
-      { name: "Nightly order digest", kind: "Automation", state: "live",
-        prod: null, preview: null,
-        deploy: "Emails Anna the next day's pickups at 9pm", when: "Ran 28 Sep, 9:00pm",
-        visits: null }
+      { name: "Google Business Profile", kind: "Local listing", vendor: "Google", state: "live",
+        cost: 0, renews: "No charge", seats: ["Anna"],
+        note: "Hours, photos and replies to reviews kept current",
+        when: "Updated 22 Sep", visits: null },
+      { name: "Pickup order form", kind: "Built for you", vendor: "Vercel", state: "building",
+        cost: 0, renews: "In the project price", seats: ["Anna", "Orders"],
+        note: "Nothing off the shelf handled 20-minute pickup holds",
+        when: "Deployed 26 Sep, 4:12pm", visits: null }
     ],
     cedar: [
-      { name: "cedaryoga.ca", kind: "Website", state: "down",
-        prod: "https://cedaryoga.ca", preview: "https://cedar-yoga-git-timetable-fix.vercel.app",
-        deploy: "Timetable page: fix the class feed that stopped responding", when: "Deploying now",
-        visits: { series: [44,41,47,45,50,48,52,49,54,51,47,38,22,9,2], total: 862, delta: -34 } }
+      { name: "cedaryoga.ca", kind: "Website and domain", vendor: "Vercel", state: "down",
+        cost: 24, renews: "Domain renews 18 Jun", seats: ["Marta"],
+        note: "Timetable page stopped responding at 8:10 this morning",
+        when: "Deploying a fix now",
+        visits: { series: [44,41,47,45,50,48,52,49,54,51,47,38,22,9,2], total: 862, delta: -34 } },
+      { name: "Google Workspace · 2 mailboxes", kind: "Email and files", vendor: "Google", state: "live",
+        cost: 48, renews: "Renews 4 Dec", seats: ["Marta", "Studio"],
+        note: "Email on cedaryoga.ca and the shared class calendar",
+        when: "Checked 2 minutes ago", visits: null }
     ],
     harbourview: [],
     quidi: [
-      { name: "quidividicycles.ca", kind: "Website", state: "live",
-        prod: "https://quidividicycles.ca", preview: null,
-        deploy: "New opening hours on every page", when: "Deployed 12 Aug, 10:40am",
+      { name: "ChatGPT Team workspace", kind: "AI workspace", vendor: "OpenAI", state: "live",
+        cost: 180, renews: "Renews 9 Oct", seats: ["Sam", "Front desk", "Workshop"],
+        note: "Drafts service quotes from the workshop notes",
+        when: "Checked 6 minutes ago", visits: null },
+      { name: "Quidi Vidi Cycles · Shopify", kind: "Online store", vendor: "Shopify", state: "live",
+        cost: 105, renews: "Renews 21 Oct", seats: ["Sam", "Front desk"],
+        note: "Products, prices and shipping rules kept current",
+        when: "Updated 24 Sep", visits: null },
+      { name: "quidividicycles.ca", kind: "Website and domain", vendor: "Vercel", state: "live",
+        cost: 24, renews: "Domain renews 11 Mar", seats: ["Sam"],
+        note: "Last change: new opening hours on every page",
+        when: "Deployed 12 Aug, 10:40am",
         visits: { series: [58,61,59,64,62,66,63,68,65,70,67,72,69,73,71], total: 2104, delta: 4 } },
-      { name: "Service booking form", kind: "App", state: "live",
-        prod: "https://quidividicycles.ca/service", preview: null,
-        deploy: "Blocks double-booking the same mechanic slot", when: "Deployed 3 Jul, 2:05pm",
-        visits: null }
+      { name: "Google Business Profile", kind: "Local listing", vendor: "Google", state: "live",
+        cost: 0, renews: "No charge", seats: ["Sam"],
+        note: "Hours, photos and replies to reviews kept current",
+        when: "Updated 19 Sep", visits: null }
     ],
     salt: [
-      { name: "saltandsage.ca", kind: "Website", state: "building",
-        prod: null, preview: "https://salt-and-sage-git-main.vercel.app",
-        deploy: "First pass of the booking flow, ready to look at", when: "Deployed 24 Sep, 11:18am",
+      { name: "Google Workspace · 3 mailboxes", kind: "Email and files", vendor: "Google", state: "live",
+        cost: 72, renews: "Renews 12 Jan", seats: ["Aisha", "Reception", "Accounts"],
+        note: "Email on saltandsage.ca and the shared booking calendar",
+        when: "Checked 9 minutes ago", visits: null },
+      { name: "saltandsage.ca", kind: "Website and domain", vendor: "Vercel", state: "building",
+        cost: 24, renews: "Domain renews 2 Feb", seats: ["Aisha"],
+        note: "First pass of the booking flow, ready to look at",
+        when: "Deployed 24 Sep, 11:18am",
         visits: { series: [12,14,11,16,13,18,15,19,17,21,19,24,22,26,24], total: 271, delta: 9 } }
     ]
+  };
+
+  /* Each vendor's own admin is where the real controls live. */
+  const VENDOR_ADMIN = {
+    Anthropic: "the Claude admin console",
+    OpenAI: "the ChatGPT admin console",
+    Google: "the Google admin console",
+    Shopify: "the Shopify admin",
+    Vercel: "the hosting dashboard on Vercel"
   };
 
   /* Hosting-and-care plans, as Stripe subscriptions would report them. */
@@ -1640,7 +1700,7 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
     /* Reads the managed item, not a second copy on the client record: the admin
        list and Managed software must never disagree about the same number. */
     const v = softwareFor(c).map(i => i.visits).find(Boolean);
-    if (!v) return `<span class="rowspark-none od-fixed">not live</span>`;
+    if (!v) return `<span class="rowspark-none od-fixed">no site</span>`;
     const g = sparkGeom(v.series, 76, 26, 3);
     const dir = v.delta > 0 ? "rising" : v.delta < 0 ? "falling" : "steady";
     return `<svg class="rowspark" viewBox="0 0 76 26" preserveAspectRatio="none" role="img"
@@ -1746,18 +1806,18 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
       actions = ext("See what we are doing", "the deploy log on Vercel", ICON_OUT);
     } else if (!sw.length) {
       eyebrow = "Not live yet";
-      head = "Nothing hosted yet";
-      note = "Once your first site is built and deployed, it appears here with its status and traffic.";
+      head = "Nothing set up yet";
+      note = "As we set up each account it appears here, with what it costs and when it renews.";
       badge = ["quiet", "Not live yet"];
     } else if (building.length) {
       eyebrow = "Status";
       head = "Everything is running";
-      note = building.length + (building.length === 1 ? " item is" : " items are")
-        + " still being built. The rest responded on the last check.";
+      note = building.length + (building.length === 1 ? " thing is" : " things are")
+        + " still being set up. The rest checked out fine.";
       badge = ["warn", "Building"];
     } else {
       head = "Everything is running";
-      note = sw.length + (sw.length === 1 ? " thing" : " things") + " responded on the last check. Nothing needs you.";
+      note = sw.length + (sw.length === 1 ? " account" : " accounts") + " checked and working. Nothing needs you.";
     }
     setTxt("[data-ov-hero-eyebrow]", eyebrow);
     setTxt("[data-ov-hero-head]", head);
@@ -1766,9 +1826,11 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
     const act = document.querySelector("[data-ov-hero-actions]");
     if (act) act.innerHTML = actions;
 
+    const monthly = sw.reduce((t, i) => t + (i.cost || 0), 0);
     setTxt("[data-ov-door-software]", sw.length
-      ? sw.length + (sw.length === 1 ? " thing" : " things") + " we host and run"
-      : "Nothing hosted yet");
+      ? sw.length + (sw.length === 1 ? " account" : " accounts")
+        + (monthly > 0 ? " · " + money(monthly) + " a month" : "")
+      : "Nothing set up yet");
     setTxt("[data-ov-door-projects]", proj
       ? proj.title + " — " + STAGES[proj.stage - 1].toLowerCase() + " stage"
       : "No work in progress");
@@ -1784,7 +1846,7 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
     if (askWrap) {
       askWrap.innerHTML = waiting.map((w, idx) => `<div class="ask">
           <div>
-            <h3>${esc(w.title)}</h3>
+            <h3 class="askh">${esc(w.title)}</h3>
             <p>${esc(w.note)}</p>
           </div>
           <div class="od-cluster" style="--od-gap: var(--space-3)">
@@ -1810,17 +1872,15 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
       list.innerHTML = "";
       if (empty) empty.innerHTML = `<div class="empty">
           <h3>Nothing hosted yet</h3>
-          <p>When we deploy your first site or app, it appears here with its status, its last deploy and its traffic.</p>
+          <p>As we set up each account — your AI workspace, email, domain, website, store or local listing — it appears here with what it costs, when it renews and who can get in.</p>
           <button class="btn btn-quiet btn-sm" type="button" data-goto="#/projects">See the project instead</button>
         </div>`;
       return;
     }
     list.innerHTML = sw.map(it => {
       const st = SITE_STATE[it.state] || SITE_STATE.building;
-      const links = [
-        it.prod ? ext("Production", "the live site at " + it.prod, ICON_OUT) : "",
-        it.preview ? ext("Preview", "the preview deployment on Vercel", ICON_OUT) : ""
-      ].filter(Boolean).join("");
+      const dest = VENDOR_ADMIN[it.vendor] || "the vendor's admin";
+      const money_ = it.cost > 0 ? money(it.cost) : "No charge";
       const traffic = it.visits
         ? `<div class="od-stat" style="--od-gap: var(--space-2)">
              <span class="eyebrow">Visitors · 30 days</span>
@@ -1830,31 +1890,42 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
                 (it.visits.delta > 0 ? "rising" : it.visits.delta < 0 ? "falling" : "steady") + ".")}
              <span>${ext("View full analytics", POSTHOG_DASH, ICON_CHART)}</span>
            </div>`
-        : `<div class="od-stat" style="--od-gap: var(--space-2)">
-             <span class="eyebrow">Visitors</span>
-             <span class="sm muted">${it.kind === "Automation"
-                ? "Automations do not get visitors. This one reports each run instead."
-                : "No traffic yet — this is not serving visitors."}</span>
-           </div>`;
+        : "";
       return `<article class="item">
           <div class="item-top">
             <span class="od-stat" style="--od-gap: 2px">
-              <span class="item-kind">${esc(it.kind)}</span>
+              <span class="item-kind">${esc(it.kind)} &middot; ${esc(it.vendor)}</span>
               <span class="item-name">${esc(it.name)}</span>
             </span>
             <span class="badge ${st.cls} od-fixed">${st.word}</span>
           </div>
+
+          <dl class="facts">
+            <div><dt>Costs you</dt><dd class="mono od-nowrap">${esc(money_)}${it.cost > 0 ? " <span class=\"per\">/mo</span>" : ""}</dd></div>
+            <div><dt>Renews</dt><dd>${esc(it.renews)}</dd></div>
+            <div><dt>Who has access</dt><dd>${it.seats.map(esc).join(", ")}</dd></div>
+          </dl>
+
           <div class="item-grid">
             <div class="deploy">
-              <span class="eyebrow">Last deploy</span>
-              <span class="deploy-msg">${esc(it.deploy)}</span>
+              <span class="eyebrow">Latest</span>
+              <span class="deploy-msg">${esc(it.note)}</span>
               <span class="deploy-when">${esc(it.when)}</span>
-              ${links ? `<span class="deploy-links">${links}</span>` : ""}
+              <span class="deploy-links">${ext("Opens " + it.vendor, dest, ICON_OUT)}</span>
             </div>
             ${traffic}
           </div>
         </article>`;
     }).join("");
+
+    /* What the whole stack costs, added from the same records the rows show. */
+    const total = sw.reduce((t, i) => t + (i.cost || 0), 0);
+    const foot = document.querySelector("[data-sw-total]");
+    if (foot) foot.innerHTML = total > 0
+      ? `<strong>${money(total)} a month</strong> across ${sw.length} ${sw.length === 1 ? "account" : "accounts"},
+         billed by each vendor to you — not through us. Our care plan is separate and on
+         <button class="linkish" type="button" data-goto="#/billing">Billing</button>.`
+      : "";
   }
 
   /* ── Projects: stage, what is next, what is waiting ──────────────────────── */
@@ -1887,8 +1958,10 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
             </span>
           </li>`;
       }).join("");
+      /* The card's own title is an h3, so an approval inside it is an h4 —
+         axe-core flagged the old h3 here as a skipped level. */
       const waiting = (p.waiting || []).map(w => `<div class="ask" style="margin-top: var(--space-4)">
-          <div><h3>${esc(w.title)}</h3><p>${esc(w.note)}</p></div>
+          <div><h3 class="askh">${esc(w.title)}</h3><p>${esc(w.note)}</p></div>
           <div class="od-cluster" style="--od-gap: var(--space-3)">
             <button class="btn btn-ghost btn-sm" type="button" data-goto="#/overview">Approve on the Overview</button>
           </div>
@@ -1897,7 +1970,7 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
           <div class="od-row" style="--od-gap: var(--space-3); flex-wrap: wrap; margin-bottom: var(--space-5)">
             <span class="od-fill od-stat" style="--od-gap: 2px">
               <span class="eyebrow">${p.stage === 4 ? "Looked after" : "In progress"}</span>
-              <span style="font-weight: var(--fw-semibold)">${esc(p.title)}</span>
+              <h2 class="cardh">${esc(p.title)}</h2>
             </span>
             <span class="badge ${p.stage === 4 ? "ok" : "warn"} od-fixed">${p.stage === 4 ? "Looked after" : STAGES[p.stage - 1]}</span>
           </div>
