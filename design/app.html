@@ -177,7 +177,7 @@ details[open] summary .mark { transform: rotate(45deg); }
 .bottomnav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
   background: color-mix(in oklch, var(--bg) 88%, transparent); backdrop-filter: blur(16px);
   border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom, 0px); }
-.bottomnav ul { display: grid; grid-template-columns: repeat(4, 1fr); }
+.bottomnav ul { display: grid; grid-template-columns: repeat(var(--nav-count, 4), 1fr); }
 .bottomnav ul > li { display: grid; }
 .navlink { display: grid; justify-items: center; gap: 3px; padding: var(--space-2) var(--space-1) var(--space-3);
   min-height: 60px; text-decoration: none; color: var(--muted); background: none; border: 0; cursor: pointer;
@@ -285,6 +285,8 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
 @media (max-width: 639px) {
   .row { padding-inline: var(--space-4); gap: var(--space-3); }
   .row-chev { display: none; }
+  /* A client row keeps its chevron: it is the affordance that the row opens. */
+  .clientrow .row-chev { display: block; }
 }
 
 /* Steps */
@@ -388,6 +390,41 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
 .contact { display: grid; gap: var(--space-4); align-items: center; }
 @media (min-width: 560px) { .contact { grid-template-columns: 72px minmax(0, 1fr) auto; } }
 .contact img { border-radius: 50%; border: 1px solid var(--line); }
+
+/* ══ Admin ════════════════════════════════════════════════════════════════ */
+
+/* A nav item that is present but not yet usable. Position never changes. */
+.navlink:disabled { opacity: .45; cursor: not-allowed; }
+.navlink:disabled .n::after { display: none; }
+
+/* Clients list. The name and the chevron share the first line; the statuses
+   wrap underneath, so nothing is ever left alone on a line of its own. */
+.clientrow { align-items: flex-start; }
+.cr-main { flex: 1 1 0; min-width: 0; display: grid; gap: var(--space-2); }
+.cr-name { font-weight: var(--fw-semibold); }
+.cr-meta { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.clientrow .row-chev { margin-top: 3px; }
+
+/* Viewing as client */
+.asbar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3);
+  padding: var(--space-3) var(--space-4); margin-bottom: var(--space-5);
+  border: 1px solid var(--line-strong); border-radius: var(--radius-lg);
+  background: var(--surface-sunken); }
+.asbar-text { flex: 1 1 15rem; min-width: 0; font-size: var(--fs-sm); }
+.asbar-eyebrow { color: var(--faint); font-family: var(--font-mono); font-size: var(--fs-2xs);
+  letter-spacing: var(--track-label); text-transform: uppercase; }
+
+/* Sign-in hint */
+.hint { margin-top: var(--space-5); padding: var(--space-4) var(--space-5);
+  border: 1px dashed var(--line-strong); border-radius: var(--radius-lg);
+  background: var(--surface-sunken); display: grid; gap: var(--space-2); }
+.hint dl { display: grid; gap: var(--space-1); margin: 0; }
+.hint .pair { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); }
+.hint dt { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text); }
+.hint dd { margin: 0; font-size: var(--fs-xs); color: var(--faint); }
+
+/* Sheet form fields */
+.sheet-fields { display: grid; gap: var(--space-4); margin-top: var(--space-5); }
 </style>
 </head>
 <body>
@@ -430,7 +467,14 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
 
       <p class="foot">New here? <a href="mailto:hello@solenix.dev?subject=Book%20a%20call">Book a call</a> and we will set you up.</p>
     </div>
-    <p class="xs faint" style="text-align:center;margin-top:var(--space-5)">This is a design prototype. Any address signs you into an example account.</p>
+    <div class="hint">
+      <p class="xs faint">This is a design prototype. Two example sign-ins:</p>
+      <dl>
+        <div class="pair"><dt>anna@mapleandrye.ca</dt><dd>a client's own portal</dd></div>
+        <div class="pair"><dt>jager@solenix.dev</dt><dd>Jager's admin view</dd></div>
+      </dl>
+      <p class="xs faint">Any other address signs you in as the example client.</p>
+    </div>
   </div>
 </div>
 
@@ -458,8 +502,8 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
     <div class="od-stack" style="--od-gap: var(--space-3)">
       <div class="od-row" style="--od-gap: var(--space-3)">
         <span class="od-fill od-stat" style="--od-gap:0">
-          <span class="sm" style="font-weight:var(--fw-semibold)">Maple &amp; Rye</span>
-          <span class="xs faint od-truncate">dana@mapleandrye.ca</span>
+          <span class="sm" style="font-weight:var(--fw-semibold)" data-who-biz>Maple &amp; Rye</span>
+          <span class="xs faint od-truncate" data-who-email>dana@mapleandrye.ca</span>
         </span>
         <button class="iconbtn od-fixed" type="button" data-theme-toggle aria-label="Switch theme" title="Switch theme">
           <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="3.6"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.6 4.6l1.4 1.4M14 14l1.4 1.4M15.4 4.6L14 6M6 14l-1.4 1.4"/></svg>
@@ -483,7 +527,7 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
         </svg>
         <span class="od-stat" style="--od-gap:0">
           <span>Solenix</span>
-          <span class="sub">Maple &amp; Rye</span>
+          <span class="sub" data-who-sub>Maple &amp; Rye</span>
         </span>
       </a>
       <button class="iconbtn od-fixed" type="button" data-theme-toggle aria-label="Switch theme" title="Switch theme">
@@ -500,31 +544,31 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
 
       <p class="notice">
         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M10 9v4.5M10 6.4v.1"/></svg>
-        <span><strong>This is an example account.</strong> Everything below is sample content for a bakery called Maple &amp; Rye, so you can see how the portal reads. Your own project, website and invoices appear here once you are set up.</span>
+        <span data-notice><strong>This is an example account.</strong> Everything below is sample content for a bakery called Maple &amp; Rye, so you can see how the portal reads. Your own project, website and invoices appear here once you are set up.</span>
       </p>
 
       <!-- ─────────────── OVERVIEW ─────────────── -->
       <section class="screen" id="screen-overview" aria-labelledby="h-overview">
         <div class="page-head">
           <p class="eyebrow">Tuesday, 29 September</p>
-          <h1 id="h-overview">Good morning, Dana.</h1>
-          <p class="muted">Your online ordering is in the build step. One thing is waiting on you.</p>
+          <h1 id="h-overview" data-ov-title>Good morning, Dana.</h1>
+          <p class="muted" data-ov-lede>Your online ordering is in the build step. One thing is waiting on you.</p>
         </div>
 
         <div class="summary">
           <a class="card" href="#/project">
-            <div class="card-top"><span class="eyebrow">Your project</span><span class="badge warn">Building</span></div>
-            <p class="card-key">Step 3 of 4</p>
-            <p class="card-note">Online ordering for pickup. On track for 17 October.</p>
+            <div class="card-top"><span class="eyebrow">Your project</span><span class="badge warn" data-ov-proj-badge>Building</span></div>
+            <p class="card-key" data-ov-proj-key>Step 3 of 4</p>
+            <p class="card-note" data-ov-proj-note>Online ordering for pickup. On track for 17 October.</p>
             <span class="card-go">See the plan
               <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10h11m0 0-4-4m4 4-4 4"/></svg>
             </span>
           </a>
 
           <a class="card" href="#/website">
-            <div class="card-top"><span class="eyebrow">Your website</span><span class="badge ok">Live</span></div>
-            <p class="card-key">Working</p>
-            <p class="card-note">mapleandrye.ca · checked 4 minutes ago.</p>
+            <div class="card-top"><span class="eyebrow">Your website</span><span class="badge ok" data-ov-site-badge>Live</span></div>
+            <p class="card-key" data-ov-site-key>Working</p>
+            <p class="card-note" data-ov-site-note>mapleandrye.ca · checked 4 minutes ago.</p>
             <span class="card-go">See the details
               <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10h11m0 0-4-4m4 4-4 4"/></svg>
             </span>
@@ -540,7 +584,7 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
           </a>
         </div>
 
-        <div class="section">
+        <div class="section" data-ask-section>
           <div class="section-head"><h2>Waiting on you</h2></div>
           <div id="ask-wrap">
             <div class="ask">
@@ -610,10 +654,10 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
       <section class="screen" id="screen-project" aria-labelledby="h-project" hidden>
         <div class="page-head">
           <p class="eyebrow">Your project</p>
-          <h1 id="h-project">Online ordering for pickup</h1>
+          <h1 id="h-project" data-proj-title>Online ordering for pickup</h1>
           <div class="od-cluster" style="--od-gap: var(--space-3)">
-            <span class="badge warn">Building</span>
-            <span class="sm muted">Started 15 September · on track for 17 October</span>
+            <span class="badge warn" data-proj-badge>Building</span>
+            <span class="sm muted" data-proj-meta>Started 15 September · on track for 17 October</span>
           </div>
         </div>
 
@@ -721,14 +765,14 @@ button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; tran
       <section class="screen" id="screen-website" aria-labelledby="h-website" hidden>
         <div class="page-head">
           <p class="eyebrow">Your website</p>
-          <h1 id="h-website">mapleandrye.ca</h1>
+          <h1 id="h-website" data-site-title>mapleandrye.ca</h1>
         </div>
 
         <div class="card card-lg">
           <div class="card-top">
             <span class="od-row" style="--od-gap: var(--space-3)">
-              <span class="badge ok">Live</span>
-              <span class="sm muted">Checked 4 minutes ago</span>
+              <span class="badge ok" data-site-badge>Live</span>
+              <span class="sm muted" data-site-checked>Checked 4 minutes ago</span>
             </span>
             <button class="btn btn-ghost btn-sm" type="button" data-visit>Visit site
               <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 4.5H15v7.5M15 4.5 6 13.5"/></svg>

@@ -3,15 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Design system · SolenixAI</title>
-<meta name="description" content="The SolenixAI design system: the logo, the palette, the type scale and every component, in dark and light.">
+<title>Design system v2 · SolenixAI</title>
+<meta name="description" content="The SolenixAI design system v2: light and orbit, the Sora display face, data visualisation tokens and six layout archetypes, in dark and light.">
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="assets/brand/logo-dark.svg" type="image/svg+xml" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="assets/brand/logo-light.svg" type="image/svg+xml">
+
+<!-- Display face. display=swap so the fallback renders first and the page
+     never blanks. See DESIGN.md §2 for the brand/build.py follow-up. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400..800&display=swap">
+
 <link rel="stylesheet" href="tokens.css">
 <style>
 /* ===========================================================================
-   Component layer. Tokens come from tokens.css — no hex below this line.
+   Component layer, v2. Tokens come from tokens.css — no hex below this line.
    =========================================================================== */
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -24,7 +31,8 @@ body {
   font-size: var(--fs-body);
   line-height: var(--lh-body);
   color: var(--text);
-  background: radial-gradient(120% 90% at 100% 100%, var(--bg2) 0%, var(--bg) 60%);
+  background: var(--grad-sky);
+  background-attachment: fixed;
   min-height: 100dvh;
   display: flex; flex-direction: column;
   overflow-x: hidden;
@@ -37,34 +45,94 @@ button { cursor: pointer; background: none; border: 0; }
 p { text-wrap: pretty; }
 h1, h2, h3, h4 { text-wrap: balance; font-family: var(--font-display); }
 ::selection { background: color-mix(in srgb, var(--accent) 30%, transparent); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
-/* ── ambient sky: sun + orbits, same motif as the banners ─────────────────── */
-.sky { position: fixed; right: -24vmax; bottom: -34vmax; width: 78vmax; height: 78vmax; pointer-events: none; z-index: 0; }
-.sky .ring { fill: none; stroke: var(--ring); stroke-opacity: .16; stroke-width: 1; vector-effect: non-scaling-stroke; }
-.sky .orbit { transform-origin: 350px 350px; animation: spin linear infinite; }
-.sky .o1 { animation-duration: var(--orbit-1); }
-.sky .o2 { animation-duration: var(--orbit-2); animation-direction: reverse; }
-.sky .o3 { animation-duration: var(--orbit-3); }
-.sky .dot { fill: var(--ring); }
-@keyframes spin { to { transform: rotate(360deg); } }
-@media (prefers-reduced-motion: reduce) { .sky .orbit { animation: none; } }
+/* ── 1. Light and orbit ───────────────────────────────────────────────────────
+   Every ambient light is position:absolute inside a section that is
+   position:relative + overflow:hidden + isolation:isolate. Never fixed. That is
+   what keeps the sun's core from passing under a panel's text — v1 pinned a
+   78vmax sun to the viewport and it tracked the reader down the whole page.
+   ------------------------------------------------------------------------- */
+.lit { position: relative; isolation: isolate; overflow: hidden; }
+.lit > .sky { position: absolute; inset: 0; z-index: var(--z-sky); pointer-events: none; }
+.lit > .texture { position: absolute; inset: 0; z-index: var(--z-texture); pointer-events: none; }
+.lit > .wrap, .lit > .inner { position: relative; z-index: var(--z-content); }
 
-/* ── layout ───────────────────────────────────────────────────────────────── */
-.wrap { position: relative; z-index: 1; width: 100%; max-width: var(--container); margin-inline: auto; padding-inline: var(--gutter); }
-main { flex: 1; position: relative; z-index: 1; }
+/* The light source: a bright core inside a wide halo. */
+.sky-light {
+  position: absolute;
+  width: var(--light-size, 46rem); aspect-ratio: 1;
+  left: var(--light-x, 78%); top: var(--light-y, -18%);
+  translate: -50% 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at center,
+    color-mix(in srgb, var(--sun1) 52%, transparent) 0%,
+    color-mix(in srgb, var(--sun2) 26%, transparent) 30%,
+    color-mix(in srgb, var(--sun2) 8%, transparent) 55%,
+    color-mix(in srgb, var(--sun2) 0%, transparent) 72%);
+}
+
+/* Orbit rings, centred on the light. */
+.sky-orbit {
+  position: absolute;
+  width: var(--orbit-size, 74rem); aspect-ratio: 1;
+  left: var(--light-x, 78%); top: var(--light-y, -18%);
+  translate: -50% calc(-50% + (var(--light-size, 46rem) / 2));
+  overflow: visible;
+}
+.sky-orbit .ring { fill: none; stroke: var(--ring); stroke-opacity: .17; stroke-width: 1; vector-effect: non-scaling-stroke; }
+.sky-orbit .ring-faint { stroke-opacity: .1; }
+.sky-orbit .arc { fill: none; stroke: var(--ring); stroke-opacity: .34; stroke-width: 1.5; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.sky-orbit .track { transform-origin: 400px 400px; animation: orbit var(--orbit-1) var(--ease-orbit) infinite; }
+.sky-orbit .t2 { animation-duration: var(--orbit-2); animation-direction: reverse; }
+.sky-orbit .t3 { animation-duration: var(--orbit-3); }
+.sky-orbit .dot { fill: var(--ring); }
+@keyframes orbit { to { rotate: 360deg; } }
+@media (prefers-reduced-motion: reduce) { .sky-orbit .track { animation: none; } }
+
+/* Ground texture: a 32px hairline grid and a sparse starfield, both masked so
+   they fade out before they reach a block of prose. A mask reads only alpha, so
+   currentColor / transparent introduces no colour. */
+.texture {
+  background-image: var(--texture-grid);
+  background-size: var(--grid-size) var(--grid-size);
+  mask-image: radial-gradient(70% 60% at var(--light-x, 78%) var(--light-y, -18%), currentColor 0%, transparent 78%);
+  -webkit-mask-image: radial-gradient(70% 60% at var(--light-x, 78%) var(--light-y, -18%), currentColor 0%, transparent 78%);
+}
+.texture.stars { background-image: var(--texture-stars), var(--texture-grid);
+  background-size: 100% 100%, var(--grid-size) var(--grid-size); }
+
+/* Glass: --surface's alpha, plus blur, plus a lit top edge. */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md), var(--glass-inset);
+}
+
+/* ── 2. Layout ───────────────────────────────────────────────────────────── */
+.wrap { position: relative; z-index: var(--z-content); width: 100%; max-width: var(--container); margin-inline: auto; padding-inline: var(--gutter); }
+.wrap-wide { max-width: var(--container-wide); }
+main { flex: 1; position: relative; z-index: var(--z-content); }
 .section { padding-block: var(--space-section); border-top: 1px solid var(--line); }
 .grid { display: grid; gap: var(--space-4); grid-template-columns: 1fr; }
 @media (min-width: 720px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
 @media (min-width: 900px) { .grid-3 { grid-template-columns: repeat(3, 1fr); } }
 .stack { display: flex; flex-direction: column; gap: var(--space-4); }
+.stack-sm { gap: var(--space-2); }
 .cluster { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
-.skip { position: absolute; left: var(--space-4); top: calc(var(--space-2) * -6); z-index: 20;
+.row { display: flex; align-items: center; gap: var(--space-2); }
+.skip { position: absolute; left: var(--space-4); top: calc(var(--space-2) * -6); z-index: var(--z-skip);
   background: var(--surface-solid); color: var(--text); border: 1px solid var(--line-strong);
   border-radius: var(--radius-pill); padding: var(--space-3) var(--space-5); font-weight: var(--fw-semibold);
   transition: top var(--dur-fast) var(--ease-out); }
 .skip:focus-visible { top: var(--space-2); }
 
-/* ── type roles ───────────────────────────────────────────────────────────── */
+/* ── 3. Type roles ───────────────────────────────────────────────────────── */
+.statement { font-family: var(--font-display); font-size: var(--fs-statement); line-height: var(--lh-display);
+  letter-spacing: var(--track-statement); font-weight: var(--fw-black); }
 .display { font-size: var(--fs-display); line-height: var(--lh-display); letter-spacing: var(--track-display); font-weight: var(--fw-bold); }
 .h1 { font-size: var(--fs-h1); line-height: var(--lh-heading); letter-spacing: var(--track-heading); font-weight: var(--fw-bold); }
 .h2 { font-size: var(--fs-h2); line-height: var(--lh-heading); letter-spacing: var(--track-heading); font-weight: var(--fw-brand); }
@@ -73,26 +141,31 @@ main { flex: 1; position: relative; z-index: 1; }
 .lede { font-size: var(--fs-lede); color: var(--muted); max-width: var(--measure); }
 .body { max-width: var(--measure); }
 .small { font-size: var(--fs-sm); color: var(--muted); }
-.caption { font-size: var(--fs-xs); color: var(--faint); letter-spacing: 0; text-transform: none; font-family: var(--font-text); }
+.caption { font-size: var(--fs-xs); color: var(--faint); }
 .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
 .eyebrow { display: inline-flex; align-items: center; gap: var(--space-2); font-family: var(--font-mono);
   font-size: var(--fs-xs); font-weight: var(--fw-semibold); letter-spacing: var(--track-eyebrow);
   text-transform: uppercase; color: var(--accent); }
-.eyebrow::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor;
-  box-shadow: 0 0 0 4px color-mix(in srgb, currentColor 18%, transparent); }
+.eyebrow::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; box-shadow: var(--glow-point); }
 .label { font-family: var(--font-mono); font-size: var(--fs-xs); font-weight: var(--fw-semibold);
   letter-spacing: var(--track-label); text-transform: uppercase; color: var(--faint); }
 .token { font-family: var(--font-mono); font-size: var(--fs-2xs); letter-spacing: 0; color: var(--faint); }
-em.sun { font-style: normal; background: linear-gradient(90deg, var(--sun2), var(--sun1));
+code.token { overflow-wrap: anywhere; }
+
+/* Display-text gradient. --fs-h1 and above, one phrase per page. Measured in
+   DESIGN.md §3: worst stop is 3.4:1 light / 6.9:1 dark at large text. */
+em.sun { font-style: normal; background: var(--grad-headline);
   -webkit-background-clip: text; background-clip: text; color: transparent; }
+@supports not ((background-clip: text) or (-webkit-background-clip: text)) { em.sun { color: var(--accent-text); } }
 
 .section-head { display: flex; flex-wrap: wrap; gap: var(--space-3) var(--space-5); align-items: baseline;
   justify-content: space-between; margin-bottom: var(--space-5); }
 .section-head .h2 { flex: 1 1 18ch; }
 
-/* ── nav ──────────────────────────────────────────────────────────────────── */
-.topnav { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 82%, transparent);
-  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+/* ── 4. Nav ──────────────────────────────────────────────────────────────── */
+.topnav { position: sticky; top: 0; z-index: var(--z-nav); background: color-mix(in srgb, var(--bg) 78%, transparent);
+  backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-bottom: 1px solid var(--line); box-shadow: var(--glass-inset); }
 .topnav .wrap { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); min-height: var(--nav-height); }
 .brand { display: inline-flex; align-items: center; gap: var(--space-2); font-family: var(--font-display);
   font-weight: var(--fw-brand); letter-spacing: -.01em; text-decoration: none; }
@@ -104,9 +177,8 @@ em.sun { font-style: normal; background: linear-gradient(90deg, var(--sun2), var
 .navlink:hover { color: var(--text); background: var(--line); }
 .navlink[aria-current="page"] { color: var(--text); font-weight: var(--fw-semibold); background: var(--line); }
 .nav-sm { display: none; }
-@media (min-width: 640px) { .nav-sm { display: inline-flex; } }
+@media (min-width: 900px) { .nav-sm { display: inline-flex; } }
 
-/* ── theme switch ─────────────────────────────────────────────────────────── */
 .themeswitch { display: inline-flex; gap: 2px; padding: 3px; border: 1px solid var(--line);
   border-radius: var(--radius-pill); background: var(--surface); flex: none; }
 .themeswitch button { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%;
@@ -116,199 +188,314 @@ em.sun { font-style: normal; background: linear-gradient(90deg, var(--sun2), var
 .themeswitch button[aria-pressed="true"] { color: var(--accent-ink); background: var(--accent); }
 .themeswitch button[aria-pressed="true"]:hover { background: var(--accent-hover); color: var(--accent-ink); }
 
-/* ── buttons ──────────────────────────────────────────────────────────────── */
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
-  min-height: var(--tap-min); padding: 0 var(--space-5); border-radius: var(--radius-pill);
-  border: 1px solid var(--line); font-size: var(--fs-sm); font-weight: var(--fw-semibold);
-  text-decoration: none; white-space: nowrap;
-  transition: transform var(--dur-base) var(--ease-out), background var(--dur-fast) var(--ease-out),
-    border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-base) var(--ease-out); }
+/* ── 5. Buttons ──────────────────────────────────────────────────────────────
+   Action ember: a solid fill, one per screen. Everything else is a ghost.
+   ------------------------------------------------------------------------- */
+.btn { position: relative; overflow: hidden; display: inline-flex; align-items: center; justify-content: center;
+  gap: var(--space-2); min-height: var(--tap-min); padding: 0 var(--space-5); border-radius: var(--radius-pill);
+  font-size: var(--fs-sm); font-weight: var(--fw-semibold); text-decoration: none; white-space: nowrap;
+  border: 1px solid transparent;
+  transition: background var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out),
+    translate var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out); }
 .btn svg { width: 17px; height: 17px; flex: none; }
-.btn:hover { transform: translateY(var(--lift)); }
-.btn:active { transform: none; }
-.btn-primary { background: var(--accent); color: var(--accent-ink); border-color: transparent; box-shadow: var(--shadow-accent); }
-.btn-primary:hover { background: var(--accent-hover); color: var(--accent-ink); }
-.btn-secondary { background: var(--surface); color: var(--text); }
-.btn-secondary:hover { background: color-mix(in srgb, var(--text) 8%, var(--surface)); color: var(--text); border-color: var(--line-strong); }
-.btn-ghost { background: none; border-color: transparent; color: var(--text); }
-.btn-ghost:hover { background: color-mix(in srgb, var(--text) 8%, transparent); color: var(--text); }
-.btn[disabled], .btn[aria-disabled="true"] { opacity: .45; cursor: not-allowed; transform: none; box-shadow: none; }
-.btn-sm { min-height: 36px; padding: 0 var(--space-4); font-size: var(--fs-xs); letter-spacing: 0;
-  font-family: var(--font-text); text-transform: none; }
-.link { color: var(--accent); font-weight: var(--fw-semibold); text-decoration: none; }
-.link:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+.btn-primary { background: var(--grad-ember); color: var(--accent-ink); box-shadow: var(--glow-ember); }
+.btn-primary:hover { background: var(--accent-hover); color: var(--accent-ink); translate: 0 var(--lift);
+  box-shadow: var(--glow-ember), var(--glow-hover); }
+.btn-primary:active { translate: 0 0; }
+/* The light sweep: one pass on hover, never a loop. */
+.btn-primary::after { content: ""; position: absolute; inset: 0; background: var(--grad-sweep);
+  translate: -110% 0; pointer-events: none; }
+.btn-primary:hover::after { animation: sweep var(--dur-sweep) var(--ease-out) 1; }
+@keyframes sweep { from { translate: -110% 0; } to { translate: 110% 0; } }
+@media (prefers-reduced-motion: reduce) { .btn-primary:hover::after { animation: none; } }
+.btn-ghost { border-color: var(--line-strong); color: var(--text); }
+.btn-ghost:hover { background: color-mix(in srgb, var(--text) 8%, transparent); border-color: var(--line-strong);
+  color: var(--text); translate: 0 var(--lift); }
+.btn-ghost:active { translate: 0 0; }
+.btn-sm { min-height: 36px; padding: 0 var(--space-4); font-size: var(--fs-xs); }
+.btn:disabled, .btn[aria-disabled="true"] { opacity: .45; cursor: not-allowed; translate: 0 0; box-shadow: none; }
 
-/* ── cards ────────────────────────────────────────────────────────────────── */
-.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-xl);
-  padding: var(--space-5); box-shadow: var(--shadow-md);
-  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-  display: flex; flex-direction: column; gap: var(--space-2); }
-.card-link { text-decoration: none; transition: transform var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out); }
-.card-link:hover { transform: translateY(var(--lift-card)); border-color: color-mix(in srgb, var(--accent) 35%, var(--line)); box-shadow: var(--shadow-lg); }
-.card-quiet { background: none; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; }
-.card .h3 + p, .card .h4 + p { color: var(--muted); font-size: var(--fs-sm); }
-.card .foot { margin-top: auto; padding-top: var(--space-3); }
-.chip { width: 40px; height: 40px; border-radius: var(--radius-md); display: grid; place-items: center;
-  background: var(--accent-quiet); color: var(--accent); margin-bottom: var(--space-2); flex: none; }
-.chip svg { width: 20px; height: 20px; }
-
-/* ── status badge ─────────────────────────────────────────────────────────── */
-.badge { display: inline-flex; align-items: center; gap: var(--space-2); padding: 5px var(--space-3);
+/* ── 6. Badges and chips ─────────────────────────────────────────────────── */
+.badge { display: inline-flex; align-items: center; gap: var(--space-2); padding: var(--space-1) var(--space-3);
   border-radius: var(--radius-pill); font-family: var(--font-mono); font-size: var(--fs-2xs);
   font-weight: var(--fw-semibold); letter-spacing: var(--track-label); text-transform: uppercase; white-space: nowrap; }
-.badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex: none; }
-.badge-live { color: var(--ok); background: var(--ok-tint); }
-.badge-building { color: var(--warn); background: var(--warn-tint); }
-.badge-building::before { animation: pulse 1.8s var(--ease-in-out) infinite; }
+.badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex: none; }
+.badge-neutral { color: var(--muted); background: color-mix(in srgb, var(--text) 7%, transparent); }
+.badge-ok { color: var(--ok); background: var(--ok-tint); }
+.badge-warn { color: var(--warn); background: var(--warn-tint); }
 .badge-down { color: var(--down); background: var(--down-tint); }
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
-@media (prefers-reduced-motion: reduce) { .badge-building::before { animation: none; } }
-.badge-neutral { color: var(--muted); background: var(--surface-sunken); }
+.badge-ok::before, .badge-warn::before { box-shadow: var(--glow-point); }
+.chip { display: inline-flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--line); border-radius: var(--radius-pill); background: var(--surface);
+  font-size: var(--fs-xs); color: var(--muted); }
+.chip .k { font-family: var(--font-mono); color: var(--text); font-weight: var(--fw-semibold); }
 
-/* ── inputs ───────────────────────────────────────────────────────────────── */
-.field { display: flex; flex-direction: column; gap: var(--space-2); }
-.field > label { font-size: var(--fs-sm); font-weight: var(--fw-medium); }
-.input { width: 100%; min-height: var(--tap-min); padding: var(--space-3) var(--space-4);
-  background: var(--surface-solid); color: var(--text);
-  border: 1px solid var(--line-strong); border-radius: var(--radius-md); font-size: var(--fs-body);
-  transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out); }
-.input::placeholder { color: var(--faint); }
-.input:hover { border-color: color-mix(in srgb, var(--text) 40%, var(--line-strong)); }
-.input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); }
-.input:focus-visible { outline: none; }
-textarea.input { min-height: 96px; resize: vertical; line-height: var(--lh-body); }
-select.input { appearance: none; padding-right: var(--space-8);
-  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%);
-  background-position: right var(--space-5) center, calc(100% - var(--space-4)) center;
-  background-size: 6px 6px, 6px 6px; background-repeat: no-repeat; }
-.input[disabled] { background: var(--surface-sunken); color: var(--faint); border-color: var(--line); cursor: not-allowed; }
-.input[aria-invalid="true"] { border-color: var(--down); }
-.input[aria-invalid="true"]:focus { border-color: var(--down); box-shadow: 0 0 0 3px color-mix(in srgb, var(--down) 22%, transparent); }
-.hint { font-size: var(--fs-xs); color: var(--faint); }
-.hint-error { display: flex; align-items: center; gap: var(--space-1); font-size: var(--fs-xs); color: var(--down); font-weight: var(--fw-medium); }
-.hint-error svg { width: 14px; height: 14px; flex: none; }
-.check { display: flex; align-items: flex-start; gap: var(--space-3); font-size: var(--fs-sm); }
-.check input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--accent); flex: none; }
+/* ── 7. Cards and specimens ──────────────────────────────────────────────── */
+.card { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-5);
+  background: var(--glass-bg); backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--line); border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md), var(--glass-inset);
+  transition: translate var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out); }
+.card-link { text-decoration: none; color: inherit; }
+.card-link:hover { translate: 0 var(--lift-card);
+  border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+  box-shadow: var(--shadow-lg), var(--glass-inset), var(--glow-hover); }
+.card-quiet { background: var(--surface-sunken); box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; }
+.card .icon { display: grid; place-items: center; width: 40px; height: 40px; border-radius: var(--radius-md);
+  background: var(--accent-quiet); color: var(--accent-text); flex: none; }
+.card .icon svg { width: 20px; height: 20px; }
 
-/* ── table ────────────────────────────────────────────────────────────────── */
-.table { width: 100%; border-collapse: collapse; }
-.table th, .table td { text-align: left; padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--line); }
-.table th { font-family: var(--font-mono); font-size: var(--fs-2xs); font-weight: var(--fw-semibold);
-  letter-spacing: var(--track-label); text-transform: uppercase; color: var(--faint); }
-.table thead th { border-bottom-color: var(--line-strong); }
-.table tbody tr { transition: background var(--dur-fast) var(--ease-out); }
-.table tbody tr:hover { background: var(--surface-sunken); }
-.table tbody th { font-family: var(--font-text); font-size: var(--fs-body); font-weight: var(--fw-semibold);
-  letter-spacing: 0; text-transform: none; color: var(--text); }
-.table code { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--muted); }
-.table .end { text-align: right; }
-@media (max-width: 639px) {
-  .table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
-  .table tr { display: block; padding: var(--space-4) 0; border-bottom: 1px solid var(--line); }
-  .table tbody tr:hover { background: none; }
-  .table th, .table td { display: flex; gap: var(--space-4); justify-content: space-between; align-items: center;
-    padding: var(--space-1) 0; border: 0; }
-  .table td::before { content: attr(data-label); font-family: var(--font-mono); font-size: var(--fs-2xs);
-    letter-spacing: var(--track-label); text-transform: uppercase; color: var(--faint); flex: none; }
-  .table .end { text-align: left; }
-}
-
-/* ── empty state ──────────────────────────────────────────────────────────── */
-.empty { border: 1px dashed var(--line-strong); border-radius: var(--radius-xl); padding: var(--space-7) var(--space-5);
-  text-align: center; display: flex; flex-direction: column; align-items: center; gap: var(--space-3); }
-.empty .mark { width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center;
-  background: var(--surface-sunken); color: var(--faint); }
-.empty .mark svg { width: 24px; height: 24px; }
-.empty p { color: var(--muted); max-width: 40ch; font-size: var(--fs-sm); }
-
-/* ── sign-in ──────────────────────────────────────────────────────────────── */
-.signin { max-width: 25rem; margin-inline: auto; background: var(--surface-solid); border: 1px solid var(--line);
-  border-radius: var(--radius-xl); padding: var(--space-6) var(--space-5); box-shadow: var(--shadow-lg);
-  display: flex; flex-direction: column; gap: var(--space-4); }
-.signin header { display: flex; flex-direction: column; align-items: center; gap: var(--space-2); text-align: center; }
-.signin header svg.mark { width: 34px; height: 34px; }
-.signin .divider { display: flex; align-items: center; gap: var(--space-3); color: var(--faint);
-  font-family: var(--font-mono); font-size: var(--fs-2xs); letter-spacing: var(--track-label); text-transform: uppercase; }
-.signin .divider::before, .signin .divider::after { content: ""; flex: 1; border-top: 1px solid var(--line); }
-.signin .row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; }
-
-/* ── specimen scaffolding ─────────────────────────────────────────────────── */
-.specimen { border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; }
+.specimen { border: 1px solid var(--line); border-radius: var(--radius-xl); background: var(--surface);
+  overflow: hidden; display: flex; flex-direction: column; }
 .specimen > figcaption { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); align-items: baseline;
   justify-content: space-between; padding: var(--space-3) var(--space-4);
   border-bottom: 1px solid var(--line); background: var(--surface-sunken); }
-.specimen > .body-area { padding: var(--space-5) var(--space-4); }
-.swatches { display: grid; gap: var(--space-3); grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
-.swatch { display: flex; flex-direction: column; gap: var(--space-1); }
-.swatch .chipbox { height: 60px; border-radius: var(--radius-md); border: 1px solid var(--line); }
-.swatch .name { font-size: var(--fs-xs); font-weight: var(--fw-semibold); }
-.ratio { font-family: var(--font-mono); font-size: var(--fs-2xs); font-variant-numeric: tabular-nums; color: var(--faint); }
-.typerow { display: grid; gap: var(--space-1) var(--space-5); grid-template-columns: 1fr; padding-block: var(--space-3); border-top: 1px solid var(--line); }
-.typerow:first-child { border-top: 0; padding-top: 0; }
-@media (min-width: 720px) { .typerow { grid-template-columns: 9rem 1fr; align-items: baseline; } }
-.scalebar { display: flex; align-items: center; gap: var(--space-3); padding-block: 5px; }
-.scalebar .bar { height: 12px; border-radius: 3px; background: var(--accent-quiet); border-inline-start: 2px solid var(--accent); flex: none; }
-.radiigrid { display: grid; gap: var(--space-3); grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); }
-.radiibox { aspect-ratio: 1; border: 1px solid var(--line-strong); background: var(--surface-sunken);
-  display: grid; place-items: end center; padding-bottom: 6px; }
-.shadowbox { height: 74px; border-radius: var(--radius-lg); background: var(--surface-solid); border: 1px solid var(--line);
-  display: grid; place-items: center; }
-.dos { display: grid; gap: var(--space-4); grid-template-columns: 1fr; }
-@media (min-width: 720px) { .dos { grid-template-columns: 1fr 1fr; } }
-.do, .dont { border-radius: var(--radius-md); padding: var(--space-4); background: var(--surface-sunken); }
-.do { box-shadow: inset 3px 0 0 var(--ok); }
-.dont { box-shadow: inset 3px 0 0 var(--down); }
-.do p, .dont p { font-size: var(--fs-sm); }
-.dont p.said { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--down); }
+.body-area { padding: var(--space-5) var(--space-4); flex: 1; }
+.body-area-flush { padding: 0; }
 
-/* ── logo showcase ────────────────────────────────────────────────────────── */
-.lockups { display: flex; flex-wrap: wrap; gap: var(--space-6); align-items: flex-end; }
-.lockup { display: flex; flex-direction: column; gap: var(--space-2); }
-.lockup .row { display: inline-flex; align-items: center; gap: var(--space-2); font-family: var(--font-display); font-weight: var(--fw-brand); letter-spacing: -.01em; }
-.construction { display: grid; gap: var(--space-5); grid-template-columns: 1fr; align-items: center; }
-@media (min-width: 720px) { .construction { grid-template-columns: 200px 1fr; } }
-.guide { fill: none; stroke: var(--line-strong); stroke-width: .4; }
-.guidetext { font-family: var(--font-mono); font-size: 2.1px; fill: var(--faint); letter-spacing: 0; }
-.avatar { border-radius: var(--radius-lg); border: 1px solid var(--line); width: 120px; height: 120px; }
+/* ── 8. Swatches ─────────────────────────────────────────────────────────── */
+.swatches { display: grid; gap: var(--space-3); grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr)); }
+.sw { display: flex; flex-direction: column; gap: var(--space-2); }
+.sw .chipbox { height: 52px; border-radius: var(--radius-xs); border: 1px solid var(--line); }
+.sw .nm { font-size: var(--fs-xs); font-weight: var(--fw-semibold); }
+.ink-row { display: flex; flex-direction: column; gap: var(--space-2); }
+.ink-row p { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-3); align-items: baseline; }
 
-/* ── footer ───────────────────────────────────────────────────────────────── */
-footer { position: relative; z-index: 1; border-top: 1px solid var(--line);
-  background: color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-  margin-top: var(--space-7); }
-footer .wrap { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); justify-content: space-between;
-  padding-block: var(--space-5); font-size: var(--fs-sm); color: var(--faint); }
+/* ── 9. Type scale specimen ──────────────────────────────────────────────── */
+.scale { display: flex; flex-direction: column; }
+.scale > div { display: grid; gap: var(--space-1) var(--space-4); padding-block: var(--space-3);
+  border-bottom: 1px dashed var(--line); grid-template-columns: 1fr; }
+.scale > div:last-child { border-bottom: 0; }
+.scale .sample { min-width: 0; overflow-wrap: anywhere; }
+@media (min-width: 720px) { .scale > div { grid-template-columns: 1fr auto; align-items: baseline; } }
+.glyphs { font-family: var(--font-display); font-weight: var(--fw-bold); letter-spacing: var(--track-display);
+  font-size: clamp(2.5rem, 12vw, 5rem); line-height: 1.1; overflow-wrap: anywhere; }
+
+/* ── 10. Archetype: full-bleed feature ───────────────────────────────────── */
+.feature { border-radius: var(--radius-2xl); border: 1px solid var(--line); background: var(--grad-sky);
+  box-shadow: var(--shadow-lg), var(--glass-inset); }
+.feature > .inner { padding: clamp(var(--space-6), 6vw, var(--space-9)) clamp(var(--space-5), 5vw, var(--space-8)); }
+
+/* ── 11. Archetype: split with visual ────────────────────────────────────── */
+.split { display: grid; gap: var(--space-6); align-items: center; }
+@media (min-width: 900px) { .split { grid-template-columns: 1fr 1fr; gap: var(--space-8); } }
+.split .prose { max-width: var(--measure); }
+
+/* ── 12. Archetype: bento ────────────────────────────────────────────────── */
+.bento { display: grid; gap: var(--space-4); grid-template-columns: 1fr; }
+.bento > * { min-width: 0; }
+@media (min-width: 480px) { .bento { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 900px) { .bento { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .bento .span-2 { grid-column: span 2; }
+  .bento .hero-cell { grid-column: span 2; grid-row: span 2; } }
+.bento .card { border-radius: var(--radius-2xl); }
+
+/* ── 13. Archetype: big statement ────────────────────────────────────────── */
+.bigstate { text-align: center; padding-block: clamp(var(--space-8), 12vh, var(--space-10)); }
+.bigstate .statement { max-width: 22ch; margin-inline: auto; }
+.bigstate .after { margin-top: var(--space-5); color: var(--muted); max-width: 46ch; margin-inline: auto; }
+
+/* ── 14. Archetype: live demo panel ──────────────────────────────────────── */
+.demo { border-radius: var(--radius-2xl); overflow: hidden; }
+.demo > header { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); align-items: center;
+  justify-content: space-between; padding: var(--space-4) var(--space-5); border-bottom: 1px solid var(--line); }
+.demo > .screen { padding: var(--space-5); display: grid; gap: var(--space-5); }
+@media (min-width: 720px) { .demo > .screen { grid-template-columns: 1fr 1fr; } }
+.demo .full { grid-column: 1 / -1; }
+
+/* ── 15. Data visualisation ──────────────────────────────────────────────── */
+/* Sparkline */
+.spark { display: block; width: 100%; height: 46px; overflow: visible; }
+.spark .line { fill: none; stroke: var(--spark-line); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round;
+  vector-effect: non-scaling-stroke; }
+.spark .area { fill: url(#sparkfill); }
+/* A <circle> would stretch into an ellipse under preserveAspectRatio="none".
+   A zero-length path with a round cap and non-scaling-stroke stays a circle. */
+.spark .last { fill: none; stroke: var(--spark-point); stroke-width: 7; stroke-linecap: round;
+  vector-effect: non-scaling-stroke; filter: drop-shadow(0 0 4px var(--spark-point)); }
+
+/* Stat with trend */
+.stat { display: flex; flex-direction: column; gap: var(--space-1); }
+.stat .value { font-family: var(--font-display); font-size: var(--fs-stat); font-weight: var(--fw-bold);
+  letter-spacing: var(--track-stat); line-height: 1.1; font-variant-numeric: tabular-nums; }
+.stat .value .unit { font-size: .5em; font-weight: var(--fw-semibold); color: var(--muted); white-space: nowrap; }
+.trend { display: inline-flex; align-items: center; gap: var(--space-1); padding: 2px var(--space-2);
+  border-radius: var(--radius-pill); font-family: var(--font-mono); font-size: var(--fs-2xs);
+  font-weight: var(--fw-semibold); font-variant-numeric: tabular-nums; white-space: nowrap;
+  color: var(--trend-flat); background: var(--trend-flat-tint); }
+.trend[data-sentiment="good"] { color: var(--trend-up); background: var(--trend-up-tint); }
+.trend[data-sentiment="bad"] { color: var(--trend-down); background: var(--trend-down-tint); }
+.trend .arrow { font-family: var(--font-text); }
+
+/* Progress timeline */
+.timeline { list-style: none; display: grid; gap: var(--space-4); }
+.timeline li { display: grid; grid-template-columns: 24px 1fr; gap: var(--space-3); align-items: start; position: relative; }
+.timeline li::before { content: ""; position: absolute; left: 11px; top: 24px; bottom: calc(-1 * var(--space-4) - 2px);
+  width: 2px; background: var(--chart-track); }
+.timeline li:last-child::before { display: none; }
+.timeline .node { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--chart-track);
+  background: var(--bg); display: grid; place-items: center; margin-top: 1px; }
+.timeline .node svg { width: 12px; height: 12px; color: var(--accent-ink); }
+.timeline li[data-state="done"] .node { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.timeline li[data-state="done"]::before { background: var(--accent); }
+.timeline li[data-state="now"] .node { background: var(--accent); border-color: var(--accent); color: var(--accent-ink);
+  box-shadow: var(--glow-point); animation: breathe var(--pulse-period) var(--ease-in-out) infinite; }
+.timeline li[data-state="next"] .node { background: transparent; }
+.timeline .stage { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); align-items: baseline; }
+.timeline .name { font-size: var(--fs-sm); font-weight: var(--fw-semibold); }
+.timeline .when { font-family: var(--font-mono); font-size: var(--fs-2xs); color: var(--faint); font-variant-numeric: tabular-nums; }
+.timeline li[data-state="next"] .name { color: var(--muted); font-weight: var(--fw-regular); }
+@keyframes breathe {
+  0%, 100% { box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 16%, transparent), 0 0 14px color-mix(in srgb, currentColor 45%, transparent); }
+  50% { box-shadow: 0 0 0 7px color-mix(in srgb, currentColor 8%, transparent), 0 0 22px color-mix(in srgb, currentColor 60%, transparent); }
+}
+@media (prefers-reduced-motion: reduce) { .timeline li[data-state="now"] .node { animation: none; } }
+@media (min-width: 640px) {
+  .timeline { grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: var(--space-3); }
+  .timeline li { grid-template-columns: 1fr; gap: var(--space-2); }
+  .timeline li::before { left: 26px; right: calc(-1 * var(--space-3)); top: 11px; bottom: auto; width: auto; height: 2px; }
+  .timeline .stage { display: block; }
+}
+
+/* Chart frame */
+.chart { display: grid; gap: var(--space-3); }
+.plot { width: 100%; height: auto; overflow: visible; }
+.plot .gridline { stroke: var(--chart-grid); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.plot .tick { font-family: var(--font-mono); font-size: 9px; fill: var(--chart-axis); }
+.plot .series { fill: none; stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.legend { list-style: none; display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); }
+.legend li { display: inline-flex; align-items: center; gap: var(--space-2); font-size: var(--fs-xs); color: var(--muted); }
+.legend .key { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+.c1 { color: var(--chart-1); } .c2 { color: var(--chart-2); } .c3 { color: var(--chart-3); }
+.c4 { color: var(--chart-4); } .c5 { color: var(--chart-5); }
+.fill-c { fill: currentColor; } .stroke-c { stroke: currentColor; }
+.bg-c { background: currentColor; }
+.dotglow { filter: drop-shadow(0 0 4px currentColor); }
+
+/* ── 16. Table, inputs, empty, sign-in ───────────────────────────────────── */
+.tablewrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: var(--fs-sm); min-width: 32rem; }
+th { text-align: left; font-family: var(--font-mono); font-size: var(--fs-2xs); font-weight: var(--fw-semibold);
+  letter-spacing: var(--track-label); text-transform: uppercase; color: var(--faint);
+  padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--line); white-space: nowrap; }
+td { padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--line); vertical-align: middle; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr { transition: background var(--dur-fast) var(--ease-out); }
+tbody tr:hover { background: var(--surface-sunken); }
+td.right, th.right { text-align: right; }
+
+.field { display: flex; flex-direction: column; gap: var(--space-2); }
+.field > label { font-size: var(--fs-sm); font-weight: var(--fw-semibold); }
+.field .req { color: var(--accent-text); }
+.input { width: 100%; min-height: var(--tap-min); padding: var(--space-3) var(--space-4);
+  background: var(--surface-solid); border: 1px solid var(--line-strong); border-radius: var(--radius-md);
+  transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out); }
+.input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); }
+.input:disabled { background: var(--surface-sunken); color: var(--faint); cursor: not-allowed; }
+textarea.input { min-height: 5.5rem; resize: vertical; }
+.hint { font-size: var(--fs-xs); color: var(--faint); }
+.hint-error { display: flex; gap: var(--space-2); align-items: flex-start; font-size: var(--fs-xs); color: var(--down); }
+.hint-error svg { width: 14px; height: 14px; flex: none; margin-top: 2px; }
+.input[aria-invalid="true"] { border-color: var(--down); }
+.input[aria-invalid="true"]:focus { border-color: var(--down); box-shadow: 0 0 0 3px color-mix(in srgb, var(--down) 22%, transparent); }
+
+.empty { display: flex; flex-direction: column; align-items: center; gap: var(--space-3); text-align: center;
+  padding: var(--space-7) var(--space-5); }
+
+/* ── 17. Do / don't ──────────────────────────────────────────────────────── */
+.vpair { display: grid; gap: var(--space-4); }
+@media (min-width: 720px) { .vpair { grid-template-columns: 1fr 1fr; } }
+.vcell { padding: var(--space-4); border-radius: var(--radius-lg); border: 1px solid var(--line); background: var(--surface-sunken); }
+.vcell .tag { display: inline-flex; align-items: center; gap: var(--space-2); font-family: var(--font-mono);
+  font-size: var(--fs-2xs); font-weight: var(--fw-semibold); letter-spacing: var(--track-label);
+  text-transform: uppercase; margin-bottom: var(--space-2); }
+.vcell.good .tag { color: var(--ok); }
+.vcell.bad .tag { color: var(--down); }
+.vcell.bad p { color: var(--muted); }
+
+/* ── 18. Reveal. Opt-in from JS only, so no-JS never hides content. ──────── */
+.js-reveal .reveal > * { opacity: 0; translate: 0 var(--reveal-rise);
+  transition: opacity var(--dur-reveal) var(--ease-out), translate var(--dur-reveal) var(--ease-out); }
+.js-reveal .reveal.in > * { opacity: 1; translate: 0 0; }
+.js-reveal .reveal.in > *:nth-child(2) { transition-delay: var(--stagger); }
+.js-reveal .reveal.in > *:nth-child(3) { transition-delay: calc(var(--stagger) * 2); }
+.js-reveal .reveal.in > *:nth-child(4) { transition-delay: calc(var(--stagger) * 3); }
+.js-reveal .reveal.in > *:nth-child(5) { transition-delay: calc(var(--stagger) * 4); }
+.js-reveal .reveal.in > *:nth-child(n+6) { transition-delay: calc(var(--stagger) * 5); }
+
+/* One-shot sweep on demand, for the motion specimen. */
+.sweepable { position: relative; overflow: hidden; }
+.sweepable::after { content: ""; position: absolute; inset: 0; background: var(--grad-sweep); translate: -110% 0; pointer-events: none; }
+.sweepable.sweeping::after { animation: sweep var(--dur-sweep) var(--ease-out) 1; }
+
+/* ── 19. Footer ──────────────────────────────────────────────────────────── */
+footer { border-top: 1px solid var(--line); margin-top: var(--space-section);
+  padding-block: var(--space-6); font-size: var(--fs-sm); color: var(--faint); }
+footer .wrap { display: flex; flex-wrap: wrap; gap: var(--space-3) var(--space-5); justify-content: space-between; }
 footer a { text-decoration: none; }
 footer a:hover { color: var(--text); }
-.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* ── 20. Construction guides (logo specimen) ─────────────────────────────── */
+.construction { display: grid; gap: var(--space-5); }
+@media (min-width: 560px) { .construction { grid-template-columns: auto 1fr; align-items: center; } }
+.guide { fill: none; stroke: var(--accent); stroke-opacity: .5; stroke-width: .25; stroke-dasharray: 1 1; }
+.guidetext { font-family: var(--font-mono); font-size: 1.7px; fill: var(--faint); }
+.lockups { display: flex; flex-direction: column; gap: var(--space-4); }
+.lockup { display: flex; flex-direction: column; gap: var(--space-2); align-items: flex-start; }
+.lockup .row { font-family: var(--font-display); font-weight: var(--fw-brand); letter-spacing: -.01em; }
+.avatar { width: 84px; height: 84px; border-radius: var(--radius-md); }
+
+/* ── 21. Chart axes in HTML ──────────────────────────────────────────────────
+   SVG <text> scales with the viewBox, so a 9px tick label lands at ~6px on a
+   375px screen. The labels live in HTML instead and keep their real size; the
+   plot keeps uniform scaling so the glowing end points stay round.
+   ------------------------------------------------------------------------- */
+.plotgrid { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-2) var(--space-3); align-items: stretch; }
+.yaxis, .xaxis { font-family: var(--font-mono); font-size: var(--fs-2xs); color: var(--chart-axis);
+  font-variant-numeric: tabular-nums; }
+.yaxis { display: flex; flex-direction: column; justify-content: space-between; text-align: right;
+  line-height: 1; margin-block: -0.5em; }
+.xaxis { display: flex; justify-content: space-between; gap: var(--space-1); }
+.xaxis span:first-child { text-align: left; }
+.xaxis span:last-child { text-align: right; }
+
+/* ── 22. Segmented filter and status rows (the live demo panel) ──────────── */
+.seg { display: inline-flex; flex-wrap: wrap; gap: 2px; padding: 3px; border: 1px solid var(--line);
+  border-radius: var(--radius-pill); background: var(--surface-sunken); }
+.segbtn { min-height: 38px; padding: 0 var(--space-4); border-radius: var(--radius-pill);
+  font-size: var(--fs-xs); font-weight: var(--fw-semibold); color: var(--muted);
+  transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out); }
+.segbtn:hover { color: var(--text); background: var(--line); }
+.segbtn[aria-pressed="true"] { color: var(--text); background: var(--surface-solid); box-shadow: var(--shadow-sm); }
+.statusrow { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; justify-content: space-between;
+  padding: var(--space-3) var(--space-4); border: 1px solid var(--line); border-radius: var(--radius-lg);
+  background: var(--surface-sunken); transition: border-color var(--dur-fast) var(--ease-out); }
+.statusrow:hover { border-color: var(--line-strong); }
+.statusrow .name { font-size: var(--fs-sm); font-weight: var(--fw-semibold); overflow-wrap: anywhere; }
+[hidden] { display: none !important; }
 </style>
 </head>
 <body>
 <a class="skip" href="#content">Skip to content</a>
 
-<svg class="sky" viewBox="0 0 700 700" aria-hidden="true">
+<!-- Shared gradient defs. One copy, referenced by every mark and sparkline. -->
+<svg width="0" height="0" aria-hidden="true" style="position:absolute">
   <defs>
-    <radialGradient id="glow" cx=".5" cy=".5" r=".5">
-      <stop offset=".55" style="stop-color:var(--sun2);stop-opacity:.22"/>
-      <stop offset="1" style="stop-color:var(--sun2);stop-opacity:0"/>
-    </radialGradient>
     <radialGradient id="sun" cx=".42" cy=".38" r=".62">
       <stop offset="0" style="stop-color:var(--sun1)"/>
       <stop offset="1" style="stop-color:var(--sun2)"/>
     </radialGradient>
+    <linearGradient id="sparkfill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" style="stop-color:var(--chart-1);stop-opacity:.26"/>
+      <stop offset="1" style="stop-color:var(--chart-1);stop-opacity:0"/>
+    </linearGradient>
   </defs>
-  <circle cx="350" cy="350" r="270" fill="url(#glow)"/>
-  <circle class="ring" cx="350" cy="350" r="215"/>
-  <circle class="ring" cx="350" cy="350" r="280"/>
-  <circle class="ring" cx="350" cy="350" r="345"/>
-  <g class="orbit o1"><circle class="dot" cx="350" cy="135" r="5"/></g>
-  <g class="orbit o2"><circle class="dot" cx="70" cy="350" r="6"/></g>
-  <g class="orbit o3"><circle class="dot" cx="595" cy="100" r="4"/></g>
-  <circle cx="350" cy="350" r="150" fill="url(#sun)"/>
 </svg>
 
 <!-- ═══ nav ═══════════════════════════════════════════════════════════════ -->
-<header class="topnav" data-od-id="topnav">
-  <div class="wrap">
+<header class="topnav">
+  <div class="wrap wrap-wide">
     <a class="brand" href="https://solenix.dev" aria-label="SolenixAI home">
       <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/><circle cx="16" cy="16" r="8" fill="url(#sun)"/><circle cx="27" cy="9" r="2.2" fill="var(--ring)"/></svg>
       SolenixAI
@@ -316,8 +503,10 @@ footer a:hover { color: var(--text); }
     <nav class="navlinks" aria-label="Design system">
       <a class="navlink nav-sm" href="#colour">Colour</a>
       <a class="navlink nav-sm" href="#type">Type</a>
-      <a class="navlink" href="#components" aria-current="page">Components</a>
-      <a class="navlink nav-sm" href="#voice">Voice</a>
+      <a class="navlink" href="#light">Light</a>
+      <a class="navlink nav-sm" href="#data">Data</a>
+      <a class="navlink nav-sm" href="#layout">Layout</a>
+      <a class="navlink nav-sm" href="#components">Components</a>
     </nav>
     <div class="themeswitch" role="group" aria-label="Theme">
       <button type="button" data-theme-set="auto" aria-pressed="true" title="Match my device" aria-label="Match my device">
@@ -334,31 +523,93 @@ footer a:hover { color: var(--text); }
 </header>
 
 <main id="content">
-<div class="wrap">
 
-  <!-- ═══ hero ═════════════════════════════════════════════════════════════ -->
-  <section style="padding-block: var(--space-hero) var(--space-section);" data-od-id="hero">
-    <p class="eyebrow">Design system · v1</p>
-    <h1 class="display" style="margin-block: var(--space-4) var(--space-5);">One sun, written <em class="sun">down.</em></h1>
-    <p class="lede">The brand that's already live on solenix.dev, now with the parts it was missing: a type scale, status colours, a focus contract, and every component in both themes.</p>
-    <div class="cluster" style="margin-top: var(--space-6);">
-      <span class="badge badge-neutral">3 files</span>
-      <span class="badge badge-neutral">2 themes</span>
-      <span class="badge badge-neutral">375px floor</span>
-      <span class="badge badge-neutral">WCAG AA</span>
+<!-- ═══ hero · archetype 1: full-bleed feature ════════════════════════════ -->
+<div class="wrap wrap-wide" style="padding-top: var(--space-6);">
+  <section class="feature lit" aria-labelledby="hero-h">
+    <div class="sky" data-parallax>
+      <div class="sky-light"></div>
+      <svg class="sky-orbit" viewBox="0 0 800 800" aria-hidden="true">
+        <circle class="ring" cx="400" cy="400" r="200"/>
+        <circle class="ring ring-faint" cx="400" cy="400" r="290"/>
+        <circle class="ring ring-faint" cx="400" cy="400" r="380"/>
+        <path class="arc" d="M120 400a280 280 0 0 1 130-236"/>
+        <g class="track"><circle class="dot" cx="400" cy="200" r="5"/></g>
+        <g class="track t2"><circle class="dot" cx="110" cy="400" r="6"/></g>
+        <g class="track t3"><circle class="dot" cx="400" cy="780" r="4"/></g>
+      </svg>
+    </div>
+    <div class="texture stars"></div>
+    <div class="inner stack reveal" style="gap: var(--space-5);">
+      <p class="eyebrow">Design system · v2</p>
+      <h1 class="display" id="hero-h" style="max-width: 24ch;">The sun, turned all the way <em class="sun">up.</em></h1>
+      <p class="lede">v1 wrote the brand down and asked it to stay calm. v2 gives it a voice: a display face with character, light and orbit as a visual language, and the parts the client portal was missing.</p>
+      <div class="cluster" style="gap: var(--space-3) var(--space-4);">
+        <a class="btn btn-primary" href="#changed">
+          See what changed
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h13M12 5l7 7-7 7"/></svg>
+        </a>
+        <a class="btn btn-ghost" href="#components">Jump to components</a>
+      </div>
+      <div class="cluster" style="gap: var(--space-2);">
+        <span class="badge badge-neutral">3 files</span>
+        <span class="badge badge-neutral">2 themes</span>
+        <span class="badge badge-neutral">375px floor</span>
+        <span class="badge badge-neutral">WCAG AA</span>
+        <span class="badge badge-neutral">6 archetypes</span>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="wrap wrap-wide">
+
+  <!-- ═══ what changed ════════════════════════════════════════════════════ -->
+  <section class="section" id="changed" style="border-top: 0;">
+    <div class="section-head">
+      <h2 class="h2">What v2 changes</h2>
+      <p class="small" style="max-width: 40ch;">Four v1 rules made everything flat. All four are retired. The palette, the mark and the voice are untouched.</p>
+    </div>
+
+    <div class="grid grid-2 reveal">
+      <div class="card">
+        <p class="label">Typography</p>
+        <p class="h4">One family became three faces.</p>
+        <p class="small">v1 ran display and text on the same system stack, so nothing on the page had a voice. <strong>Sora</strong> now carries every headline. Text and mono are unchanged.</p>
+      </div>
+      <div class="card">
+        <p class="label">Visual language</p>
+        <p class="h4">"One gradient exists in this brand."</p>
+        <p class="small">Now five, plus glows, glass and texture — all tokens. Light and orbit is the signature, and it is made of light rather than more colour.</p>
+      </div>
+      <div class="card">
+        <p class="label">Accent budget</p>
+        <p class="h4">Twice per screen became two rules.</p>
+        <p class="small"><strong>Action ember</strong> — a solid fill you press — stays one per screen. <strong>Light ember</strong> — glow, gradient, orbit, lit edge — is unlimited.</p>
+      </div>
+      <div class="card">
+        <p class="label">Motion</p>
+        <p class="h4">Ambient drift became five signatures.</p>
+        <p class="small">Orbit, light sweep, scroll reveal, count-up, hover glow. Each one says something. All of them stop dead under reduced motion.</p>
+      </div>
+    </div>
+
+    <div class="card card-quiet" style="margin-top: var(--space-4); border-style: dashed;">
+      <p class="label">Carried in as a fix</p>
+      <p class="small">v1's gradient headline word used <code class="token">--sun1</code> as text colour in both themes. On the light ground that measures <strong class="num">1.60:1</strong> — a failure, on the largest words on the page. v2 gives the effect its own token, <code class="token">--grad-headline</code>, whose worst stop is <span class="num">3.4:1</span> light and <span class="num">6.9:1</span> dark at display size.</p>
     </div>
   </section>
 
-  <!-- ═══ logo ═════════════════════════════════════════════════════════════ -->
-  <section class="section" id="logo" data-od-id="logo">
+  <!-- ═══ the mark ════════════════════════════════════════════════════════ -->
+  <section class="section" id="mark">
     <div class="section-head">
       <h2 class="h2">The mark</h2>
-      <p class="small" style="max-width: 32ch;">A sun, one orbit ring, one agent dot. Nothing else goes in.</p>
+      <p class="small" style="max-width: 34ch;">A sun, one orbit ring, one agent dot. v2 changes nothing here — the mark was never the problem.</p>
     </div>
 
     <div class="grid grid-2">
-      <div class="specimen">
-        <figcaption><span class="label">Lockup</span><span class="token">--fw-brand · -0.01em</span></figcaption>
+      <figure class="specimen">
+        <figcaption><span class="label">Lockup</span><span class="token">--font-display · 650 · -0.01em</span></figcaption>
         <div class="body-area stack">
           <div class="lockups">
             <div class="lockup">
@@ -380,15 +631,15 @@ footer a:hover { color: var(--text); }
               <span class="token">20px min</span>
             </div>
           </div>
-          <p class="caption">Below 20px the dot stops resolving — use the sun alone.</p>
+          <p class="caption">Below 20px the dot stops resolving — use the sun alone. The lockup is set in Sora now, which is the only thing about the mark v2 touches.</p>
         </div>
-      </div>
+      </figure>
 
-      <div class="specimen">
+      <figure class="specimen">
         <figcaption><span class="label">Construction</span><span class="token">32-unit grid</span></figcaption>
         <div class="body-area">
           <div class="construction">
-            <svg viewBox="-2 -2 36 36" aria-label="The mark on its grid: orbit ring at radius 14, sun at radius 8, agent dot radius 2.2 at 27,9." style="width: 100%; max-width: 200px; margin-inline: auto;">
+            <svg viewBox="-2 -2 36 36" aria-label="The mark on its grid: orbit ring at radius 14, sun at radius 8, agent dot radius 2.2 at 27,9." style="width: 100%; max-width: 190px; margin-inline: auto;">
               <circle class="guide" cx="16" cy="16" r="14"/>
               <path class="guide" d="M16 0v32M0 16h32"/>
               <circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/>
@@ -400,30 +651,30 @@ footer a:hover { color: var(--text); }
               <text class="guidetext" x="7.4" y="9.6">r14</text>
               <text class="guidetext" x="27" y="4.6" text-anchor="middle">27,9</text>
             </svg>
-            <ul class="stack" style="gap: var(--space-2); list-style: none; font-size: var(--fs-sm);">
+            <ul class="stack stack-sm" style="list-style: none; font-size: var(--fs-sm);">
               <li><strong>Ring</strong> <span class="token">r14 · --ring at 45% · 1.5 wide</span></li>
-              <li><strong>Sun</strong> <span class="token">r8 · --sun1 → --sun2 at 42% 38%</span></li>
+              <li><strong>Sun</strong> <span class="token">r8 · --grad-sun at 42% 38%</span></li>
               <li><strong>Agent dot</strong> <span class="token">r2.2 at 27,9 — breaks the ring</span></li>
             </ul>
           </div>
         </div>
-      </div>
+      </figure>
     </div>
 
     <div class="grid grid-2" style="margin-top: var(--space-4);">
-      <div class="specimen">
+      <figure class="specimen">
         <figcaption><span class="label">Shipped assets</span><span class="token">/brand/out/</span></figcaption>
         <div class="body-area cluster" style="gap: var(--space-5); align-items: flex-start;">
           <div class="lockup">
             <img class="avatar" src="assets/brand/avatar.png" width="512" height="512" alt="The SolenixAI org avatar: the sun mark centred on a dark field of orbit rings." loading="lazy">
             <span class="token">avatar.png · 512²</span>
           </div>
-          <div class="stack" style="gap: var(--space-2); flex: 1 1 14rem;">
+          <div class="stack stack-sm" style="flex: 1 1 14rem;">
             <p class="small"><code class="token">brand/build.py</code> generates the avatar, the favicons and the four GitHub banners from the same values listed here.</p>
             <p class="caption">Change a colour in this system and re-run it the same day, or the site and the banners drift apart.</p>
           </div>
         </div>
-      </div>
+      </figure>
       <div class="card card-quiet" style="border-style: dashed; justify-content: center;">
         <p class="label">The rule</p>
         <p class="h4">One ring, one dot.</p>
@@ -432,471 +683,879 @@ footer a:hover { color: var(--text); }
     </div>
   </section>
 
-  <!-- ═══ colour ═══════════════════════════════════════════════════════════ -->
-  <section class="section" id="colour" data-od-id="colour">
+  <!-- ═══ colour ══════════════════════════════════════════════════════════ -->
+  <section class="section" id="colour">
     <div class="section-head">
       <h2 class="h2">Colour</h2>
-      <p class="small" style="max-width: 34ch;">Ratios are measured against each token's normal background. AA needs 4.5:1 for text, 3:1 for icons.</p>
-    </div>
-
-    <div class="stack">
-      <div class="specimen">
-        <figcaption><span class="label">Surfaces and ink</span><span class="token">--bg · --surface · --text</span></figcaption>
-        <div class="body-area">
-          <div class="swatches">
-            <div class="swatch"><div class="chipbox" style="background: var(--bg);"></div><span class="name">Page</span><span class="token">--bg</span></div>
-            <div class="swatch"><div class="chipbox" style="background: var(--bg2);"></div><span class="name">Far corner</span><span class="token">--bg2</span></div>
-            <div class="swatch"><div class="chipbox" style="background: var(--surface-solid);"></div><span class="name">Surface</span><span class="token">--surface-solid</span></div>
-            <div class="swatch"><div class="chipbox" style="background: var(--surface-sunken);"></div><span class="name">Sunken</span><span class="token">--surface-sunken</span></div>
-            <div class="swatch"><div class="chipbox" style="background: var(--text);"></div><span class="name">Text</span><span class="ratio">--text · 16.8:1</span></div>
-            <div class="swatch"><div class="chipbox" style="background: var(--muted);"></div><span class="name">Muted</span><span class="ratio">--muted · 7.3:1</span></div>
-            <div class="swatch"><div class="chipbox" style="background: var(--faint);"></div><span class="name">Faint</span><span class="ratio">--faint · 4.9:1</span></div>
-            <div class="swatch"><div class="chipbox" style="background: var(--line-solid);"></div><span class="name">Line</span><span class="token">--line-solid</span></div>
-          </div>
-          <p class="caption" style="margin-top: var(--space-4);">Ratios shown for light; dark runs equal or higher on every pair. <code class="token">--faint</code> at 4.9:1 is the floor — captions only, never something to act on.</p>
-        </div>
-      </div>
-
-      <div class="grid grid-2">
-        <div class="specimen">
-          <figcaption><span class="label">The ember</span><span class="token">one accent, twice per screen</span></figcaption>
-          <div class="body-area">
-            <div class="swatches">
-              <div class="swatch"><div class="chipbox" style="background: var(--accent);"></div><span class="name">Accent</span><span class="ratio">--accent · 5.0:1</span></div>
-              <div class="swatch"><div class="chipbox" style="background: var(--accent-hover);"></div><span class="name">Hover</span><span class="ratio">--accent-hover · 7.3:1</span></div>
-              <div class="swatch"><div class="chipbox" style="background: var(--accent-quiet); border-color: var(--line-strong);"></div><span class="name">Quiet fill</span><span class="token">--accent-quiet</span></div>
-            </div>
-            <p class="caption" style="margin-top: var(--space-4);">Hover moves the fill away from the ink, so contrast goes up, never down.</p>
-          </div>
-        </div>
-
-        <div class="specimen">
-          <figcaption><span class="label">The sun</span><span class="token">--sun1 → --sun2</span></figcaption>
-          <div class="body-area">
-            <div class="chipbox" style="height: 60px; background: linear-gradient(100deg, var(--sun1), var(--sun2));"></div>
-            <p class="caption" style="margin-top: var(--space-3);">The one gradient in this brand. It belongs to the mark and the ambient sky — never a text colour, never a page background.</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="specimen">
-        <figcaption><span class="label">Status</span><span class="token">--ok · --warn · --down</span></figcaption>
-        <div class="body-area stack">
-          <div class="cluster" style="gap: var(--space-4);">
-            <span class="badge badge-live">Live</span>
-            <span class="badge badge-building">Building</span>
-            <span class="badge badge-down">Down</span>
-          </div>
-          <div class="swatches">
-            <div class="swatch"><div class="chipbox" style="background: var(--ok);"></div><span class="name">Live</span><span class="ratio">--ok · 6.5:1 on tint</span></div>
-            <div class="swatch"><div class="chipbox" style="background: var(--warn);"></div><span class="name">Building</span><span class="ratio">--warn · 6.2:1 on tint</span></div>
-            <div class="swatch"><div class="chipbox" style="background: var(--down);"></div><span class="name">Down</span><span class="ratio">--down · 5.4:1 on tint</span></div>
-          </div>
-          <p class="caption">Every badge carries a dot, a colour <em>and</em> a word. Colour alone is not a state. "Building" borrows the ember on purpose — work in flight is the sun coming up.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══ type ═════════════════════════════════════════════════════════════ -->
-  <section class="section" id="type" data-od-id="type">
-    <div class="section-head">
-      <h2 class="h2">Type</h2>
-      <p class="small" style="max-width: 34ch;">Three roles, two visible faces. The grotesque carries display and text; mono does every label, number and command.</p>
-    </div>
-
-    <div class="specimen">
-      <figcaption><span class="label">Scale</span><span class="token">clamp() — 375px to 1920px, no media query</span></figcaption>
-      <div class="body-area">
-        <div class="typerow"><span class="token">--fs-display · 700 · -.035em</span><span class="display">Sun</span></div>
-        <div class="typerow"><span class="token">--fs-h1 · 700 · -.015em</span><span class="h1">Websites, done for you</span></div>
-        <div class="typerow"><span class="token">--fs-h2 · 650 · -.015em</span><span class="h2">AI for small businesses</span></div>
-        <div class="typerow"><span class="token">--fs-h3 · 650</span><span class="h3">Agents Marketplace</span></div>
-        <div class="typerow"><span class="token">--fs-h4 · 600</span><span class="h4">Launch &amp; look after</span></div>
-        <div class="typerow"><span class="token">--fs-lede · 400</span><span class="lede">We find the hours AI can save you and set it up so it keeps working.</span></div>
-        <div class="typerow"><span class="token">--fs-body · 400</span><span class="body">Tell us how your business runs, where the time goes, and what you need online. We'll come back with a plan before any work starts.</span></div>
-        <div class="typerow"><span class="token">--fs-sm · 400</span><span class="small">Nav links, secondary UI, captions with weight.</span></div>
-        <div class="typerow"><span class="token">--fs-xs · 600 · mono caps</span><span class="eyebrow">Open source</span></div>
-        <div class="typerow"><span class="token">--fs-2xs · 600 · the floor</span><span class="badge badge-neutral">Badge</span></div>
-      </div>
-    </div>
-
-    <div class="grid grid-2" style="margin-top: var(--space-4);">
-      <div class="specimen">
-        <figcaption><span class="label">Mono at work</span><span class="token">--font-mono</span></figcaption>
-        <div class="body-area stack" style="gap: var(--space-3);">
-          <p class="label">Section label</p>
-          <p class="num" style="font-size: var(--fs-h2); letter-spacing: var(--track-heading);">1,024 · 64rem · 4.5:1</p>
-          <div style="background: var(--surface-sunken); border: 1px solid var(--line); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); overflow-x: auto;">
-            <code class="token" style="font-size: var(--fs-xs); white-space: nowrap;">/plugin marketplace add SolenixAI/agents-marketplace</code>
-          </div>
-          <p class="caption">Numbers are always mono and tabular, so columns line up.</p>
-        </div>
-      </div>
-      <div class="specimen">
-        <figcaption><span class="label">Measure</span><span class="token">--measure · 34rem</span></figcaption>
-        <div class="body-area">
-          <p class="body">Prose is capped at 34rem. Long lines are the most common way to make plain words feel hard — a reader who has to track back across a wide column reads slower and trusts less, even when every word is simple.</p>
-          <p class="caption" style="margin-top: var(--space-3);">Headings balance; paragraphs wrap pretty. No headline is left with one word on its last line.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══ space, radius, shadow, motion ════════════════════════════════════ -->
-  <section class="section" id="foundations" data-od-id="foundations">
-    <div class="section-head">
-      <h2 class="h2">Space, radius, shadow, motion</h2>
-      <p class="small" style="max-width: 34ch;">A 4px base, a pill-and-20px silhouette, two-layer shadows, and the house easing curve.</p>
+      <p class="small" style="max-width: 40ch;">Unchanged from v1. Every number below is measured against the real background, in the theme you are looking at.</p>
     </div>
 
     <div class="grid grid-2">
-      <div class="specimen">
-        <figcaption><span class="label">Space</span><span class="token">4px base · --space-1…10</span></figcaption>
+      <figure class="specimen">
+        <figcaption><span class="label">Surfaces</span><span class="token">--bg · --bg2 · --surface · --surface-sunken</span></figcaption>
         <div class="body-area">
-          <div class="scalebar"><span class="bar" style="width: 4px;"></span><span class="token">--space-1 · 4</span></div>
-          <div class="scalebar"><span class="bar" style="width: 8px;"></span><span class="token">--space-2 · 8</span></div>
-          <div class="scalebar"><span class="bar" style="width: 12px;"></span><span class="token">--space-3 · 12</span></div>
-          <div class="scalebar"><span class="bar" style="width: 16px;"></span><span class="token">--space-4 · 16</span></div>
-          <div class="scalebar"><span class="bar" style="width: 24px;"></span><span class="token">--space-5 · 24</span></div>
-          <div class="scalebar"><span class="bar" style="width: 32px;"></span><span class="token">--space-6 · 32</span></div>
-          <div class="scalebar"><span class="bar" style="width: 48px;"></span><span class="token">--space-7 · 48</span></div>
-          <div class="scalebar"><span class="bar" style="width: 64px;"></span><span class="token">--space-8 · 64</span></div>
-          <div class="scalebar"><span class="bar" style="width: 96px;"></span><span class="token">--space-9 · 96</span></div>
-          <div class="scalebar"><span class="bar" style="width: 128px;"></span><span class="token">--space-10 · 128</span></div>
-          <p class="caption" style="margin-top: var(--space-3);">Use the steps. Adding one is how a system starts drifting.</p>
-        </div>
-      </div>
-
-      <div class="stack">
-        <div class="specimen">
-          <figcaption><span class="label">Radius</span><span class="token">--radius-xs…2xl · pill</span></figcaption>
-          <div class="body-area">
-            <div class="radiigrid">
-              <div class="radiibox" style="border-radius: var(--radius-xs);"><span class="token">8</span></div>
-              <div class="radiibox" style="border-radius: var(--radius-md);"><span class="token">12</span></div>
-              <div class="radiibox" style="border-radius: var(--radius-lg);"><span class="token">16</span></div>
-              <div class="radiibox" style="border-radius: var(--radius-xl);"><span class="token">20</span></div>
-              <div class="radiibox" style="border-radius: var(--radius-2xl);"><span class="token">28</span></div>
-              <div class="radiibox" style="border-radius: var(--radius-pill);"><span class="token">pill</span></div>
-            </div>
-            <p class="caption" style="margin-top: var(--space-3);">Buttons are pills, cards are 20px. That pairing is the brand's silhouette.</p>
+          <div class="swatches">
+            <div class="sw"><div class="chipbox" style="background: var(--bg)"></div><span class="nm">Page floor</span><span class="token">--bg</span></div>
+            <div class="sw"><div class="chipbox" style="background: var(--bg2)"></div><span class="nm">Ground</span><span class="token">--bg2</span></div>
+            <div class="sw"><div class="chipbox" style="background: var(--surface)"></div><span class="nm">Surface</span><span class="token">--surface</span></div>
+            <div class="sw"><div class="chipbox" style="background: var(--surface-sunken)"></div><span class="nm">Sunken</span><span class="token">--surface-sunken</span></div>
           </div>
         </div>
+      </figure>
 
-        <div class="specimen">
-          <figcaption><span class="label">Shadow</span><span class="token">contact layer + soft layer</span></figcaption>
-          <div class="body-area">
-            <div class="grid" style="grid-template-columns: repeat(3, 1fr); gap: var(--space-3);">
-              <div class="shadowbox" style="box-shadow: var(--shadow-sm);"><span class="token">sm</span></div>
-              <div class="shadowbox" style="box-shadow: var(--shadow-md);"><span class="token">md</span></div>
-              <div class="shadowbox" style="box-shadow: var(--shadow-lg);"><span class="token">lg</span></div>
-            </div>
-            <p class="caption" style="margin-top: var(--space-3);">Shadow signals height, never decoration. <code class="token">--shadow-accent</code> is reserved for the one primary button.</p>
+      <figure class="specimen">
+        <figcaption><span class="label">Ink</span><span class="token">measured on --bg · light / dark</span></figcaption>
+        <div class="body-area">
+          <div class="ink-row">
+            <p><span style="color: var(--text); font-weight: var(--fw-semibold)">Headings and body</span> <span class="token">--text · 16.8 / 17.4</span></p>
+            <p><span style="color: var(--muted)">Secondary prose</span> <span class="token">--muted · 7.3 / 7.3</span></p>
+            <p><span style="color: var(--faint)">Captions and metadata</span> <span class="token">--faint · 4.9 / 5.6</span></p>
+            <p><span style="color: var(--accent); font-weight: var(--fw-semibold)">Accent and links</span> <span class="token">--accent · 5.0 / 9.1</span></p>
           </div>
+          <p class="caption" style="margin-top: var(--space-4);"><code class="token">--faint</code> is the floor of the system. Captions and metadata only — anything a reader must act on uses <code class="token">--muted</code> or darker.</p>
         </div>
-      </div>
+      </figure>
     </div>
 
-    <div class="specimen" style="margin-top: var(--space-4);">
-      <figcaption><span class="label">Motion</span><span class="token">--ease-out · cubic-bezier(.2,.7,.2,1)</span></figcaption>
-      <div class="body-area">
-        <table class="table">
-          <thead><tr><th scope="col">Token</th><th scope="col">Value</th><th scope="col">Used for</th></tr></thead>
-          <tbody>
-            <tr><th scope="row">--dur-fast</th><td data-label="Value" class="num">120ms</td><td data-label="Used for" class="small">Colour, border</td></tr>
-            <tr><th scope="row">--dur-base</th><td data-label="Value" class="num">180ms</td><td data-label="Used for" class="small">Lift, shadow</td></tr>
-            <tr><th scope="row">--dur-slow</th><td data-label="Value" class="num">320ms</td><td data-label="Used for" class="small">Panels, disclosure</td></tr>
-            <tr><th scope="row">--dur-reveal</th><td data-label="Value" class="num">700ms</td><td data-label="Used for" class="small">Entrance, once per page</td></tr>
-            <tr><th scope="row">--orbit-1/2/3</th><td data-label="Value" class="num">90s / 140s / 200s</td><td data-label="Used for" class="small">Ambient orbits behind this page</td></tr>
-          </tbody>
-        </table>
-        <p class="caption" style="margin-top: var(--space-4);">Reduced motion collapses every duration to 1ms and both hover lifts to 0. Nothing here is load-bearing on animation.</p>
+    <div class="grid grid-2" style="margin-top: var(--space-4);">
+      <figure class="specimen">
+        <figcaption><span class="label">Status</span><span class="token">a colour and a word, never colour alone</span></figcaption>
+        <div class="body-area stack">
+          <div class="cluster">
+            <span class="badge badge-ok">Live</span>
+            <span class="badge badge-warn">Building</span>
+            <span class="badge badge-down">Down</span>
+            <span class="badge badge-neutral">Paused</span>
+          </div>
+          <p class="small">A small business owner's real question is "is it working right now?" Every state carries a dot, a colour and a word.</p>
+          <p class="caption">"Building" borrows the ember hue on purpose — work in flight is the sun coming up. It is semantic, it carries a word, and it is never pill-shaped like a button.</p>
+        </div>
+      </figure>
+
+      <figure class="specimen">
+        <figcaption><span class="label">Chart series</span><span class="token">--chart-1 … --chart-5</span></figcaption>
+        <div class="body-area stack">
+          <div class="swatches" style="grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr));">
+            <div class="sw c1"><div class="chipbox bg-c"></div><span class="nm" style="color: var(--chart-1)">Ember</span><span class="token">--chart-1</span></div>
+            <div class="sw c2"><div class="chipbox bg-c"></div><span class="nm" style="color: var(--chart-2)">Teal</span><span class="token">--chart-2</span></div>
+            <div class="sw c3"><div class="chipbox bg-c"></div><span class="nm" style="color: var(--chart-3)">Indigo</span><span class="token">--chart-3</span></div>
+            <div class="sw c4"><div class="chipbox bg-c"></div><span class="nm" style="color: var(--chart-4)">Fuchsia</span><span class="token">--chart-4</span></div>
+            <div class="sw c5"><div class="chipbox bg-c"></div><span class="nm" style="color: var(--chart-5)">Sky</span><span class="token">--chart-5</span></div>
+          </div>
+          <div class="cluster" style="gap: var(--space-2);">
+            <span class="badge" style="color: var(--chart-1); background: var(--chart-1-tint)">Visits</span>
+            <span class="badge" style="color: var(--chart-2); background: var(--chart-2-tint)">Calls</span>
+            <span class="badge" style="color: var(--chart-3); background: var(--chart-3-tint)">Bookings</span>
+            <span class="badge" style="color: var(--chart-4); background: var(--chart-4-tint)">Emails</span>
+            <span class="badge" style="color: var(--chart-5); background: var(--chart-5-tint)">Orders</span>
+          </div>
+          <p class="caption">Each series clears 4.5:1 on the page <em>and</em> on its own tint, so a series colour can label itself. Five is the maximum — at six, it is the wrong chart.</p>
+        </div>
+      </figure>
+    </div>
+
+    <figure class="specimen" style="margin-top: var(--space-4);">
+      <figcaption><span class="label">Trend</span><span class="token">--trend-up · --trend-down · --trend-flat</span></figcaption>
+      <div class="body-area stack">
+        <div class="cluster" style="gap: var(--space-4);">
+          <span class="trend" data-sentiment="good"><span class="arrow" aria-hidden="true">↑</span> +18%</span>
+          <span class="trend" data-sentiment="bad"><span class="arrow" aria-hidden="true">↑</span> +12%</span>
+          <span class="trend" data-sentiment="neutral"><span class="arrow" aria-hidden="true">↑</span> +4%</span>
+          <span class="trend" data-sentiment="good"><span class="arrow" aria-hidden="true">↓</span> −9%</span>
+        </div>
+        <p class="small"><strong>A rise is not always good.</strong> Bookings up is green; hosting cost up is not. The direction lives in the token; the judgement is set per instance with <code class="token">data-sentiment</code>. Default is neutral — the arrow shows direction and nobody is told how to feel.</p>
+        <p class="caption">Every trend carries an arrow glyph and a signed number, so the direction survives with no colour at all.</p>
       </div>
+    </figure>
+  </section>
+
+  <!-- ═══ type ════════════════════════════════════════════════════════════ -->
+  <section class="section" id="type">
+    <div class="section-head">
+      <h2 class="h2">Type</h2>
+      <p class="small" style="max-width: 40ch;">Three roles, three faces. The single biggest reason v1 read as flat was that nothing on the page had a voice.</p>
+    </div>
+
+    <div class="split" style="margin-bottom: var(--space-6);">
+      <div class="prose stack">
+        <p class="eyebrow">Display · Sora</p>
+        <p class="h1">Why this face</p>
+        <p class="body small">A geometric grotesque whose bowls are near-perfect circles — the same geometry as the mark — with tight apertures and flat terminals that read as technical rather than friendly. It holds its presence at 96px, which is what the big statement needs.</p>
+        <p class="body small">And it is not Inter, Roboto or Space Grotesk, so it does not arrive pre-loaded with somebody else's startup.</p>
+        <div class="cluster" style="gap: var(--space-2);">
+          <span class="chip"><span class="k">400–800</span> variable</span>
+          <span class="chip"><span class="k">swap</span> no blank page</span>
+          <span class="chip"><span class="k">OFL 1.1</span> licence</span>
+        </div>
+      </div>
+      <figure class="specimen">
+        <figcaption><span class="label">Specimen</span><span class="token">--font-display · 700</span></figcaption>
+        <div class="body-area">
+          <p class="glyphs">Aa Gg 0369</p>
+          <p class="token" style="margin-top: var(--space-3);">SolenixAI · light and orbit · 375px · AA</p>
+        </div>
+      </figure>
+    </div>
+
+    <div class="grid grid-3">
+      <figure class="specimen">
+        <figcaption><span class="label">Display</span><span class="token">--font-display</span></figcaption>
+        <div class="body-area">
+          <p style="font-family: var(--font-display); font-weight: var(--fw-bold); font-size: var(--fs-h2); letter-spacing: var(--track-heading);">Sora</p>
+          <p class="caption" style="margin-top: var(--space-2);">Headlines, statements, the lockup, stat numerals.</p>
+        </div>
+      </figure>
+      <figure class="specimen">
+        <figcaption><span class="label">Text</span><span class="token">--font-text</span></figcaption>
+        <div class="body-area">
+          <p style="font-family: var(--font-text); font-size: var(--fs-h3);">System grotesque</p>
+          <p class="caption" style="margin-top: var(--space-2);">Body, UI, buttons. Unchanged from v1 — fast, and already what ships.</p>
+        </div>
+      </figure>
+      <figure class="specimen">
+        <figcaption><span class="label">Mono</span><span class="token">--font-mono</span></figcaption>
+        <div class="body-area">
+          <p style="font-family: var(--font-mono); font-size: var(--fs-h4);">ui-monospace</p>
+          <p class="caption" style="margin-top: var(--space-2);">Eyebrows, labels, numbers, table headers, status, code. Still doing real work.</p>
+        </div>
+      </figure>
+    </div>
+
+    <figure class="specimen" style="margin-top: var(--space-4);">
+      <figcaption><span class="label">Scale</span><span class="token">clamp() — 375px and 1920px both land</span></figcaption>
+      <div class="body-area">
+        <div class="scale">
+          <div><p class="statement sample" style="font-size: clamp(2rem, 6vw, 3rem);">Big statement</p><span class="token">--fs-statement · 800 · -0.04em</span></div>
+          <div><p class="display sample" style="font-family: var(--font-display)">Page headline</p><span class="token">--fs-display · 700 · -0.03em</span></div>
+          <div><p class="h1 sample">Page title</p><span class="token">--fs-h1 · 700</span></div>
+          <div><p class="h2 sample">Section title</p><span class="token">--fs-h2 · 650</span></div>
+          <div><p class="h3 sample">Card title</p><span class="token">--fs-h3 · 650</span></div>
+          <div><p class="h4 sample">Sub-head</p><span class="token">--fs-h4 · 600</span></div>
+          <div><p class="sample" style="font-family: var(--font-display); font-size: var(--fs-stat); font-weight: var(--fw-bold); letter-spacing: var(--track-stat); font-variant-numeric: tabular-nums;">1,284</p><span class="token">--fs-stat · 700 · tabular</span></div>
+          <div><p class="lede sample">The sentence under a headline.</p><span class="token">--fs-lede · 400</span></div>
+          <div><p class="sample">Prose, capped at 34rem so plain words stay easy.</p><span class="token">--fs-body · 400</span></div>
+          <div><p class="small sample">Nav and secondary UI.</p><span class="token">--fs-sm · 400</span></div>
+          <div><p class="label sample">Eyebrow label</p><span class="token">--fs-xs · mono · 0.14em</span></div>
+          <div><p class="sample"><span class="badge badge-neutral">Badge floor</span></p><span class="token">--fs-2xs · nothing smaller</span></div>
+        </div>
+      </div>
+    </figure>
+
+    <div class="card card-quiet" style="margin-top: var(--space-4); border-style: dashed;">
+      <p class="label">Follow-up · brand/build.py needs the same face</p>
+      <p class="small"><code class="token">build.py</code> writes SVG banners, and an SVG cannot load a webfont — it renders with whatever the viewer has. Until this is dealt with, the banners are set in the system grotesque and the site is set in Sora, and they read as two brands.</p>
+      <p class="small">Recommended: <strong>outline the lockup</strong> to <code class="token">&lt;path&gt;</code> data once, and leave generated body labels on the system stack. Embedding a base64 subset also works but inflates every banner. Until one of them lands, <code class="token">build.py</code>'s own stack stays as it is — a half-migration that merely <em>references</em> Sora would render as a random fallback on other people's machines, which is worse.</p>
     </div>
   </section>
 
-  <!-- ═══ components ═══════════════════════════════════════════════════════ -->
-  <section class="section" id="components" data-od-id="components">
+  <!-- ═══ light and orbit ═════════════════════════════════════════════════ -->
+  <section class="section" id="light">
     <div class="section-head">
-      <h2 class="h2">Components</h2>
-      <p class="small" style="max-width: 34ch;">Every state defined as a foreground and background pair. Contrast after a hover is never lower than at rest.</p>
+      <h2 class="h2">Light and orbit</h2>
+      <p class="small" style="max-width: 40ch;">The signature language. Four materials, stacked in a fixed order: light, ground, orbit, glass.</p>
     </div>
 
-    <div class="stack">
-
-      <!-- buttons -->
-      <div class="specimen" data-od-id="spec-buttons">
-        <figcaption><span class="label">Buttons</span><span class="token">44px min · pill · hover lifts 1px</span></figcaption>
+    <div class="grid grid-2 reveal">
+      <figure class="specimen">
+        <figcaption><span class="label">1 · Light</span><span class="token">a core inside a halo</span></figcaption>
         <div class="body-area stack">
-          <div class="cluster">
-            <button class="btn btn-primary" type="button">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
-              Talk to us
-            </button>
-            <button class="btn btn-secondary" type="button">Get a website</button>
-            <button class="btn btn-ghost" type="button">Browse the marketplace</button>
-            <button class="btn btn-secondary" type="button" disabled>Not ready yet</button>
+          <div class="lit" style="height: 160px; border-radius: var(--radius-lg); border: 1px solid var(--line); background: var(--grad-sky);">
+            <div class="sky"><div class="sky-light" style="--light-size: 18rem; --light-x: 50%; --light-y: -22%;"></div></div>
           </div>
-          <div class="cluster">
-            <button class="btn btn-secondary btn-sm" type="button">Copy</button>
-            <button class="btn btn-ghost btn-sm" type="button">Undo</button>
-            <a class="link" href="#components">A link, inline in prose</a>
-          </div>
-          <p class="caption">One solid button per action, per screen. Every other entry point is secondary, ghost, or a text link — and never the same words twice. Ghost and secondary keep <code class="token">--text</code> on hover and move the background instead; the primary swaps fill and ink together.</p>
+          <p class="small">One source per screen. The <strong>core</strong> is bright, saturated and small; the <strong>halo</strong> is dim and wide. The core is decoration and never passes under text. The halo may.</p>
         </div>
-      </div>
+      </figure>
 
-      <!-- inputs -->
-      <div class="specimen" data-od-id="spec-inputs">
-        <figcaption><span class="label">Inputs</span><span class="token">--radius-md · 2px focus ring</span></figcaption>
-        <div class="body-area">
-          <div class="grid grid-2">
-            <div class="field">
-              <label for="f-name">Business name</label>
-              <input class="input" id="f-name" type="text" value="Duckworth Bakery">
-            </div>
-            <div class="field">
-              <label for="f-email">Email</label>
-              <input class="input" id="f-email" type="email" placeholder="you@yourshop.ca">
-              <p class="hint">A placeholder shows a real example, never an instruction.</p>
-            </div>
-            <div class="field">
-              <label for="f-what">What you need</label>
-              <select class="input" id="f-what">
-                <option>A website</option>
-                <option>Help with AI</option>
-                <option>Both</option>
-              </select>
-            </div>
-            <div class="field">
-              <label for="f-phone">Phone</label>
-              <input class="input" id="f-phone" type="tel" value="709 555 018" aria-invalid="true" aria-describedby="f-phone-err">
-              <p class="hint-error" id="f-phone-err">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4.5M12 16h.01"/></svg>
-                That's one digit short. Newfoundland numbers have 10.
-              </p>
-            </div>
-            <div class="field" style="grid-column: 1 / -1;">
-              <label for="f-notes">Anything else</label>
-              <textarea class="input" id="f-notes" placeholder="We're open six days and the phone never stops. I'd like the ordering to run itself."></textarea>
-            </div>
-            <div class="field">
-              <label for="f-locked">Domain</label>
-              <input class="input" id="f-locked" type="text" value="duckworthbakery.ca" disabled>
-              <p class="hint">Disabled is the only state allowed to lose contrast.</p>
-            </div>
-            <div class="stack" style="gap: var(--space-3); justify-content: center;">
-              <label class="check"><input type="checkbox" checked> Email me when the site goes live</label>
-              <label class="check"><input type="checkbox"> Send the monthly note about new agent tools</label>
+      <figure class="specimen">
+        <figcaption><span class="label">2 · Ground</span><span class="token">--texture-grid · --texture-stars</span></figcaption>
+        <div class="body-area stack">
+          <div class="lit" style="height: 160px; border-radius: var(--radius-lg); border: 1px solid var(--line); background: var(--grad-sky);">
+            <div class="texture stars" style="--light-x: 50%; --light-y: 10%;"></div>
+          </div>
+          <p class="small">A 32px hairline grid and a sparse starfield, masked so they fade out before they reach a block of prose. Pitch is <code class="token">--grid-size</code>; both stay under 6% opacity.</p>
+        </div>
+      </figure>
+
+      <figure class="specimen">
+        <figcaption><span class="label">3 · Orbit</span><span class="token">--ring at 10–34% · --orbit-1/2/3</span></figcaption>
+        <div class="body-area stack">
+          <div class="lit" style="height: 160px; border-radius: var(--radius-lg); border: 1px solid var(--line); background: var(--grad-sky);">
+            <div class="sky">
+              <div class="sky-light" style="--light-size: 13rem; --light-x: 50%; --light-y: 22%;"></div>
+              <svg class="sky-orbit" viewBox="0 0 800 800" style="--orbit-size: 26rem; --light-size: 13rem; --light-x: 50%; --light-y: 22%;" aria-hidden="true">
+                <circle class="ring" cx="400" cy="400" r="230"/>
+                <circle class="ring ring-faint" cx="400" cy="400" r="330"/>
+                <path class="arc" d="M170 400a230 230 0 0 1 110-197"/>
+                <g class="track"><circle class="dot" cx="400" cy="170" r="8"/></g>
+                <g class="track t2"><circle class="dot" cx="70" cy="400" r="9"/></g>
+              </svg>
             </div>
           </div>
-          <p class="caption" style="margin-top: var(--space-4);">Labels name the thing, with no colon. Errors say what happened and what to do next — never a code on its own.</p>
+          <p class="small">The mark's geometry at page scale, centred on the light, with glowing points riding the rings. This is the one motif allowed to repeat on every screen.</p>
         </div>
-      </div>
+      </figure>
 
-      <!-- cards -->
-      <div class="specimen" data-od-id="spec-cards">
-        <figcaption><span class="label">Cards</span><span class="token">--radius-xl · --shadow-md · lifts 3px</span></figcaption>
-        <div class="body-area">
-          <div class="grid grid-3">
-            <a class="card card-link" href="#components">
-              <span class="chip" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/></svg></span>
-              <p class="label">Consulting</p>
-              <h3 class="h3">AI for small businesses</h3>
-              <p>A short look at how you work, the tasks AI can take off your plate, and a setup your team actually keeps using.</p>
-              <span class="foot link">Start a conversation →</span>
-            </a>
-            <article class="card">
-              <p class="label">Uptime</p>
-              <p class="num" style="font-size: 2.6rem; line-height: 1.05; letter-spacing: -.03em; color: var(--text);">—</p>
-              <p class="small">No monitoring connected yet. Numbers appear here once a site is live.</p>
-              <span class="foot"><span class="badge badge-neutral">Nothing to report</span></span>
-            </article>
-            <article class="card card-quiet" style="border-style: dashed;">
-              <p class="label">Quiet card</p>
-              <h3 class="h3">No fill, no shadow</h3>
-              <p>For grouping inside a section that already sits on a surface. Two stacked shadows read as a mistake.</p>
-            </article>
-          </div>
-          <p class="caption" style="margin-top: var(--space-4);">A whole card is the target when the whole card is the link. The stat card shows an em dash rather than a made-up number — we never print a figure we don't have.</p>
-        </div>
-      </div>
-
-      <!-- status + table -->
-      <div class="specimen" data-od-id="spec-table">
-        <figcaption>
-          <span class="label">Table and status</span>
-          <span class="badge badge-neutral">Specimen data</span>
-        </figcaption>
-        <div class="body-area">
-          <table class="table">
-            <caption class="sr-only">SolenixAI surfaces and their status. Statuses are specimen values shown to exercise all three badge states.</caption>
-            <thead>
-              <tr>
-                <th scope="col">Surface</th>
-                <th scope="col">Lives at</th>
-                <th scope="col" class="end">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><th scope="row">Home</th><td data-label="Lives at"><code>solenix.dev</code></td><td data-label="Status" class="end"><span class="badge badge-live">Live</span></td></tr>
-              <tr><th scope="row">Agents Marketplace</th><td data-label="Lives at"><code>solenix.dev/agents</code></td><td data-label="Status" class="end"><span class="badge badge-live">Live</span></td></tr>
-              <tr><th scope="row">Design system</th><td data-label="Lives at"><code>/design</code></td><td data-label="Status" class="end"><span class="badge badge-building">Building</span></td></tr>
-              <tr><th scope="row">Brand assets</th><td data-label="Lives at"><code>/brand/out</code></td><td data-label="Status" class="end"><span class="badge badge-live">Live</span></td></tr>
-              <tr><th scope="row">Status page</th><td data-label="Lives at"><code>not built yet</code></td><td data-label="Status" class="end"><span class="badge badge-down">Down</span></td></tr>
-            </tbody>
-          </table>
-          <p class="caption" style="margin-top: var(--space-4);">Row headers are real <code class="token">&lt;th scope="row"&gt;</code>. Below 640px the head hides and each cell carries its own label, so the page never scrolls sideways. Statuses here are specimen values, shown to exercise all three badges.</p>
-        </div>
-      </div>
-
-      <!-- empty state -->
-      <div class="specimen" data-od-id="spec-empty">
-        <figcaption><span class="label">Empty state</span><span class="token">say what goes here · one action</span></figcaption>
-        <div class="body-area">
-          <div class="empty">
-            <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m8 9-4 3 4 3M16 9l4 3-4 3M13.5 5l-3 14"/></svg></span>
-            <h3 class="h4">No tools installed yet</h3>
-            <p>Add the SolenixAI marketplace once, and every tool we use and trust shows up here ready to install.</p>
-            <button class="btn btn-secondary" type="button" style="margin-top: var(--space-2);">Add the marketplace</button>
-          </div>
-          <p class="caption" style="margin-top: var(--space-4);">Never just "No data". Say what belongs here and give the one action that fills it.</p>
-        </div>
-      </div>
-
-      <!-- nav specimen -->
-      <div class="specimen" data-od-id="spec-nav">
-        <figcaption><span class="label">Nav</span><span class="token">sticky · frosted · 72px</span></figcaption>
-        <div class="body-area" style="padding: 0;">
-          <div style="border-bottom: 1px solid var(--line); background: var(--surface);">
-            <div style="display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); min-height: var(--nav-height); padding-inline: var(--space-4); flex-wrap: wrap;">
-              <span class="brand" aria-hidden="true">
-                <svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/><circle cx="16" cy="16" r="8" fill="url(#sun)"/><circle cx="27" cy="9" r="2.2" fill="var(--ring)"/></svg>
-                SolenixAI
-              </span>
-              <div class="navlinks" aria-hidden="true">
-                <span class="navlink">Consulting</span>
-                <span class="navlink">Websites</span>
-                <span class="navlink" aria-current="page">Agents</span>
-                <span class="navlink" style="background: var(--line); color: var(--text);">Hover</span>
+      <figure class="specimen">
+        <figcaption><span class="label">4 · Glass</span><span class="token">--glass-bg · --glass-blur · --glass-inset</span></figcaption>
+        <div class="body-area stack">
+          <div class="lit" style="height: 160px; border-radius: var(--radius-lg); border: 1px solid var(--line); background: var(--grad-sky);">
+            <div class="sky"><div class="sky-light" style="--light-size: 16rem; --light-x: 84%; --light-y: -30%;"></div></div>
+            <div class="texture" style="--light-x: 84%; --light-y: -30%;"></div>
+            <div class="inner" style="padding: var(--space-4); height: 100%; display: grid; place-items: center;">
+              <div class="glass" style="padding: var(--space-4); width: 100%;">
+                <p class="h4">Catching the light</p>
+                <p class="caption">Text through glass: 16.2:1 dark, 17.2:1 light.</p>
               </div>
             </div>
           </div>
-          <p class="caption" style="padding: var(--space-4);">The real one is at the top of this page. Current page and hover share a background — current adds weight, so the state survives when colour can't be seen. Below 640px only what a phone needs stays.</p>
+          <p class="small">Panels use <code class="token">--surface</code>'s own alpha plus blur plus a lit top edge, so each one looks like the light is above it. Those alphas are the measured minimum — lowering one breaks AA through the panel.</p>
         </div>
-      </div>
+      </figure>
+    </div>
 
-      <!-- sign-in -->
-      <div class="specimen" data-od-id="spec-signin">
-        <figcaption><span class="label">Sign in</span><span class="token">--shadow-lg · 25rem</span></figcaption>
-        <div class="body-area" style="background: var(--surface-sunken);">
-          <form class="signin" onsubmit="return false;">
-            <header>
-              <svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/><circle cx="16" cy="16" r="8" fill="url(#sun)"/><circle cx="27" cy="9" r="2.2" fill="var(--ring)"/></svg>
-              <h3 class="h3">Sign in to SolenixAI</h3>
-              <p class="small">See your site, your hours saved, and what we're working on.</p>
-            </header>
-            <div class="field">
-              <label for="s-email">Email</label>
-              <input class="input" id="s-email" type="email" autocomplete="email" placeholder="you@yourshop.ca" required>
-            </div>
-            <div class="field">
-              <label for="s-pass">Password</label>
-              <input class="input" id="s-pass" type="password" autocomplete="current-password" placeholder="••••••••" required>
-            </div>
-            <div class="row">
-              <label class="check"><input type="checkbox" checked> Keep me signed in</label>
-              <a class="link" style="font-size: var(--fs-sm);" href="#components">Forgot it?</a>
-            </div>
-            <button class="btn btn-primary" type="submit" style="width: 100%;">Sign in</button>
-            <p class="divider">or</p>
-            <button class="btn btn-secondary" type="button" style="width: 100%;">
-              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.25-1.28-5.25-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.43-2.7 5.4-5.27 5.69.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
-              Continue with GitHub
-            </button>
-            <p class="caption" style="text-align: center;">New here? <a class="link" href="#components">Talk to us first</a> — we set the account up with you.</p>
-          </form>
+    <div class="grid grid-2" style="margin-top: var(--space-4);">
+      <figure class="specimen">
+        <figcaption><span class="label">Gradients</span><span class="token">the no-gradients rule is gone</span></figcaption>
+        <div class="body-area stack stack-sm">
+          <div class="sw"><div class="chipbox" style="background: var(--grad-sun)"></div><span class="token">--grad-sun · the mark and the light source</span></div>
+          <div class="sw"><div class="chipbox" style="background: var(--grad-sky)"></div><span class="token">--grad-sky · the page ground</span></div>
+          <div class="sw"><div class="chipbox" style="background: var(--grad-ember)"></div><span class="token">--grad-ember · the primary button</span></div>
+          <div class="sw"><div class="chipbox" style="background: var(--grad-headline)"></div><span class="token">--grad-headline · display text only</span></div>
+          <p class="caption" style="margin-top: var(--space-2);">A gradient is a light effect, so it runs warm-to-warm or transparent-to-light — never between two different hues. Nothing sits behind body text above 12% strength.</p>
         </div>
-      </div>
+      </figure>
 
+      <figure class="specimen">
+        <figcaption><span class="label">Glow</span><span class="token">shadow says how high · glow says how alive</span></figcaption>
+        <div class="body-area stack">
+          <div class="cluster" style="gap: var(--space-5);">
+            <div class="lockup"><div style="width: 56px; height: 56px; border-radius: var(--radius-md); background: var(--surface); border: 1px solid var(--line); box-shadow: var(--glow-soft);"></div><span class="token">--glow-soft</span></div>
+            <div class="lockup"><div style="width: 56px; height: 56px; border-radius: var(--radius-md); background: var(--grad-ember); box-shadow: var(--glow-ember);"></div><span class="token">--glow-ember</span></div>
+            <div class="lockup"><div style="width: 56px; height: 56px; border-radius: var(--radius-md); background: var(--surface); border: 1px solid var(--line); box-shadow: var(--glow-hover);"></div><span class="token">--glow-hover</span></div>
+            <div class="lockup" style="padding-top: var(--space-4);"><div class="c2" style="width: 12px; height: 12px; border-radius: 50%; background: currentColor; box-shadow: var(--glow-point); margin: var(--space-3) 22px;"></div><span class="token">--glow-point</span></div>
+          </div>
+          <p class="small"><code class="token">--glow-point</code> is built on <code class="token">currentColor</code>, so one token glows any chart series, any agent dot, any timeline node.</p>
+          <p class="caption">An element can have both a shadow and a glow. Most have neither.</p>
+        </div>
+      </figure>
+    </div>
+
+    <div class="card card-quiet" style="margin-top: var(--space-4); border-style: dashed;">
+      <p class="label">The core rule, enforced structurally</p>
+      <p class="small">Ambient light is <code class="token">position: absolute</code> inside a section that is <code class="token">relative</code>, <code class="token">overflow: hidden</code> and <code class="token">isolation: isolate</code>. Never <code class="token">fixed</code>. That is what keeps the core out from under panel text — and it is a bug fix: v1 pinned a 78vmax sun to the viewport, so it tracked the reader down the entire page and sat under whatever they were reading.</p>
+      <p class="caption">Measured: <code class="token">--faint</code> through dark glass over a glow <em>halo</em> is 4.9:1 and passes. Over the <em>core</em> it is 4.1:1 and fails. So the core does not go there.</p>
     </div>
   </section>
 
-  <!-- ═══ voice ════════════════════════════════════════════════════════════ -->
-  <section class="section" id="voice" data-od-id="voice">
+  <!-- ═══ accent budget ═══════════════════════════════════════════════════ -->
+  <section class="section" id="accent">
     <div class="section-head">
-      <h2 class="h2">Voice</h2>
-      <p class="small" style="max-width: 34ch;">Our reader runs a shop, a clinic, a trade. They're smart and busy, they're not technical, and they shouldn't have to be.</p>
+      <h2 class="h2">The accent budget</h2>
+      <p class="small" style="max-width: 40ch;">v1 made the brand's only warm colour a scarce resource, so nothing glowed. v2 splits the accent by what it does.</p>
     </div>
 
-    <div class="dos">
-      <div class="do">
-        <p class="label" style="color: var(--ok); margin-bottom: var(--space-2);">We say</p>
-        <p>We find the hours AI can save you and set it up so it keeps working.</p>
-      </div>
-      <div class="dont">
-        <p class="label" style="color: var(--down); margin-bottom: var(--space-2);">Not</p>
-        <p class="said">Leveraging cutting-edge AI to unlock transformative operational efficiency.</p>
-      </div>
-      <div class="do">
-        <p class="label" style="color: var(--ok); margin-bottom: var(--space-2);">We say</p>
-        <p>Agent tools that install in one line.</p>
-      </div>
-      <div class="dont">
-        <p class="label" style="color: var(--down); margin-bottom: var(--space-2);">Not</p>
-        <p class="said">One-line MCP server provisioning for agentic workflows.</p>
-      </div>
-      <div class="do">
-        <p class="label" style="color: var(--ok); margin-bottom: var(--space-2);">We say</p>
-        <p>The site's been down since 9:40. We know why and we're fixing it. Next update by 11.</p>
-      </div>
-      <div class="dont">
-        <p class="label" style="color: var(--down); margin-bottom: var(--space-2);">Not</p>
-        <p class="said">We are currently experiencing intermittent service degradation.</p>
-      </div>
-    </div>
-
-    <div class="grid grid-2" style="margin-top: var(--space-5);">
-      <div class="specimen">
-        <figcaption><span class="label">Words</span><span class="token">use · not</span></figcaption>
-        <div class="body-area">
-          <table class="table">
-            <thead><tr><th scope="col">Use</th><th scope="col">Not</th></tr></thead>
-            <tbody>
-              <tr><th scope="row">set up</th><td data-label="Not" class="small">provision, onboard, deploy</td></tr>
-              <tr><th scope="row">website</th><td data-label="Not" class="small">web presence, digital experience</td></tr>
-              <tr><th scope="row">we look after it</th><td data-label="Not" class="small">managed service, retainer</td></tr>
-              <tr><th scope="row">it's working / it's down</th><td data-label="Not" class="small">operational / degraded</td></tr>
-              <tr><th scope="row">what it costs</th><td data-label="Not" class="small">investment, pricing structure</td></tr>
-              <tr><th scope="row">talk to us</th><td data-label="Not" class="small">book a discovery call</td></tr>
-            </tbody>
-          </table>
+    <div class="grid grid-2">
+      <figure class="specimen">
+        <figcaption><span class="label">Action ember · still rare</span><span class="token">one per screen</span></figcaption>
+        <div class="body-area stack">
+          <div class="cluster">
+            <button class="btn btn-primary" type="button">Book a call</button>
+            <button class="btn btn-ghost" type="button">See our work</button>
+          </div>
+          <p class="small">A solid <code class="token">--accent</code> or <code class="token">--grad-ember</code> fill, which the reader reads as "press this". One per screen — not per section. If two are in view, one of them is a ghost button instead.</p>
+          <p class="caption">Never a solid accent fill on a badge, a chip, a tab, a nav item or a card.</p>
         </div>
+      </figure>
+
+      <figure class="specimen">
+        <figcaption><span class="label">Light ember · unlimited</span><span class="token">glow · gradient · orbit · lit edge</span></figcaption>
+        <div class="body-area stack">
+          <div class="lit" style="height: 132px; border-radius: var(--radius-lg); border: 1px solid var(--line); background: var(--grad-sky);">
+            <div class="sky">
+              <div class="sky-light" style="--light-size: 15rem; --light-x: 20%; --light-y: -40%;"></div>
+              <svg class="sky-orbit" viewBox="0 0 800 800" style="--orbit-size: 30rem; --light-size: 15rem; --light-x: 20%; --light-y: -40%;" aria-hidden="true">
+                <circle class="ring" cx="400" cy="400" r="260"/>
+                <circle class="ring ring-faint" cx="400" cy="400" r="360"/>
+                <g class="track t3"><circle class="dot" cx="400" cy="140" r="7"/></g>
+              </svg>
+            </div>
+            <div class="inner" style="height: 100%; display: flex; align-items: flex-end; padding: var(--space-4);">
+              <p class="eyebrow">Six uses of ember, no buttons</p>
+            </div>
+          </div>
+          <p class="small">Ember as <em>light</em> rather than surface: glows, gradients, orbit strokes, the lit glass edge, the sun, <code class="token">--chart-1</code>, eyebrow dots, focus rings, sparkline fills, timeline progress. As much as the composition wants.</p>
+        </div>
+      </figure>
+    </div>
+
+    <div class="card" style="margin-top: var(--space-4);">
+      <p class="label">The test</p>
+      <p class="h4">Could a reader mistake this for something to press?</p>
+      <p class="small">If yes, it is action ember and it costs the budget. If no, it is light, and it is free. A glowing 1px orbit line is not a button. A 48px pill with a label is.</p>
+    </div>
+  </section>
+
+  <!-- ═══ motion ══════════════════════════════════════════════════════════ -->
+  <section class="section" id="motion">
+    <div class="section-head">
+      <h2 class="h2">Motion</h2>
+      <p class="small" style="max-width: 40ch;">Five signatures. Each one says something. All of them stop dead under <code class="token">prefers-reduced-motion</code>, and every value stays on the screen.</p>
+    </div>
+
+    <div class="grid grid-2">
+      <figure class="specimen">
+        <figcaption><span class="label">1 · Orbit</span><span class="token">90s / 140s / 200s · linear</span></figcaption>
+        <div class="body-area stack">
+          <div class="lit" style="height: 140px; border-radius: var(--radius-lg); border: 1px solid var(--line); background: var(--grad-sky);">
+            <div class="sky">
+              <svg class="sky-orbit" viewBox="0 0 800 800" style="--orbit-size: 22rem; --light-size: 0rem; --light-x: 50%; --light-y: 50%;" aria-hidden="true">
+                <circle class="ring" cx="400" cy="400" r="180"/>
+                <circle class="ring ring-faint" cx="400" cy="400" r="280"/>
+                <g class="track" style="animation-duration: 14s"><circle class="dot" cx="400" cy="220" r="10"/></g>
+                <g class="track t2" style="animation-duration: 22s"><circle class="dot" cx="120" cy="400" r="8"/></g>
+              </svg>
+            </div>
+          </div>
+          <p class="small">Rings turn at <code class="token">--ease-orbit</code>, forever, alternating direction. 90 seconds is slow enough that you notice it only if you stop and look — which is the point. It says the system is running. <span class="caption">(Sped up here so you can see it.)</span></p>
+        </div>
+      </figure>
+
+      <figure class="specimen">
+        <figcaption><span class="label">2 · Light sweep</span><span class="token">--dur-sweep · once, never a loop</span></figcaption>
+        <div class="body-area stack">
+          <div class="sweepable glass" id="sweep-target" style="padding: var(--space-5); text-align: center;">
+            <p class="h4">One pass across the panel</p>
+            <p class="caption">Also fires on the primary button's hover.</p>
+          </div>
+          <div class="cluster">
+            <button class="btn btn-ghost btn-sm" type="button" id="sweep-run">Run the sweep</button>
+            <span class="caption">A looping sweep is a casino.</span>
+          </div>
+        </div>
+      </figure>
+
+      <figure class="specimen">
+        <figcaption><span class="label">3 · Scroll reveal</span><span class="token">--dur-reveal · --stagger 40ms</span></figcaption>
+        <div class="body-area stack">
+          <div class="reveal stack stack-sm" id="reveal-demo">
+            <div class="chip" style="width: 100%">First child</div>
+            <div class="chip" style="width: 100%">40ms later</div>
+            <div class="chip" style="width: 100%">80ms later</div>
+          </div>
+          <div class="cluster">
+            <button class="btn btn-ghost btn-sm" type="button" id="reveal-run">Replay</button>
+            <span class="caption">Fires once, at 12% visible.</span>
+          </div>
+          <p class="small">Re-animating every time you scroll back is motion sickness, not delight. And the hidden state is added by script, so with no JavaScript nothing is ever stuck invisible.</p>
+        </div>
+      </figure>
+
+      <figure class="specimen">
+        <figcaption><span class="label">4 · Count-up · 5 · Hover glow</span><span class="token">--dur-count · --dur-base</span></figcaption>
+        <div class="body-area stack">
+          <div class="cluster" style="gap: var(--space-6); align-items: flex-end;">
+            <div class="stat">
+              <span class="label">Hours saved · example</span>
+              <span class="value" data-count="1284">1,284</span>
+            </div>
+            <button class="btn btn-ghost btn-sm" type="button" id="count-run">Count again</button>
+          </div>
+          <a class="card card-link" href="#motion" style="text-decoration: none; padding: var(--space-4);">
+            <p class="h4">Hover this card</p>
+            <p class="caption">It lifts 3px, its border warms, and it gains <code class="token">--glow-hover</code>. The label colour never changes.</p>
+          </a>
+          <p class="caption">The count-up's final value is the element's real text, so it is correct before, during and after — and with motion off it never animates at all.</p>
+        </div>
+      </figure>
+    </div>
+
+    <div class="card card-quiet" style="margin-top: var(--space-4); border-style: dashed;">
+      <p class="label">Reduced motion, explicitly</p>
+      <p class="small">Orbits stop — the rings stay, they do not turn. The sweep does not run. Reveals are skipped, never left at <code class="token">opacity: 0</code> waiting for an observer. Count-ups jump to their value. Parallax is off. Nothing in this system is load-bearing on animation.</p>
+    </div>
+  </section>
+
+  <!-- ═══ data visualisation ══════════════════════════════════════════════ -->
+  <section class="section" id="data">
+    <div class="section-head">
+      <h2 class="h2">Data visualisation</h2>
+      <p class="small" style="max-width: 40ch;">Four components for the client portal. Inline SVG and CSS off the chart tokens — no chart library, nothing to keep up to date.</p>
+    </div>
+    <p class="small" style="margin-bottom: var(--space-5); max-width: 60ch;">Every figure on this page is <strong>example data</strong> for a made-up bakery, and it is labelled as such. This system does not print a number it cannot stand behind.</p>
+
+    <div class="grid grid-2 reveal">
+      <figure class="specimen">
+        <figcaption><span class="label">Sparkline</span><span class="token">--spark-line · --spark-fill · --spark-point</span></figcaption>
+        <div class="body-area stack">
+          <div class="row" style="gap: var(--space-5); align-items: flex-end;">
+            <div class="stat" style="flex: none;">
+              <span class="label">Site visits · example</span>
+              <span class="value" data-count="2914">2,914</span>
+            </div>
+            <div style="flex: 1 1 8rem; min-width: 0;">
+              <svg class="spark" viewBox="0 0 240 46" preserveAspectRatio="none" role="img" aria-label="Twelve weeks of example site visits, rising from 34 a week to 91 a week.">
+                <path class="area" d="M0.0 39.2 L21.8 36.8 L43.6 41.0 L65.5 32.6 L87.3 28.4 L109.1 30.8 L130.9 23.0 L152.7 24.8 L174.5 16.4 L196.4 18.2 L218.2 9.2 L240.0 5.0 L240 46 L0 46 Z"/>
+                <path class="line" d="M0.0 39.2 L21.8 36.8 L43.6 41.0 L65.5 32.6 L87.3 28.4 L109.1 30.8 L130.9 23.0 L152.7 24.8 L174.5 16.4 L196.4 18.2 L218.2 9.2 L240.0 5.0"/>
+                <path class="last" d="M240 5 h0.01"/>
+              </svg>
+              <p class="caption" style="margin-top: var(--space-1);">12 weeks</p>
+            </div>
+          </div>
+          <p class="small">No axes, no gridlines, no tooltip. A sparkline shows <em>shape</em>, so it is always beside the number it belongs to — never alone. Only the last point is marked, because the current value is the only one worth marking.</p>
+          <p class="caption">It carries an <code class="token">aria-label</code> naming the range and direction, because a decorative line is invisible to a screen reader.</p>
+        </div>
+      </figure>
+
+      <figure class="specimen">
+        <figcaption><span class="label">Stat with trend</span><span class="token">--fs-stat · data-sentiment</span></figcaption>
+        <div class="body-area stack">
+          <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr)); gap: var(--space-5);">
+            <div class="stat">
+              <span class="label">Bookings</span>
+              <span class="value" data-count="126">126</span>
+              <span><span class="trend" data-sentiment="good"><span class="arrow" aria-hidden="true">↑</span> +18%</span></span>
+            </div>
+            <div class="stat">
+              <span class="label">Hosting</span>
+              <span class="value"><span class="unit">$</span><span data-count="42">42</span><span class="unit">/mo</span></span>
+              <span><span class="trend" data-sentiment="bad"><span class="arrow" aria-hidden="true">↑</span> +$6</span></span>
+            </div>
+            <div class="stat">
+              <span class="label">Enquiries</span>
+              <span class="value" data-count="38">38</span>
+              <span><span class="trend" data-sentiment="neutral"><span class="arrow" aria-hidden="true">→</span> ±0</span></span>
+            </div>
+          </div>
+          <p class="small">Bookings up is good. Hosting up is not. Same token, same arrow direction, opposite colour — because the judgement is set per instance, not baked into the direction.</p>
+          <p class="caption">The numeral counts up on first view; its final value is the element's real text, so it is correct before, during and after. Example data.</p>
+        </div>
+      </figure>
+    </div>
+
+    <figure class="specimen" style="margin-top: var(--space-4);">
+      <figcaption><span class="label">Progress timeline</span><span class="token">--accent · --chart-track · --glow-point</span></figcaption>
+      <div class="body-area stack">
+        <ol class="timeline">
+          <li data-state="done">
+            <span class="node" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.5 5.5L20 6.5"/></svg></span>
+            <span class="stage"><span class="name">Kickoff <span class="sr-only">— done</span></span><span class="when">8 Sep</span></span>
+          </li>
+          <li data-state="done">
+            <span class="node" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.5 5.5L20 6.5"/></svg></span>
+            <span class="stage"><span class="name">Design <span class="sr-only">— done</span></span><span class="when">15 Sep</span></span>
+          </li>
+          <li data-state="now" aria-current="step">
+            <span class="node" aria-hidden="true"></span>
+            <span class="stage"><span class="name">Build</span><span class="when">Now</span></span>
+          </li>
+          <li data-state="next">
+            <span class="node" aria-hidden="true"></span>
+            <span class="stage"><span class="name">Launch <span class="sr-only">— not started</span></span><span class="when">6 Oct</span></span>
+          </li>
+        </ol>
+        <p class="small">The current stage is marked three ways — a filled node, a breathing glow, and the word <strong>Now</strong> — and carries <code class="token">aria-current="step"</code>. It is the most-read element in the portal; it does not get to be subtle.</p>
+        <p class="caption">Stacked on a phone, horizontal from 640px. Example project.</p>
       </div>
-      <div class="specimen">
-        <figcaption><span class="label">In the interface</span><span class="token">the short rules</span></figcaption>
-        <div class="body-area">
-          <ul class="stack" style="gap: var(--space-3); list-style: none; font-size: var(--fs-sm);">
-            <li><strong>Buttons</strong> say the outcome. "Get a website", not "Learn more".</li>
-            <li><strong>Labels</strong> name the thing, no colon.</li>
-            <li><strong>Errors</strong> say what happened and what to do next.</li>
-            <li><strong>Status</strong> is a word beside a colour.</li>
-            <li><strong>Confirmations</strong> name the thing: "Website copied", not "Success!".</li>
-            <li><strong>Sentence case</strong> everywhere. Caps are for mono labels only.</li>
-            <li><strong>No invented numbers.</strong> If we don't know it, we don't print it.</li>
+    </figure>
+
+    <figure class="specimen" style="margin-top: var(--space-4);">
+      <figcaption><span class="label">Chart frame</span><span class="token">--chart-grid · --chart-axis · legend with words</span></figcaption>
+      <div class="body-area">
+        <div class="chart">
+          <div class="plotgrid">
+            <p class="yaxis" aria-hidden="true"><span>120</span><span>90</span><span>60</span><span>30</span><span>0</span></p>
+            <svg class="plot" viewBox="0 0 490 160" role="img" aria-label="Example week for a bakery: visits peak at 96 on Friday, calls at 38, bookings at 17. All three rise to Friday and dip on Saturday.">
+              <line class="gridline" x1="0" y1="0" x2="490" y2="0"/>
+              <line class="gridline" x1="0" y1="40" x2="490" y2="40"/>
+              <line class="gridline" x1="0" y1="80" x2="490" y2="80"/>
+              <line class="gridline" x1="0" y1="120" x2="490" y2="120"/>
+              <line class="gridline" x1="0" y1="160" x2="490" y2="160"/>
+              <g class="c1"><path class="series stroke-c" d="M0 74.7 L81.7 65.3 L163.3 82.7 L245 49.3 L326.7 32 L408.3 61.3 L490 42.7"/><circle class="fill-c dotglow" cx="490" cy="42.7" r="4"/></g>
+              <g class="c2"><path class="series stroke-c" d="M0 130.7 L81.7 124 L163.3 134.7 L245 118.7 L326.7 109.3 L408.3 121.3 L490 114.7"/><circle class="fill-c dotglow" cx="490" cy="114.7" r="4"/></g>
+              <g class="c3"><path class="series stroke-c" d="M0 149.3 L81.7 145.3 L163.3 150.7 L245 141.3 L326.7 137.3 L408.3 144 L490 140"/><circle class="fill-c dotglow" cx="490" cy="140" r="4"/></g>
+            </svg>
+            <span></span>
+            <p class="xaxis" aria-hidden="true"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></p>
+          </div>
+          <ul class="legend">
+            <li class="c1"><span class="key bg-c"></span> Visits</li>
+            <li class="c2"><span class="key bg-c"></span> Calls</li>
+            <li class="c3"><span class="key bg-c"></span> Bookings</li>
           </ul>
         </div>
+        <p class="small" style="margin-top: var(--space-4);">Horizontal gridlines only. Tick labels in <code class="token">--faint</code> mono, so they are text-legal. Every legend entry is a swatch <strong>and</strong> a word — five colours with no words is not a chart, it is a puzzle.</p>
+        <p class="caption">The axis starts at zero, always. A truncated axis is a lie. Example week.</p>
       </div>
+    </figure>
+  </section>
+
+  <!-- ═══ layout archetypes ═══════════════════════════════════════════════ -->
+  <section class="section" id="layout">
+    <div class="section-head">
+      <h2 class="h2">Section archetypes</h2>
+      <p class="small" style="max-width: 40ch;">v1 had one shape — a card grid — which is the other half of why the pages felt mediocre. Six shapes, each with a job. No two adjacent sections use the same one.</p>
+    </div>
+
+    <p class="label" style="margin-bottom: var(--space-3);">1 · Full-bleed feature <span class="token" style="text-transform: none; letter-spacing: 0;">— one per page. The hero at the top of this page is the live example.</span></p>
+    <div class="feature lit" style="margin-bottom: var(--space-7);">
+      <div class="sky">
+        <div class="sky-light" style="--light-size: 26rem; --light-x: 14%; --light-y: -46%;"></div>
+        <svg class="sky-orbit" viewBox="0 0 800 800" style="--orbit-size: 46rem; --light-size: 26rem; --light-x: 14%; --light-y: -46%;" aria-hidden="true">
+          <circle class="ring" cx="400" cy="400" r="240"/>
+          <circle class="ring ring-faint" cx="400" cy="400" r="340"/>
+          <path class="arc" d="M160 400a240 240 0 0 1 112-205"/>
+          <g class="track t2"><circle class="dot" cx="400" cy="160" r="6"/></g>
+        </svg>
+      </div>
+      <div class="texture stars" style="--light-x: 14%; --light-y: -46%;"></div>
+      <div class="inner" style="padding: var(--space-8) var(--space-6);">
+        <div class="stack" style="max-width: 46ch;">
+          <p class="eyebrow">Edge to edge</p>
+          <p class="h1">For the one thing the page is actually about.</p>
+          <p class="small">Its own light source, its own orbit rings, its own ground. Content inset to <code class="token">--container-wide</code>, corners at <code class="token">--radius-2xl</code>. Nothing else on the page competes with it.</p>
+        </div>
+      </div>
+    </div>
+
+    <p class="label" style="margin-bottom: var(--space-3);">2 · Split with visual <span class="token" style="text-transform: none; letter-spacing: 0;">— prose one side, the thing being described on the other.</span></p>
+    <div class="split" style="margin-bottom: var(--space-7);">
+      <div class="prose stack">
+        <p class="eyebrow">Two columns from 900px</p>
+        <p class="h2">The visual is never decoration.</p>
+        <p class="small">Prose capped at <code class="token">--measure</code> on one side; a real chart, panel or working control on the other. Below 900px the prose goes first, always — never a picture the reader has to scroll past to reach the point.</p>
+        <p class="caption">If there is nothing real to show, it is a card, not a split.</p>
+      </div>
+      <div class="glass" style="padding: var(--space-5);">
+        <div class="row" style="justify-content: space-between; margin-bottom: var(--space-4);">
+          <span class="label">This week · example</span>
+          <span class="badge badge-ok">Live</span>
+        </div>
+        <svg class="spark" viewBox="0 0 240 46" preserveAspectRatio="none" role="img" aria-label="Example: twelve weeks of visits rising steadily.">
+          <path class="area" d="M0.0 39.2 L21.8 36.8 L43.6 41.0 L65.5 32.6 L87.3 28.4 L109.1 30.8 L130.9 23.0 L152.7 24.8 L174.5 16.4 L196.4 18.2 L218.2 9.2 L240.0 5.0 L240 46 L0 46 Z"/>
+          <path class="line" d="M0.0 39.2 L21.8 36.8 L43.6 41.0 L65.5 32.6 L87.3 28.4 L109.1 30.8 L130.9 23.0 L152.7 24.8 L174.5 16.4 L196.4 18.2 L218.2 9.2 L240.0 5.0"/>
+          <path class="last" d="M240 5 h0.01"/>
+        </svg>
+        <div class="row" style="justify-content: space-between; margin-top: var(--space-4);">
+          <div class="stat"><span class="label">Visits</span><span class="value" style="font-size: var(--fs-h2)">2,914</span></div>
+          <span class="trend" data-sentiment="good"><span class="arrow" aria-hidden="true">↑</span> +18%</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="label" style="margin-bottom: var(--space-3);">3 · Bento grid <span class="token" style="text-transform: none; letter-spacing: 0;">— when the items are genuinely different sizes of idea.</span></p>
+    <div class="bento reveal" style="margin-bottom: var(--space-7);">
+      <div class="card hero-cell lit" style="justify-content: flex-end; min-height: 15rem;">
+        <div class="sky"><div class="sky-light" style="--light-size: 14rem; --light-x: 82%; --light-y: -34%;"></div></div>
+        <div class="inner stack stack-sm">
+          <p class="eyebrow">The 2×2 cell</p>
+          <p class="h2">One idea gets the room it needs.</p>
+          <p class="small">Every cell is a real thing. No cell exists to fill the grid.</p>
+        </div>
+      </div>
+      <div class="card">
+        <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 12h18"/></svg></span>
+        <p class="h4">1×1</p>
+        <p class="caption">The default cell.</p>
+      </div>
+      <div class="card">
+        <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg></span>
+        <p class="h4">1×1</p>
+        <p class="caption">Same weight, different idea.</p>
+      </div>
+      <div class="card span-2">
+        <p class="label">2×1</p>
+        <p class="h4">A wide cell for a sentence that needs the width.</p>
+        <p class="caption">4 columns at 900px, 2 at 480px, 1 below that. Nothing gets crushed.</p>
+      </div>
+    </div>
+
+    <p class="label" style="margin-bottom: var(--space-3);">4 · Big statement <span class="token" style="text-transform: none; letter-spacing: 0;">— one per page. A breath, and a place to say the honest thing.</span></p>
+    <div class="lit" style="border-radius: var(--radius-2xl); border: 1px solid var(--line); background: var(--grad-sky); margin-bottom: var(--space-7);">
+      <div class="sky">
+        <svg class="sky-orbit" viewBox="0 0 800 800" style="--orbit-size: 40rem; --light-size: 0rem; --light-x: 50%; --light-y: 58%;" aria-hidden="true">
+          <path class="arc" d="M60 400a340 340 0 0 1 680 0"/>
+          <circle class="ring ring-faint" cx="400" cy="400" r="340"/>
+        </svg>
+      </div>
+      <div class="inner bigstate">
+        <p class="statement">We don't print a number we can't stand behind.</p>
+        <p class="after small">No card, no button, nothing to click. One sentence at <code class="token">--fs-statement</code> with a single orbit arc behind it.</p>
+      </div>
+    </div>
+
+    <p class="label" style="margin-bottom: var(--space-3);">5 · Live demo panel <span class="token" style="text-transform: none; letter-spacing: 0;">— something that actually works. The filter below is real.</span></p>
+    <section class="demo glass" style="margin-bottom: var(--space-7);" aria-labelledby="demo-h">
+      <header>
+        <div>
+          <p class="label">Client portal · example</p>
+          <p class="h4" id="demo-h">Website health</p>
+        </div>
+        <div class="seg" role="group" aria-label="Filter sites">
+          <button class="segbtn" type="button" data-filter="all" aria-pressed="true">All</button>
+          <button class="segbtn" type="button" data-filter="ok" aria-pressed="false">Live</button>
+          <button class="segbtn" type="button" data-filter="attention" aria-pressed="false">Needs attention</button>
+        </div>
+      </header>
+      <div class="screen">
+        <div class="stack stack-sm full" id="site-list">
+          <div class="statusrow" data-state="ok">
+            <span class="stack stack-sm"><span class="name">maple-and-rye.ca</span><span class="caption">Bakery · shipped 15 Aug</span></span>
+            <span class="badge badge-ok">Live</span>
+          </div>
+          <div class="statusrow" data-state="attention">
+            <span class="stack stack-sm"><span class="name">harbourside-dental.ca</span><span class="caption">Clinic · new booking page</span></span>
+            <span class="badge badge-warn">Building</span>
+          </div>
+          <div class="statusrow" data-state="attention">
+            <span class="stack stack-sm"><span class="name">rowe-plumbing.ca</span><span class="caption">Trade · host not responding</span></span>
+            <span class="badge badge-down">Down</span>
+          </div>
+          <div class="statusrow" data-state="ok">
+            <span class="stack stack-sm"><span class="name">quidi-vidi-yoga.ca</span><span class="caption">Studio · shipped 2 Sep</span></span>
+            <span class="badge badge-ok">Live</span>
+          </div>
+          <p class="empty" id="site-empty" hidden>
+            <span class="h4">Nothing here right now</span>
+            <span class="small">No site matches that filter. Try <strong>All</strong>.</span>
+          </p>
+        </div>
+        <p class="caption full">Chrome is minimal: a label, the panel, one line of caption. Example clients and example dates — real, plausible, and marked. If a panel cannot be made to work, it becomes a split with a static visual, and it says so.</p>
+      </div>
+    </section>
+
+    <p class="label" style="margin-bottom: var(--space-3);">6 · Card grid <span class="token" style="text-transform: none; letter-spacing: 0;">— the v1 workhorse, kept. For genuinely parallel items.</span></p>
+    <div class="grid grid-3">
+      <a class="card card-link" href="#layout">
+        <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg></span>
+        <p class="h4">AI assistants</p>
+        <p class="small">We find the hours AI can save you and set it up so it keeps working.</p>
+      </a>
+      <a class="card card-link" href="#layout">
+        <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="15" rx="2"/><path d="M3 9h18"/></svg></span>
+        <p class="h4">Software and websites</p>
+        <p class="small">Built for your business, not squeezed out of a template.</p>
+      </a>
+      <a class="card card-link" href="#layout">
+        <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l7.5 3.5v5c0 4.2-3 7-7.5 8.5-4.5-1.5-7.5-4.3-7.5-8.5v-5Z"/></svg></span>
+        <p class="h4">Ongoing care</p>
+        <p class="small">We look after it, and we tell you when something is down.</p>
+      </a>
+    </div>
+    <p class="caption" style="margin-top: var(--space-3);">Equal cards, 1 / 2 / 3 columns. For services, steps or plans — not for everything else.</p>
+  </section>
+
+  <!-- ═══ components ══════════════════════════════════════════════════════ -->
+  <section class="section" id="components">
+    <div class="section-head">
+      <h2 class="h2">Components</h2>
+      <p class="small" style="max-width: 40ch;">The v1 set, restyled on the v2 language. Hover, focus and error states are live — try them with a keyboard.</p>
+    </div>
+
+    <div class="grid grid-2">
+      <figure class="specimen">
+        <figcaption><span class="label">Buttons</span><span class="token">--radius-pill · 44px minimum</span></figcaption>
+        <div class="body-area stack">
+          <div class="cluster">
+            <button class="btn btn-primary" type="button">Book a call</button>
+            <button class="btn btn-ghost" type="button">See our work</button>
+            <button class="btn btn-ghost btn-sm" type="button">Copy link</button>
+            <button class="btn btn-ghost" type="button" disabled>Not yet</button>
+          </div>
+          <p class="caption">One solid fill per screen. Hover the primary to see the light sweep. Disabled is the only state allowed to reduce contrast.</p>
+        </div>
+      </figure>
+
+      <figure class="specimen">
+        <figcaption><span class="label">Sign-in</span><span class="token">--shadow-lg · the portal's front door</span></figcaption>
+        <div class="body-area">
+          <div class="glass" style="padding: var(--space-5); box-shadow: var(--shadow-lg), var(--glass-inset); max-width: 22rem; margin-inline: auto;">
+            <div class="stack">
+              <div class="row" style="gap: var(--space-2); justify-content: center;">
+                <svg viewBox="0 0 32 32" width="24" height="24" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/><circle cx="16" cy="16" r="8" fill="url(#sun)"/><circle cx="27" cy="9" r="2.2" fill="var(--ring)"/></svg>
+                <span style="font-family: var(--font-display); font-weight: var(--fw-brand); letter-spacing: -.01em;">SolenixAI</span>
+              </div>
+              <p class="h3" style="text-align: center;">Sign in to your portal</p>
+              <div class="field">
+                <label for="s-email">Email</label>
+                <input class="input" id="s-email" type="email" autocomplete="email" placeholder="you@yourshop.ca">
+              </div>
+              <div class="field">
+                <label for="s-pass">Password</label>
+                <input class="input" id="s-pass" type="password" autocomplete="current-password" placeholder="••••••••">
+              </div>
+              <button class="btn btn-primary" type="button" style="width: 100%;">Sign in</button>
+              <p class="caption" style="text-align: center;">Forgot it? <a href="#components" style="color: var(--accent-text);">We'll send you a link</a></p>
+            </div>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <figure class="specimen" style="margin-top: var(--space-4);">
+      <figcaption><span class="label">Form</span><span class="token">visible labels · errors beside the field</span></figcaption>
+      <div class="body-area">
+        <form class="grid grid-2" onsubmit="return false;">
+          <div class="field">
+            <label for="f-name">Business name</label>
+            <input class="input" id="f-name" type="text" value="Maple &amp; Rye Bakery">
+          </div>
+          <div class="field">
+            <label for="f-email">Email <span class="req" aria-hidden="true">*</span><span class="sr-only">required</span></label>
+            <input class="input" id="f-email" type="email" placeholder="you@yourshop.ca" required>
+            <p class="hint">We reply within a working day.</p>
+          </div>
+          <div class="field">
+            <label for="f-what">What do you need</label>
+            <select class="input" id="f-what">
+              <option>A website</option>
+              <option selected>Something to take a job off my plate</option>
+              <option>Someone to look after what we have</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-phone">Phone</label>
+            <input class="input" id="f-phone" type="tel" value="709 555 018" aria-invalid="true" aria-describedby="f-phone-err">
+            <p class="hint-error" id="f-phone-err">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5M12 16.2v.1"/></svg>
+              <span>That's 9 digits — a Newfoundland number needs 10. Try 709 555 0181.</span>
+            </p>
+          </div>
+          <div class="field" style="grid-column: 1 / -1;">
+            <label for="f-notes">Anything else</label>
+            <textarea class="input" id="f-notes" placeholder="We're open six days and the phone never stops. I'd like the ordering to run itself."></textarea>
+          </div>
+          <div class="field">
+            <label for="f-locked">Your site</label>
+            <input class="input" id="f-locked" type="text" value="maple-and-rye.ca" disabled>
+            <p class="hint">Set when your site went live. Ask us to change it.</p>
+          </div>
+        </form>
+        <p class="caption" style="margin-top: var(--space-4);">Labels are always visible — a placeholder is an example, never a label. The error says what happened <em>and</em> what to do next.</p>
+      </div>
+    </figure>
+
+    <div class="grid grid-2" style="margin-top: var(--space-4);">
+      <figure class="specimen">
+        <figcaption><span class="label">Table</span><span class="token">mono headers · tabular numbers</span></figcaption>
+        <div class="body-area body-area-flush">
+          <div class="tablewrap">
+            <table>
+              <caption class="sr-only">Example client sites, their status, stage and last update.</caption>
+              <thead>
+                <tr><th scope="col">Site</th><th scope="col">Status</th><th scope="col">Stage</th><th scope="col" class="right">Updated</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>maple-and-rye.ca</td><td><span class="badge badge-ok">Live</span></td><td>Care</td><td class="right num">15 Aug</td></tr>
+                <tr><td>harbourside-dental.ca</td><td><span class="badge badge-warn">Building</span></td><td>Build</td><td class="right num">26 Sep</td></tr>
+                <tr><td>rowe-plumbing.ca</td><td><span class="badge badge-down">Down</span></td><td>Care</td><td class="right num">27 Sep</td></tr>
+                <tr><td>quidi-vidi-yoga.ca</td><td><span class="badge badge-ok">Live</span></td><td>Care</td><td class="right num">2 Sep</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </figure>
+
+      <figure class="specimen">
+        <figcaption><span class="label">Empty state</span><span class="token">say what goes here, and the one action</span></figcaption>
+        <div class="body-area body-area-flush">
+          <div class="empty">
+            <svg viewBox="0 0 64 64" width="56" height="56" aria-hidden="true">
+              <circle cx="32" cy="32" r="26" fill="none" stroke="var(--ring)" stroke-opacity=".3" stroke-width="1.5"/>
+              <circle cx="32" cy="32" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".18" stroke-width="1.5" stroke-dasharray="3 4"/>
+              <circle cx="51" cy="19" r="3" fill="var(--ring)" fill-opacity=".5"/>
+            </svg>
+            <p class="h4">No invoices yet</p>
+            <p class="small" style="max-width: 28ch;">Your first invoice appears here once your project starts. Nothing is owed today.</p>
+            <a class="btn btn-ghost btn-sm" href="#components">See your project</a>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ═══ voice ═══════════════════════════════════════════════════════════ -->
+  <section class="section" id="voice">
+    <div class="section-head">
+      <h2 class="h2">Voice</h2>
+      <p class="small" style="max-width: 40ch;">Unchanged from v1. The look got more ambitious; the language did not.</p>
+    </div>
+
+    <p class="lede" style="margin-bottom: var(--space-6);">Our reader runs a shop, a clinic or a trade. They are smart and busy, they are not technical, and they should not have to be. We sound like a competent neighbour who explains things properly.</p>
+
+    <div class="stack" style="gap: var(--space-5);">
+      <div>
+        <p class="label" style="margin-bottom: var(--space-3);">Lead with what they get</p>
+        <div class="vpair">
+          <div class="vcell good"><p class="tag">Use</p><p>We find the hours AI can save you and set it up so it keeps working.</p></div>
+          <div class="vcell bad"><p class="tag">Not</p><p>Leveraging cutting-edge AI to unlock transformative operational efficiency.</p></div>
+        </div>
+      </div>
+      <div>
+        <p class="label" style="margin-bottom: var(--space-3);">A button says the outcome</p>
+        <div class="vpair">
+          <div class="vcell good"><p class="tag">Use</p><p>Get a website · Browse the marketplace · Start a conversation</p></div>
+          <div class="vcell bad"><p class="tag">Not</p><p>Learn more · Get started · Submit</p></div>
+        </div>
+      </div>
+      <div>
+        <p class="label" style="margin-bottom: var(--space-3);">No jargon without a translation</p>
+        <div class="vpair">
+          <div class="vcell good"><p class="tag">Use</p><p>Agent tools that install in one line.</p></div>
+          <div class="vcell bad"><p class="tag">Not</p><p>One-line MCP server provisioning for agentic workflows.</p></div>
+        </div>
+      </div>
+      <div>
+        <p class="label" style="margin-bottom: var(--space-3);">Own the bad news</p>
+        <div class="vpair">
+          <div class="vcell good"><p class="tag">Use</p><p>Your site is down. The host stopped responding at 6:12am. We're on it and we'll know more within the hour.</p></div>
+          <div class="vcell bad"><p class="tag">Not</p><p>We are currently experiencing intermittent service degradation.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-2" style="margin-top: var(--space-6);">
+      <figure class="specimen">
+        <figcaption><span class="label">Words we use, and don't</span></figcaption>
+        <div class="body-area body-area-flush">
+          <div class="tablewrap">
+            <table>
+              <thead><tr><th scope="col">Use</th><th scope="col">Not</th></tr></thead>
+              <tbody>
+                <tr><td>set up</td><td class="small">provision, onboard, deploy</td></tr>
+                <tr><td>website</td><td class="small">web presence, digital experience</td></tr>
+                <tr><td>we look after it</td><td class="small">managed service, retainer</td></tr>
+                <tr><td>it's working / it's down</td><td class="small">operational / degraded</td></tr>
+                <tr><td>what it costs</td><td class="small">investment, pricing structure</td></tr>
+                <tr><td>talk to us</td><td class="small">book a discovery call</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </figure>
+      <figure class="specimen">
+        <figcaption><span class="label">In the interface</span></figcaption>
+        <div class="body-area">
+          <ul class="stack stack-sm" style="list-style: none; font-size: var(--fs-sm);">
+            <li><strong>Labels</strong> name the thing, no colon. <span class="token">Email</span></li>
+            <li><strong>Empty states</strong> say what goes here and give the one action that fills it.</li>
+            <li><strong>Errors</strong> say what happened and what to do next.</li>
+            <li><strong>Status</strong> is a word beside a colour. <span class="token">Live · Building · Down</span></li>
+            <li><strong>Confirmations</strong> name the specific thing. <span class="token">Website copied</span></li>
+            <li><strong>Placeholders</strong> show a real example. <span class="token">you@yourshop.ca</span></li>
+            <li><strong>Charts</strong> label every series in words.</li>
+          </ul>
+          <p class="caption" style="margin-top: var(--space-4);">Sentence case everywhere. ALL CAPS is for mono eyebrows only, where the tracking makes it a label rather than shouting.</p>
+        </div>
+      </figure>
     </div>
   </section>
 
 </div>
 </main>
 
-<footer data-od-id="footer">
-  <div class="wrap">
-    <span>SolenixAI design system · <span class="num">v1</span> · St. John's, Newfoundland</span>
+<footer>
+  <div class="wrap wrap-wide">
+    <span>SolenixAI design system · <span class="num">v2</span> · St. John's, Newfoundland</span>
     <a href="mailto:hello@solenix.dev">hello@solenix.dev</a>
   </div>
 </footer>
@@ -904,6 +1563,7 @@ footer a:hover { color: var(--text); }
 <p class="sr-only" role="status" id="theme-status"></p>
 
 <script>
+/* ── Theme ───────────────────────────────────────────────────────────────── */
 (() => {
   const KEY = 'solenix-theme';
   const root = document.documentElement;
@@ -928,6 +1588,116 @@ footer a:hover { color: var(--text); }
       try { localStorage.setItem(KEY, mode); } catch {}
     });
   }
+})();
+
+/* ── Signature motion ─────────────────────────────────────────────────────
+   Every effect below is opt-in from script, so with JavaScript off nothing is
+   hidden, nothing is mid-animation, and every number is its final value.
+   ----------------------------------------------------------------------- */
+(() => {
+  const calm = matchMedia('(prefers-reduced-motion: reduce)');
+  const root = document.documentElement;
+
+  /* 3 · Scroll-linked reveal. Once, at 12% visible. */
+  const reveals = [...document.querySelectorAll('.reveal')];
+  if (!calm.matches && 'IntersectionObserver' in window) {
+    root.classList.add('js-reveal');
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (!e.isIntersecting) continue;
+        e.target.classList.add('in');
+        io.unobserve(e.target);           /* re-animating on scroll-back is motion sickness */
+      }
+    }, { threshold: 0.12 });
+    for (const el of reveals) io.observe(el);
+  }
+
+  /* 4 · Number count-up. The final value is already the element's text. */
+  const counts = [...document.querySelectorAll('[data-count]')];
+  const runCount = (el) => {
+    const end = Number(el.dataset.count);
+    const final = el.textContent;
+    if (!Number.isFinite(end) || calm.matches) { el.textContent = final; return; }
+    const dur = parseFloat(getComputedStyle(root).getPropertyValue('--dur-count')) || 1200;
+    const t0 = performance.now();
+    const step = (now) => {
+      const p = Math.min(1, (now - t0) / dur);
+      const eased = 1 - Math.pow(1 - p, 3);
+      if (p < 1) {
+        el.textContent = Math.round(end * eased).toLocaleString('en-CA');
+        requestAnimationFrame(step);
+      } else {
+        el.textContent = final;           /* land on the real text, never on rounded maths */
+      }
+    };
+    requestAnimationFrame(step);
+  };
+  if (!calm.matches && 'IntersectionObserver' in window) {
+    const io2 = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (!e.isIntersecting) continue;
+        runCount(e.target);
+        io2.unobserve(e.target);
+      }
+    }, { threshold: 0.6 });
+    for (const el of counts) io2.observe(el);
+  }
+
+  /* 1 · Parallax. Sky drifts at --parallax of scroll distance, never more. */
+  const skies = [...document.querySelectorAll('[data-parallax]')];
+  if (skies.length && !calm.matches) {
+    let queued = false;
+    const move = () => {
+      queued = false;
+      const rate = parseFloat(getComputedStyle(root).getPropertyValue('--parallax')) || 0;
+      for (const sky of skies) {
+        const box = sky.parentElement.getBoundingClientRect();
+        sky.style.translate = '0 ' + Math.round(-box.top * rate) + 'px';
+      }
+    };
+    addEventListener('scroll', () => { if (!queued) { queued = true; requestAnimationFrame(move); } }, { passive: true });
+    move();
+  }
+
+  /* Specimen replay controls. */
+  const sweepTarget = document.getElementById('sweep-target');
+  document.getElementById('sweep-run')?.addEventListener('click', () => {
+    sweepTarget.classList.remove('sweeping');
+    void sweepTarget.offsetWidth;
+    sweepTarget.classList.add('sweeping');
+  });
+  document.getElementById('reveal-run')?.addEventListener('click', () => {
+    const d = document.getElementById('reveal-demo');
+    d.classList.remove('in');
+    void d.offsetWidth;
+    requestAnimationFrame(() => d.classList.add('in'));
+  });
+  document.getElementById('count-run')?.addEventListener('click', (e) => {
+    const v = e.target.closest('.body-area').querySelector('[data-count]');
+    v.textContent = v.dataset.count === '1284' ? '1,284' : v.textContent;
+    runCount(v);
+  });
+})();
+
+/* ── Live demo panel: the filter is real ─────────────────────────────────── */
+(() => {
+  const seg = document.querySelector('.seg');
+  if (!seg) return;
+  const rows = [...document.querySelectorAll('#site-list .statusrow')];
+  const empty = document.getElementById('site-empty');
+  seg.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-filter]');
+    if (!btn) return;
+    const want = btn.dataset.filter;
+    for (const b of seg.querySelectorAll('[data-filter]')) b.setAttribute('aria-pressed', String(b === btn));
+    let shown = 0;
+    for (const row of rows) {
+      const match = want === 'all' || row.dataset.state === want;
+      row.hidden = !match;
+      if (match) shown++;
+    }
+    empty.hidden = shown > 0;
+  });
 })();
 </script>
 </body>

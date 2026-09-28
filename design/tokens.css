@@ -1,32 +1,47 @@
 /* ============================================================================
-   SolenixAI design tokens
+   SolenixAI design tokens · v2
    ----------------------------------------------------------------------------
-   One source of truth for colour, type, space, radius, shadow and motion.
+   One source of truth for colour, light, type, space, radius, shadow, motion
+   and data visualisation.
 
-   Evolved from the :root block already shipping in /assets/site.css — every
-   name that file uses (--bg, --bg2, --surface, --text, --muted, --faint,
-   --line, --accent, --accent-ink, --sun1, --sun2, --ring, --shadow) still
-   exists and still means the same thing, so site.css keeps working unchanged.
+   v1 compatibility
+     Every token name v1 and /assets/site.css use (--bg, --bg2, --surface,
+     --text, --muted, --faint, --line, --accent, --accent-ink, --sun1, --sun2,
+     --ring, --shadow …) still exists and still means the same thing. The
+     palette is unchanged. v2 adds light, not colour.
 
    Theming
      Light is the default. Dark arrives via prefers-color-scheme.
      [data-theme="dark"] / [data-theme="light"] on <html> always wins, because
      the media query is scoped to :root:not([data-theme]).
 
+   Structure
+     §1  theme-varying colour        — duplicated per theme
+     §2  derived colour and light    — written once, themes itself
+     §3  type
+     §4  space and layout
+     §5  radius
+     §6  motion
+     §7  focus
+     Anything that can be derived with color-mix() from a §1 token lives in §2
+     and is written exactly once.
+
    Rules
      - Never write a raw hex outside this file.
      - Derive tones with color-mix(in oklch, …), not new numbered tokens.
-     - One accent per screen, twice at most. Status colours are not the accent.
+     - Action ember (a solid accent fill) is one per screen. Light ember —
+       glow, gradient, orbit, lit edge, chart series one — is unlimited.
+       See DESIGN.md §5.
    ========================================================================== */
 
-/* ── 1. Colour ────────────────────────────────────────────────────────────── */
+/* ── 1. Theme-varying colour ──────────────────────────────────────────────── */
 
 :root {
   color-scheme: light;
 
   /* Surfaces */
   --bg: #fbfaf8;                      /* page floor */
-  --bg2: #f3f1ed;                     /* gradient far corner */
+  --bg2: #f3f1ed;                     /* ground, far corner */
   --surface: rgba(255, 255, 255, 0.86); /* cards, nav, raised areas */
   --surface-solid: #ffffff;           /* when translucency is not an option */
   --surface-sunken: rgba(28, 25, 23, 0.05); /* code wells, inset rows */
@@ -41,14 +56,14 @@
   --line-solid: #e4e0d9;              /* hairlines in SVG exports */
   --line-strong: rgba(28, 25, 23, 0.22);
 
-  /* Accent — the ember. One per screen, twice at most. */
+  /* Accent — the ember. Solid fills stay rare; ember as light does not. */
   --accent: #c2410c;                  /* on --bg                    5.0:1 */
   --accent-hover: #9a3412;            /* darker: contrast goes up */
   --accent-ink: #ffffff;              /* text on an --accent fill   5.2:1 */
   --accent-text: #9a3412;             /* accent as small text on a tint 7.0:1 */
-  --accent-quiet: color-mix(in oklch, var(--accent) 12%, transparent);
 
-  /* Sun — the logo gradient. Decoration and the logo mark only, never text. */
+  /* Sun — the mark's gradient and the ambient light source.
+     Never a page background. --sun1 is never a text colour: 1.60:1 here. */
   --sun1: #fbbf24;
   --sun2: #ea580c;
   --ring: #ea580c;
@@ -56,18 +71,36 @@
   /* Status — semantic, and deliberately not the accent hue except "building",
      which borrows the ember on purpose: work in progress is the sun rising. */
   --ok: #065f46;                      /* live       7.4:1 on --bg */
-  --ok-tint: color-mix(in oklch, var(--ok) 8%, transparent);
   --warn: #9a3412;                    /* building   7.0:1 on --bg */
-  --warn-tint: color-mix(in oklch, var(--warn) 8%, transparent);
   --down: #b91c1c;                    /* down       6.2:1 on --bg */
-  --down-tint: color-mix(in oklch, var(--down) 8%, transparent);
+
+  /* Chart — five series, ember first. Each clears 4.5:1 on --bg AND on its own
+     tint, so a series colour may also be its own label. */
+  --chart-1: #c2410c;                 /* ember   5.0:1 · on tint 4.5:1 */
+  --chart-2: #0f766e;                 /* teal    5.3:1 · on tint 4.8:1 */
+  --chart-3: #4338ca;                 /* indigo  7.6:1 · on tint 6.8:1 */
+  --chart-4: #86198f;                 /* fuchsia 7.9:1 · on tint 7.1:1 */
+  --chart-5: #0369a1;                 /* sky     5.7:1 · on tint 5.2:1 */
+  --chart-tint-alpha: 8%;             /* the measured maximum for this theme */
+
+  /* Glass — the same alphas as --surface, plus blur and a lit top edge.
+     These are the measured minimum; lowering one breaks AA through the panel. */
+  --glass-bg: rgba(255, 255, 255, 0.86);
+  --glass-edge: rgba(255, 255, 255, 0.9);
+
+  /* Texture and light */
+  --grid-line: rgba(28, 25, 23, 0.055);
+  --star: rgba(28, 25, 23, 0.16);
+  --sweep-light: rgba(255, 255, 255, 0.55);
+
+  /* Display-text gradient. Not --sun1 → --sun2: that is 1.60:1 here.
+     #9a3412 → #ea580c is 7.0:1 → 3.4:1, both AA at large text. */
+  --grad-headline: linear-gradient(96deg, var(--accent-hover), var(--sun2));
 
   /* Elevation */
   --shadow-sm: 0 1px 2px rgba(28, 25, 23, 0.05);
   --shadow-md: 0 1px 2px rgba(28, 25, 23, 0.04), 0 8px 24px rgba(28, 25, 23, 0.06);
   --shadow-lg: 0 2px 4px rgba(28, 25, 23, 0.05), 0 20px 48px rgba(28, 25, 23, 0.1);
-  --shadow-accent: 0 6px 20px color-mix(in srgb, var(--accent) 30%, transparent);
-  --shadow: var(--shadow-md);          /* alias kept for site.css */
 }
 
 @media (prefers-color-scheme: dark) {
@@ -100,6 +133,23 @@
     --ok: #34d399;                    /* 10.1:1 */
     --warn: #fbbf24;                  /* 11.6:1 */
     --down: #fb7185;                  /*  7.2:1 */
+
+    --chart-1: #f59e0b;               /* ember   9.1:1 · on tint 6.6:1 */
+    --chart-2: #2dd4bf;               /* teal   10.4:1 · on tint 7.4:1 */
+    --chart-3: #818cf8;               /* indigo  6.5:1 · on tint 4.9:1 */
+    --chart-4: #e879f9;               /* fuchsia 7.9:1 · on tint 5.9:1 */
+    --chart-5: #38bdf8;               /* sky     9.1:1 · on tint 6.6:1 */
+    --chart-tint-alpha: 14%;
+
+    --glass-bg: rgba(20, 24, 32, 0.84);
+    --glass-edge: rgba(244, 242, 238, 0.16);
+
+    --grid-line: rgba(244, 242, 238, 0.05);
+    --star: rgba(244, 242, 238, 0.32);
+    --sweep-light: rgba(255, 255, 255, 0.4);
+
+    /* #fbbf24 → #f97316 is 11.6:1 → 6.9:1 on this ground. */
+    --grad-headline: linear-gradient(96deg, var(--sun1), var(--sun2));
 
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 32px rgba(0, 0, 0, 0.35);
@@ -139,6 +189,22 @@
   --warn: #fbbf24;
   --down: #fb7185;
 
+  --chart-1: #f59e0b;
+  --chart-2: #2dd4bf;
+  --chart-3: #818cf8;
+  --chart-4: #e879f9;
+  --chart-5: #38bdf8;
+  --chart-tint-alpha: 14%;
+
+  --glass-bg: rgba(20, 24, 32, 0.84);
+  --glass-edge: rgba(244, 242, 238, 0.16);
+
+  --grid-line: rgba(244, 242, 238, 0.05);
+  --star: rgba(244, 242, 238, 0.32);
+  --sweep-light: rgba(255, 255, 255, 0.4);
+
+  --grad-headline: linear-gradient(96deg, var(--sun1), var(--sun2));
+
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 32px rgba(0, 0, 0, 0.35);
   --shadow-lg: 0 2px 4px rgba(0, 0, 0, 0.35), 0 24px 56px rgba(0, 0, 0, 0.45);
@@ -174,44 +240,149 @@
   --warn: #9a3412;
   --down: #b91c1c;
 
+  --chart-1: #c2410c;
+  --chart-2: #0f766e;
+  --chart-3: #4338ca;
+  --chart-4: #86198f;
+  --chart-5: #0369a1;
+  --chart-tint-alpha: 8%;
+
+  --glass-bg: rgba(255, 255, 255, 0.86);
+  --glass-edge: rgba(255, 255, 255, 0.9);
+
+  --grid-line: rgba(28, 25, 23, 0.055);
+  --star: rgba(28, 25, 23, 0.16);
+  --sweep-light: rgba(255, 255, 255, 0.55);
+
+  --grad-headline: linear-gradient(96deg, var(--accent-hover), var(--sun2));
+
   --shadow-sm: 0 1px 2px rgba(28, 25, 23, 0.05);
   --shadow-md: 0 1px 2px rgba(28, 25, 23, 0.04), 0 8px 24px rgba(28, 25, 23, 0.06);
   --shadow-lg: 0 2px 4px rgba(28, 25, 23, 0.05), 0 20px 48px rgba(28, 25, 23, 0.1);
 }
 
-/* ── 2. Type ──────────────────────────────────────────────────────────────── */
+/* ── 2. Derived colour and light ──────────────────────────────────────────── */
+/* Written once. Every value below derives from §1, so it themes itself. */
 
 :root {
-  /* Three roles, two visible faces. The brand's grotesque carries display and
-     text — it is one family worked at two optical sizes and two tracking
-     settings, which is how every live SolenixAI surface and every generated
-     SVG banner is already set. Mono is the genuine second face and does real
-     work: eyebrows, labels, numbers, table headers, status, code. */
-  --font-display: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    "Noto Sans", Helvetica, Arial, sans-serif;
+  /* Soft accent and status fills */
+  --accent-quiet: color-mix(in oklch, var(--accent) 12%, transparent);
+  --ok-tint: color-mix(in oklch, var(--ok) 8%, transparent);
+  --warn-tint: color-mix(in oklch, var(--warn) 8%, transparent);
+  --down-tint: color-mix(in oklch, var(--down) 8%, transparent);
+
+  /* Chart tints — the alpha is per-theme, the derivation is not. */
+  --chart-1-tint: color-mix(in oklch, var(--chart-1) var(--chart-tint-alpha), transparent);
+  --chart-2-tint: color-mix(in oklch, var(--chart-2) var(--chart-tint-alpha), transparent);
+  --chart-3-tint: color-mix(in oklch, var(--chart-3) var(--chart-tint-alpha), transparent);
+  --chart-4-tint: color-mix(in oklch, var(--chart-4) var(--chart-tint-alpha), transparent);
+  --chart-5-tint: color-mix(in oklch, var(--chart-5) var(--chart-tint-alpha), transparent);
+
+  /* Chart furniture */
+  --chart-grid: color-mix(in oklch, var(--text) 8%, transparent);   /* graphic only */
+  --chart-axis: var(--faint);                                       /* tick labels  */
+  --chart-track: color-mix(in oklch, var(--text) 10%, transparent); /* unfilled bar */
+
+  /* Sparkline */
+  --spark-line: var(--chart-1);
+  --spark-fill: linear-gradient(to bottom,
+    color-mix(in oklch, var(--chart-1) 26%, transparent),
+    color-mix(in oklch, var(--chart-1) 0%, transparent));
+  --spark-point: var(--chart-1);
+
+  /* Trend. Direction only — the judgement is set per instance with
+     data-sentiment, because a rise is not always good. */
+  --trend-up: var(--ok);
+  --trend-down: var(--down);
+  --trend-flat: var(--muted);
+  --trend-up-tint: var(--ok-tint);
+  --trend-down-tint: var(--down-tint);
+  --trend-flat-tint: color-mix(in oklch, var(--text) 7%, transparent);
+
+  /* ── Gradients. Five named, plus the texture mask. ── */
+  --grad-sun: radial-gradient(circle at 42% 38%, var(--sun1), var(--sun2));
+  --grad-sky: radial-gradient(120% 90% at 100% 100%, var(--bg2) 0%, var(--bg) 60%);
+  --grad-ember: linear-gradient(135deg, var(--accent-hover), var(--accent));
+  --grad-sweep: linear-gradient(100deg,
+    transparent 18%, var(--sweep-light) 48%, transparent 78%);
+  --grad-veil: linear-gradient(to bottom, transparent, var(--bg) 72%);
+  /* --grad-headline is per-theme: see §1. */
+
+  /* ── Glow. Light, not elevation. Shadow says how high; glow says how alive. ── */
+  --glow-soft: 0 0 32px color-mix(in srgb, var(--ring) 14%, transparent);
+  --glow-ember:
+    0 0 0 1px color-mix(in srgb, var(--accent) 34%, transparent),
+    0 10px 32px color-mix(in srgb, var(--accent) 26%, transparent);
+  --glow-hover: 0 0 28px color-mix(in srgb, var(--accent) 22%, transparent);
+  /* Uses currentColor, so one token glows any chart series. */
+  --glow-point:
+    0 0 0 3px color-mix(in srgb, currentColor 16%, transparent),
+    0 0 14px color-mix(in srgb, currentColor 45%, transparent);
+
+  /* ── Glass ── */
+  --glass-blur: 18px;
+  --glass-inset: inset 0 1px 0 var(--glass-edge);
+
+  /* ── Texture. Grid pitch is --grid-size (§4). ── */
+  --texture-grid:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  --texture-stars:
+    radial-gradient(1.5px 1.5px at 18% 24%, var(--star), transparent),
+    radial-gradient(1px 1px at 64% 12%, var(--star), transparent),
+    radial-gradient(1.5px 1.5px at 82% 58%, var(--star), transparent),
+    radial-gradient(1px 1px at 33% 71%, var(--star), transparent),
+    radial-gradient(1px 1px at 91% 31%, var(--star), transparent),
+    radial-gradient(1.5px 1.5px at 48% 88%, var(--star), transparent);
+
+  /* ── Elevation alias kept for site.css ── */
+  --shadow: var(--shadow-md);
+  --shadow-accent: 0 6px 20px color-mix(in srgb, var(--accent) 30%, transparent);
+
+  /* ── Layering. Light behind texture behind content, every time. ── */
+  --z-sky: 0;
+  --z-texture: 1;
+  --z-content: 2;
+  --z-nav: 20;
+  --z-skip: 30;
+}
+
+/* ── 3. Type ──────────────────────────────────────────────────────────────── */
+
+:root {
+  /* Three roles, three faces. Sora carries display — a geometric grotesque
+     whose bowls are the same circles as the mark, holding at 96px. Text and
+     mono are unchanged from v1; mono still does real work on every eyebrow,
+     label, number, table header and status.
+     brand/build.py still needs the same display face — see DESIGN.md §2. */
+  --font-display: "Sora", ui-sans-serif, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
   --font-text: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
     "Noto Sans", Helvetica, Arial, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono",
     monospace;
 
   /* Size. clamp() so 375px and 1920px both land without a media query. */
-  --fs-display: clamp(2.4rem, 7.2vw, 4.25rem);  /* page-owning headline */
+  --fs-statement: clamp(2.75rem, 10vw, 6rem);   /* big statement, one per page */
+  --fs-display: clamp(2.4rem, 7.2vw, 4.5rem);   /* page-owning headline */
   --fs-h1: clamp(1.9rem, 5vw, 2.6rem);
   --fs-h2: clamp(1.4rem, 3.4vw, 1.75rem);
   --fs-h3: 1.2rem;
   --fs-h4: 1.02rem;
+  --fs-stat: clamp(1.9rem, 5.5vw, 2.75rem);     /* a stat's numeral */
   --fs-lede: clamp(1.05rem, 2.6vw, 1.25rem);
   --fs-body: 1rem;
   --fs-sm: 0.92rem;
   --fs-xs: 0.8rem;
   --fs-2xs: 0.72rem;                  /* badges, floor — never below this */
 
-  /* Weight. 650 is the brand's lockup weight. */
+  /* Weight. 650 is the brand's lockup weight; 800 is --fs-statement only. */
   --fw-regular: 400;
   --fw-medium: 500;
   --fw-semibold: 600;
   --fw-brand: 650;
   --fw-bold: 700;
+  --fw-black: 800;
 
   /* Line height */
   --lh-display: 1.04;
@@ -219,15 +390,18 @@
   --lh-body: 1.5;
   --lh-relaxed: 1.6;
 
-  /* Tracking. Negative as type grows, positive as it shrinks into a label. */
-  --track-display: -0.035em;
+  /* Tracking. Negative as type grows, positive as it shrinks into a label.
+     Sora needs less negative tracking at size than the system stack did. */
+  --track-statement: -0.04em;
+  --track-display: -0.03em;
   --track-heading: -0.015em;
+  --track-stat: -0.02em;
   --track-body: 0;
   --track-label: 0.12em;
   --track-eyebrow: 0.14em;
 }
 
-/* ── 3. Space and layout ──────────────────────────────────────────────────── */
+/* ── 4. Space and layout ──────────────────────────────────────────────────── */
 
 :root {
   /* 4px base. Skip no steps; add none. */
@@ -247,7 +421,10 @@
   --space-hero: clamp(3.5rem, 12vh, 8rem);
 
   --container: 64rem;                 /* 1024px — the live site's measure */
+  --container-wide: 78rem;            /* bento, split, full-bleed, demo panel */
   --measure: 34rem;                   /* max line length for prose */
+  --grid-size: 32px;                  /* texture grid pitch */
+  --bento-min: 15rem;                 /* smallest bento cell */
   --gutter: var(--space-4);           /* 16px, 32px from 640px up */
   --nav-height: 72px;
   --tap-min: 44px;                    /* every interactive target clears this */
@@ -257,7 +434,7 @@
   :root { --gutter: var(--space-6); }
 }
 
-/* ── 4. Radius ────────────────────────────────────────────────────────────── */
+/* ── 5. Radius ────────────────────────────────────────────────────────────── */
 
 :root {
   --radius-xs: 8px;
@@ -265,20 +442,26 @@
   --radius-md: 12px;                  /* icon chips, code wells, inputs */
   --radius-lg: 16px;
   --radius-xl: 20px;                  /* cards */
-  --radius-2xl: 28px;                 /* full-bleed panels */
+  --radius-2xl: 28px;                 /* full-bleed panels, bento cells */
   --radius-pill: 999px;               /* buttons, badges, nav links */
 }
 
-/* ── 5. Motion ────────────────────────────────────────────────────────────── */
+/* ── 6. Motion ────────────────────────────────────────────────────────────── */
 
 :root {
   --dur-fast: 120ms;                  /* colour, border */
-  --dur-base: 180ms;                  /* lift, shadow */
+  --dur-base: 180ms;                  /* lift, shadow, glow */
   --dur-slow: 320ms;                  /* panels, disclosure */
-  --dur-reveal: 700ms;                /* entrance, once */
+  --dur-reveal: 700ms;                /* section entrance */
+  --dur-sweep: 1400ms;                /* one pass of the light sweep */
+  --dur-count: 1200ms;                /* a number counting to its value */
+  --stagger: 40ms;                    /* delay between staggered siblings */
 
   --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);  /* the house curve */
   --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-orbit: linear;               /* easing a loop reads as broken */
+
+  --pulse-period: 4s;                 /* one breath of an ambient glow */
 
   /* Orbit periods — slow enough to read as ambient, not as animation. */
   --orbit-1: 90s;
@@ -287,6 +470,8 @@
 
   --lift: -1px;                       /* buttons */
   --lift-card: -3px;                  /* cards */
+  --reveal-rise: 12px;                /* how far a revealed child travels */
+  --parallax: 0.12;                   /* sky drift as a fraction of scroll */
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -295,12 +480,17 @@
     --dur-base: 1ms;
     --dur-slow: 1ms;
     --dur-reveal: 1ms;
+    --dur-sweep: 1ms;
+    --dur-count: 1ms;
+    --stagger: 0ms;
     --lift: 0px;
     --lift-card: 0px;
+    --reveal-rise: 0px;
+    --parallax: 0;
   }
 }
 
-/* ── 6. Focus ─────────────────────────────────────────────────────────────── */
+/* ── 7. Focus ─────────────────────────────────────────────────────────────── */
 
 :root {
   --focus-width: 2px;
