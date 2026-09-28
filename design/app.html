@@ -1,0 +1,1290 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your Solenix portal</title>
+<meta name="description" content="Your project, your website's health and your invoices, in one place.">
+<link rel="stylesheet" href="tokens.css">
+<style>
+/* OD-LAYOUT-PRIMITIVES v1 — structure only: display, flex/grid, overflow, wrapping, ratio.
+   Put this @layer first; product CSS outside the layer always wins. */
+@layer od-layout {
+  :where(.od-stack,.od-row,.od-row-top,.od-cluster,.od-grid,.od-field,.od-stat,.od-cell,.od-tile) > :where(*) { min-width: 0; }
+
+  /* containers */
+  .od-stack   { display: flex; flex-direction: column; gap: var(--od-gap, 8px); }
+  .od-row     { display: flex; align-items: center; gap: var(--od-gap, 8px); }
+  .od-row-top { display: flex; align-items: flex-start; gap: var(--od-gap, 8px); }
+  .od-cluster { display: flex; flex-wrap: wrap; align-items: center; gap: var(--od-gap, 8px); }
+  .od-fill    { flex: 1 1 0; min-width: 0; }
+  .od-fixed   { flex: none; }
+  .od-grid    { display: grid; gap: var(--od-gap, 12px); grid-template-columns: repeat(var(--od-cols, 3), minmax(0, 1fr)); }
+
+  /* stacked information: each piece is its own line — never sibling inline spans */
+  .od-stat, .od-field, .od-cell { display: grid; gap: var(--od-gap, 2px); }
+  :where(.od-stat,.od-field,.od-cell) > :where(*) { display: block; }
+  .od-tile { display: grid; grid-template-rows: auto 1fr; }
+  :where(.od-tile) > :where(*) { display: block; }
+
+  /* media keeps its intrinsic ratio by default; never a distorted or cropped
+     cover by accident. height:auto lets the ratio win over an <img height="…">
+     attribute. Cropping to a uniform box is an explicit opt-in: set --od-ratio
+     AND add .od-media-cover together (per the core rule, only where a crop is
+     deliberate — tile thumbs, decorative fills — never on full-frame content). */
+  .od-media { display: block; width: 100%; height: auto; aspect-ratio: var(--od-ratio, auto); }
+  .od-media-cover { object-fit: cover; }
+
+  /* data text only — authored copy is rewritten to its budget instead */
+  .od-truncate { display: block; max-width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .od-clamp-2, .od-clamp-3 { display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+  .od-clamp-2 { -webkit-line-clamp: 2; }
+  .od-clamp-3 { -webkit-line-clamp: 3; }
+  .od-lines-2 { min-height: calc(2 * 1.4em); }   /* block-level reservation for a shared baseline */
+  .od-nowrap  { white-space: nowrap; }           /* 数字+单位 · 价格+起 · 日期+星期 */
+  .od-keep    { word-break: keep-all; overflow-wrap: anywhere; } /* CJK labels break at spaces / <wbr> first */
+
+  /* screen skeleton (optional): bars take their own space, the middle scrolls — no padding guessed for chrome */
+  .od-screen { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; height: 100%; }
+  .od-scroll { overflow-y: auto; overscroll-behavior: contain; min-height: 0; }
+
+  /* horizontal rail: the next item peeks at the edge; trailing room survives overflow */
+  .od-rail { display: flex; gap: var(--od-gap, 8px); overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none;
+             padding-inline: var(--od-rail-pad, 16px); scroll-padding-inline: var(--od-rail-pad, 16px); }
+  .od-rail::-webkit-scrollbar { display: none; }
+  :where(.od-rail) > :where(*) { flex: none; scroll-snap-align: start; }
+  :where(.od-rail) > :where(:last-child) { margin-inline-end: var(--od-rail-pad, 16px); }
+
+  .od-spacer { flex: none; visibility: hidden; pointer-events: none; }
+  .od-touch  { min-width: 44px; min-height: 44px; }
+}
+/* /OD-LAYOUT-PRIMITIVES v1 */
+
+/* ══ Base ═════════════════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0; font-family: var(--font-text); font-size: var(--fs-body); line-height: var(--lh-body);
+  color: var(--text); background: var(--bg); -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; }
+h1, h2, h3, h4 { font-family: var(--font-display); line-height: var(--lh-heading); letter-spacing: var(--track-heading); margin: 0; text-wrap: balance; }
+p { margin: 0; text-wrap: pretty; }
+ul { margin: 0; padding: 0; list-style: none; }
+button { font: inherit; color: inherit; }
+
+.eyebrow { font-family: var(--font-mono); font-size: var(--fs-xs); font-weight: var(--fw-semibold); letter-spacing: var(--track-eyebrow); text-transform: uppercase; color: var(--faint); }
+.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.muted { color: var(--muted); }
+.faint { color: var(--faint); }
+.sm { font-size: var(--fs-sm); }
+.xs { font-size: var(--fs-xs); }
+.visually-hidden { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+.skip { position: absolute; top: var(--space-2); left: var(--space-2); z-index: 60; padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md); background: var(--surface-solid); border: 1px solid var(--line-strong); font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold); text-decoration: none; transform: translateY(-200%); }
+.skip:focus { transform: none; }
+#main:focus { outline: none; }
+
+/* ══ Buttons — continued from home.html ═══════════════════════════════════ */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+  min-height: var(--tap-min); padding: 0 var(--space-5); border-radius: var(--radius-pill);
+  font: var(--fw-semibold) var(--fs-body)/1 var(--font-text); text-decoration: none; white-space: nowrap;
+  border: 1px solid transparent; cursor: pointer; background: transparent;
+  transition: background var(--dur-fast), border-color var(--dur-fast), color var(--dur-fast),
+    transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base); }
+.btn-primary { background: var(--accent); color: var(--accent-ink); box-shadow: var(--shadow-accent); }
+.btn-ghost { color: var(--text); border-color: var(--line-strong); }
+.btn-quiet { color: var(--muted); }
+.btn-sm { min-height: 40px; padding: 0 var(--space-4); font-size: var(--fs-sm); }
+.btn svg { width: 18px; height: 18px; flex: none; }
+@media (hover: hover) {
+  .btn-primary:hover { background: var(--accent-hover); transform: translateY(var(--lift)); }
+  .btn-ghost:hover { background: color-mix(in oklch, var(--text) 8%, transparent); }
+  .btn-quiet:hover { background: var(--line); color: var(--text); }
+}
+.btn[aria-disabled="true"], .btn:disabled { opacity: .55; cursor: not-allowed; box-shadow: none; transform: none; }
+.btn.is-busy { pointer-events: none; }
+.btn .spin { display: none; width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid color-mix(in oklch, currentColor 30%, transparent); border-top-color: currentColor;
+  animation: spin 800ms linear infinite; }
+.btn.is-busy .spin { display: block; }
+.btn.is-busy .label-idle { display: none; }
+.btn .label-busy { display: none; }
+.btn.is-busy .label-busy { display: inline; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .btn .spin { animation-duration: 2s; } }
+
+/* ══ Surfaces ═════════════════════════════════════════════════════════════ */
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-xl);
+  padding: var(--space-5); box-shadow: var(--shadow-sm); }
+.card-lg { padding: var(--space-6); }
+.card h2 { font-size: var(--fs-h3); }
+.card h3 { font-size: var(--fs-h4); }
+
+.badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: var(--radius-pill);
+  font: var(--fw-semibold) var(--fs-2xs)/1.2 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; }
+.badge::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex: none; }
+.badge.ok { color: var(--ok); background: var(--ok-tint); }
+.badge.warn { color: var(--warn); background: var(--warn-tint); }
+.badge.down { color: var(--down); background: var(--down-tint); }
+.badge.quiet { color: var(--faint); background: var(--surface-sunken); }
+.chip-example { font-family: var(--font-mono); font-size: var(--fs-2xs); font-weight: var(--fw-semibold);
+  letter-spacing: var(--track-label); text-transform: uppercase; color: var(--faint);
+  border: 1px solid var(--line); border-radius: var(--radius-pill); padding: 3px 8px; }
+
+.icon-chip { width: 40px; height: 40px; border-radius: var(--radius-md); background: var(--accent-quiet);
+  display: grid; place-items: center; color: var(--accent-text); flex: none; }
+.icon-chip svg { width: 20px; height: 20px; }
+
+summary::-webkit-details-marker { display: none; }
+summary .mark { font-family: var(--font-mono); font-size: 1.25rem; color: var(--faint);
+  transition: transform var(--dur-slow) var(--ease-out); }
+details[open] summary .mark { transform: rotate(45deg); }
+
+/* ══ App frame ════════════════════════════════════════════════════════════ */
+.app { min-height: 100vh; min-height: 100dvh; }
+.app.is-signedout { display: grid; place-items: center; padding: var(--space-6) var(--gutter); }
+
+/* Top bar — visible below 1024px */
+.topbar { position: sticky; top: 0; z-index: 30; height: var(--nav-height);
+  background: color-mix(in oklch, var(--bg) 80%, transparent); backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line); }
+.topbar-inner { height: 100%; display: flex; align-items: center; gap: var(--space-3); padding: 0 var(--gutter); }
+
+.brand { display: flex; align-items: center; gap: var(--space-2); font-weight: var(--fw-brand);
+  letter-spacing: -0.01em; text-decoration: none; }
+.brand svg { width: 28px; height: 28px; flex: none; }
+.brand .sub { font-family: var(--font-mono); font-size: var(--fs-2xs); letter-spacing: var(--track-label);
+  text-transform: uppercase; color: var(--faint); font-weight: var(--fw-semibold); }
+
+.iconbtn { display: grid; place-items: center; width: var(--tap-min); height: var(--tap-min);
+  border-radius: var(--radius-pill); border: 1px solid transparent; background: transparent; cursor: pointer;
+  color: var(--muted); transition: background var(--dur-fast), color var(--dur-fast); }
+.iconbtn svg { width: 20px; height: 20px; }
+@media (hover: hover) { .iconbtn:hover { background: var(--line); color: var(--text); } }
+
+/* Sidebar — 1024px and up */
+.sidebar { display: none; }
+
+/* Main */
+.main { padding: var(--space-6) var(--gutter) calc(var(--space-8) + 76px); }
+.page { max-width: 68rem; margin: 0 auto; }
+.page-head { display: grid; gap: var(--space-3); margin-bottom: var(--space-6); }
+.page-head h1 { font-size: var(--fs-h1); }
+
+/* Bottom nav — below 1024px */
+.bottomnav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
+  background: color-mix(in oklch, var(--bg) 88%, transparent); backdrop-filter: blur(16px);
+  border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom, 0px); }
+.bottomnav ul { display: grid; grid-template-columns: repeat(4, 1fr); }
+.bottomnav ul > li { display: grid; }
+.navlink { display: grid; justify-items: center; gap: 3px; padding: var(--space-2) var(--space-1) var(--space-3);
+  min-height: 60px; text-decoration: none; color: var(--muted); background: none; border: 0; cursor: pointer;
+  transition: color var(--dur-fast); }
+.navlink svg { width: 22px; height: 22px; }
+.navlink .n { font-size: var(--fs-2xs); font-weight: var(--fw-semibold); letter-spacing: 0.02em; }
+.navlink[aria-current="page"] { color: var(--accent-text); }
+.navlink[aria-current="page"] .n { position: relative; }
+.navlink[aria-current="page"] .n::after { content: ""; position: absolute; left: 50%; bottom: -5px;
+  transform: translateX(-50%); width: 16px; height: 2px; border-radius: 2px; background: var(--accent); }
+@media (hover: hover) { .navlink:hover { color: var(--text); } }
+
+@media (min-width: 1024px) {
+  .app.is-signedin { display: grid; grid-template-columns: 264px minmax(0, 1fr); }
+  .topbar { display: none; }
+  .bottomnav { display: none; }
+  .sidebar { position: sticky; top: 0; align-self: start; height: 100vh; height: 100dvh;
+    border-right: 1px solid var(--line); padding: var(--space-6) var(--space-5);
+    background: color-mix(in oklch, var(--bg2) 60%, transparent);
+    display: flex; flex-direction: column; gap: var(--space-6); }
+  .sidebar .navlink { grid-auto-flow: column; justify-items: start; justify-content: start; align-items: center;
+    gap: var(--space-3); padding: 0 var(--space-4); min-height: var(--tap-min); border-radius: var(--radius-pill);
+    width: 100%; }
+  .sidebar .navlink .n { font-size: var(--fs-sm); }
+  .sidebar .navlink[aria-current="page"] { background: var(--accent-quiet); }
+  .sidebar .navlink[aria-current="page"] .n::after { display: none; }
+  .sidebar ul { display: grid; gap: var(--space-1); }
+  .main { padding: var(--space-8) var(--space-8) var(--space-9); }
+}
+
+/* ══ Sign in ══════════════════════════════════════════════════════════════ */
+.signin { width: 100%; max-width: 27rem; }
+.signin-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-lg); padding: var(--space-7) var(--space-6); backdrop-filter: blur(18px); }
+.signin h1 { font-size: var(--fs-h2); margin-top: var(--space-4); }
+.signin .lede { color: var(--muted); margin-top: var(--space-3); font-size: var(--fs-sm); }
+.signin form { margin-top: var(--space-6); display: grid; gap: var(--space-4); }
+.signin .foot { margin-top: var(--space-5); font-size: var(--fs-sm); color: var(--faint); text-align: center; }
+.signin .foot a { color: var(--accent-text); text-decoration: none; font-weight: var(--fw-semibold); }
+.signin .foot a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+label.lbl { font-size: var(--fs-sm); font-weight: var(--fw-semibold); }
+.req { color: var(--accent-text); font-weight: var(--fw-regular); }
+input[type="email"], input[type="text"] {
+  width: 100%; min-height: var(--tap-min); padding: 0 var(--space-4); border-radius: var(--radius-md);
+  border: 1px solid var(--line-strong); background: var(--surface-solid); color: var(--text);
+  font: var(--fw-regular) var(--fs-body)/1.4 var(--font-text);
+  transition: border-color var(--dur-fast), box-shadow var(--dur-fast); }
+input::placeholder { color: var(--faint); }
+@media (hover: hover) { input[type="email"]:hover { border-color: color-mix(in oklch, var(--text) 30%, var(--line-strong)); } }
+input:focus { border-color: var(--accent); }
+input[aria-invalid="true"] { border-color: var(--down); }
+.err { display: none; gap: var(--space-2); align-items: flex-start; font-size: var(--fs-sm); color: var(--down); }
+.err svg { width: 18px; height: 18px; flex: none; margin-top: 2px; }
+.err.is-shown { display: flex; }
+
+/* ══ Notice bar ═══════════════════════════════════════════════════════════ */
+.notice { display: flex; align-items: flex-start; gap: var(--space-3); padding: var(--space-4) var(--space-5);
+  border: 1px dashed var(--line-strong); border-radius: var(--radius-lg); background: var(--surface-sunken);
+  font-size: var(--fs-sm); color: var(--muted); margin-bottom: var(--space-6); }
+.notice svg { width: 20px; height: 20px; flex: none; color: var(--faint); margin-top: 1px; }
+.notice strong { color: var(--text); font-weight: var(--fw-semibold); }
+
+/* ══ Screens ══════════════════════════════════════════════════════════════ */
+.screen[hidden] { display: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .screen:not([hidden]) { animation: enter var(--dur-slow) var(--ease-out) both; }
+  @keyframes enter { from { opacity: 0; transform: translateY(8px); } }
+}
+
+.section { margin-top: var(--space-7); }
+.section-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-4);
+  margin-bottom: var(--space-4); }
+.section-head h2 { font-size: var(--fs-h3); }
+
+/* Summary cards on Overview */
+.summary { display: grid; gap: var(--space-4); }
+@media (min-width: 768px) { .summary { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+a.card, button.card { display: block; width: 100%; text-align: left; text-decoration: none; color: inherit;
+  cursor: pointer; transition: transform var(--dur-base) var(--ease-out), border-color var(--dur-base); }
+@media (hover: hover) {
+  a.card:hover, button.card:hover { transform: translateY(var(--lift-card));
+    border-color: color-mix(in oklch, var(--accent) 35%, var(--line)); }
+}
+.card-top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
+  margin-bottom: var(--space-4); }
+.card-key { font: var(--fw-bold) clamp(1.35rem, 3.2vw, 1.6rem)/1.15 var(--font-display); letter-spacing: -0.02em; }
+.card-note { margin-top: var(--space-2); font-size: var(--fs-sm); color: var(--muted); }
+.card-go { margin-top: var(--space-4); font-size: var(--fs-sm); font-weight: var(--fw-semibold);
+  color: var(--accent-text); display: inline-flex; align-items: center; gap: var(--space-2); }
+.card-go svg { width: 16px; height: 16px; transition: transform var(--dur-base) var(--ease-out); }
+@media (hover: hover) { a.card:hover .card-go svg, button.card:hover .card-go svg { transform: translateX(3px); } }
+
+/* Rows */
+.rows { border: 1px solid var(--line); border-radius: var(--radius-xl); overflow: hidden; background: var(--surface); }
+.row { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-4) var(--space-5);
+  border-top: 1px solid var(--line); width: 100%; text-align: left; background: none; border-left: 0;
+  border-right: 0; border-bottom: 0; }
+.rows > :first-child, .rows > :first-child > .row { border-top: 0; }
+button.row, a.row { cursor: pointer; text-decoration: none; color: inherit; transition: background var(--dur-fast); }
+@media (hover: hover) { button.row:hover, a.row:hover { background: var(--surface-sunken); } }
+.row .k { font-size: var(--fs-sm); color: var(--muted); }
+.row .v { font-weight: var(--fw-semibold); }
+.row-chev { width: 18px; height: 18px; color: var(--faint); flex: none; }
+@media (max-width: 639px) {
+  .row { padding-inline: var(--space-4); gap: var(--space-3); }
+  .row-chev { display: none; }
+}
+
+/* Steps */
+.steps { display: grid; gap: 0; }
+.stepitem { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: var(--space-4);
+  padding-bottom: var(--space-6); position: relative; }
+.stepitem:last-child { padding-bottom: 0; }
+.stepitem::before { content: ""; position: absolute; left: 16px; top: 34px; bottom: 0; width: 2px;
+  background: var(--line-strong); }
+.stepitem:last-child::before { display: none; }
+.stepdot { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center;
+  border: 2px solid var(--line-strong); background: var(--bg); font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono);
+  color: var(--faint); position: relative; z-index: 1; }
+.stepdot svg { width: 16px; height: 16px; }
+.stepitem.done .stepdot { border-color: var(--ok); color: var(--ok); }
+.stepitem.now .stepdot { border-color: var(--accent); color: var(--accent-text); background: var(--accent-quiet); }
+.stepitem h3 { font-size: var(--fs-h4); }
+.stepitem .when { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--faint); margin-top: 2px; }
+.stepitem p { color: var(--muted); font-size: var(--fs-sm); margin-top: var(--space-2); }
+
+/* Task list */
+.tasks { display: grid; gap: var(--space-3); }
+.task { display: flex; align-items: flex-start; gap: var(--space-3); padding: var(--space-4) var(--space-5);
+  border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); }
+.task .tick { width: 20px; height: 20px; flex: none; margin-top: 2px; color: var(--ok); }
+.task .dash { width: 20px; height: 20px; flex: none; margin-top: 2px; color: var(--faint); }
+.task .t { font-weight: var(--fw-medium); }
+.task .d { font-size: var(--fs-sm); color: var(--muted); margin-top: 2px; }
+
+/* Waiting on you */
+.ask { border: 1px solid color-mix(in oklch, var(--accent) 40%, var(--line)); background: var(--accent-quiet);
+  border-radius: var(--radius-xl); padding: var(--space-5); display: grid; gap: var(--space-4); }
+@media (min-width: 640px) { .ask { grid-template-columns: minmax(0, 1fr) auto; align-items: center; } }
+.ask h3 { font-size: var(--fs-h4); }
+.ask p { font-size: var(--fs-sm); color: var(--muted); margin-top: var(--space-2); }
+
+/* Empty state */
+.empty { border: 1px dashed var(--line-strong); border-radius: var(--radius-xl); padding: var(--space-6);
+  text-align: center; display: grid; gap: var(--space-3); justify-items: center; background: var(--surface-sunken); }
+.empty h3 { font-size: var(--fs-h4); }
+.empty p { font-size: var(--fs-sm); color: var(--muted); max-width: 30rem; }
+
+/* Bars — example visitor chart */
+.bars { display: flex; align-items: flex-end; gap: 4px; height: 96px; margin-top: var(--space-4); }
+.bars span { flex: 1 1 0; min-width: 0; border-radius: 3px 3px 0 0;
+  background: color-mix(in oklch, var(--accent) 70%, transparent); }
+.bars span:last-child { background: var(--accent); }
+.barlabels { display: flex; justify-content: space-between; margin-top: var(--space-2);
+  font-family: var(--font-mono); font-size: var(--fs-2xs); color: var(--faint); }
+
+/* Invoice detail */
+.lines { margin-top: var(--space-5); }
+.line { display: flex; align-items: flex-start; gap: var(--space-4); padding: var(--space-4) 0;
+  border-top: 1px solid var(--line); }
+.line:first-child { border-top: 0; }
+.line .amt { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: var(--fw-semibold); }
+.total { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-4);
+  margin-top: var(--space-4); padding-top: var(--space-4); border-top: 2px solid var(--line-strong); }
+.total .big { font: var(--fw-bold) var(--fs-h2)/1 var(--font-mono); font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em; }
+.backlink { display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--tap-min);
+  font-size: var(--fs-sm); font-weight: var(--fw-semibold); color: var(--muted); text-decoration: none;
+  background: none; border: 0; cursor: pointer; padding: 0; }
+.backlink svg { width: 18px; height: 18px; }
+@media (hover: hover) { .backlink:hover { color: var(--text); } }
+
+/* Confirm sheet */
+.scrim { position: fixed; inset: 0; z-index: 50; background: rgb(0 0 0 / 55%);
+  display: grid; place-items: end center; padding: 0; }
+.scrim[hidden] { display: none; }
+@media (min-width: 640px) { .scrim { place-items: center; padding: var(--space-6); } }
+.sheet { width: 100%; max-width: 28rem; background: var(--surface-solid); border: 1px solid var(--line);
+  border-radius: var(--radius-2xl) var(--radius-2xl) 0 0; padding: var(--space-6);
+  padding-bottom: calc(var(--space-6) + env(safe-area-inset-bottom, 0px)); box-shadow: var(--shadow-lg); }
+@media (min-width: 640px) { .sheet { border-radius: var(--radius-2xl); padding-bottom: var(--space-6); } }
+.sheet h2 { font-size: var(--fs-h3); margin-top: var(--space-3); }
+.sheet p { color: var(--muted); font-size: var(--fs-sm); margin-top: var(--space-3); }
+.sheet-actions { display: grid; gap: var(--space-3); margin-top: var(--space-6); }
+@media (min-width: 400px) { .sheet-actions { grid-template-columns: 1fr 1fr; } }
+@media (prefers-reduced-motion: no-preference) {
+  .scrim:not([hidden]) { animation: fade var(--dur-fast) var(--ease-out) both; }
+  .scrim:not([hidden]) .sheet { animation: up var(--dur-slow) var(--ease-out) both; }
+  @keyframes fade { from { opacity: 0; } }
+  @keyframes up { from { transform: translateY(16px); opacity: 0; } }
+}
+
+/* Toast */
+.toast { position: fixed; z-index: 55; left: var(--gutter); right: var(--gutter);
+  bottom: calc(76px + var(--space-4) + env(safe-area-inset-bottom, 0px));
+  display: flex; align-items: center; gap: var(--space-3); padding: var(--space-4) var(--space-5);
+  background: var(--surface-solid); border: 1px solid var(--line-strong); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg); font-size: var(--fs-sm); font-weight: var(--fw-medium); }
+.toast[hidden] { display: none; }
+.toast svg { width: 20px; height: 20px; flex: none; color: var(--ok); }
+@media (min-width: 1024px) { .toast { left: auto; right: var(--space-8); bottom: var(--space-6); max-width: 24rem; } }
+@media (prefers-reduced-motion: no-preference) {
+  .toast:not([hidden]) { animation: up var(--dur-base) var(--ease-out) both; }
+}
+
+/* Contact card */
+.contact { display: grid; gap: var(--space-4); align-items: center; }
+@media (min-width: 560px) { .contact { grid-template-columns: 72px minmax(0, 1fr) auto; } }
+.contact img { border-radius: 50%; border: 1px solid var(--line); }
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<!-- ══════════════════════════════════ SIGNED OUT ══════════════════════════ -->
+<div class="app is-signedout" id="signedout">
+  <div class="signin">
+    <div class="signin-card">
+      <a class="brand" href="/" aria-label="Solenix home">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><defs><radialGradient id="sg1" cx="42%" cy="38%"><stop offset="0" stop-color="var(--sun1)"/><stop offset="1" stop-color="var(--sun2)"/></radialGradient></defs>
+          <circle cx="16" cy="16" r="7" fill="url(#sg1)"/>
+          <ellipse cx="16" cy="16" rx="13.5" ry="13.5" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1"/>
+          <circle cx="26.5" cy="9.5" r="2.4" fill="var(--ring)"/>
+        </svg>
+        <span>Solenix</span>
+      </a>
+
+      <h1>Sign in to your portal</h1>
+      <p class="lede">Your project, your website and your invoices, in one place. We email you a link — there is no password to remember.</p>
+
+      <form id="signin-form" novalidate>
+        <div class="od-field" style="--od-gap: var(--space-2)">
+          <label class="lbl" for="email">Email <span class="req">(required)</span></label>
+          <input type="email" id="email" name="email" autocomplete="email" inputmode="email"
+                 placeholder="dana@mapleandrye.ca" aria-describedby="email-help email-err">
+          <p class="xs faint" id="email-help">Use the address we send your invoices to.</p>
+        </div>
+        <p class="err" id="email-err" role="alert">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M10 6.5v4M10 13.6v.1"/></svg>
+          <span id="email-err-text">That does not look like an email address. Check for a missing @ or a typo in the domain.</span>
+        </p>
+        <button class="btn btn-primary" type="submit" id="signin-btn">
+          <span class="spin" aria-hidden="true"></span>
+          <span class="label-idle">Email me a link</span>
+          <span class="label-busy">Sending…</span>
+        </button>
+      </form>
+
+      <p class="foot">New here? <a href="mailto:hello@solenix.dev?subject=Book%20a%20call">Book a call</a> and we will set you up.</p>
+    </div>
+    <p class="xs faint" style="text-align:center;margin-top:var(--space-5)">This is a design prototype. Any address signs you into an example account.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════ SIGNED IN ═══════════════════════════ -->
+<div class="app is-signedin" id="signedin" hidden>
+
+  <!-- Sidebar · 1024px and up -->
+  <aside class="sidebar">
+    <a class="brand" href="#/overview" aria-label="Solenix portal home">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><defs><radialGradient id="sg2" cx="42%" cy="38%"><stop offset="0" stop-color="var(--sun1)"/><stop offset="1" stop-color="var(--sun2)"/></radialGradient></defs>
+        <circle cx="16" cy="16" r="7" fill="url(#sg2)"/>
+        <ellipse cx="16" cy="16" rx="13.5" ry="13.5" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1"/>
+        <circle cx="26.5" cy="9.5" r="2.4" fill="var(--ring)"/>
+      </svg>
+      <span class="od-stat" style="--od-gap:0">
+        <span style="font-weight:var(--fw-brand)">Solenix</span>
+        <span class="sub">Portal</span>
+      </span>
+    </a>
+
+    <nav aria-label="Portal" class="od-fill">
+      <ul data-nav="side"></ul>
+    </nav>
+
+    <div class="od-stack" style="--od-gap: var(--space-3)">
+      <div class="od-row" style="--od-gap: var(--space-3)">
+        <span class="od-fill od-stat" style="--od-gap:0">
+          <span class="sm" style="font-weight:var(--fw-semibold)">Maple &amp; Rye</span>
+          <span class="xs faint od-truncate">dana@mapleandrye.ca</span>
+        </span>
+        <button class="iconbtn od-fixed" type="button" data-theme-toggle aria-label="Switch theme" title="Switch theme">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="3.6"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.6 4.6l1.4 1.4M14 14l1.4 1.4M15.4 4.6L14 6M6 14l-1.4 1.4"/></svg>
+        </button>
+      </div>
+      <button class="btn btn-quiet btn-sm" type="button" data-signout style="justify-content:flex-start;padding-left:var(--space-3)">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.5 14.5V17H3V3h9.5v2.5M8 10h9m0 0-2.5-2.5M17 10l-2.5 2.5"/></svg>
+        Sign out
+      </button>
+    </div>
+  </aside>
+
+  <!-- Top bar · below 1024px -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand od-fill" href="#/overview" aria-label="Solenix portal home">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><defs><radialGradient id="sg3" cx="42%" cy="38%"><stop offset="0" stop-color="var(--sun1)"/><stop offset="1" stop-color="var(--sun2)"/></radialGradient></defs>
+          <circle cx="16" cy="16" r="7" fill="url(#sg3)"/>
+          <ellipse cx="16" cy="16" rx="13.5" ry="13.5" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1"/>
+          <circle cx="26.5" cy="9.5" r="2.4" fill="var(--ring)"/>
+        </svg>
+        <span class="od-stat" style="--od-gap:0">
+          <span>Solenix</span>
+          <span class="sub">Maple &amp; Rye</span>
+        </span>
+      </a>
+      <button class="iconbtn od-fixed" type="button" data-theme-toggle aria-label="Switch theme" title="Switch theme">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="3.6"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.6 4.6l1.4 1.4M14 14l1.4 1.4M15.4 4.6L14 6M6 14l-1.4 1.4"/></svg>
+      </button>
+      <button class="iconbtn od-fixed" type="button" data-signout aria-label="Sign out" title="Sign out">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.5 14.5V17H3V3h9.5v2.5M8 10h9m0 0-2.5-2.5M17 10l-2.5 2.5"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="main" id="main">
+    <div class="page">
+
+      <p class="notice">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="7.5"/><path d="M10 9v4.5M10 6.4v.1"/></svg>
+        <span><strong>This is an example account.</strong> Everything below is sample content for a bakery called Maple &amp; Rye, so you can see how the portal reads. Your own project, website and invoices appear here once you are set up.</span>
+      </p>
+
+      <!-- ─────────────── OVERVIEW ─────────────── -->
+      <section class="screen" id="screen-overview" aria-labelledby="h-overview">
+        <div class="page-head">
+          <p class="eyebrow">Tuesday, 29 September</p>
+          <h1 id="h-overview">Good morning, Dana.</h1>
+          <p class="muted">Your online ordering is in the build step. One thing is waiting on you.</p>
+        </div>
+
+        <div class="summary">
+          <a class="card" href="#/project">
+            <div class="card-top"><span class="eyebrow">Your project</span><span class="badge warn">Building</span></div>
+            <p class="card-key">Step 3 of 4</p>
+            <p class="card-note">Online ordering for pickup. On track for 17 October.</p>
+            <span class="card-go">See the plan
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10h11m0 0-4-4m4 4-4 4"/></svg>
+            </span>
+          </a>
+
+          <a class="card" href="#/website">
+            <div class="card-top"><span class="eyebrow">Your website</span><span class="badge ok">Live</span></div>
+            <p class="card-key">Working</p>
+            <p class="card-note">mapleandrye.ca · checked 4 minutes ago.</p>
+            <span class="card-go">See the details
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10h11m0 0-4-4m4 4-4 4"/></svg>
+            </span>
+          </a>
+
+          <a class="card" href="#/invoices">
+            <div class="card-top"><span class="eyebrow">Your invoices</span><span class="badge warn" data-due-badge>Due</span></div>
+            <p class="card-key mono od-nowrap" data-due-amount>$1,850.00</p>
+            <p class="card-note" data-due-note>Invoice 0042, due 10 October.</p>
+            <span class="card-go">Open invoices
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10h11m0 0-4-4m4 4-4 4"/></svg>
+            </span>
+          </a>
+        </div>
+
+        <div class="section">
+          <div class="section-head"><h2>Waiting on you</h2></div>
+          <div id="ask-wrap">
+            <div class="ask">
+              <div>
+                <h3>Approve the pickup times</h3>
+                <p>We have written the pickup window as “Ready in 30 minutes, Tuesday to Saturday, 8am–4pm.” Say yes and we build it in, or tell us the wording you want.</p>
+              </div>
+              <div class="od-cluster" style="--od-gap: var(--space-3)">
+                <button class="btn btn-primary btn-sm" type="button" data-approve>
+                  <span class="spin" aria-hidden="true"></span>
+                  <span class="label-idle">Looks right</span>
+                  <span class="label-busy">Sending…</span>
+                </button>
+                <a class="btn btn-ghost btn-sm" href="mailto:jager@solenix.dev?subject=Pickup%20times%20wording">Change it</a>
+              </div>
+            </div>
+          </div>
+          <template id="ask-empty">
+            <div class="empty">
+              <h3>Nothing waiting on you</h3>
+              <p>When we need a decision or a photo from you, it appears here and we email you about it. Until then, we are building.</p>
+              <a class="btn btn-ghost btn-sm" href="#/project">See what we are building</a>
+            </div>
+          </template>
+        </div>
+
+        <div class="section">
+          <div class="section-head"><h2>Latest from us</h2><a class="sm" href="#/project" style="color:var(--accent-text);text-decoration:none;font-weight:var(--fw-semibold)">All updates</a></div>
+          <ul class="rows">
+            <li class="row">
+              <span class="od-fill od-stat" style="--od-gap: var(--space-1)">
+                <span class="v">Order form built and tested</span>
+                <span class="k">Customers can pick items, choose a pickup time and pay. Card payments go live once Stripe finishes checking your business.</span>
+              </span>
+              <span class="mono xs faint od-fixed od-nowrap">26 Sep</span>
+            </li>
+            <li class="row">
+              <span class="od-fill od-stat" style="--od-gap: var(--space-1)">
+                <span class="v">Menu photos swapped in</span>
+                <span class="k">The eleven photos you sent are in, cropped and sized so the page still loads fast on a phone.</span>
+              </span>
+              <span class="mono xs faint od-fixed od-nowrap">23 Sep</span>
+            </li>
+            <li class="row">
+              <span class="od-fill od-stat" style="--od-gap: var(--space-1)">
+                <span class="v">Plan approved</span>
+                <span class="k">You approved the written plan and the fixed price. Build started the next morning.</span>
+              </span>
+              <span class="mono xs faint od-fixed od-nowrap">15 Sep</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="section">
+          <div class="card card-lg contact">
+            <img src="assets/brand/avatar.png" alt="Jager Cooper" width="512" height="512" class="od-media" style="--od-ratio: 1 / 1; width: 64px">
+            <div class="od-stat" style="--od-gap: var(--space-1)">
+              <span style="font-weight:var(--fw-semibold)">Jager is building this himself</span>
+              <span class="sm muted">Questions, changes, or something not working? Email him directly — no ticket queue.</span>
+            </div>
+            <a class="btn btn-ghost btn-sm od-fixed" href="mailto:jager@solenix.dev">Email Jager</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─────────────── PROJECT ─────────────── -->
+      <section class="screen" id="screen-project" aria-labelledby="h-project" hidden>
+        <div class="page-head">
+          <p class="eyebrow">Your project</p>
+          <h1 id="h-project">Online ordering for pickup</h1>
+          <div class="od-cluster" style="--od-gap: var(--space-3)">
+            <span class="badge warn">Building</span>
+            <span class="sm muted">Started 15 September · on track for 17 October</span>
+          </div>
+        </div>
+
+        <div class="card card-lg">
+          <h2 class="visually-hidden">The four steps</h2>
+          <div class="steps">
+            <div class="stepitem done">
+              <span class="stepdot" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 10.5l3 3 7-7"/></svg></span>
+              <div>
+                <h3>Call <span class="visually-hidden">— done</span></h3>
+                <p class="when">Done · 8 September</p>
+                <p>Thirty minutes on your Saturday queue and the phone orders you were writing on paper.</p>
+              </div>
+            </div>
+            <div class="stepitem done">
+              <span class="stepdot" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 10.5l3 3 7-7"/></svg></span>
+              <div>
+                <h3>Plan <span class="visually-hidden">— done</span></h3>
+                <p class="when">Done · 15 September</p>
+                <p>You approved the written plan: online ordering for pickup, a fixed build price, and a monthly price to look after it.</p>
+              </div>
+            </div>
+            <div class="stepitem now">
+              <span class="stepdot" aria-hidden="true">03</span>
+              <div>
+                <h3>Build <span class="visually-hidden">— happening now</span></h3>
+                <p class="when">Now · since 16 September</p>
+                <p>Six of eight pieces are finished. What is left is card payments and the printed slip for your kitchen.</p>
+              </div>
+            </div>
+            <div class="stepitem">
+              <span class="stepdot" aria-hidden="true">04</span>
+              <div>
+                <h3>Care <span class="visually-hidden">— not started</span></h3>
+                <p class="when">Starts 17 October</p>
+                <p>Once it is live we watch it, fix what breaks, and change it as your menu changes.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-head"><h2>Working on now</h2></div>
+          <ul class="tasks">
+            <li class="task">
+              <svg class="dash" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="7.5" stroke-dasharray="3 3"/></svg>
+              <span class="od-fill od-stat" style="--od-gap: var(--space-1)">
+                <span class="t">Card payments</span>
+                <span class="d">Waiting on Stripe to finish checking your business. Nothing for you to do — they email you if they need a document.</span>
+              </span>
+              <span class="badge quiet od-fixed">Waiting</span>
+            </li>
+            <li class="task">
+              <svg class="dash" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="7.5" stroke-dasharray="3 3"/></svg>
+              <span class="od-fill od-stat" style="--od-gap: var(--space-1)">
+                <span class="t">Kitchen order slip</span>
+                <span class="d">A printed slip with the items, the name and the pickup time, so the counter does not need to read a screen.</span>
+              </span>
+              <span class="badge warn od-fixed">Building</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="section">
+          <div class="section-head"><h2>Next up</h2></div>
+          <ul class="tasks">
+            <li class="task">
+              <svg class="dash" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M10 4.5v11M4.5 10h11"/></svg>
+              <span class="od-fill od-stat" style="--od-gap: var(--space-1)">
+                <span class="t">A day of real orders with you</span>
+                <span class="d">We sit with you through one morning of real orders and fix anything awkward on the spot.</span>
+              </span>
+              <span class="mono xs faint od-fixed od-nowrap">10 Oct</span>
+            </li>
+            <li class="task">
+              <svg class="dash" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M10 4.5v11M4.5 10h11"/></svg>
+              <span class="od-fill od-stat" style="--od-gap: var(--space-1)">
+                <span class="t">Go live</span>
+                <span class="d">Ordering turns on for customers, and we watch it closely for the first two weeks.</span>
+              </span>
+              <span class="mono xs faint od-fixed od-nowrap">17 Oct</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="section">
+          <details class="card card-lg" style="padding-block: var(--space-4)">
+            <summary style="list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);min-height:var(--tap-min);font-weight:var(--fw-semibold)">
+              Finished — 6 pieces
+              <span class="mark" aria-hidden="true">+</span>
+            </summary>
+            <ul class="rows" style="margin-top:var(--space-4)">
+              <li class="row"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;flex:none;color:var(--ok)" aria-hidden="true"><path d="M5 10.5l3 3 7-7"/></svg><span class="od-fill">Menu and prices, matching your printed board</span><span class="mono xs faint od-nowrap">19 Sep</span></li>
+              <li class="row"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;flex:none;color:var(--ok)" aria-hidden="true"><path d="M5 10.5l3 3 7-7"/></svg><span class="od-fill">Photos cropped and sized for phones</span><span class="mono xs faint od-nowrap">23 Sep</span></li>
+              <li class="row"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;flex:none;color:var(--ok)" aria-hidden="true"><path d="M5 10.5l3 3 7-7"/></svg><span class="od-fill">Basket and pickup-time picker</span><span class="mono xs faint od-nowrap">24 Sep</span></li>
+              <li class="row"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;flex:none;color:var(--ok)" aria-hidden="true"><path d="M5 10.5l3 3 7-7"/></svg><span class="od-fill">Order confirmation email to the customer</span><span class="mono xs faint od-nowrap">25 Sep</span></li>
+              <li class="row"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;flex:none;color:var(--ok)" aria-hidden="true"><path d="M5 10.5l3 3 7-7"/></svg><span class="od-fill">Daily order list you can read on your phone</span><span class="mono xs faint od-nowrap">26 Sep</span></li>
+              <li class="row"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;flex:none;color:var(--ok)" aria-hidden="true"><path d="M5 10.5l3 3 7-7"/></svg><span class="od-fill">Sold-out switch for each item</span><span class="mono xs faint od-nowrap">26 Sep</span></li>
+            </ul>
+          </details>
+        </div>
+      </section>
+
+      <!-- ─────────────── WEBSITE ─────────────── -->
+      <section class="screen" id="screen-website" aria-labelledby="h-website" hidden>
+        <div class="page-head">
+          <p class="eyebrow">Your website</p>
+          <h1 id="h-website">mapleandrye.ca</h1>
+        </div>
+
+        <div class="card card-lg">
+          <div class="card-top">
+            <span class="od-row" style="--od-gap: var(--space-3)">
+              <span class="badge ok">Live</span>
+              <span class="sm muted">Checked 4 minutes ago</span>
+            </span>
+            <button class="btn btn-ghost btn-sm" type="button" data-visit>Visit site
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.5 4.5H15v7.5M15 4.5 6 13.5"/></svg>
+            </button>
+          </div>
+          <p class="muted">Your site is loading normally and your contact form is reaching your inbox. We check every five minutes. If it stops working we usually know before you do, and we email you.</p>
+        </div>
+
+        <div class="section">
+          <div class="section-head"><h2>The details</h2></div>
+          <ul class="rows">
+            <li class="row">
+              <span class="od-fill k">Last change</span>
+              <span class="od-fixed od-stat" style="--od-gap:0;text-align:right">
+                <span class="v od-nowrap">Menu photos</span>
+                <span class="xs faint mono od-nowrap">23 Sep 2026</span>
+              </span>
+            </li>
+            <li class="row">
+              <span class="od-fill k">Loads in</span>
+              <span class="od-fixed od-row" style="--od-gap: var(--space-3)">
+                <span class="chip-example">Example</span>
+                <span class="v mono od-nowrap">1.2 s</span>
+              </span>
+            </li>
+            <li class="row">
+              <span class="od-fill k">Contact form</span>
+              <span class="badge ok od-fixed">Working</span>
+            </li>
+            <li class="row">
+              <span class="od-fill k">Security certificate</span>
+              <span class="od-fixed od-stat" style="--od-gap:0;text-align:right">
+                <span class="v od-nowrap">Valid</span>
+                <span class="xs faint mono od-nowrap">Renews 4 Dec</span>
+              </span>
+            </li>
+            <li class="row">
+              <span class="od-fill k">Backups</span>
+              <span class="od-fixed od-stat" style="--od-gap:0;text-align:right">
+                <span class="v od-nowrap">Daily</span>
+                <span class="xs faint mono od-nowrap">Last 4:12 am</span>
+              </span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="section">
+          <div class="section-head">
+            <h2>Visitors</h2>
+            <span class="chip-example">Example</span>
+          </div>
+          <div class="card card-lg">
+            <div class="od-cluster" style="--od-gap: var(--space-4); justify-content: space-between">
+              <span class="od-stat" style="--od-gap: var(--space-1)">
+                <span class="card-key mono od-nowrap">1,284</span>
+                <span class="sm muted">people in the last 30 days</span>
+              </span>
+              <span class="od-stat" style="--od-gap: var(--space-1); text-align: right">
+                <span class="v mono od-nowrap">62%</span>
+                <span class="sm muted">came on a phone</span>
+              </span>
+            </div>
+            <div class="bars" role="img" aria-label="Example daily visitors over the last 30 days, ranging from about 20 to about 70 people a day, highest on Saturdays.">
+              <span style="height:34%"></span><span style="height:41%"></span><span style="height:38%"></span><span style="height:52%"></span><span style="height:47%"></span><span style="height:88%"></span><span style="height:61%"></span>
+              <span style="height:36%"></span><span style="height:44%"></span><span style="height:40%"></span><span style="height:49%"></span><span style="height:55%"></span><span style="height:92%"></span><span style="height:64%"></span>
+              <span style="height:39%"></span><span style="height:43%"></span><span style="height:46%"></span><span style="height:51%"></span><span style="height:58%"></span><span style="height:96%"></span><span style="height:67%"></span>
+              <span style="height:42%"></span><span style="height:48%"></span><span style="height:45%"></span><span style="height:57%"></span><span style="height:62%"></span><span style="height:100%"></span><span style="height:71%"></span>
+              <span style="height:44%"></span><span style="height:53%"></span>
+            </div>
+            <p class="barlabels"><span>30 days ago</span><span>Today</span></p>
+            <p class="sm muted" style="margin-top:var(--space-4)">Saturdays are your busiest day online, which matches your counter. These are example numbers — your real ones appear here once your site is connected.</p>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-head"><h2>Google listing</h2></div>
+          <div class="empty">
+            <span class="icon-chip" aria-hidden="true">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="5.5"/><path d="M13 13l4 4"/></svg>
+            </span>
+            <h3>Not connected yet</h3>
+            <p>Connect your Google Business profile and this shows how many people found you through search, plus your opening hours as Google has them.</p>
+            <a class="btn btn-ghost btn-sm" href="mailto:jager@solenix.dev?subject=Connect%20our%20Google%20listing">Ask us to connect it</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─────────────── INVOICES ─────────────── -->
+      <section class="screen" id="screen-invoices" aria-labelledby="h-invoices" hidden>
+        <div class="page-head">
+          <p class="eyebrow">Your invoices</p>
+          <h1 id="h-invoices">Invoices</h1>
+          <p class="muted" data-inv-summary>One invoice is due. Everything else is paid.</p>
+        </div>
+        <ul class="rows" data-inv-list></ul>
+        <p class="sm faint" style="margin-top:var(--space-5)">Invoices are in Canadian dollars and include GST. Paying by e-transfer instead? Send it to <a href="mailto:hello@solenix.dev" style="color:var(--accent-text)">hello@solenix.dev</a> and we will mark it paid.</p>
+      </section>
+
+      <!-- ─────────────── INVOICE DETAIL ─────────────── -->
+      <section class="screen" id="screen-invoice" aria-labelledby="h-invoice" hidden>
+        <button class="backlink" type="button" data-back>
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 10H5m0 0 4-4m-4 4 4 4"/></svg>
+          All invoices
+        </button>
+        <div class="page-head" style="margin-top:var(--space-4)">
+          <p class="eyebrow" data-inv-eyebrow>Invoice 0042</p>
+          <h1 id="h-invoice" data-inv-title>Online ordering — build, second half</h1>
+          <div class="od-cluster" style="--od-gap: var(--space-3)" data-inv-meta></div>
+        </div>
+
+        <div class="card card-lg">
+          <div class="lines" data-inv-lines></div>
+          <div class="total">
+            <span class="od-stat" style="--od-gap: var(--space-1)">
+              <span style="font-weight:var(--fw-semibold)">Total</span>
+              <span class="xs faint">Includes GST</span>
+            </span>
+            <span class="big od-nowrap" data-inv-total>$1,850.00</span>
+          </div>
+          <div class="od-cluster" style="--od-gap: var(--space-3); margin-top: var(--space-6)" data-inv-actions></div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Bottom nav · below 1024px -->
+  <nav class="bottomnav" aria-label="Portal">
+    <ul data-nav="bottom"></ul>
+  </nav>
+</div>
+
+<!-- Confirm sheet -->
+<div class="scrim" id="scrim" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title" aria-describedby="sheet-body" id="sheet">
+    <span class="icon-chip" aria-hidden="true">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5h15M2.5 5.5A2 2 0 0 1 4.5 3.5h11a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-11a2 2 0 0 1-2-2z"/><path d="M5.5 12h3"/></svg>
+    </span>
+    <h2 id="sheet-title">Pay $1,850.00 now?</h2>
+    <p id="sheet-body">This charges the card ending 4242 for invoice 0042. You get a receipt by email straight away, and nothing else changes.</p>
+    <div class="sheet-actions">
+      <button class="btn btn-ghost" type="button" data-sheet-cancel>Not now</button>
+      <button class="btn btn-primary" type="button" data-sheet-confirm>
+        <span class="spin" aria-hidden="true"></span>
+        <span class="label-idle">Pay now</span>
+        <span class="label-busy">Paying…</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast" hidden>
+  <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 10.5l3 3 7-7"/></svg>
+  <span id="toast-text"></span>
+</div>
+<p class="visually-hidden" role="status" aria-live="polite" id="live"></p>
+
+<script>
+(() => {
+  "use strict";
+
+  /* ── Theme ─────────────────────────────────────────────────────────────── */
+  const root = document.documentElement;
+  const prefersDark = () => window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const store = {
+    get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch { /* private mode */ } }
+  };
+  const saved = store.get("solenix-theme");
+  if (saved === "dark" || saved === "light") root.setAttribute("data-theme", saved);
+
+  const currentTheme = () => root.getAttribute("data-theme") || (prefersDark() ? "dark" : "light");
+
+  function syncThemeButtons() {
+    const next = currentTheme() === "dark" ? "light" : "dark";
+    document.querySelectorAll("[data-theme-toggle]").forEach(b => {
+      b.setAttribute("aria-label", "Switch to the " + next + " theme");
+      b.title = "Switch to the " + next + " theme";
+    });
+  }
+  document.querySelectorAll("[data-theme-toggle]").forEach(b => {
+    b.addEventListener("click", () => {
+      const next = currentTheme() === "dark" ? "light" : "dark";
+      root.setAttribute("data-theme", next);
+      store.set("solenix-theme", next);
+      syncThemeButtons();
+      say("Switched to the " + next + " theme.");
+    });
+  });
+  syncThemeButtons();
+
+  /* ── Announcements ─────────────────────────────────────────────────────── */
+  const live = document.getElementById("live");
+  function say(msg) { live.textContent = ""; setTimeout(() => { live.textContent = msg; }, 40); }
+
+  const toast = document.getElementById("toast");
+  const toastText = document.getElementById("toast-text");
+  let toastTimer;
+  function showToast(msg) {
+    toastText.textContent = msg;
+    toast.hidden = false;
+    say(msg);
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { toast.hidden = true; }, 5000);
+  }
+
+  /* ── Busy buttons ──────────────────────────────────────────────────────── */
+  function busy(btn, on) {
+    btn.classList.toggle("is-busy", on);
+    if (on) btn.setAttribute("aria-disabled", "true");
+    else btn.removeAttribute("aria-disabled");
+  }
+
+  /* ── Navigation ────────────────────────────────────────────────────────── */
+  const NAV = [
+    { id: "overview", label: "Overview", icon: '<path d="M3.5 8.5 10 3l6.5 5.5V16a1 1 0 0 1-1 1H12v-5H8v5H4.5a1 1 0 0 1-1-1z"/>' },
+    { id: "project",  label: "Project",  icon: '<path d="M4 4.5h12M4 10h12M4 15.5h7"/>' },
+    { id: "website",  label: "Website",  icon: '<circle cx="10" cy="10" r="7"/><path d="M3 10h14M10 3c2 2.2 2 11.8 0 14M10 3c-2 2.2-2 11.8 0 14"/>' },
+    { id: "invoices", label: "Invoices", icon: '<path d="M5 3h10v14l-2.5-1.6L10 17l-2.5-1.6L5 17z"/><path d="M8 7.5h4M8 11h4"/>' }
+  ];
+
+  document.querySelectorAll("[data-nav]").forEach(ul => {
+    ul.innerHTML = NAV.map(n => `
+      <li><a class="navlink" href="#/${n.id}" data-navid="${n.id}">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${n.icon}</svg>
+        <span class="n">${n.label}</span>
+      </a></li>`).join("");
+  });
+
+  /* ── Invoices ──────────────────────────────────────────────────────────── */
+  const money = n => "$" + n.toLocaleString("en-CA", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  const INVOICES = [
+    {
+      id: "0042", title: "Online ordering — build, second half", total: 1850, status: "due",
+      issued: "26 Sep 2026", due: "10 Oct 2026",
+      lines: [
+        ["Online ordering build — second half of the fixed price", "Agreed in your plan on 15 September.", 1500],
+        ["Looking after your site — October", "Monitoring, backups, small changes.", 260],
+        ["GST", "5% on the above.", 90]
+      ]
+    },
+    {
+      id: "0041", title: "Online ordering — build, first half", total: 1850, status: "paid",
+      issued: "26 Aug 2026", due: "10 Sep 2026", paid: "8 Sep 2026",
+      lines: [
+        ["Online ordering build — first half of the fixed price", "Agreed in your plan on 15 September.", 1500],
+        ["Looking after your site — September", "Monitoring, backups, small changes.", 260],
+        ["GST", "5% on the above.", 90]
+      ]
+    },
+    {
+      id: "0040", title: "Website refresh — final payment", total: 4200, status: "paid",
+      issued: "22 Jul 2026", due: "5 Aug 2026", paid: "1 Aug 2026",
+      lines: [
+        ["Website refresh — second half of the fixed price", "New pages, new photos, faster on phones.", 3800],
+        ["Photo editing", "Eleven product photos cropped and colour-corrected.", 200],
+        ["GST", "5% on the above.", 200]
+      ]
+    },
+    {
+      id: "0039", title: "Website refresh — deposit", total: 2100, status: "paid",
+      issued: "20 Jun 2026", due: "4 Jul 2026", paid: "24 Jun 2026",
+      lines: [
+        ["Website refresh — deposit", "Half the fixed price, due before we start.", 2000],
+        ["GST", "5% on the above.", 100]
+      ]
+    }
+  ];
+
+  const invList = document.querySelector("[data-inv-list]");
+  const invSummary = document.querySelector("[data-inv-summary]");
+
+  const statusBadge = inv => inv.status === "paid"
+    ? '<span class="badge ok od-fixed">Paid</span>'
+    : '<span class="badge warn od-fixed">Due</span>';
+
+  function renderInvoiceList() {
+    invList.innerHTML = INVOICES.map(inv => `
+      <li><a class="row" href="#/invoices/${inv.id}">
+        <span class="od-fill od-stat" style="--od-gap: var(--space-1)">
+          <span class="v od-truncate">Invoice ${inv.id}</span>
+          <span class="k od-truncate">${inv.title}</span>
+        </span>
+        <span class="od-fixed od-stat" style="--od-gap: var(--space-1); text-align: right">
+          <span class="v mono od-nowrap">${money(inv.total)}</span>
+          <span class="xs faint mono od-nowrap">${inv.status === "paid" ? "Paid " + inv.paid : "Due " + inv.due}</span>
+        </span>
+        ${statusBadge(inv)}
+        <svg class="row-chev" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 5l5 5-5 5"/></svg>
+      </a></li>`).join("");
+
+    const due = INVOICES.filter(i => i.status === "due");
+    const owed = due.reduce((s, i) => s + i.total, 0);
+    invSummary.textContent = due.length === 0
+      ? "Nothing due. Everything is paid — thank you."
+      : (due.length === 1 ? "One invoice is due, " : due.length + " invoices are due, ")
+        + money(owed) + " in total. Everything else is paid.";
+
+    // The Overview card reads from the same data, so the two screens never disagree.
+    const amountEl = document.querySelector("[data-due-amount]");
+    const noteEl = document.querySelector("[data-due-note]");
+    const badgeEl = document.querySelector("[data-due-badge]");
+    if (due.length === 0) {
+      amountEl.textContent = "All paid";
+      amountEl.classList.remove("mono");
+      noteEl.textContent = "Nothing due. Your next invoice arrives at the end of October.";
+      badgeEl.className = "badge ok";
+      badgeEl.textContent = "Paid";
+    } else {
+      amountEl.textContent = money(owed);
+      amountEl.classList.add("mono");
+      noteEl.textContent = "Invoice " + due[0].id + ", due " + due[0].due.replace(" 2026", "") + ".";
+      badgeEl.className = "badge warn";
+      badgeEl.textContent = "Due";
+    }
+  }
+
+  function renderInvoice(id) {
+    const inv = INVOICES.find(i => i.id === id);
+    if (!inv) return false;
+    document.querySelector("[data-inv-eyebrow]").textContent = "Invoice " + inv.id;
+    document.querySelector("[data-inv-title]").textContent = inv.title;
+    document.querySelector("[data-inv-meta]").innerHTML = statusBadge(inv)
+      + `<span class="sm muted">Sent ${inv.issued} · ${inv.status === "paid" ? "paid " + inv.paid : "due " + inv.due}</span>`;
+    document.querySelector("[data-inv-lines]").innerHTML = inv.lines.map(([t, d, a]) => `
+      <div class="line">
+        <span class="od-fill od-stat" style="--od-gap: var(--space-1)">
+          <span style="font-weight:var(--fw-medium)">${t}</span>
+          <span class="sm muted">${d}</span>
+        </span>
+        <span class="amt od-fixed od-nowrap">${money(a)}</span>
+      </div>`).join("");
+    document.querySelector("[data-inv-total]").textContent = money(inv.total);
+
+    document.querySelector("[data-inv-actions]").innerHTML = inv.status === "due"
+      ? `<button class="btn btn-primary" type="button" data-pay="${inv.id}">Pay ${money(inv.total)}</button>
+         <button class="btn btn-ghost" type="button" data-download="${inv.id}">Download a copy</button>`
+      : `<span class="sm muted">Paid on ${inv.paid} from the card ending 4242. A receipt went to dana@mapleandrye.ca.</span>
+         <button class="btn btn-ghost btn-sm" type="button" data-download="${inv.id}">Download a receipt</button>`;
+    return true;
+  }
+
+  /* ── Pay flow ──────────────────────────────────────────────────────────── */
+  const scrim = document.getElementById("scrim");
+  const sheet = document.getElementById("sheet");
+  let payingId = null;
+  let lastFocus = null;
+
+  function openSheet(id) {
+    const inv = INVOICES.find(i => i.id === id);
+    if (!inv) return;
+    payingId = id;
+    lastFocus = document.activeElement;
+    document.getElementById("sheet-title").textContent = "Pay " + money(inv.total) + " now?";
+    document.getElementById("sheet-body").textContent =
+      "This charges the card ending 4242 for invoice " + inv.id +
+      ". You get a receipt by email straight away, and nothing else changes.";
+    scrim.hidden = false;
+    document.body.style.overflow = "hidden";
+    sheet.querySelector("[data-sheet-cancel]").focus();
+  }
+
+  function closeSheet() {
+    scrim.hidden = true;
+    document.body.style.overflow = "";
+    busy(sheet.querySelector("[data-sheet-confirm]"), false);
+    if (lastFocus && document.contains(lastFocus)) lastFocus.focus();
+  }
+
+  sheet.querySelector("[data-sheet-cancel]").addEventListener("click", closeSheet);
+  scrim.addEventListener("mousedown", e => { if (e.target === scrim) closeSheet(); });
+  document.addEventListener("keydown", e => {
+    if (scrim.hidden) return;
+    if (e.key === "Escape") { closeSheet(); return; }
+    if (e.key !== "Tab") return;
+    const f = sheet.querySelectorAll("button:not([aria-disabled='true'])");
+    if (!f.length) return;
+    const first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
+
+  sheet.querySelector("[data-sheet-confirm]").addEventListener("click", e => {
+    busy(e.currentTarget, true);
+    setTimeout(() => {
+      const inv = INVOICES.find(i => i.id === payingId);
+      inv.status = "paid";
+      inv.paid = "29 Sep 2026";
+      closeSheet();
+      renderInvoiceList();
+      renderInvoice(inv.id);
+      document.querySelector("[data-inv-actions] [data-download]")?.focus();
+      showToast("Invoice " + inv.id + " paid. Receipt on its way to your email.");
+    }, 900);
+  });
+
+  /* ── A real file, written from the same data the screen shows ──────────── */
+  function downloadInvoice(id) {
+    const inv = INVOICES.find(i => i.id === id);
+    if (!inv) return;
+    const paid = inv.status === "paid";
+    const body = [
+      "SOLENIX · solenix.dev · hello@solenix.dev",
+      "",
+      (paid ? "RECEIPT " : "INVOICE ") + inv.id,
+      inv.title,
+      "",
+      "Bill to   Maple & Rye Bakery, dana@mapleandrye.ca",
+      "Sent      " + inv.issued,
+      (paid ? "Paid      " + inv.paid : "Due       " + inv.due),
+      "",
+      "".padEnd(60, "-"),
+      ...inv.lines.flatMap(([t, d, a]) => [t + "   " + money(a), "  " + d, ""]),
+      "".padEnd(60, "-"),
+      "TOTAL   " + money(inv.total),
+      "Canadian dollars, GST included.",
+      "",
+      "This copy comes from an example account in a design prototype."
+    ].join("\n");
+    const url = URL.createObjectURL(new Blob([body], { type: "text/plain;charset=utf-8" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "solenix-" + (paid ? "receipt" : "invoice") + "-" + inv.id + ".txt";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    showToast((paid ? "Receipt " : "Invoice ") + inv.id + " saved to your downloads.");
+  }
+
+  /* ── Clicks that are not links ─────────────────────────────────────────── */
+  document.addEventListener("click", e => {
+    const pay = e.target.closest("[data-pay]");
+    if (pay) { e.preventDefault(); openSheet(pay.dataset.pay); return; }
+
+    const dl = e.target.closest("[data-download]");
+    if (dl) { e.preventDefault(); downloadInvoice(dl.dataset.download); return; }
+
+    if (e.target.closest("[data-visit]")) {
+      showToast("This is an example account, so mapleandrye.ca is not a real site to open.");
+      return;
+    }
+
+    const approve = e.target.closest("[data-approve]");
+    if (approve) {
+      busy(approve, true);
+      setTimeout(() => {
+        document.getElementById("ask-wrap")
+          .replaceChildren(document.getElementById("ask-empty").content.cloneNode(true));
+        showToast("Pickup times approved. Jager has it.");
+      }, 800);
+    }
+  });
+
+  /* ── Sign in / out ─────────────────────────────────────────────────────── */
+  const signedout = document.getElementById("signedout");
+  const signedin = document.getElementById("signedin");
+  const form = document.getElementById("signin-form");
+  const email = document.getElementById("email");
+  const emailErr = document.getElementById("email-err");
+  const emailErrText = document.getElementById("email-err-text");
+
+  function validateEmail(show) {
+    const v = email.value.trim();
+    let msg = "";
+    if (!v) msg = "Enter the email address we send your invoices to.";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v))
+      msg = "That does not look like an email address. Check for a missing @ or a typo in the domain.";
+    if (msg && show) {
+      emailErrText.textContent = msg;
+      emailErr.classList.add("is-shown");
+      email.setAttribute("aria-invalid", "true");
+    } else if (!msg) {
+      emailErr.classList.remove("is-shown");
+      email.removeAttribute("aria-invalid");
+    }
+    return !msg;
+  }
+  email.addEventListener("blur", () => validateEmail(true));
+  email.addEventListener("input", () => { if (email.getAttribute("aria-invalid")) validateEmail(true); });
+
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    if (!validateEmail(true)) { email.focus(); return; }
+    const btn = document.getElementById("signin-btn");
+    busy(btn, true);
+    setTimeout(() => { busy(btn, false); signIn(); }, 900);
+  });
+
+  function signIn() {
+    signedout.hidden = true;
+    signedin.hidden = false;
+    if (!location.hash.startsWith("#/")) location.hash = "#/overview";
+    else route();
+    say("Signed in to your Solenix portal.");
+    const main = document.getElementById("main");
+    main.setAttribute("tabindex", "-1");
+    main.focus({ preventScroll: true });
+  }
+
+  document.querySelectorAll("[data-signout]").forEach(b => b.addEventListener("click", () => {
+    signedin.hidden = true;
+    signedout.hidden = false;
+    document.body.style.overflow = "";
+    email.value = "";
+    emailErr.classList.remove("is-shown");
+    email.removeAttribute("aria-invalid");
+    email.focus();
+    say("Signed out.");
+  }));
+
+  /* ── Router ────────────────────────────────────────────────────────────── */
+  const screens = {
+    overview: document.getElementById("screen-overview"),
+    project: document.getElementById("screen-project"),
+    website: document.getElementById("screen-website"),
+    invoices: document.getElementById("screen-invoices"),
+    invoice: document.getElementById("screen-invoice")
+  };
+  const scrollMemory = {};
+  let lastRoute = "overview";
+
+  function route() {
+    if (signedin.hidden) return;
+    const parts = location.hash.replace(/^#\/?/, "").split("/").filter(Boolean);
+    let name = parts[0] || "overview";
+    let detail = parts[1] || null;
+    if (!NAV.some(n => n.id === name)) { name = "overview"; detail = null; }
+
+    let key = name;
+    if (name === "invoices" && detail && renderInvoice(detail)) key = "invoice";
+
+    scrollMemory[lastRoute] = window.scrollY;
+
+    Object.entries(screens).forEach(([k, el]) => { el.hidden = k !== key; });
+    document.querySelectorAll(".navlink").forEach(a => {
+      if (a.dataset.navid === name) a.setAttribute("aria-current", "page");
+      else a.removeAttribute("aria-current");
+    });
+
+    if (!scrim.hidden) closeSheet();
+
+    // Coming back to a list returns the reader to where they were; a new screen starts at the top.
+    if (key !== lastRoute) window.scrollTo({ top: scrollMemory[key] ?? 0, behavior: "auto" });
+    lastRoute = key;
+  }
+
+  document.querySelector("[data-back]").addEventListener("click", () => { location.hash = "#/invoices"; });
+  window.addEventListener("hashchange", route);
+
+  renderInvoiceList();
+  if (location.hash.startsWith("#/")) signIn(); else email.focus();
+})();
+</script>
+
+</body>
+</html>
