@@ -68,6 +68,19 @@ export async function completeWelcome(_prev: WelcomeState, form: FormData): Prom
       })
       .eq("id", client.id);
     if (error) throw new Error(error.message);
+
+    // Their website is a service; its live status and visitors are read, not stored.
+    const domain = v.domain || client.site_domain;
+    if (domain) {
+      const db = createAdminClient();
+      const { count } = await db.from("services").select("id", { count: "exact", head: true }).eq("client_id", client.id).eq("site_domain", domain);
+      if (!count) {
+        await db.from("services").insert({
+          client_id: client.id, name: domain, kind: "Website and domain", vendor: "Vercel",
+          site_domain: domain, vercel_project: client.vercel_project, seats: [v.contact.split(" ")[0]],
+        });
+      }
+    }
   } catch (e) {
     console.error("welcome", profile.id, (e as Error).message);
     return { status: "error", values: v };

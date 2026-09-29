@@ -141,10 +141,10 @@ export async function getVisitors(domain: string | null): Promise<VisitorsResult
 
   try {
     const [totals, days] = await Promise.all([
-      run(`select uniqIf(person_id, timestamp >= now() - interval 30 day),
-                  uniqIf(person_id, timestamp < now() - interval 30 day)
+      run(`select uniqIf(distinct_id, timestamp >= now() - interval 30 day),
+                  uniqIf(distinct_id, timestamp < now() - interval 30 day)
            from events where ${where} and timestamp >= now() - interval 60 day`),
-      run(`select toString(toDate(timestamp)) as day, uniq(person_id)
+      run(`select toString(toDate(timestamp)) as day, uniq(distinct_id)
            from events where ${where} and timestamp >= now() - interval 30 day
            group by day order by day`),
     ]);

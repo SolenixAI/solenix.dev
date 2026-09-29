@@ -1,83 +1,81 @@
-"use client";
+"use client"
 
-import { useActionState } from "react";
-import { SubmitButton } from "@/components/portal/client-bits";
-import { AlertIcon } from "@/components/portal/icons";
-import { completeWelcome, type WelcomeState } from "./actions";
+import { useActionState } from "react"
+import { SubmitButton } from "@/components/portal/submit-button"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldLegend, FieldSet } from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
+import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
+import { completeWelcome, type WelcomeState } from "./actions"
 
 const PROVINCES = [
   ["AB", "Alberta"], ["BC", "British Columbia"], ["MB", "Manitoba"], ["NB", "New Brunswick"],
   ["NL", "Newfoundland and Labrador"], ["NS", "Nova Scotia"], ["NT", "Northwest Territories"],
   ["NU", "Nunavut"], ["ON", "Ontario"], ["PE", "Prince Edward Island"], ["QC", "Quebec"],
   ["SK", "Saskatchewan"], ["YT", "Yukon"],
-] as const;
+] as const
 
-type Props = { initial: Record<string, string> };
+export function WelcomeForm({ initial }: { initial: Record<string, string> }) {
+  const [state, action] = useActionState<WelcomeState, FormData>(completeWelcome, { status: "idle", values: initial })
+  const val = (k: string) => state.values?.[k] ?? initial[k] ?? ""
 
-export function WelcomeForm({ initial }: Props) {
-  const [state, action] = useActionState<WelcomeState, FormData>(completeWelcome, { status: "idle", values: initial });
-  const val = (k: string) => state.values?.[k] ?? initial[k] ?? "";
-
-  const Field = ({ name, label, required, help, ...rest }: {
-    name: string; label: string; required?: boolean; help?: string;
-  } & React.InputHTMLAttributes<HTMLInputElement>) => (
-    <div className="od-field" style={{ ["--od-gap" as string]: "var(--space-2)" }}>
-      <label className="lbl" htmlFor={`w-${name}`}>{label}{required && <> <span className="req">(required)</span></>}</label>
-      <input
-        id={`w-${name}`}
-        name={name}
-        defaultValue={val(name)}
-        aria-invalid={state.errors?.[name] ? "true" : undefined}
-        aria-describedby={`w-${name}-err${help ? ` w-${name}-help` : ""}`}
-        {...rest}
-      />
-      {help && <p className="xs faint" id={`w-${name}-help`}>{help}</p>}
-      <p className={"err" + (state.errors?.[name] ? " is-shown" : "")} id={`w-${name}-err`} role="alert">
-        <AlertIcon /><span>{state.errors?.[name]}</span>
-      </p>
-    </div>
-  );
+  const text = (name: string, label: string, props: React.ComponentProps<typeof Input> & { required?: boolean; help?: string }) => {
+    const { help, required, ...rest } = props
+    const err = state.errors?.[name]
+    return (
+      <Field data-invalid={!!err}>
+        <FieldLabel htmlFor={`w-${name}`}>{label}{required && <span className="font-normal text-ember-text"> (required)</span>}</FieldLabel>
+        <Input id={`w-${name}`} name={name} defaultValue={val(name)} aria-invalid={err ? true : undefined} {...rest} />
+        {help && <FieldDescription>{help}</FieldDescription>}
+        {err && <FieldError>{err}</FieldError>}
+      </Field>
+    )
+  }
 
   return (
-    <form action={action} noValidate>
-      <Field name="business" label="Business name" required type="text" autoComplete="organization" placeholder="Maple & Rye" />
-      <Field name="contact" label="Your name" required type="text" autoComplete="name" placeholder="Dana Walsh" />
-      <Field name="email" label="Billing email" required type="email" inputMode="email" autoComplete="email" placeholder="dana@mapleandrye.ca" help="Invoices and receipts go here." />
-      <Field name="domain" label="Your website" type="text" inputMode="url" placeholder="mapleandrye.ca" help="Leave it empty if you do not have one yet." />
+    <form action={action} noValidate className="mt-6 grid gap-6">
+      <FieldGroup className="gap-4">
+        {text("business", "Business name", { required: true, autoComplete: "organization", placeholder: "Maple & Rye" })}
+        {text("contact", "Your name", { required: true, autoComplete: "name", placeholder: "Dana Walsh" })}
+        {text("email", "Billing email", { required: true, type: "email", inputMode: "email", autoComplete: "email", placeholder: "dana@mapleandrye.ca", help: "Invoices and receipts go here." })}
+        {text("domain", "Your website", { inputMode: "url", placeholder: "mapleandrye.ca", help: "Leave it empty if you do not have one yet." })}
+      </FieldGroup>
 
-      <fieldset style={{ border: 0, padding: 0, margin: 0, display: "grid", gap: "var(--space-4)" }}>
-        <legend className="lbl" style={{ padding: 0, marginBottom: "var(--space-3)" }}>Billing address</legend>
-        <Field name="line1" label="Street address" required type="text" autoComplete="address-line1" placeholder="12 Water Street" />
-        <Field name="line2" label="Unit or suite" type="text" autoComplete="address-line2" placeholder="Suite 3" />
-        <div className="formgrid two">
-          <Field name="city" label="City or town" required type="text" autoComplete="address-level2" placeholder="St. John's" />
-          <div className="od-field" style={{ ["--od-gap" as string]: "var(--space-2)" }}>
-            <label className="lbl" htmlFor="w-province">Province</label>
-            <select id="w-province" name="province" defaultValue={val("province")} autoComplete="address-level1">
-              <option value="">Not in Canada</option>
-              {PROVINCES.map(([code, name]) => <option key={code} value={code}>{name}</option>)}
-            </select>
+      <FieldSet>
+        <FieldLegend>Billing address</FieldLegend>
+        <FieldGroup className="gap-4">
+          {text("line1", "Street address", { required: true, autoComplete: "address-line1", placeholder: "12 Water Street" })}
+          {text("line2", "Unit or suite", { autoComplete: "address-line2", placeholder: "Suite 3" })}
+          <div className="grid gap-4 sm:grid-cols-2">
+            {text("city", "City or town", { required: true, autoComplete: "address-level2", placeholder: "St. John's" })}
+            <Field>
+              <FieldLabel htmlFor="w-province">Province</FieldLabel>
+              <NativeSelect id="w-province" name="province" defaultValue={val("province")} autoComplete="address-level1">
+                <NativeSelectOption value="">Not in Canada</NativeSelectOption>
+                {PROVINCES.map(([code, name]) => <NativeSelectOption key={code} value={code}>{name}</NativeSelectOption>)}
+              </NativeSelect>
+            </Field>
           </div>
-        </div>
-        <div className="formgrid two">
-          <Field name="postal" label="Postal code" required type="text" autoComplete="postal-code" placeholder="A1C 1A1" />
-          <div className="od-field" style={{ ["--od-gap" as string]: "var(--space-2)" }}>
-            <label className="lbl" htmlFor="w-country">Country</label>
-            <select id="w-country" name="country" defaultValue={val("country")} autoComplete="country">
-              <option value="CA">Canada</option>
-              <option value="US">United States</option>
-            </select>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {text("postal", "Postal code", { required: true, autoComplete: "postal-code", placeholder: "A1C 1A1" })}
+            <Field>
+              <FieldLabel htmlFor="w-country">Country</FieldLabel>
+              <NativeSelect id="w-country" name="country" defaultValue={val("country")} autoComplete="country">
+                <NativeSelectOption value="CA">Canada</NativeSelectOption>
+                <NativeSelectOption value="US">United States</NativeSelectOption>
+              </NativeSelect>
+            </Field>
           </div>
-        </div>
-      </fieldset>
+        </FieldGroup>
+      </FieldSet>
 
       {state.status === "error" && (
-        <p className="err is-shown" role="alert">
-          <AlertIcon /><span>We could not save that just now. Nothing was charged. Try again, and if it keeps happening, email hello@solenix.dev.</span>
-        </p>
+        <Alert variant="destructive">
+          <AlertDescription>We could not save that just now. Nothing was charged. Try again, and if it keeps happening, email hello@solenix.dev.</AlertDescription>
+        </Alert>
       )}
 
       <SubmitButton busy="Saving…">Open my portal</SubmitButton>
     </form>
-  );
+  )
 }

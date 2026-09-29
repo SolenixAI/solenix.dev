@@ -1,35 +1,21 @@
-import type { Metadata, Viewport } from "next";
-import { Analytics } from "./analytics";
-
-// The public site: the same markup and the same /assets/site.css as the static
-// pages it replaced. The portal under /app has its own root layout and styles.
-
-export const metadata: Metadata = {
-  metadataBase: new URL("https://solenix.dev"),
-  icons: {
-    icon: [
-      { url: "/brand/out/logo-dark.svg", type: "image/svg+xml", media: "(prefers-color-scheme: dark)" },
-      { url: "/brand/out/logo-light.svg", type: "image/svg+xml" },
-    ],
-    apple: "/brand/out/apple-touch-icon.png",
-  },
-};
-
-export const viewport: Viewport = {
-  colorScheme: "light dark",
-};
+import { Reveals } from "@/components/brand/motion"
+import { SiteFooter, SiteHeader } from "@/components/site/chrome"
+import { Analytics } from "./analytics"
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <head>
-        {/* eslint-disable-next-line @next/next/no-css-tags */}
-        <link rel="stylesheet" href="/assets/site.css" />
-      </head>
-      <body>
-        {children}
-        <Analytics />
-      </body>
-    </html>
-  );
+    <div className="flex min-h-dvh flex-col overflow-x-clip bg-(image:--grad-sky)">
+      <a
+        href="#content"
+        className="absolute -top-24 left-4 z-(--z-skip) rounded-pill border border-line-strong bg-surface-solid px-6 py-3 font-semibold no-underline transition-[top] focus-visible:top-2"
+      >
+        Skip to content
+      </a>
+      <SiteHeader />
+      <main id="content" className="flex-1">{children}</main>
+      <SiteFooter />
+      <Reveals />
+      <Analytics />
+    </div>
+  )
 }

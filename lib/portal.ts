@@ -54,14 +54,79 @@ export async function requireAdmin() {
 }
 
 /** Any client row the viewer may read — RLS decides. */
-export async function getClient(id: string) {
+export const getClient = cache(async (id: string) => {
+  if (!/^[0-9a-f-]{36}$/i.test(id)) return null;
   const supabase = await createClient();
   const { data } = await supabase.from("clients").select("*").eq("id", id).maybeSingle<Client>();
   return data;
-}
+});
 
 export async function listClients() {
   const supabase = await createClient();
   const { data } = await supabase.from("clients").select("*").order("created_at", { ascending: true });
   return (data ?? []) as Client[];
+}
+
+// ── Your tech, projects, approvals ────────────────────────────────────────────
+
+export type Service = {
+  id: string
+  client_id: string
+  name: string
+  kind: string
+  vendor: string
+  state: "live" | "building" | "down"
+  monthly_cents: number
+  renews: string | null
+  seats: string[]
+  note: string | null
+  ai: "hub" | "connected" | "can" | null
+  ai_note: string | null
+  admin_url: string | null
+  site_domain: string | null
+  vercel_project: string | null
+  position: number
+}
+
+export type Ask = {
+  id: string
+  project_id: string
+  title: string
+  note: string
+  status: "waiting" | "approved" | "changes"
+  answered_at: string | null
+}
+
+export type Project = {
+  id: string
+  client_id: string
+  title: string
+  stage: number
+  next_label: string | null
+  next_when: string | null
+  preview_url: string | null
+  created_at: string
+  asks: Ask[]
+}
+
+export async function listServices(clientId: string) {
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from("services")
+    .select("*")
+    .eq("client_id", clientId)
+    .order("position", { ascending: true })
+    .order("created_at", { ascending: true })
+  return (data ?? []) as Service[]
+}
+
+export async function listProjects(clientId: string) {
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from("projects")
+    .select("*, asks:project_asks(*)")
+    .eq("client_id", clientId)
+    .order("created_at", { ascending: false })
+    .order("created_at", { referencedTable: "project_asks", ascending: true })
+  return (data ?? []) as Project[]
 }
