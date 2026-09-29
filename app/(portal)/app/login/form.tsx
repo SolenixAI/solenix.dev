@@ -21,7 +21,7 @@ function GoogleMark() {
   )
 }
 
-export function LoginForm({ next, error }: { next: string; error: string | null }) {
+export function LoginForm({ next, error, google }: { next: string; error: string | null; google: boolean }) {
   const [state, action] = useActionState<LinkState, FormData>(sendMagicLink, { status: "idle" })
   const invalid = state.status === "invalid"
 
@@ -31,6 +31,8 @@ export function LoginForm({ next, error }: { next: string; error: string | null 
         <Alert variant="destructive"><AlertDescription>{error}</AlertDescription></Alert>
       )}
 
+      {google && (
+        <>
       <form action={signInWithGoogle}>
         <input type="hidden" name="next" value={next} />
         <SubmitButton variant="ghost" className="w-full" busy="Opening Google…">
@@ -42,6 +44,9 @@ export function LoginForm({ next, error }: { next: string; error: string | null 
       <div className="flex items-center gap-3 font-mono text-xs tracking-label text-faint uppercase">
         <Separator className="flex-1" />or<Separator className="flex-1" />
       </div>
+
+        </>
+      )}
 
       {state.status === "sent" ? (
         <Alert className="border-ok/30 bg-ok-tint text-ok">

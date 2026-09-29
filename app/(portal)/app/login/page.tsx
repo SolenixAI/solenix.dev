@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { AuthCard } from "@/components/portal/auth-card"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { configured } from "@/lib/env"
+import { enabledProviders } from "@/lib/auth-settings"
 import { safeNext } from "@/lib/origin"
 import { LoginForm } from "./form"
 
@@ -17,6 +18,7 @@ export default async function Login({ searchParams }: { searchParams: Promise<Re
   const sp = await searchParams
   const next = safeNext(sp.next)
   const error = sp.error ? (ERRORS[sp.error] ?? ERRORS.link) : null
+  const providers = configured.supabase() ? await enabledProviders() : { google: false, email: false }
 
   return (
     <AuthCard>
@@ -26,7 +28,7 @@ export default async function Login({ searchParams }: { searchParams: Promise<Re
       </p>
 
       {configured.supabase() ? (
-        <LoginForm next={next} error={error} />
+        <LoginForm next={next} error={error} google={providers.google} />
       ) : (
         <Alert className="mt-6 border-dashed border-line-strong bg-sunken">
           <AlertTitle>Sign-in is not switched on yet</AlertTitle>
