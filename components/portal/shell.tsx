@@ -1,4 +1,4 @@
-import { LogOut } from "lucide-react"
+import { ExternalLink, LogOut } from "lucide-react"
 import { Lockup } from "@/components/brand/mark"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Button } from "@/components/ui/button"
@@ -45,6 +45,9 @@ export function Shell({ viewer, children }: { viewer: Viewer; children: React.Re
             </span>
             <ThemeToggle />
           </div>
+          <Button asChild variant="quiet" size="sm" className="w-full justify-start px-3 text-sm">
+            <a href="/"><ExternalLink />Visit the website</a>
+          </Button>
           <SignOut />
         </div>
       </aside>
@@ -52,6 +55,9 @@ export function Shell({ viewer, children }: { viewer: Viewer; children: React.Re
       <header className="sticky top-0 z-30 h-nav border-b border-line bg-[color-mix(in_oklch,var(--bg)_80%,transparent)] backdrop-blur-[14px] xl:hidden">
         <div className="flex h-full items-center gap-3 px-(--gutter)">
           <div className="flex-1"><Lockup href="/app" label="Solenix portal home" sub={sub} /></div>
+          <Button asChild variant="quiet" size="icon" aria-label="Visit the website" title="Visit the website">
+            <a href="/"><ExternalLink className="size-5" /></a>
+          </Button>
           <ThemeToggle />
           <SignOut compact />
         </div>

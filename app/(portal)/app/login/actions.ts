@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { requestOrigin, safeNext } from "@/lib/origin";
+import { ADMIN_EMAIL } from "@/lib/env";
 
 export type LinkState = { status: "idle" | "sent" | "invalid" | "error"; email?: string };
 
@@ -20,7 +21,8 @@ export async function sendMagicLink(_prev: LinkState, form: FormData): Promise<L
     options: {
       // Only people we have invited get a link. Anyone else is told the same
       // thing, so the form never reveals who has a portal.
-      shouldCreateUser: false,
+      // The admin's own first sign-in creates their account.
+      shouldCreateUser: email.toLowerCase() === ADMIN_EMAIL,
       emailRedirectTo: `${origin}/app/auth/callback?next=${encodeURIComponent(next)}`,
     },
   });
