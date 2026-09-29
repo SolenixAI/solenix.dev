@@ -1,4 +1,9 @@
 .vercel
 .env*
+!.env.example
 design/.od-skills/
 design/.od-frames/
+node_modules/
+.next/
+next-env.d.ts
+*.tsbuildinfo

@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """SolenixAI brand assets, generated from one set of tokens (matches index.html).
 
-Run: python3 brand/build.py  -> writes brand/out/*.svg
+Run: python3 brand/build.py  -> writes public/brand/out/*.svg (served at /brand/out/)
 Assets: logo mark, org avatar, org banner (light/dark), Jager's profile banner (light/dark).
 """
 import pathlib
 
-OUT = pathlib.Path(__file__).parent / "out"
+OUT = pathlib.Path(__file__).resolve().parent.parent / "public" / "brand" / "out"
 FONT = "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif"
 
 # Same values as the :root tokens in index.html
