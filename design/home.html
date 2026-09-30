@@ -99,47 +99,81 @@ img, svg { display: block; }
 .hero-sub { margin-top: var(--space-5); font-size: var(--fs-lede); color: var(--muted); max-width: 30rem; }
 .hero-ctas { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-6); }
 
-.beats { position: absolute; left: 0; right: 0; bottom: clamp(2rem, 10vh, 7rem); }
-.beat { position: absolute; left: var(--gutter); right: var(--gutter); bottom: 0; max-width: var(--container-wide); margin-inline: auto; opacity: 0; will-change: opacity, transform; }
-.beat-no { font: var(--fw-semibold) var(--fs-xs)/1 var(--font-mono); letter-spacing: var(--track-eyebrow); color: var(--accent-text); display: flex; align-items: center; gap: var(--space-3); }
-.beat-no::after { content: ""; width: 56px; height: 1px; background: linear-gradient(90deg, var(--ring), transparent); }
-.beat h3 { font-size: var(--fs-beat); font-weight: var(--fw-black); letter-spacing: -0.055em; line-height: 0.92; margin: var(--space-3) 0 var(--space-4) -0.04em; }
-.beat p { font-size: var(--fs-lede); color: var(--muted); max-width: 26rem; }
+/* The story, scrubbed by scroll: a three-stop rail, then headlines that build word by word. */
+.beats { position: absolute; left: var(--gutter); right: var(--gutter); bottom: clamp(1.75rem, 8vh, 6rem); max-width: var(--container-wide); margin-inline: auto; display: grid; gap: var(--space-5); pointer-events: none; }
+.scrub { display: flex; align-items: center; gap: var(--space-4); width: min(100%, 30rem); opacity: 0; font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--faint); position: relative; padding-bottom: var(--space-3); }
+.scrub span { transition: color var(--dur-base); white-space: nowrap; }
+.scrub span.on { color: var(--text); }
+.scrub span.done { color: var(--accent-text); }
+.scrub i { position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: var(--line-strong); }
+.scrub i b { position: absolute; inset: 0 auto 0 0; width: 0; background: linear-gradient(90deg, var(--sun1), var(--sun2)); box-shadow: 0 0 10px var(--ring); }
+.scrub i b::after { content: ""; position: absolute; right: -3px; top: -3px; width: 7px; height: 7px; border-radius: 50%; background: var(--sun1); box-shadow: 0 0 10px var(--sun2); }
+.beat-stack { display: grid; }
+.beat { grid-area: 1 / 1; align-self: end; visibility: hidden; }
+.beat-no { font: var(--fw-semibold) var(--fs-xs)/1 var(--font-mono); letter-spacing: var(--track-eyebrow); color: var(--accent-text); }
+.beat h3 { font-size: clamp(2.4rem, 6.2vw, 6.25rem); font-weight: var(--fw-black); letter-spacing: -0.045em; line-height: 0.98; margin: var(--space-3) 0 var(--space-4) -0.03em; max-width: 11ch; }
+.beat h3 em { font-style: normal; }
+.beat .bw { display: inline-block; will-change: transform, opacity; }
+.beat h3 em .bw { background: var(--grad-headline); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .04em; }
+.beat p:not(.beat-no) { font-size: var(--fs-lede); color: var(--muted); max-width: 27rem; }
+.beat .bl { will-change: transform, opacity; }
 
-.hud { position: absolute; right: var(--gutter); bottom: clamp(1.75rem, 9vh, 6.5rem); display: grid; grid-template-columns: auto auto; gap: 6px var(--space-4); font: var(--fw-medium) var(--fs-2xs)/1.3 var(--font-mono); letter-spacing: 0.06em; color: var(--muted); font-variant-numeric: tabular-nums; padding: var(--space-3) var(--space-4); border-left: 1px solid var(--line-strong); }
+/* Live readout. The big number is the real distance from the figure-eight. */
+.hud { position: absolute; right: var(--gutter); bottom: clamp(1.75rem, 8vh, 6rem); display: grid; gap: var(--space-3); padding: var(--space-3) 0 var(--space-3) var(--space-5); border-left: 1px solid var(--line-strong); font: var(--fw-medium) var(--fs-2xs)/1.3 var(--font-mono); letter-spacing: 0.06em; color: var(--muted); font-variant-numeric: tabular-nums; min-width: 15rem; }
+.hud-big { display: grid; gap: 6px; }
+.hud-k { text-transform: uppercase; color: var(--faint); letter-spacing: var(--track-label); }
+.hud-v { font: var(--fw-bold) clamp(2.2rem, 3.4vw, 3.25rem)/1 var(--font-display); letter-spacing: -0.03em; color: var(--text); font-variant-numeric: tabular-nums; }
+.hud-bar { height: 2px; background: var(--line-strong); position: relative; overflow: hidden; border-radius: 2px; }
+.hud-bar b { position: absolute; inset: 0 auto 0 0; width: 100%; background: linear-gradient(90deg, var(--down), var(--warn)); transition: background-color var(--dur-slow); }
+.hud[data-state="stable"] .hud-bar b { background: var(--ok); }
+.hud dl { display: grid; grid-template-columns: auto auto; gap: 5px var(--space-4); margin: 0; }
 .hud dt { color: var(--faint); text-transform: uppercase; }
-.hud dd { margin: 0; color: var(--text); text-align: right; min-width: 11ch; }
+.hud dd { margin: 0; color: var(--text); text-align: right; white-space: nowrap; }
 .hud .state { display: inline-flex; align-items: center; gap: 6px; justify-content: flex-end; }
 .hud .state::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--warn); box-shadow: 0 0 8px var(--warn); }
+.hud[data-state="stable"] .state::before, .hud[data-state="stable"] .hud-v { color: var(--ok); }
 .hud[data-state="stable"] .state::before { background: var(--ok); box-shadow: 0 0 8px var(--ok); }
 .scroll-cue { position: absolute; left: 50%; bottom: var(--space-5); translate: -50% 0; font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--faint); display: none; }
 
-.ret { position: absolute; left: 0; top: 0; width: 84px; height: 84px; margin: -42px 0 0 -42px; opacity: 0; will-change: transform, opacity;
+/* Look: small brackets on the suns; the names live in a tidy column with leader lines, so they never pile up. */
+.ret { position: absolute; left: 0; top: 0; width: 40px; height: 40px; margin: -20px 0 0 -20px; opacity: 0; will-change: transform, opacity;
   background:
-    linear-gradient(var(--ring), var(--ring)) 0 0 / 14px 1px no-repeat, linear-gradient(var(--ring), var(--ring)) 0 0 / 1px 14px no-repeat,
-    linear-gradient(var(--ring), var(--ring)) 100% 0 / 14px 1px no-repeat, linear-gradient(var(--ring), var(--ring)) 100% 0 / 1px 14px no-repeat,
-    linear-gradient(var(--ring), var(--ring)) 0 100% / 14px 1px no-repeat, linear-gradient(var(--ring), var(--ring)) 0 100% / 1px 14px no-repeat,
-    linear-gradient(var(--ring), var(--ring)) 100% 100% / 14px 1px no-repeat, linear-gradient(var(--ring), var(--ring)) 100% 100% / 1px 14px no-repeat; }
-.ret span { position: absolute; left: calc(100% + 8px); top: -4px; padding: 3px 6px; border-radius: 4px; background: color-mix(in oklch, var(--bg) 72%, transparent); white-space: nowrap; font: var(--fw-semibold) var(--fs-2xs)/1.35 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--text); }
-.ret span b { display: block; font-weight: var(--fw-medium); color: var(--muted); letter-spacing: 0.06em; }
-.ret-ai { width: 44px; height: 44px; margin: -22px 0 0 -22px; }
+    linear-gradient(var(--ring), var(--ring)) 0 0 / 9px 1px no-repeat, linear-gradient(var(--ring), var(--ring)) 0 0 / 1px 9px no-repeat,
+    linear-gradient(var(--ring), var(--ring)) 100% 0 / 9px 1px no-repeat, linear-gradient(var(--ring), var(--ring)) 100% 0 / 1px 9px no-repeat,
+    linear-gradient(var(--ring), var(--ring)) 0 100% / 9px 1px no-repeat, linear-gradient(var(--ring), var(--ring)) 0 100% / 1px 9px no-repeat,
+    linear-gradient(var(--ring), var(--ring)) 100% 100% / 9px 1px no-repeat, linear-gradient(var(--ring), var(--ring)) 100% 100% / 1px 9px no-repeat; }
+.tool { position: absolute; left: 0; top: 0; opacity: 0; will-change: transform, opacity; padding: 7px 10px 7px 12px; border-radius: var(--radius-xs); background: color-mix(in oklch, var(--bg) 78%, transparent); border: 1px solid var(--line-strong); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); font: var(--fw-semibold) var(--fs-2xs)/1.35 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--text); white-space: nowrap; }
+.tool b { display: flex; align-items: center; gap: 8px; font-weight: var(--fw-semibold); }
+.tool b::before { content: attr(data-n); color: var(--accent-text); }
+.tool span { display: block; font-weight: var(--fw-medium); color: var(--muted); letter-spacing: 0.06em; }
+.leaders { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.leaders path { fill: none; stroke: var(--ring); stroke-opacity: .55; stroke-width: 1; }
+.leaders circle { fill: var(--ring); }
+.ret-ai { width: 40px; height: 40px; margin: -20px 0 0 -20px; }
+.ret-ai span { position: absolute; left: calc(100% + 10px); top: 2px; padding: 5px 8px; border-radius: var(--radius-xs); background: color-mix(in oklch, var(--bg) 78%, transparent); border: 1px solid var(--line-strong); white-space: nowrap; font: var(--fw-semibold) var(--fs-2xs)/1.35 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--text); }
+.ret-ai span b { display: block; font-weight: var(--fw-medium); color: var(--muted); letter-spacing: 0.06em; }
 .ret.flip span { left: auto; right: calc(100% + 10px); text-align: right; }
 .anchor { position: absolute; left: 0; top: 78svh; width: 1px; height: 1px; }
 
 @media (min-width: 900px) { .scroll-cue { display: block; } }
 @media (max-width: 720px) {
-  .hud { top: calc(var(--nav-height) + var(--space-2)); bottom: auto; right: auto; left: var(--gutter); grid-template-columns: repeat(3, auto); gap: 2px var(--space-3); border-left: 0; padding: 0; }
-  .hud dt:nth-of-type(n+4), .hud dd:nth-of-type(n+4) { display: none; }
-  .hud dd { text-align: left; min-width: 0; }
-  .hud { grid-auto-flow: column; grid-template-rows: auto auto; grid-template-columns: none; }
-  .ret { width: 60px; height: 60px; margin: -30px 0 0 -30px; }
+  .hud { top: calc(var(--nav-height) + var(--space-2)); bottom: auto; right: var(--gutter); left: var(--gutter); min-width: 0; border-left: 0; padding: 0; grid-template-columns: auto 1fr; align-items: end; gap: var(--space-2) var(--space-4); }
+  .hud-big { grid-row: span 2; }
+  .hud-v { font-size: 1.9rem; }
+  .hud-bar { grid-column: 1 / -1; order: 3; }
+  .hud dl { grid-template-columns: auto auto; gap: 3px var(--space-3); justify-self: end; }
+  .hud dt:nth-of-type(n+3), .hud dd:nth-of-type(n+3) { display: none; }
+  .tool { padding: 6px 8px; }
+  .tool span { display: none; }
+  .beat h3 { max-width: 12ch; }
 }
 /* No JavaScript: nothing pins, everything reads in order. */
 html:not(.js) .sky { height: auto; }
 html:not(.js) .stage { position: relative; height: auto; min-height: 100svh; }
 html:not(.js) .stage-ui { position: relative; }
-html:not(.js) .hero-copy, html:not(.js) .beats, html:not(.js) .beat { position: relative; bottom: auto; opacity: 1; padding-block: var(--space-8); }
-html:not(.js) .hud, html:not(.js) .ret { display: none; }
+html:not(.js) .hero-copy, html:not(.js) .beats, html:not(.js) .beat { position: relative; bottom: auto; opacity: 1; visibility: visible; padding-block: var(--space-8); }
+html:not(.js) .beat-stack { display: block; }
+html:not(.js) .hud, html:not(.js) .ret, html:not(.js) .tool, html:not(.js) .scrub, html:not(.js) .leaders { display: none; }
 
 /* ── Sections after the sky. The story keeps going: every section is lit by
    one warm source, carries the orbit, and ends settled. ── */
@@ -450,9 +484,13 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
     <div class="veil" aria-hidden="true"></div>
 
     <div class="stage-ui">
-      <div class="ret" aria-hidden="true"><span>A · Website<b>host, domain, email</b></span></div>
-      <div class="ret" aria-hidden="true"><span>B · Bookings<b>calendar, reminders</b></span></div>
-      <div class="ret" aria-hidden="true"><span>C · Payments<b>till, invoices, bank</b></span></div>
+      <svg class="leaders" aria-hidden="true"><path/><path/><path/><circle r="2.5"/><circle r="2.5"/><circle r="2.5"/></svg>
+      <div class="ret" aria-hidden="true"></div>
+      <div class="ret" aria-hidden="true"></div>
+      <div class="ret" aria-hidden="true"></div>
+      <div class="tool" aria-hidden="true"><b data-n="A">Website</b><span>host, domain, email</span></div>
+      <div class="tool" aria-hidden="true"><b data-n="B">Bookings</b><span>calendar, reminders</span></div>
+      <div class="tool" aria-hidden="true"><b data-n="C">Payments</b><span>till, invoices, bank</span></div>
       <div class="ret ret-ai" aria-hidden="true"><span>AI<b>Claude or ChatGPT</b></span></div>
 
       <div class="hero-copy" data-od-id="hero-copy">
@@ -470,18 +508,24 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
 
       <div class="beats">
         <h2 class="sr-only">How it settles</h2>
-        <article class="beat" data-od-id="beat-look"><p class="beat-no">01 / 03</p><h3>Look.</h3><p>We map every tool, login and bill you have. Nothing gets missed.</p></article>
-        <article class="beat" data-od-id="beat-connect"><p class="beat-no">02 / 03</p><h3>Connect.</h3><p>We wire them to each other, and to AI like Claude or ChatGPT.</p></article>
-        <article class="beat" data-od-id="beat-orbit"><p class="beat-no">03 / 03</p><h3>Orbit.</h3><p>One stable system. We teach your team, then keep it running.</p></article>
+        <div class="scrub" aria-hidden="true"><span>01 Look</span><span>02 Connect</span><span>03 Orbit</span><i><b></b></i></div>
+        <div class="beat-stack">
+          <article class="beat" data-od-id="beat-look"><p class="beat-no bl">01 · Look</p><h3>Every tool pulling <em>its own way.</em></h3><p class="bl">We map every tool, login and bill you have. Nothing gets missed.</p></article>
+          <article class="beat" data-od-id="beat-connect"><p class="beat-no bl">02 · Connect</p><h3>Wire them, and <em>steer.</em></h3><p class="bl">We connect them to each other, and to AI like Claude or ChatGPT.</p></article>
+          <article class="beat" data-od-id="beat-orbit"><p class="beat-no bl">03 · Orbit</p><h3>Now it holds <em>on its own.</em></h3><p class="bl">One stable system. We teach your team, then keep it running.</p></article>
+        </div>
       </div>
 
-      <dl class="hud" data-od-id="sim-hud" aria-label="Live simulation readout">
-        <dt>t</dt><dd data-hud="t">0.00</dd>
-        <dt>ΔE/E₀</dt><dd data-hud="e">—</dd>
-        <dt>State</dt><dd><span class="state" data-hud="s">Chaotic</span></dd>
-        <dt>Step</dt><dd>Verlet · dt 0.004</dd>
-        <dt>Bodies</dt><dd data-hud="n">3 · dust —</dd>
-      </dl>
+      <div class="hud" data-od-id="sim-hud" role="group" aria-label="Live simulation readout">
+        <p class="hud-big"><span class="hud-k">Off the stable orbit</span><span class="hud-v" data-hud="d">—</span></p>
+        <div class="hud-bar" aria-hidden="true"><b data-hud="bar"></b></div>
+        <dl>
+          <dt>Steering</dt><dd data-hud="k">0%</dd>
+          <dt>State</dt><dd><span class="state" data-hud="s">Chaotic</span></dd>
+          <dt>t</dt><dd data-hud="t">0.00</dd>
+          <dt>Step</dt><dd>Verlet · dt 0.004</dd>
+        </dl>
+      </div>
       <p class="scroll-cue" aria-hidden="true">Scroll to settle it</p>
     </div>
   </div>
@@ -735,9 +779,11 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
   toggle.addEventListener('click', () => { S.motion = !S.motion; try { localStorage.setItem('solenix-motion', S.motion ? 'on' : 'off'); } catch (e) {} applyMotion(); });
 
   /* Scroll story. Ranges are shared with the WebGL module through window.solenix. */
-  const sky = $('.sky'), nav = $('.nav'), hero = $('.hero-copy'), beats = $$('.beat'), rets = $$('.ret:not(.ret-ai)'), retAi = $('.ret-ai');
+  const sky = $('.sky'), nav = $('.nav'), hero = $('.hero-copy'), beats = $$('.beat'), rets = $$('.ret:not(.ret-ai)'), retAi = $('.ret-ai'), tools = $$('.tool'), scrub = $('.scrub'), scrubFill = $('.scrub b'), scrubLab = $$('.scrub span');
+  /* Split each beat headline into words so the scroll can build it word by word. */
+  beats.forEach(b => { const h = $('h3', b); h.setAttribute('aria-label', h.textContent); h.querySelectorAll(':scope, em').forEach(el => [...el.childNodes].forEach(n => { if (n.nodeType === 3 && n.textContent.trim()) { const f = document.createDocumentFragment(); n.textContent.split(/(\s+)/).forEach(w => { if (!w) return; if (/^\s+$/.test(w)) f.append(w); else { const sp = document.createElement('span'); sp.className = 'bw'; sp.setAttribute('aria-hidden', 'true'); sp.textContent = w; f.append(sp); } }); n.replaceWith(f); } })); });
   const cue = $('.scroll-cue');
-  const RANGES = [[0.15, 0.40], [0.42, 0.66], [0.68, 1.2]];
+  const RANGES = [[0.14, 0.40], [0.40, 0.66], [0.66, 1.3]];
   S.ranges = RANGES;
   const portal = $('.portal');
   let ticking = false;
@@ -746,7 +792,7 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
     const r = sky.getBoundingClientRect(), total = r.height - innerHeight;
     const p = clamp(-r.top / total);
     S.p = p;
-    const beat = p < 0.14 ? 0 : p < 0.41 ? 1 : p < 0.67 ? 2 : 3;
+    const beat = p < 0.14 ? 0 : p < 0.40 ? 1 : p < 0.66 ? 2 : 3;
     if (beat !== S.beat) { S.beat = beat; dispatchEvent(new Event('solenix:beat')); }
     const m = S.motion;
     const ho = m ? 1 - smooth(0.035, 0.12, p) : (beat === 0 ? 1 : 0);
@@ -754,15 +800,25 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
     hero.style.transform = m ? `translateY(${-p * 260}px)` : '';
     hero.style.visibility = ho < 0.02 ? 'hidden' : '';
     if (cue) cue.style.opacity = 1 - smooth(0.0, 0.05, p);
+    /* Beats build and unbuild with the scroll, word by word, in both directions. */
     beats.forEach((b, i) => {
-      const [a, z] = RANGES[i];
-      let o, y = 0;
-      if (m) { const inn = smooth(a, a + 0.05, p), out = smooth(z - 0.05, z, p); o = inn * (1 - out); y = (1 - inn) * 40 - out * 40; }
-      else o = beat === i + 1 ? 1 : 0;
-      b.style.opacity = o; b.style.transform = y ? `translateY(${y}px)` : '';
+      const [a, z] = RANGES[i], words = $$('.bw', b), blocks = $$('.bl', b);
+      let any = 0;
+      const put = (el, k, n) => {
+        let o, y;
+        if (m) { const a0 = a + 0.004 + k * 0.008, inn = smooth(a0, a0 + 0.04, p), z0 = z - 0.034 + k * 0.003, out = smooth(z0, z0 + 0.026, p); o = inn * (1 - out); y = (1 - inn) * 0.55 - out * 0.35; }
+        else { o = beat === i + 1 ? 1 : 0; y = 0; }
+        any = Math.max(any, o); el.style.opacity = o.toFixed(3); el.style.transform = y ? `translateY(${y.toFixed(3)}em)` : '';
+      };
+      put(blocks[0], 0); words.forEach((w, k) => put(w, k + 1)); put(blocks[1], words.length + 1);
+      b.style.visibility = any > 0.01 ? 'visible' : 'hidden';
     });
-    S.aiAlpha = m ? smooth(0.44, 0.49, p) * (1 - smooth(0.58, 0.63, p)) : (beat === 2 ? 1 : 0);
-    S.retAlpha = m ? smooth(0.15, 0.2, p) * (1 - smooth(0.36, 0.42, p)) : (beat === 1 ? 1 : 0);
+    const sp = m ? clamp((p - 0.14) / (0.92 - 0.14)) : [0, 0.12, 0.5, 1][beat];
+    scrub.style.opacity = m ? smooth(0.1, 0.15, p) : (beat ? 1 : 0);
+    scrubFill.style.width = (sp * 100).toFixed(2) + '%';
+    scrubLab.forEach((l, i) => { l.classList.toggle('on', beat === i + 1); l.classList.toggle('done', beat > i + 1); });
+    S.aiAlpha = m ? smooth(0.42, 0.47, p) * (1 - smooth(0.6, 0.65, p)) : (beat === 2 ? 1 : 0);
+    S.retAlpha = m ? smooth(0.15, 0.2, p) * (1 - smooth(0.37, 0.42, p)) : (beat === 1 ? 1 : 0);
     const solid = r.bottom < 72;
     nav.classList.toggle('is-solid', solid || (-r.top > 40 && r.bottom < innerHeight * 0.2));
     if (solid) nav.removeAttribute('data-theme'); else nav.setAttribute('data-theme', 'dark');
@@ -775,7 +831,7 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
     }
     scenes();
   }
-  S.rets = rets; S.retAi = retAi;
+  S.rets = rets; S.retAi = retAi; S.tools = tools; S.leaders = $('.leaders');
   addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
   addEventListener('resize', () => { S.vh = innerHeight; layoutRing(); layoutTrack(); sizeClose(); onScroll(); });
 
@@ -1016,7 +1072,7 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
 /* ── The sky. A real three-body integration (velocity Verlet, G = m = 1).
    Chaos: softened, loosely held so no sun leaves the frame.
    Order: the Chenciner–Montgomery figure-eight, unsoftened.
-   Scrolling blends what you see from one solution to the other. ── */
+   Scrolling turns up a real steering force that pulls the chaos onto the orbit. ── */
 import * as THREE from 'three';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
@@ -1026,7 +1082,7 @@ import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
 const S = window.solenix;
 const sky = document.querySelector('.sky'), stage = sky.querySelector('.stage'), canvas = document.getElementById('gl');
-const hud = { t: sky.querySelector('[data-hud="t"]'), e: sky.querySelector('[data-hud="e"]'), s: sky.querySelector('[data-hud="s"]'), n: sky.querySelector('[data-hud="n"]'), root: sky.querySelector('.hud') };
+const hud = { t: sky.querySelector('[data-hud="t"]'), d: sky.querySelector('[data-hud="d"]'), k: sky.querySelector('[data-hud="k"]'), s: sky.querySelector('[data-hud="s"]'), bar: sky.querySelector('[data-hud="bar"]'), root: sky.querySelector('.hud') };
 
 /* Colours come from tokens.css — resolved inside the dark sky. */
 const css = getComputedStyle(sky);
@@ -1035,51 +1091,68 @@ const WHITE = new THREE.Color(1, 1, 1);
 const C = { bg: tok('--bg'), sun1: tok('--sun1'), sun2: tok('--sun2'), ring: tok('--ring'), text: tok('--text'), sky: tok('--chart-5') };
 
 /* ── Physics ── */
-const DT = 0.004, T8 = 6.32591398, CHAOS_SCALE = 0.86, SC = 2.1, SUN_Y = 0.15;
-function system(p, v, soft, conf) { const s = { p: Float64Array.from(p), v: Float64Array.from(v), a: new Float64Array(6), soft2: soft * soft, conf, t: 0 }; accel(s); s.E0 = energy(s); return s; }
-function accel(s) {
+const DT = 0.004, T8 = 6.32591398, SC = 2.1, SUN_Y = 0.15;
+/* One system you watch, and one exact figure-eight it can be steered toward.
+   Steering is a real control force, a = gravity + kp(x* − x) + kd(v* − v); scroll sets its strength.
+   Near the end steering drops to zero and the orbit holds on its own, which the figure-eight does. */
+const ctl = { k: 0, soft: 0.35, conf: 1 };
+function makeSys(p, v) { return { p: Float64Array.from(p), v: Float64Array.from(v), a: new Float64Array(6), t: 0 }; }
+function gravity(s, soft2, conf) {
   const p = s.p, a = s.a; a.fill(0);
   for (let i = 0; i < 3; i++) for (let j = i + 1; j < 3; j++) {
-    const dx = p[j * 2] - p[i * 2], dy = p[j * 2 + 1] - p[i * 2 + 1], r2 = dx * dx + dy * dy + s.soft2, inv = 1 / (r2 * Math.sqrt(r2));
+    const dx = p[j * 2] - p[i * 2], dy = p[j * 2 + 1] - p[i * 2 + 1], r2 = dx * dx + dy * dy + soft2, inv = 1 / (r2 * Math.sqrt(r2));
     a[i * 2] += dx * inv; a[i * 2 + 1] += dy * inv; a[j * 2] -= dx * inv; a[j * 2 + 1] -= dy * inv;
   }
-  if (s.conf) for (let i = 0; i < 3; i++) { const x = p[i * 2], y = p[i * 2 + 1], r = Math.hypot(x, y); if (r > s.conf.R) { const k = s.conf.k * (r - s.conf.R) / r; a[i * 2] -= k * x; a[i * 2 + 1] -= k * y; } }
+  if (conf > 0) for (let i = 0; i < 3; i++) { const x = p[i * 2], y = p[i * 2 + 1], r = Math.hypot(x, y); if (r > 1.05) { const k = 5 * conf * (r - 1.05) / r; a[i * 2] -= k * x; a[i * 2 + 1] -= k * y; } }
 }
-function energy(s) {
-  const p = s.p, v = s.v; let E = 0;
-  for (let i = 0; i < 3; i++) E += 0.5 * (v[i * 2] ** 2 + v[i * 2 + 1] ** 2);
-  for (let i = 0; i < 3; i++) for (let j = i + 1; j < 3; j++) { const dx = p[j * 2] - p[i * 2], dy = p[j * 2 + 1] - p[i * 2 + 1]; E -= 1 / Math.sqrt(dx * dx + dy * dy + s.soft2); }
-  if (s.conf) for (let i = 0; i < 3; i++) { const r = Math.hypot(p[i * 2], p[i * 2 + 1]); if (r > s.conf.R) E += 0.5 * s.conf.k * (r - s.conf.R) ** 2; }
-  return E;
-}
-function step(s) {
-  const p = s.p, v = s.v, a = s.a;
-  for (let k = 0; k < 6; k++) { v[k] += 0.5 * DT * a[k]; p[k] += DT * v[k]; }
-  accel(s);
-  for (let k = 0; k < 6; k++) v[k] += 0.5 * DT * a[k];
-  s.t += DT;
-}
+const X1 = [-0.97000436, 0.24308753], V3 = [-0.93240737, -0.86473146];
+const P8 = [X1[0], X1[1], -X1[0], -X1[1], 0, 0], V8 = [-V3[0] / 2, -V3[1] / 2, -V3[0] / 2, -V3[1] / 2, V3[0], V3[1]];
 const cv = [0.1, 0.45, -0.35, -0.2, 0.25, -0.25].map(x => x * 2.6), cp = [0.9, 0.3, -0.7, 0.6, -0.2, -0.9];
 for (const arr of [cv, cp]) { const mx = (arr[0] + arr[2] + arr[4]) / 3, my = (arr[1] + arr[3] + arr[5]) / 3; for (let i = 0; i < 3; i++) { arr[i * 2] -= mx; arr[i * 2 + 1] -= my; } }
-const chaos = system(cp, cv, 0.35, { R: 1.2, k: 5 });
-const X1 = [-0.97000436, 0.24308753], V3 = [-0.93240737, -0.86473146];
-const eight = system([X1[0], X1[1], -X1[0], -X1[1], 0, 0], [-V3[0] / 2, -V3[1] / 2, -V3[0] / 2, -V3[1] / 2, V3[0], V3[1]], 0, null);
+const eight = makeSys(P8, V8);   // the exact orbit, never touched
+const sys = makeSys(cp, cv);     // what you see
+const W8 = 4;                  // steering stiffness, in sim time
+const ctrlA = new Float64Array(6);
+function accelSys() {
+  gravity(sys, ctl.soft * ctl.soft, ctl.conf);
+  const kp = ctl.k * W8 * W8, kd = ctl.k * 2 * W8;
+  for (let k = 0; k < 6; k++) { ctrlA[k] = kp * (eight.p[k] - sys.p[k]) + kd * (eight.v[k] - sys.v[k]); sys.a[k] += ctrlA[k]; }
+}
+function step() {
+  for (let k = 0; k < 6; k++) { sys.v[k] += 0.5 * DT * sys.a[k]; sys.p[k] += DT * sys.v[k]; eight.v[k] += 0.5 * DT * eight.a[k]; eight.p[k] += DT * eight.v[k]; }
+  gravity(eight, 0, 0); accelSys();
+  for (let k = 0; k < 6; k++) { sys.v[k] += 0.5 * DT * sys.a[k]; eight.v[k] += 0.5 * DT * eight.a[k]; }
+  sys.t += DT; eight.t += DT;
+}
+gravity(eight, 0, 0); accelSys();
+function offOrbit() { let d = 0; for (let i = 0; i < 3; i++) d += (sys.p[i * 2] - eight.p[i * 2]) ** 2 + (sys.p[i * 2 + 1] - eight.p[i * 2 + 1]) ** 2; return Math.sqrt(d / 3); }
+function steerForce() { let f = 0; for (let k = 0; k < 6; k++) f += ctrlA[k] * ctrlA[k]; return Math.sqrt(f / 3); }
 
 /* The figure-eight curve itself, sampled by time from a separate run: body three's path. */
 const LUT_N = 1024, LUT = new Float32Array(LUT_N * 2);
-{ const s = system(Array.from(eight.p), Array.from(eight.v), 0, null), per = Math.round(T8 / DT);
-  for (let i = 0; i < per; i++) { const k = Math.floor(i / per * LUT_N); LUT[k * 2] = s.p[4]; LUT[k * 2 + 1] = s.p[5]; step(s); } }
+{ const s = makeSys(P8, V8), per = Math.round(T8 / DT); gravity(s, 0, 0);
+  for (let i = 0; i < per; i++) { const k = Math.floor(i / per * LUT_N); LUT[k * 2] = s.p[4]; LUT[k * 2 + 1] = s.p[5];
+    for (let q = 0; q < 6; q++) { s.v[q] += 0.5 * DT * s.a[q]; s.p[q] += DT * s.v[q]; } gravity(s, 0, 0); for (let q = 0; q < 6; q++) s.v[q] += 0.5 * DT * s.a[q]; } }
 function curve(u, out) { u = ((u % 1) + 1) % 1; const f = u * LUT_N, i = Math.floor(f), j = (i + 1) % LUT_N, t = f - i; out[0] = LUT[i * 2] + (LUT[j * 2] - LUT[i * 2]) * t; out[1] = LUT[i * 2 + 1] + (LUT[j * 2 + 1] - LUT[i * 2 + 1]) * t; return out; }
 
-/* Trail history, pushed by simulation time so a full loop fits exactly. */
+/* Trail history of what you see, pushed by simulation time so one full loop is exactly HN samples. */
 const HN = 300, PUSH = T8 / HN;
-const hist = { c: new Float32Array(HN * 6), e: new Float32Array(HN * 6), head: 0, next: 0 };
-function push() { const i = hist.head = (hist.head + 1) % HN; for (let k = 0; k < 6; k++) { hist.c[i * 6 + k] = chaos.p[k] * CHAOS_SCALE; hist.e[i * 6 + k] = eight.p[k]; } }
+const hist = { p: new Float32Array(HN * 6), head: 0, next: 0 };
+function push() { const i = hist.head = (hist.head + 1) % HN; for (let k = 0; k < 6; k++) hist.p[i * 6 + k] = sys.p[k]; }
 function advance(simDt) {
   const n = Math.round(simDt / DT);
-  for (let i = 0; i < n; i++) { step(chaos); step(eight); if (chaos.t >= hist.next) { push(); hist.next += PUSH; } }
+  for (let i = 0; i < n; i++) { step(); if (sys.t >= hist.next) { push(); hist.next += PUSH; } }
 }
 advance(24); // warm up: fills the trails and lands somewhere lively
+const snap = { p: Float64Array.from(sys.p), v: Float64Array.from(sys.v), e: Float64Array.from(eight.p), ev: Float64Array.from(eight.v), h: Float32Array.from(hist.p), head: hist.head, t: sys.t };
+/* Reduced motion: a still frame per beat, computed by actually running the steered system. */
+function setStill(beat) {
+  sys.p.set(snap.p); sys.v.set(snap.v); eight.p.set(snap.e); eight.v.set(snap.ev); hist.p.set(snap.h); hist.head = snap.head; sys.t = eight.t = snap.t; hist.next = sys.t + PUSH;
+  if (beat === 2) { ctl.k = 0.35; ctl.soft = 0.2; ctl.conf = 0.5; advance(0.9); }
+  if (beat >= 3) { ctl.k = 1; ctl.soft = 0; ctl.conf = 0; advance(9); ctl.k = 0; advance(T8); }
+  if (beat < 2) { ctl.k = 0; ctl.soft = 0.35; ctl.conf = 1; }
+  gravity(eight, 0, 0); accelSys();
+}
 
 /* ── Renderer ── */
 const isSmall = Math.min(innerWidth, innerHeight) < 700;
@@ -1161,12 +1234,11 @@ function spawn(i) {
     D.x[i] = r * Math.cos(t); D.y[i] = r * Math.sin(t); D.vx[i] = -Math.sin(t) * sp; D.vy[i] = Math.cos(t) * sp; }
 }
 function gauss() { return Math.sqrt(-2 * Math.log(Math.random() + 1e-9)) * Math.cos(Math.random() * 6.2832); }
-function updateDisplay(e) {
-  const a = 1 - e;
-  for (let k = 0; k < 6; k++) { disp[k] = chaos.p[k] * CHAOS_SCALE * a + eight.p[k] * e; dispV[k] = chaos.v[k] * CHAOS_SCALE * a + eight.v[k] * e; }
+function updateDisplay() {
+  for (let k = 0; k < 6; k++) { disp[k] = sys.p[k]; dispV[k] = sys.v[k]; }
   for (let i = 0; i < 3; i++) bodyU.value[i].set(disp[i * 2] * SC, SUN_Y, disp[i * 2 + 1] * SC);
 }
-updateDisplay(0);
+updateDisplay();
 for (let i = 0; i < DN; i++) { spawn(i); D.ph[i] = Math.random(); D.off[i] = gauss() * (Math.random() < 0.85 ? 0.035 : 0.12); D.j[i] = gauss(); dSeed[i] = Math.random(); }
 function stepDust(h) {
   for (let i = 0; i < DN; i++) {
@@ -1186,7 +1258,7 @@ const dust = new THREE.Points(dustGeo, new THREE.ShaderMaterial({ ...additive, u
     void main(){ vec4 mv=modelViewMatrix*vec4(position,1.); gl_Position=projectionMatrix*mv;
       float n=0.; for(int i=0;i<3;i++){ vec3 d=position-uB[i]; n+=1./(1.+dot(d.xz,d.xz)*3.); }
       vN=clamp(n,0.,1.); float tw=.7+.3*sin(uTime*2.+aSeed*60.);
-      vA=(.12+vN*.5+uOrder*.3)*tw; gl_PointSize=uPx*(.8+aSeed*aSeed*2.2)*(14./-mv.z); }`,
+      vA=(.12+vN*.5*(1.-uOrder*.7)+uOrder*.1)*tw; gl_PointSize=uPx*(.8+aSeed*aSeed*2.2)*(14./-mv.z); }`,
   fragmentShader: `uniform vec3 uWarm,uCool; varying float vA; varying float vN;
     void main(){ float d=length(gl_PointCoord-.5); float a=smoothstep(.5,.05,d); gl_FragColor=vec4(mix(uCool*.6,uWarm*1.1,vN)*a*vA,1.); }` }));
 dust.frustumCulled = false; dust.renderOrder = 2; scene.add(dust);
@@ -1221,6 +1293,11 @@ function layRibbon(r, widthScale = 1) {
 const SUNCOL = [C.sun1.clone().lerp(C.sun2, 0.35), C.sun2.clone(), C.sun1.clone().lerp(WHITE, 0.2)];
 const trails = SUNCOL.map(c => ribbon(HN + 1, c, 0.07));
 const agentTrail = ribbon(110, C.ring.clone().lerp(WHITE, 0.15), 0.05);
+/* The orbit itself, inked in by the scroll: a thin, even line under the three suns. */
+const GUIDE_N = 360;
+const guide = ribbon(GUIDE_N, C.ring.clone().lerp(C.sun1, 0.5), 0.012, `uniform vec3 uCol,uHot; uniform float uAlpha; varying float vT,vS;
+  void main(){ float edge=1.-abs(vS); edge=smoothstep(0.,1.,edge); float head=smoothstep(.9,1.,vT); gl_FragColor=vec4(mix(uCol,uHot,head)*edge*uAlpha*(.55+head*1.2),1.); }`, false);
+guide.mesh.renderOrder = 2;
 
 /* Wires: arcs from each tool to the others, and up to AI above the centre. Pulses travel along them. */
 const ARC_FRAG = `uniform vec3 uCol,uHot; uniform float uAlpha,uTime,uPh; varying float vT,vS;
@@ -1301,100 +1378,155 @@ function resize() {
 const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
 addEventListener('pointermove', e => { mouse.tx = e.clientX / innerWidth * 2 - 1; mouse.ty = e.clientY / innerHeight * 2 - 1; }, { passive: true });
 const tmp2 = [0, 0], tgt = new THREE.Vector3(), proj = new THREE.Vector3();
-let clockT = 0, eShown = 0, settleShown = 0, hudNext = 0;
+let clockT = 0, hudNext = 0, pShown = 0, lastP = 0, scrollVel = 0;
 const smooth = S.smooth, lerp = (a, b, t) => a + (b - a) * t;
+const STILL_P = [0, 0.28, 0.55, 1];
+const leaderEls = S.leaders ? [...S.leaders.querySelectorAll('path')] : [], leaderDots = S.leaders ? [...S.leaders.querySelectorAll('circle')] : [];
+const scr = [[0, 0], [0, 0], [0, 0]];
+
+/* Everything on screen is a function of one number: how far you have scrolled. */
+function story(p) {
+  return {
+    k: smooth(0.40, 0.60, p) * (1 - smooth(0.80, 0.90, p)),   // steering strength
+    free: smooth(0.44, 0.64, p),                                // softening and the tether fall away
+    conn: smooth(0.41, 0.46, p) * (1 - smooth(0.62, 0.68, p)), // wires
+    order: smooth(0.62, 0.84, p),                               // dust joins the loop
+    ink: smooth(0.60, 0.86, p),                                 // the orbit line is drawn in
+    third: smooth(0.62, 0.84, p),                               // each trail shrinks to a third of the loop
+    rise: smooth(0.06, 0.92, p),                                // camera climbs from the grid to overhead
+    calm: smooth(0.42, 0.85, p),                                 // light settles; no blow-out
+    agent: smooth(0.86, 0.93, p)
+  };
+}
 
 function frame(dtReal, still) {
-  const p = S.p;
-  let e, conn, order, settle, agentA;
-  if (still) {
-    const b = S.beat; e = b >= 3 ? 1 : b === 2 ? 0.25 : 0; conn = b === 2 ? 1 : 0; order = b >= 3 ? 1 : b === 2 ? 0.15 : 0; settle = b >= 3 ? 1 : b === 2 ? 0.4 : 0; agentA = b >= 3 ? 1 : 0;
-  } else {
-    e = smooth(0.5, 0.68, p);
-    conn = smooth(0.43, 0.49, p) * (1 - smooth(0.6, 0.7, p));
-    order = smooth(0.54, 0.74, p);
-    settle = smooth(0.46, 0.84, p);
-    agentA = smooth(0.72, 0.8, p);
-  }
-  eShown = still ? e : lerp(eShown, e, 1 - Math.exp(-dtReal * 6));
-  settleShown = still ? settle : lerp(settleShown, settle, 1 - Math.exp(-dtReal * 4));
-  const E = eShown;
-  updateDisplay(E);
+  const pTarget = still ? STILL_P[S.beat] : S.p;
+  pShown = still ? pTarget : lerp(pShown, pTarget, 1 - Math.exp(-dtReal * 7));
+  const p = pShown, st = story(p);
+  if (!still) { ctl.k = st.k; ctl.soft = lerp(0.35, 0, st.free); ctl.conf = 1 - st.free; }
+  /* Held orbit check: if it ever drifts after release, steering comes back and the readout shows it. */
+  /* Steering lets go only once every sun is really on the orbit; the readout shows it either way. */
+  if (!still && p > 0.66) { const d = offOrbit(); if (d > 0.006) ctl.k = Math.max(ctl.k, Math.min(1, 0.35 + d * 8)); }
+  updateDisplay();
 
-  /* Grid calms as order arrives. */
-  gridU.uChaos.value = 1 - E; gridU.uDepth.value = lerp(0.95, 0.62, E);
+  gridU.uChaos.value = 1 - st.free; gridU.uDepth.value = lerp(0.95, 0.6, st.calm);
 
-  /* Camera: tilted into the plane, drifting, rising toward top-down as it settles. */
+  /* Camera: low across the grid in chaos, climbing to a steep overhead view where the eight reads flat. */
   mouse.x += (mouse.tx - mouse.x) * 0.04; mouse.y += (mouse.ty - mouse.y) * 0.04;
-  const el = THREE.MathUtils.degToRad(lerp(portrait ? 36 : 31, portrait ? 60 : 50, settleShown) + mouse.y * 3);
-  const az = (portrait ? Math.PI / 2 : 0) + Math.sin(clockT * 0.045) * 0.14 + mouse.x * 0.07;
-  const dist = portrait ? lerp(20.5, 19, settleShown) : lerp(18.5, 15.8, settleShown);
-  tgt.set(0, lerp(-0.6, -0.1, settleShown), 0);
+  const el = THREE.MathUtils.degToRad(lerp(portrait ? 30 : 22, portrait ? 74 : 66, st.rise) + mouse.y * 3 * (1 - st.rise * 0.6));
+  const az = Math.sin(clockT * 0.045) * 0.16 * (1 - st.rise) + mouse.x * 0.06 * (1 - st.rise * 0.5);
+  const fitD = portrait ? 3.25 / (Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.aspect) : 10.8;
+  const dist = lerp(portrait ? 21 : 18.5, fitD, st.rise);
+  tgt.set(0, lerp(-0.6, SUN_Y, st.rise), 0);
   camera.position.set(tgt.x + dist * Math.cos(el) * Math.sin(az), tgt.y + dist * Math.sin(el), tgt.z + dist * Math.cos(el) * Math.cos(az));
   camera.lookAt(tgt);
-  const ox = portrait ? 0 : lerp(0.215, 0.17, settleShown), oy = portrait ? lerp(0.15, 0.13, settleShown) : lerp(0.12, 0.1, settleShown);
+  const ox = portrait ? 0 : lerp(0.2, 0.19, st.rise), oy = portrait ? lerp(0.15, 0.2, st.rise) : lerp(0.12, 0.06, st.rise);
   camera.setViewOffset(W, H, -W * ox, H * oy, W, H);
 
-  /* Trails: blended history, current position as the head. */
+  /* Trails: the real history. Long and tangled in chaos; one third of the loop each once settled,
+     so the three together draw the eight exactly once instead of stacking three bright copies. */
+  const L = lerp(1, 1 / 3, st.third) * (HN - 1), tw = lerp(1, 0.55, st.calm);
   for (let b = 0; b < 3; b++) {
     const pts = trails[b].pts;
-    for (let k = 0; k < HN; k++) { const i = (hist.head + 1 + k) % HN, o = i * 6 + b * 2;
-      pts[k * 3] = (hist.c[o] * (1 - E) + hist.e[o] * E) * SC; pts[k * 3 + 1] = SUN_Y; pts[k * 3 + 2] = (hist.c[o + 1] * (1 - E) + hist.e[o + 1] * E) * SC; }
+    for (let k = 0; k < HN; k++) {
+      const back = (1 - k / (HN - 1)) * L, f = (HN - 1) - back, j0 = Math.floor(f), j1 = Math.min(HN - 1, j0 + 1), fr = f - j0;
+      const i0 = ((hist.head + 1 + j0) % HN) * 6 + b * 2, i1 = ((hist.head + 1 + j1) % HN) * 6 + b * 2;
+      pts[k * 3] = (hist.p[i0] + (hist.p[i1] - hist.p[i0]) * fr) * SC; pts[k * 3 + 1] = SUN_Y; pts[k * 3 + 2] = (hist.p[i0 + 1] + (hist.p[i1 + 1] - hist.p[i0 + 1]) * fr) * SC;
+    }
     const v = bodyU.value[b]; pts[HN * 3] = v.x; pts[HN * 3 + 1] = v.y; pts[HN * 3 + 2] = v.z;
-    layRibbon(trails[b], 1 + E * 0.35);
-    trails[b].mesh.material.uniforms.uAlpha.value = 0.95;
+    layRibbon(trails[b], tw);
+    trails[b].mesh.material.uniforms.uAlpha.value = lerp(0.95, 0.85, st.calm);
     suns[b].position.copy(v);
+    const u = suns[b].material.uniforms;
+    u.uSize.value = 2.2 * lerp(1, portrait ? 0.7 : 0.62, st.calm); u.uGain.value = lerp(1, 0.78, st.calm); u.uFlare.value = lerp(1, 0.25, st.calm);
+  }
+  bloom.strength = lerp(0.62, 0.34, st.calm);
+
+  /* The orbit line, inked in behind the bodies as you scroll. */
+  const phase = eight.t / T8, start = phase + 0.02;
+  guide.mesh.visible = st.ink > 0.002;
+  if (guide.mesh.visible) {
+    for (let k = 0; k < GUIDE_N; k++) { curve(start + k / (GUIDE_N - 1) * st.ink, tmp2); guide.pts[k * 3] = tmp2[0] * SC; guide.pts[k * 3 + 1] = SUN_Y - 0.01; guide.pts[k * 3 + 2] = tmp2[1] * SC; }
+    layRibbon(guide); guide.mesh.material.uniforms.uAlpha.value = Math.min(1, st.ink * 3);
   }
 
-  /* Dust: gravity, then pulled onto the loop as order arrives. */
+  /* Dust: gravity, then pulled into a fine filament on the loop as order arrives. */
   if (!still) { const h = Math.min(dtReal, 1 / 30) * 0.55 / 2; stepDust(h); stepDust(h); }
-  dustU.uOrder.value = order;
-  const phase = eight.t / T8;
+  dustU.uOrder.value = st.order;
   for (let i = 0; i < DN; i++) {
     let x = D.x[i] * SC, z = D.y[i] * SC, y = gridY(x, z) * 0.7 + SUN_Y * 0.3 + D.j[i] * 0.06;
-    if (order > 0) {
+    if (st.order > 0) {
       curve(D.ph[i] + phase, tmp2); const ax = tmp2[0], ay = tmp2[1];
       curve(D.ph[i] + phase + 0.002, tmp2); let nx = -(tmp2[1] - ay), ny = tmp2[0] - ax; const nl = Math.hypot(nx, ny) || 1;
-      const tx = (ax + nx / nl * D.off[i]) * SC, tz = (ay + ny / nl * D.off[i]) * SC, ty = SUN_Y + D.j[i] * 0.03;
-      const o = order * order * (3 - 2 * order);
+      const off = D.off[i] * 0.7, tx = (ax + nx / nl * off) * SC, tz = (ay + ny / nl * off) * SC, ty = SUN_Y + D.j[i] * 0.02;
+      const o = st.order * st.order * (3 - 2 * st.order);
       x += (tx - x) * o; y += (ty - y) * o; z += (tz - z) * o;
     }
     dPos[i * 3] = x; dPos[i * 3 + 1] = y; dPos[i * 3 + 2] = z;
   }
   dustGeo.attributes.position.needsUpdate = true;
 
-  /* Wires and the AI hub. */
+  /* Wires and the AI hub: the connections that do the steering. */
   const B = bodyU.value, pairs = [[B[0], B[1]], [B[1], B[2]], [B[2], B[0]], [B[0], HUB], [B[1], HUB], [B[2], HUB]];
-  pairs.forEach(([a, b], i) => { arcs[i].mesh.visible = conn > 0.002; if (conn > 0.002) { layArc(arcs[i], a, b, i < 3 ? 0.25 + a.distanceTo(b) * 0.18 : 0.6); arcs[i].mesh.material.uniforms.uAlpha.value = conn; } });
-  hub.position.copy(HUB); hub.material.uniforms.uGain.value = conn * 1.2;
+  pairs.forEach(([a, b], i) => { arcs[i].mesh.visible = st.conn > 0.002; if (st.conn > 0.002) { layArc(arcs[i], a, b, i < 3 ? 0.25 + a.distanceTo(b) * 0.18 : 0.6); arcs[i].mesh.material.uniforms.uAlpha.value = st.conn; } });
+  hub.position.copy(HUB); hub.material.uniforms.uGain.value = st.conn * 1.2;
 
-  /* The agent dot rides the loop once it is stable. */
+  /* The agent dot rides the loop once it holds. */
   const ap = phase * 2 + 0.17;
-  curve(ap, tmp2); agent.position.set(tmp2[0] * SC, SUN_Y, tmp2[1] * SC); agent.material.uniforms.uGain.value = agentA * 1.8;
+  curve(ap, tmp2); agent.position.set(tmp2[0] * SC, SUN_Y, tmp2[1] * SC); agent.material.uniforms.uGain.value = st.agent * 1.4; agent.material.uniforms.uSize.value = 0.9 * lerp(1, 0.7, st.calm);
   for (let k = 0; k < agentTrail.n; k++) { curve(ap - (agentTrail.n - 1 - k) * 0.0018, tmp2); agentTrail.pts[k * 3] = tmp2[0] * SC; agentTrail.pts[k * 3 + 1] = SUN_Y; agentTrail.pts[k * 3 + 2] = tmp2[1] * SC; }
-  layRibbon(agentTrail); agentTrail.mesh.material.uniforms.uAlpha.value = agentA;
+  layRibbon(agentTrail, 0.7); agentTrail.mesh.material.uniforms.uAlpha.value = st.agent;
 
   timeU.value = clockT; finalPass.uniforms.uTime.value = clockT;
   composer.render();
 
-  /* Reticles on the three suns during "Look". */
+  /* Look: brackets on the suns, names in a fixed column (a row on phones) with leader lines. */
   const ra = S.retAlpha || 0;
-  S.rets.forEach((el, i) => { if (ra <= 0.001) { el.style.opacity = 0; return; }
-    proj.copy(B[i]).project(camera); const sx = (proj.x + 1) / 2 * W, sy = (1 - proj.y) / 2 * H;
-    el.classList.toggle('flip', sx > W - 230); el.style.opacity = ra; el.style.transform = `translate3d(${sx.toFixed(1)}px, ${sy.toFixed(1)}px, 0)`; });
+  for (let i = 0; i < 3; i++) { proj.copy(B[i]).project(camera); scr[i][0] = (proj.x + 1) / 2 * W; scr[i][1] = (1 - proj.y) / 2 * H; }
+  if (ra <= 0.001) { S.rets.forEach(el => el.style.opacity = 0); S.tools.forEach(el => el.style.opacity = 0); if (S.leaders) S.leaders.style.opacity = 0; }
+  else {
+    S.leaders.style.opacity = ra;
+    const order = [0, 1, 2], ys = [], xs = [];
+    if (portrait) {
+      order.sort((a, b) => scr[a][0] - scr[b][0]);
+      const top = (hud.root.getBoundingClientRect().bottom - stage.getBoundingClientRect().top) + 18;
+      order.forEach((bi, slot) => {
+        const el = S.tools[bi], w = el.offsetWidth, h = el.offsetHeight, cx = W * (slot * 2 + 1) / 6, lx = Math.min(Math.max(cx - w / 2, 12), W - 12 - w);
+        el.style.transform = `translate3d(${lx.toFixed(1)}px, ${top.toFixed(1)}px, 0)`; el.style.opacity = ra;
+        const [bx, by] = scr[bi], sx = lx + w / 2, sy = top + h, mid = Math.max(sy + 14, Math.min(by - 34, sy + 60));
+        leaderEls[bi].setAttribute('d', `M${sx.toFixed(1)} ${sy.toFixed(1)}V${mid.toFixed(1)}L${bx.toFixed(1)} ${(by - 22).toFixed(1)}`);
+        leaderDots[bi].setAttribute('cx', sx.toFixed(1)); leaderDots[bi].setAttribute('cy', sy.toFixed(1));
+      });
+    } else {
+      order.sort((a, b) => scr[a][1] - scr[b][1]);
+      const maxX = Math.max(scr[0][0], scr[1][0], scr[2][0]), gap = 62, colX = Math.min(maxX + 90, W - 250);
+      let y = Math.max(96, Math.min(scr[order[0]][1] - 24, H * 0.58 - gap * 2));
+      order.forEach(bi => {
+        y = Math.max(y, scr[bi][1] - 24);
+        const el = S.tools[bi], h = el.offsetHeight, ly = Math.min(y, H * 0.6 - h);
+        el.style.transform = `translate3d(${colX.toFixed(1)}px, ${ly.toFixed(1)}px, 0)`; el.style.opacity = ra;
+        const [bx, by] = scr[bi], ey = ly + h / 2, elbow = colX - 28;
+        leaderEls[bi].setAttribute('d', `M${(bx + 22).toFixed(1)} ${by.toFixed(1)}L${elbow.toFixed(1)} ${ey.toFixed(1)}H${(colX - 4).toFixed(1)}`);
+        leaderDots[bi].setAttribute('cx', (colX - 4).toFixed(1)); leaderDots[bi].setAttribute('cy', ey.toFixed(1));
+        y = ly + gap;
+      });
+    }
+    S.rets.forEach((el, i) => { el.style.opacity = ra; el.style.transform = `translate3d(${scr[i][0].toFixed(1)}px, ${scr[i][1].toFixed(1)}px, 0)`; });
+  }
 
   { const el = S.retAi, a = S.aiAlpha || 0; el.style.opacity = a;
     if (a > 0.001) { proj.copy(HUB).project(camera); const sx = (proj.x + 1) / 2 * W, sy = (1 - proj.y) / 2 * H; el.classList.toggle('flip', sx > W - 230); el.style.transform = `translate3d(${sx.toFixed(1)}px, ${sy.toFixed(1)}px, 0)`; } }
 
-  /* HUD: the real numbers from the integrator. */
+  /* HUD: the real numbers. Distance is the rms gap between each sun and its place on the exact orbit. */
   if (still || clockT > hudNext) {
-    hudNext = clockT + 0.1;
-    const sys = E > 0.5 ? eight : chaos, drift = (energy(sys) - sys.E0) / Math.abs(sys.E0);
+    hudNext = clockT + 0.08;
+    const d = offOrbit(), holding = ctl.k < 0.01 && d < 0.02 && p > 0.8;
+    hud.d.textContent = d < 0.005 ? '0.00' : d.toFixed(2);
+    hud.bar.style.width = Math.min(100, d / 1.2 * 100).toFixed(1) + '%';
+    hud.k.textContent = Math.round(ctl.k * 100) + '%';
     hud.t.textContent = sys.t.toFixed(2);
-    hud.e.textContent = (drift >= 0 ? '+' : '−') + Math.abs(drift).toExponential(1).replace('e', '×10^').replace(/\^([+-]?)(\d+)/, (m, s, d) => '^' + (s === '-' ? '−' : '') + d);
-    const st = E < 0.02 ? 'Chaotic' : E < 0.985 ? 'Resolving' : 'Stable · figure-8';
-    hud.s.textContent = st; hud.root.dataset.state = E >= 0.985 ? 'stable' : 'chaos';
-    hud.n.textContent = `3 · dust ${DN.toLocaleString('en-CA')}`;
+    hud.s.textContent = holding ? 'Holds on its own' : ctl.k > 0.02 ? (d < 0.03 ? 'On the orbit' : 'Steering') : 'Chaotic';
+    hud.root.dataset.state = holding || (ctl.k > 0.02 && d < 0.03) ? 'stable' : 'chaos';
   }
 }
 
@@ -1404,7 +1536,8 @@ function tick(now) {
   raf = requestAnimationFrame(tick);
   const dt = Math.min((now - last) / 1000 || 0.016, 0.1); last = now;
   clockT += dt;
-  advance(Math.min(dt, 1 / 20) * 0.55);
+  scrollVel = lerp(scrollVel, Math.abs(S.p - lastP) / Math.max(dt, 1e-3), 1 - Math.exp(-dt * 8)); lastP = S.p;
+  advance(Math.min(dt, 1 / 20) * (0.55 + Math.min(1.6, scrollVel * 6)));
   frame(dt, false);
   /* Adaptive quality: drop resolution if frames run long, restore if they recover. */
   if (dt > 0.024) { slow++; fast = 0; } else { fast++; slow = Math.max(0, slow - 1); }
@@ -1415,14 +1548,15 @@ function sync() {
   const want = visible && !document.hidden && S.motion;
   if (want && !running) { running = true; last = performance.now(); raf = requestAnimationFrame(tick); }
   else if (!want && running) { running = false; cancelAnimationFrame(raf); }
-  if (!S.motion && visible) frame(0, true);
+  if (!S.motion && visible) { setStill(S.beat); frame(0, true); }
 }
 new IntersectionObserver(es => { visible = es[0].isIntersecting; sync(); }, { rootMargin: '100px' }).observe(sky);
 document.addEventListener('visibilitychange', sync);
 addEventListener('solenix:motion', sync);
-addEventListener('solenix:beat', () => { if (!S.motion) frame(0, true); });
+addEventListener('solenix:beat', () => { if (!S.motion) setTimeout(() => { setStill(S.beat); frame(0, true); }, 0); });
 addEventListener('resize', () => { resize(); if (!S.motion) frame(0, true); });
 resize();
+if (!S.motion) setStill(S.beat);
 frame(0.016, !S.motion);
 stage.classList.add('gl-on');
 sync();
