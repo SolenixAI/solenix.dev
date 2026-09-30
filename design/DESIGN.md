@@ -1,4 +1,4 @@
-# SolenixAI design system · v2
+# Solenix design system · v3
 
 The system behind [solenix.dev](https://solenix.dev). It is not a new brand — it
 is the one already live, given a display voice, a signature visual language, and
@@ -10,7 +10,9 @@ permission to look expensive.
 | --- | --- |
 | `DESIGN.md` | This document. Principles, tokens, voice. |
 | `tokens.css` | The tokens as CSS custom properties. The only place a hex may appear. |
-| `index.html` | The showcase. Every token and component, rendered, in both themes. |
+| `index.html` | The v2 showcase. Every v2 token and component, rendered, in both themes. |
+| `system-v3.html` | The v3 showcase. The scene, night sections and the v3 page components. |
+| `home-v3.html` | The reference build of the scene. When this document and it disagree, this document wins. |
 | `assets/brand/` | The shipped logo and avatar, copied from `/brand/out/`. |
 
 **What shipped in v1, and stays**
@@ -20,7 +22,30 @@ mark. Every token name from v1 and from `/assets/site.css` survives unchanged
 and still means the same thing, so `site.css` keeps working if you drop
 `tokens.css` in front of it. The voice is untouched.
 
-## What v2 changes, and why
+## What v3 changes, and why
+
+v2 gave the brand light. `home-v3.html` gave it a **story**: a small business is
+a three-body problem, and we find the stable orbit. v3 turns that page into rules,
+so every future surface tells the same story in the same materials.
+
+| v2 | v3 |
+| --- | --- |
+| Signature is "light and orbit" as a texture | Signature is a story: chaos settling into the figure-eight. Every page ends settled. Section 15. |
+| The scene lived in one page's code | The sky scene is specified: layers, physics, framing, labels, budget, fallbacks. Section 16. |
+| The figure-eight was drawn by eye | The figure-eight is a brand asset with real path data from the physics. Section 17. |
+| Type capped at `--fs-statement` (6rem) | Two scene-only sizes above it: `--fs-hero` and `--fs-beat`. Section 2. |
+| Orbits ran forever with no control | Any page with motion longer than 5s shows a Motion switch. That is WCAG 2.2.2, Level A. Section 9. |
+| Light and dark everywhere | **Night sections**: a scene is dark in both themes, scoped with `data-theme`. The rest of the page follows the reader. Section 16. |
+| Placeholders were improvised per page | Three honest placeholders: the "to confirm" chip, the Example tag and the photo slot. Section 18. |
+| "One solid ember per screen" | One action per page, "Book a call", repeated where it makes sense, sticky on phones, never two in view. Section 19. |
+| The lockup read "SolenixAI" | The lockup reads **Solenix**. Section 12. |
+
+**Weak spots in the reference build, now rules.** Scene labels could collide
+during "Look"; the figure-eight clipped at the top on portrait screens; the nav
+"Client sign in" looked letter-spaced (a `&nbsp;` inside a flex gap). Sections
+16 and 18 say how each is prevented.
+
+## What v2 changed, and why
 
 v1 was tuned for *calm*, and its own rules made everything flat. Four of them
 did the damage, and all four are retired here:
@@ -136,6 +161,8 @@ layout.
 
 | Token | Value | Tracking | Weight | Use |
 | --- | --- | --- | --- | --- |
+| `--fs-beat` | `clamp(3.6rem, 12.5vw, 11rem)` | `-0.055em` | 800 | v3. One word per story beat, inside a scene only. |
+| `--fs-hero` | `clamp(2.6rem, 7.4vw, 8.25rem)` | `-0.045em` | 700 | v3. The headline over a scene. One per page. |
 | `--fs-statement` | `clamp(2.75rem, 10vw, 6rem)` | `-0.04em` | 800 | The big-statement archetype. One per page. |
 | `--fs-display` | `clamp(2.4rem, 7.2vw, 4.5rem)` | `-0.03em` | 700 | The headline that owns a page |
 | `--fs-h1` | `clamp(1.9rem, 5vw, 2.6rem)` | `-0.015em` | 700 | Page title |
@@ -509,6 +536,11 @@ static visual instead, and it says so.
 **6. Card grid.** The v1 workhorse, kept. Equal cards, 1 / 2 / 3 columns. For
 genuinely parallel items — services, steps, plans. Not for everything else.
 
+**7. Night sky (v3).** A full-bleed WebGL scene in a night section, with the
+headline and one action over it. It replaces the full-bleed feature at the top of
+a page, never sits mid-page, and counts as that page's full-bleed feature.
+Specified in section 16. *One per page.*
+
 ---
 
 ## 7. Radius
@@ -606,6 +638,20 @@ greys the label is a bug in this system.
 
 Nothing is load-bearing on animation. Every number, state and control is present
 and legible with motion fully disabled.
+
+### The Motion switch (v3)
+
+Reduced motion is for people who ask for it. Everyone else still needs a way to
+stop motion that runs longer than five seconds — WCAG 2.2.2 is Level A, and the
+v2 orbits broke it. So:
+
+- Any page with a scene, an orbit, a pulse or a looping trace shows a **Motion**
+  switch in the nav: `role="switch"`, `aria-checked`, 44px tall.
+- It defaults to on, or off when `prefers-reduced-motion: reduce` is set, and the
+  choice persists in `localStorage` under `solenix-motion`.
+- Off means off: the scene freezes on a still frame, SVG animations pause
+  (`pauseAnimations()`), CSS animations pause, typing demos finish instantly.
+- The switch never changes layout. It changes only whether things move.
 
 ---
 
@@ -705,7 +751,7 @@ on the upper right; do not move it. v2 changes nothing here — the mark was nev
 the problem.
 
 Clearspace is half the mark's width on every side. The lockup pairs the mark with
-"SolenixAI" in `--font-display` at `--fw-brand` and `-0.01em`, separated by
+"Solenix" in `--font-display` at `--fw-brand` and `-0.01em`, separated by
 `--space-2`. Minimum size is 20px, below which the dot stops resolving — use the
 sun alone.
 
@@ -774,6 +820,12 @@ makes it a label rather than shouting.
 **10. Cut the warm-up.** "We're excited to announce", "In today's fast-paced
 world", "Let's dive in" — delete and start at the point.
 
+**11. Canadian spelling.** Colour, centre, organize, cheque, licence (noun).
+The business is in St. John's; the reader is too.
+
+**12. Two lines, most.** No paragraph runs past two lines at its column width. If
+it does, cut it or split it — do not shrink the type.
+
 ### Words we use, and don't
 
 | Use | Not |
@@ -816,3 +868,253 @@ world", "Let's dive in" — delete and start at the point.
    *through* the glass, not against the page.
 6. Turn on reduced motion and read the whole page. Every number must be there.
 7. If you change a colour, change `brand/build.py` and re-run it the same day.
+8. Name the page's one job before you design it (section 19), and make sure
+   every section either earns that job or explains it.
+9. If the page has a scene, walk section 16's checklist: framing at 375 and
+   1440, labels never touching, the Motion switch, the still frame, the fallback.
+10. Every price, count and photo you do not have yet is a placeholder from
+    section 18. Never a guess.
+
+---
+
+## 15. The story: chaos to orbit (v3)
+
+The brand is one idea told three ways. A small business with a dozen tools is a
+**three-body problem**: everything pulls on everything, nothing settles, and
+there is no general fix. Rare stable solutions exist — the Chenciner–Montgomery
+**figure-eight**, where three equal bodies chase each other forever on one loop.
+Solenix finds that orbit for a business and keeps it there.
+
+| State | What it means | Where it may appear |
+| --- | --- | --- |
+| **Chaos** | The owner's problem. Tools pulling on each other. | Hero and problem moments only. Never inside the product. |
+| **Resolving** | Our work: Look, Connect, Teach, Look after. | The scroll story; how-we-work sections. |
+| **Stable orbit** | The outcome. One system, looked after. | Everywhere else: portal, closing, footer, vertical pages. |
+
+**Every page ends settled.** A page may open in chaos; it may not close in it. The
+portal, which is the outcome itself, never shows chaos at all.
+
+**The motif ladder.** Use the smallest one that says enough.
+
+1. **The mark** — sun, one ring, one agent dot. One system, running. Every page.
+2. **The figure-eight** — three things in balance. The closing flourish, a
+   fallback, an empty state. Section 17.
+3. **The three-body scene** — the whole story in WebGL. One per page, top only.
+
+**Beats map to the service.** The story's three beats are the service steps.
+
+| Beat | On screen | Service |
+| --- | --- | --- |
+| 01 Look | Reticles and labels land on each sun | We map every tool, login and bill |
+| 02 Connect | Arcs join the suns to each other and to an AI point | We wire them together and to Claude or ChatGPT |
+| 03 Orbit | The suns settle on the figure-eight; the agent dot starts riding it | One stable system, taught and looked after |
+
+---
+
+## 16. The sky scene (v3)
+
+The one place the brand is allowed to be spectacular. It earns that by being
+**real**: a physics simulation, not a canned animation, reporting its own honest
+numbers.
+
+### Structure
+
+A `<section class="sky" data-theme="dark">` containing a `position: sticky`
+stage, never `position: fixed`. The section is `overflow: clip` (not `hidden`,
+which breaks sticky) and `isolation: isolate`, with a `--radius-2xl` bottom edge
+where it meets the page. Inside the stage, in `--z-*` order: the canvas
+(`--z-sky`), the `--scene-veil` (`--z-texture`), then text and controls
+(`--z-content`).
+
+**Night section.** `data-theme="dark"` on the section makes every token inside
+it dark, in both themes. It is the only sanctioned way to force a theme, and it
+is limited to scene sections. Everything after it follows the reader's theme.
+The hand-off uses `--page-bg`, which still holds the reader's page colour.
+
+### Layers, back to front
+
+1. **Starfield** — two shells of points at different depths, for parallax.
+2. **Spacetime grid** — a plane dipped by the summed gravitational potential of
+   the three suns. Lines brighten and warm toward `--sun2` near the wells, fade
+   by radius, and fade where the line pitch drops under a pixel (no moiré).
+   Ripples only while chaotic.
+3. **Dust** — thousands of test particles under the same gravity, respawning
+   when captured. In the orbit beat they are pulled onto the loop.
+4. **Trails** — tapered, camera-facing ribbons. History is pushed by
+   *simulation* time, so a full ribbon is exactly one period of the figure-eight.
+5. **Suns** — billboarded plasma: granulation, limb darkening, corona with rays,
+   a thin anamorphic streak. HDR, so bloom picks them up and the grid does not.
+6. **Arcs and the AI point** — Connect beat only. Pulses travel along them.
+7. **The agent dot** — the mark's dot, riding the loop once it is stable.
+
+**Post.** Bloom (strength about 0.6, threshold about 0.9), ACES tone mapping at
+exposure about 0.92, chromatic fringe at the edges only, vignette, grain no more
+than 0.05. If the suns read as white blobs, bloom is too strong — detail in the
+plasma is the test.
+
+### Physics honesty
+
+- Velocity Verlet, G = m = 1, fixed step 0.004, at `--sim-speed`.
+- Chaos is softened (ε 0.35) and held by a weak containment force so no sun
+  leaves the frame. The energy readout includes that force.
+- The figure-eight uses the published initial conditions, unsoftened.
+- The scroll blend from chaos to the orbit is visual, not physical, and the HUD
+  says **Resolving** while it happens.
+- The HUD shows only numbers the integrator produced: time, energy drift,
+  state. Nothing decorative that looks like data.
+
+### Colour
+
+Shaders never contain a hex. The scene reads `--bg`, `--text`, `--sun1`,
+`--sun2`, `--ring` and `--chart-5` from computed style *inside the night
+section* and derives the three suns the same way `--scene-sun-a/b/c` do.
+
+### Framing — the whole loop, always
+
+The camera fits the scene; the scene never fits the camera by luck.
+
+- Desktop: the system sits right of the headline (view offset), camera tilted
+  about 55° from face-on, drifting slowly, rising toward top-down as it settles.
+- Portrait: azimuth turns 90° so the loop's long axis runs into depth; the system
+  sits above the text block.
+- Each frame, probe the loop (or the chaos radius) padded by a corona and solve
+  the camera distance so every probe lands inside a safe box: below the nav,
+  above the text block, inside the side margins. **Clipping the loop at any
+  aspect ratio is a bug** — it was one in the reference build.
+
+### Labels — never touching
+
+- Reticle brackets (`--reticle-size`, `--reticle-size-sm` under 720px) sit on
+  each body. Labels sit beside them on `--label-bg`.
+- Labels are laid out every frame: sort by screen y, push each down to clear the
+  one above by `--label-gap`, flip to the other side within 230px of an edge,
+  and keep all of them inside the viewport. A leader line joins a displaced
+  label to its reticle.
+- Under 420px, labels drop their second line and show the name only.
+
+### Budget
+
+Device pixel ratio up to `--scene-dpr-max`, stepping down to 1 after sustained
+slow frames and back up when they recover. Render only while the section is on
+screen, the tab is visible and Motion is on. Dust about 7,000 on desktop and
+3,200 on small screens. Target 60fps.
+
+### Still, fallback, no script
+
+- **Motion off** (or reduced motion): render one frame. Story beats swap as
+  stills, with no in-between frames.
+- **No WebGL or the module fails**: a static SVG figure-eight (section 17) with
+  three suns, on the night ground.
+- **No JavaScript**: nothing pins; hero and beats read top to bottom.
+
+### Variants
+
+| Variant | Use | Shape |
+| --- | --- | --- |
+| **Full story** | Home | Hero plus pinned beats, about 420svh, chaos → orbit |
+| **Calm** | Vertical pages (law, and later ones) | Hero only, 100svh, already settled, no reticles or arcs, less dust |
+
+---
+
+## 17. The figure-eight (v3)
+
+The settled system, drawn from the physics — never a lemniscate, never an ∞
+glyph. This is body three's path over one period, sampled 96 times by time, in
+a `0 0 600 220` viewBox:
+
+```
+M300 110L283.4 125.3L266.5 140.3L249.2 154.7L231.2 168L212.6 179.9L193.3 189.9L173.7 197.8L154.1 203.2L134.8 206.1L116.5 206.6L99.4 204.8L83.8 201.2L69.9 196.2L57.7 190.1L47.1 183.1L38.1 175.6L30.5 167.8L24.2 159.7L19.1 151.5L15 143.2L11.9 134.9L9.8 126.6L8.5 118.3L8.1 110L8.5 101.7L9.8 93.4L11.9 85.1L15 76.8L19.1 68.5L24.2 60.3L30.5 52.2L38.1 44.4L47.1 36.9L57.7 29.9L69.9 23.8L83.8 18.8L99.4 15.2L116.5 13.4L134.8 13.9L154.1 16.8L173.7 22.2L193.3 30.1L212.6 40.1L231.2 52L249.2 65.3L266.5 79.7L283.4 94.7L300 110L316.6 125.3L333.5 140.3L350.8 154.7L368.8 168L387.4 179.9L406.7 189.9L426.3 197.8L445.9 203.2L465.2 206.1L483.5 206.6L500.6 204.8L516.2 201.2L530.1 196.2L542.3 190.1L552.9 183.1L561.9 175.6L569.5 167.8L575.8 159.7L580.9 151.5L585 143.2L588.1 134.9L590.2 126.6L591.5 118.3L591.9 110L591.5 101.7L590.2 93.4L588.1 85.1L585 76.8L580.9 68.5L575.8 60.3L569.5 52.2L561.9 44.4L552.9 36.9L542.3 29.9L530.1 23.8L516.2 18.8L500.6 15.2L483.5 13.4L465.2 13.9L445.9 16.8L426.3 22.2L406.7 30.1L387.4 40.1L368.8 52L350.8 65.3L333.5 79.7L316.6 94.7Z
+```
+
+**Anatomy.** A base stroke of `--ring` at 28% opacity with
+`vector-effect: non-scaling-stroke`; one running dash (`pathLength="1000"`,
+dasharray `110 890`, 14s linear); three suns filled with the mark's radial
+gradient, a third of a lap apart (`--orbit-eight`, begins at 0, −⅓ and −⅔ of the
+period); the agent dot in `--ring`, lapping at `--agent-lap`.
+
+**Rules.** One per page. It is the closing flourish, the scene's fallback, or an
+empty state — never decoration mid-page. It sits above or beside text, never
+behind body copy: a sun passing under a sentence breaks legibility. The Motion
+switch pauses it.
+
+---
+
+## 18. Page components (v3)
+
+Everything below is in the reference build and rendered in `system-v3.html`.
+
+**Beat heading.** A mono counter (`01 / 03`, `--accent-text`, with a short
+`--ring` rule after it), one word at `--fs-beat` with `--track-beat` and
+`--lh-hero`, and one line of `--fs-lede` in `--muted`, 26rem wide at most.
+
+**HUD readout.** A `<dl>` in `--font-mono` at `--fs-2xs`: terms in `--faint`
+caps, values in `--text` with `tabular-nums`, right-aligned. The state carries a
+dot and a word — `--warn` for Chaotic and Resolving, `--ok` for Stable. Real
+values only (section 16). Under 720px it shows three pairs in a row under the nav.
+
+**Reticle label.** Four 14px corner brackets in `--reticle`, and a label on
+`--label-bg`: name in `--text` caps, detail in `--muted`. Laid out by the rules in
+section 16. Decorative to assistive tech (`aria-hidden`), because the same facts
+are in the beat text.
+
+**Motion switch.** Section 9. A pill with the word "Motion" and a small track
+whose dot slides and glows `--ring` when on. Under 420px the word hides and the
+accessible name stays.
+
+**"To confirm" chip.** `--font-mono`, `--tbd-fg` on `--tbd-bg`, 1px dashed
+`--tbd-line`, `--radius-xs`. Reads "amount to confirm", "to confirm", "date to
+confirm". Every price, count or date not yet committed is this chip — never a
+plausible-looking guess.
+
+**Example tag.** A dashed `--example-line` pill in mono caps reading "Example",
+on every panel that shows sample data. It does not license invented metrics.
+State situations (times, names, what happened), never performance claims.
+
+**Photo slot.** Until a real photo exists: a dashed circle with initials and the
+words "Photo to come". Never a stock face, never an illustration.
+
+**Trust row.** Facts beside the primary action, in `--fs-sm`: founder's name with
+the photo slot, "St. John's, NL", "Fixed price in writing", "You own
+everything". Nothing on it may be unverifiable.
+
+**Settling panel.** A UI preview tilted in 3D that straightens as it scrolls into
+view — the story in miniature. From `rotateX(16deg) rotateY(-18deg)
+rotateZ(4deg)` to roughly `4 / -6 / 1`. Half the amplitude under 720px; fixed
+at the settled end with Motion off.
+
+**Self-typing demo.** The full text is in the DOM for screen readers; the typed
+copy is a separate `aria-hidden` span. Steps show a spinner and then a check.
+It starts when it scrolls into view, has a "Play it again" button (44px), and
+finishes instantly with Motion off.
+
+**Sticky action.** On phones, one "Book a call" bar pinned to the bottom at
+`--z-sticky`, shown only when no inline primary action is on screen.
+
+**Nav buttons.** Never put `&nbsp;` inside a flex container with a `gap`: the gap
+lands between the words and reads as letter-spacing. Use two labels, a long one
+and a short one, and switch them with a media query.
+
+---
+
+## 19. Conversion and trust (v3)
+
+A page is designed backwards from **one measurable job**. The homepage's job is
+booked calls. Every section either earns that job or explains it.
+
+- **Say who it is for, fast.** The headline or its eyebrow names the reader —
+  small businesses in Newfoundland & Labrador — in under eight words, without
+  losing the three-body line.
+- **One action.** "Book a call", repeated at the logical points (hero, after the
+  story, after pricing, closing), sticky on phones, never two in view at once.
+  Everything else is a ghost button or a link.
+- **True trust only.** Founder's name and photo slot, St. John's, "Fixed price in
+  writing", "You own everything". No client logos, no testimonials, no invented
+  metrics, no scarcity (no "limited spots", no deadlines, no queues).
+- **Prices are flat and itemized.** A fixed setup price and a flat monthly price,
+  each with what is included, shown as "to confirm" chips until they are set.
+- **ROI comes from the reader.** A calculator uses their inputs — people, hours
+  per week, hourly rate — shows the formula and is labelled an estimate.
+- **AI drafts; a person decides.** Never "replaces" a lawyer, accountant or
+  anyone else. It drafts and prepares; the owner or their professional checks.
+- **Industries.** Vertical pages (law first) use the calm scene and the same
+  components. The homepage links to them in an Industries strip.

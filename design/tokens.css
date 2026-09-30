@@ -1,5 +1,5 @@
 /* ============================================================================
-   SolenixAI design tokens · v2
+   Solenix design tokens · v3
    ----------------------------------------------------------------------------
    One source of truth for colour, light, type, space, radius, shadow, motion
    and data visualisation.
@@ -8,7 +8,9 @@
      Every token name v1 and /assets/site.css use (--bg, --bg2, --surface,
      --text, --muted, --faint, --line, --accent, --accent-ink, --sun1, --sun2,
      --ring, --shadow …) still exists and still means the same thing. The
-     palette is unchanged. v2 adds light, not colour.
+     palette is unchanged. v2 added light, not colour. v3 adds the scene: night
+     sections, the two display sizes above --fs-statement, and the honest-
+     placeholder and scene-label tokens. Every v2 name still means the same.
 
    Theming
      Light is the default. Dark arrives via prefers-color-scheme.
@@ -23,6 +25,7 @@
      §5  radius
      §6  motion
      §7  focus
+     §8  scene, night sections and page components (v3)
      Anything that can be derived with color-mix() from a §1 token lives in §2
      and is written exactly once.
 
@@ -344,6 +347,7 @@
   --z-texture: 1;
   --z-content: 2;
   --z-nav: 20;
+  --z-sticky: 25;                     /* v3 · the one sticky CTA on phones */
   --z-skip: 30;
 }
 
@@ -363,6 +367,8 @@
     monospace;
 
   /* Size. clamp() so 375px and 1920px both land without a media query. */
+  --fs-beat: clamp(3.6rem, 12.5vw, 11rem);      /* v3 · story beat word, scene only */
+  --fs-hero: clamp(2.6rem, 7.4vw, 8.25rem);     /* v3 · scene headline, one per page */
   --fs-statement: clamp(2.75rem, 10vw, 6rem);   /* big statement, one per page */
   --fs-display: clamp(2.4rem, 7.2vw, 4.5rem);   /* page-owning headline */
   --fs-h1: clamp(1.9rem, 5vw, 2.6rem);
@@ -385,6 +391,7 @@
   --fw-black: 800;
 
   /* Line height */
+  --lh-hero: 0.98;                    /* v3 · --fs-hero and --fs-beat */
   --lh-display: 1.04;
   --lh-heading: 1.2;
   --lh-body: 1.5;
@@ -392,6 +399,8 @@
 
   /* Tracking. Negative as type grows, positive as it shrinks into a label.
      Sora needs less negative tracking at size than the system stack did. */
+  --track-beat: -0.055em;             /* v3 */
+  --track-hero: -0.045em;             /* v3 */
   --track-statement: -0.04em;
   --track-display: -0.03em;
   --track-heading: -0.015em;
@@ -502,4 +511,50 @@
 :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
   outline: var(--focus-width) solid var(--focus-color);
   outline-offset: var(--focus-offset);
+}
+
+/* ── 8. Scene, night sections and page components (v3) ───────────────────── */
+/* A night section is a scene section scoped with data-theme="dark", so it is
+   dark in both themes while the rest of the page follows the reader.
+   --page-bg is resolved here at :root, so inside a night section it still
+   holds the reader's page colour — use it for the hand-off at the bottom. */
+
+:root {
+  --page-bg: var(--bg);
+
+  /* The three suns. CSS and SVG use these. WebGL reads --sun1, --sun2 and
+     --ring from computed style and derives the same mixes in script. */
+  --scene-sun-a: color-mix(in oklch, var(--sun1) 65%, var(--sun2));
+  --scene-sun-b: var(--sun2);
+  --scene-sun-c: color-mix(in oklch, var(--sun1) 80%, white);
+
+  /* Text over a scene always sits on the veil. Never on the bare canvas. */
+  --scene-veil:
+    linear-gradient(to top,
+      color-mix(in oklch, var(--bg) 92%, transparent) 0%,
+      color-mix(in oklch, var(--bg) 40%, transparent) 30%,
+      transparent 52%),
+    linear-gradient(100deg,
+      color-mix(in oklch, var(--bg) 70%, transparent) 0%,
+      transparent 48%);
+
+  /* Scene labels: reticle brackets on a body, a backed label beside it. */
+  --reticle: var(--ring);
+  --reticle-size: 84px;
+  --reticle-size-sm: 60px;
+  --label-bg: color-mix(in oklch, var(--bg) 72%, transparent);
+  --label-gap: 8px;                   /* minimum space between stacked labels */
+
+  /* Honest placeholders. A number we have not committed to is a chip. */
+  --tbd-fg: var(--warn);
+  --tbd-bg: var(--warn-tint);
+  --tbd-line: color-mix(in oklch, var(--warn) 55%, transparent);
+  --example-line: var(--line-strong);
+
+  /* Scene motion. Periods in seconds; the sim speed is read by script. */
+  --orbit-eight: 21s;                 /* one lap of a sun on the figure-eight */
+  --agent-lap: 9s;                    /* the agent dot laps faster than the suns */
+  --pulse-live: 2.4s;                 /* the Live dot's ring */
+  --sim-speed: 0.55;                  /* simulation time units per second */
+  --scene-dpr-max: 2;                 /* never render the scene above 2× */
 }

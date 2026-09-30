@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "system-v3.html",
+  "entry": "system-v3.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-09-30T21:05:53.390Z",
+  "updatedAt": "2026-09-30T21:05:53.390Z",
+  "metadata": {
+    "inferred": true,
+    "reconciled": true
+  }
+}
