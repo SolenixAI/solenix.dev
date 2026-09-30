@@ -347,7 +347,9 @@ html[data-motion="on"] .wire li.flow::after { animation: flow 1.1s var(--ease-in
 .gets li { display: grid; grid-template-columns: 7.5rem 1fr; gap: var(--space-3); align-items: baseline; color: var(--muted); }
 .gets b { font: var(--fw-semibold) var(--fs-xs)/1.3 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--accent-text); }
 @media (max-width: 999px) { .gets li { grid-template-columns: 1fr; gap: 2px; } }
-@media (max-width: 999px) {
+@media (max-width: 999px) { .demo-grid .wire-wrap { order: -1; } }
+/* Tablets: the four stops as one row. Phones keep the vertical list, so every name sits on one line with its line of detail. */
+@media (min-width: 641px) and (max-width: 999px) {
   .wire { grid-template-columns: repeat(4, 1fr); }
   .wire li { grid-template-columns: 1fr; justify-items: center; text-align: center; padding: 0; gap: var(--space-2); }
   .wire .nd { grid-row: auto; }
@@ -356,8 +358,8 @@ html[data-motion="on"] .wire li.flow::after { animation: flow 1.1s var(--ease-in
   .wire li + li::before { left: -50%; top: 22px; width: 100%; height: 1px; }
   .wire li + li::after { top: 19px; left: -50%; }
   @keyframes flow { from { left: -50%; opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } to { left: 40%; opacity: 0; } }
-  .demo-grid .wire-wrap { order: -1; }
 }
+@media (max-width: 640px) { .wire li { padding-block: var(--space-3); } .wire small { font-size: var(--fs-xs); } }
 
 /* ── What it could be worth: the owner's own numbers, shown as a range ── */
 .roi-grid { display: grid; gap: var(--space-7); align-items: start; }
@@ -386,7 +388,10 @@ html[data-motion="on"] .wire li.flow::after { animation: flow 1.1s var(--ease-in
 @media (max-width: 640px) { .roi-out { grid-template-columns: 1fr; } .roi-k { grid-template-columns: 7.5rem 1fr; align-items: baseline; column-gap: var(--space-3); } .roi-k small { grid-column: 2; } }
 
 /* ── Promises: four equal columns, one calm step in size from title to line. ── */
-.promises { list-style: none; padding: 0; margin: 0; display: grid; gap: 0; border-top: 1px solid var(--line-strong); }
+/* The scene keeps moving around the list, but the words sit on a calm, near-opaque panel. */
+.promises { list-style: none; margin: 0; display: grid; gap: 0; padding: 0 var(--space-5); background: color-mix(in oklch, var(--bg) 88%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid var(--line); border-radius: var(--radius-2xl); box-shadow: var(--shadow-md), var(--glass-inset); }
+.promises li:last-child { border-bottom: 0; }
+@media (min-width: 640px) and (max-width: 999px) { .promises li:nth-last-child(2) { border-bottom: 0; } }
 @media (min-width: 640px) { .promises { grid-template-columns: 1fr 1fr; } }
 @media (min-width: 1000px) { .promises { grid-template-columns: repeat(4, 1fr); } }
 .promises li { display: grid; gap: var(--space-3); align-content: start; padding: var(--space-6) var(--space-5) var(--space-6) 0; border-bottom: 1px solid var(--line); }
@@ -755,14 +760,12 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
 </section>
 </main>
 
-<div class="hud" data-od-id="sim-hud" role="group" aria-label="Live simulation readout">
-  <p class="hud-big"><span class="hud-k">Off the stable orbit</span><span class="hud-v" data-hud="d">—</span></p>
+<div class="hud" data-od-id="sim-hud" role="group" aria-label="How settled the three tools are right now">
+  <p class="hud-big"><span class="hud-k">How settled</span><span class="hud-v" data-hud="d">—</span></p>
   <div class="hud-bar" aria-hidden="true"><b data-hud="bar"></b></div>
   <dl>
-    <dt>Steering</dt><dd data-hud="k">0%</dd>
-    <dt>State</dt><dd><span class="state" data-hud="s">Chaotic</span></dd>
-    <dt>t</dt><dd data-hud="t">0.00</dd>
-    <dt>Step</dt><dd>Verlet · dt 0.004</dd>
+    <dt>Right now</dt><dd><span class="state" data-hud="s">Pulling apart</span></dd>
+    <dt>Our help</dt><dd data-hud="k">None yet</dd>
   </dl>
 </div>
 
@@ -1031,7 +1034,7 @@ import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 const S = window.solenix;
 const stage = document.querySelector('.world'), canvas = document.getElementById('gl');
 const q = s => document.querySelector(s);
-const hud = { t: q('[data-hud="t"]'), d: q('[data-hud="d"]'), k: q('[data-hud="k"]'), s: q('[data-hud="s"]'), bar: q('[data-hud="bar"]'), root: q('.hud') };
+const hud = { d: q('[data-hud="d"]'), k: q('[data-hud="k"]'), s: q('[data-hud="s"]'), bar: q('[data-hud="bar"]'), root: q('.hud') };
 
 /* Colours come from tokens.css — resolved inside the dark sky. */
 const css = getComputedStyle(document.documentElement);
@@ -1505,11 +1508,13 @@ function frame(dtReal, still) {
   /* HUD: the real numbers. Distance is the rms gap between each sun and its place on the exact orbit. */
   if (still || clockT > hudNext) {
     hudNext = clockT + 0.08;
-    hud.d.textContent = d < 0.005 ? '0.00' : d.toFixed(2);
-    hud.bar.style.width = Math.min(100, d / 1.2 * 100).toFixed(1) + '%';
-    hud.k.textContent = Math.round(ctl.k * 100) + '%';
-    hud.t.textContent = sys.t.toFixed(2);
-    hud.s.textContent = (holding || (still && sc.order > 0.9 && sc.k < 0.01)) ? 'Holds on its own' : ctl.k > 0.02 ? (d < 0.03 ? 'On the orbit' : 'Steering') : 'Chaotic';
+    /* Plain words: how settled the three tools are (from the real distance to the orbit), and how much we're helping. */
+    const settled = Math.round(Math.max(0, 1 - d / 1.8) * 100);
+    hud.d.textContent = (d < 0.005 ? 100 : Math.min(99, settled)) + '%';
+    hud.bar.style.width = (d < 0.005 ? 100 : settled) + '%';
+    const help = ctl.k < 0.02 ? (sc.order > 0.9 ? 'Not needed' : 'None yet') : ctl.k > 0.6 ? 'Hands on' : 'Guiding';
+    hud.k.textContent = help;
+    hud.s.textContent = (holding || (still && sc.order > 0.9 && sc.k < 0.01)) ? 'Runs on its own' : ctl.k > 0.02 ? (d < 0.03 ? 'Working together' : 'Coming together') : 'Pulling apart';
     hud.root.dataset.state = holding || (still && sc.order > 0.9) || (ctl.k > 0.02 && d < 0.03) ? 'stable' : 'chaos';
   }
 }
