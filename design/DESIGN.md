@@ -45,6 +45,7 @@ The system behind solenix.dev. Solenix is one tech expert for small businesses i
 - **Tone:** Like a competent neighbour who explains things properly. Warm, direct, never salesy, never talking down. The reader runs a shop, a clinic, a law firm or a trade — smart and busy, not technical. Short sentences, one idea each, no paragraph past two lines. Second person, active voice, sentence case, Canadian spelling.
 
 ### Messaging pillars
+- Every claim lands on one of three things an owner cares about: **time saved, money saved, or money made** (cost × latency). Say which one, in their numbers where we have them.
 - Your business is a three-body problem: a dozen tools pulling on each other. We find the stable orbit and keep it there.
 - One tech expert for small businesses in Newfoundland & Labrador — we rebuild your website, host it and look after it every month.
 - AI your team actually uses: we set it up inside the tools you already have and teach you and your staff to get real value from it every day.
