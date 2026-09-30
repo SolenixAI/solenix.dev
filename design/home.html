@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Solenix — Your business is a three-body problem</title>
-<meta name="description" content="One tech expert for small businesses in St. John's. We connect the tools you already have, wire them to AI, teach your team and keep it running for a flat monthly fee.">
+<meta name="description" content="One AI at the centre of the tools you already use, set up and taught by a St. John's tech expert. Hours back, lower costs, more sales.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400..800&display=swap">
@@ -358,6 +358,32 @@ html[data-motion="on"] .wire li.flow::after { animation: flow 1.1s var(--ease-in
   .demo-grid .wire-wrap { order: -1; }
 }
 
+/* ── What it could be worth: the owner's own numbers, shown as a range ── */
+.roi-grid { display: grid; gap: var(--space-7); align-items: start; }
+@media (min-width: 1000px) { .roi-grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--space-8); } }
+.roi-copy { display: grid; gap: var(--space-5); }
+.roi-note { color: var(--muted); font-size: var(--fs-sm); max-width: 26rem; }
+.roi { background: var(--surface); backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); border: 1px solid var(--line); border-radius: var(--radius-2xl); box-shadow: var(--shadow-lg), var(--glass-inset); padding: clamp(var(--space-5), 3vw, var(--space-7)); display: grid; gap: var(--space-6); }
+.roi-in { display: grid; gap: var(--space-5); }
+.roi-f { display: grid; gap: var(--space-2); font-size: var(--fs-sm); font-weight: var(--fw-semibold); }
+.roi-row { display: grid; grid-template-columns: 1fr 4.5rem; gap: var(--space-4); align-items: center; }
+.roi-row output { font: var(--fw-bold) var(--fs-h3)/1 var(--font-display); text-align: right; font-variant-numeric: tabular-nums; }
+.roi input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: var(--tap-min); background: transparent; cursor: pointer; margin: 0; --fill: 30%; }
+.roi input[type=range]::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; background: linear-gradient(90deg, var(--sun1), var(--sun2)) 0 / var(--fill) 100% no-repeat, var(--chart-track); }
+.roi input[type=range]::-moz-range-track { height: 4px; border-radius: 2px; background: var(--chart-track); }
+.roi input[type=range]::-moz-range-progress { height: 4px; border-radius: 2px; background: linear-gradient(90deg, var(--sun1), var(--sun2)); }
+.roi input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; margin-top: -9px; border-radius: 50%; background: var(--text); border: 4px solid var(--accent); box-shadow: 0 0 14px color-mix(in srgb, var(--ring) 60%, transparent); }
+.roi input[type=range]::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: var(--text); border: 4px solid var(--accent); }
+.roi input[type=range]:focus-visible { outline: var(--focus-width) solid var(--focus-color); outline-offset: 2px; border-radius: var(--radius-pill); }
+.roi-out { display: grid; gap: var(--space-3); grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--line); padding-top: var(--space-5); }
+.roi-k { display: grid; gap: 6px; align-content: start; }
+.roi-k b { font: var(--fw-bold) clamp(1.35rem, 2.4vw, 2rem)/1.05 var(--font-display); letter-spacing: var(--track-stat); font-variant-numeric: tabular-nums; }
+.roi-k:first-child b { color: var(--accent-text); }
+.roi-k small { color: var(--muted); font-size: var(--fs-xs); }
+.roi-how { font-size: var(--fs-xs); color: var(--muted); line-height: 1.6; }
+.roi-how .tag { margin-right: var(--space-2); }
+@media (max-width: 640px) { .roi-out { grid-template-columns: 1fr; } .roi-k { grid-template-columns: 7.5rem 1fr; align-items: baseline; column-gap: var(--space-3); } .roi-k small { grid-column: 2; } }
+
 /* ── Promises: four equal columns, one calm step in size from title to line. ── */
 .promises { list-style: none; padding: 0; margin: 0; display: grid; gap: 0; border-top: 1px solid var(--line-strong); }
 @media (min-width: 640px) { .promises { grid-template-columns: 1fr 1fr; } }
@@ -479,9 +505,9 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
 <div class="scene-ui" aria-hidden="true">
   <svg class="leaders"><path/><path/><path/><circle r="2.5"/><circle r="2.5"/><circle r="2.5"/></svg>
   <div class="ret"></div><div class="ret"></div><div class="ret"></div>
-  <div class="tool"><b data-n="A">Website</b><span>host, domain, email</span></div>
-  <div class="tool"><b data-n="B">Bookings</b><span>calendar, reminders</span></div>
-  <div class="tool"><b data-n="C">Payments</b><span>till, invoices, bank</span></div>
+  <div class="tool"><b data-n="A">The shop</b><span>till, orders, website</span></div>
+  <div class="tool"><b data-n="B">The books</b><span>invoices, bank, spreadsheets</span></div>
+  <div class="tool"><b data-n="C">The marketing</b><span>ads, email, social</span></div>
   <div class="ret ret-ai"><span>AI<b>Claude or ChatGPT</b></span></div>
   <div class="stop-mk" data-k="0">01<span>A clear picture</span></div>
   <div class="stop-mk" data-k="1">02<span>Your own portal</span></div>
@@ -498,7 +524,7 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
         <div class="wrap">
           <p class="eyebrow">Solenix · St. John's, NL</p>
           <h1 class="h1" data-od-id="hero-headline"><span class="w" style="--i:0"><span>Your</span></span> <span class="w" style="--i:1"><span>business</span></span> <span class="w" style="--i:2"><span>is</span></span> <span class="w" style="--i:3"><span>a</span></span> <span class="w g" style="--i:4"><span>three&#8209;body</span></span> <span class="w g" style="--i:5"><span>problem.</span></span></h1>
-          <p class="hero-sub">A dozen tools pulling on each other. Nothing settles. We find the stable orbit.</p>
+          <p class="hero-sub">The shop, the books, the ads, the email, all pulling on each other. We put one AI at the centre. You ask, it gets done. Hours back, every week.</p>
           <div class="hero-ctas">
             <a class="btn btn-primary" href="mailto:hello@solenix.dev?subject=Book%20a%20call" data-od-id="hero-cta">Book a call</a>
             <a class="btn btn-ghost" href="#settle" data-od-id="hero-see">See how it settles
@@ -508,7 +534,7 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
       </div>
 
       <div class="beats">
-        <article class="beat" data-od-id="beat-look"><p class="beat-no bl">01 · Look</p><h2 class="beat-h">Every tool pulling <em>its own way.</em></h2><p class="bl">We map every tool, login and bill you have. Nothing gets missed.</p></article>
+        <article class="beat" data-od-id="beat-look"><p class="beat-no bl">01 · Look</p><h2 class="beat-h">Every tool pulling <em>its own way.</em></h2><p class="bl">Each one eats hours you don't get paid for. On the first call, we map every tool, login and bill.</p></article>
       </div>
       <p class="scroll-cue" aria-hidden="true">Scroll · it settles as you go</p>
   </div>
@@ -519,7 +545,7 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
     <div class="pt-copy rv">
       <p class="eyebrow">Your portal</p>
       <h2 class="h2">Twelve logins become <em>one.</em></h2>
-      <p class="lede">Your site, your project and your bills in one place. Nothing to chase.</p>
+      <p class="lede">Your website, your plans and your bills in one place. Less time chasing logins, and no paying for tools you forgot you had.</p>
       <p class="tally" aria-hidden="true"><span class="from"><b>12</b> logins</span><span class="to"></span><span class="one"><b>1</b> sign-in</span></p>
       <a class="ghostlink" href="/app" data-od-id="portal-link">See the client portal <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
     </div>
@@ -579,9 +605,9 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
 <section class="sec demo-sec" id="example" data-od-id="demo" data-scene="demo">
   <div class="wrap">
     <div class="sec-head rv">
-      <p class="eyebrow">AI, set up properly</p>
-      <h2 class="h2">Your business, with an assistant <em>that knows it.</em></h2>
-      <p class="lede">We connect AI to the tools you already use, then teach you and your team to get real value from it every day.</p>
+      <p class="eyebrow">One AI at the centre</p>
+      <h2 class="h2">You ask. <em>It gets done.</em></h2>
+      <p class="lede">Claude or ChatGPT, set up for your team and connected to the tools you already use. We teach you to use it until it saves you hours every week.</p>
     </div>
     <div class="demo-grid">
       <div class="chat rv" style="--d:1" data-od-id="demo-chat">
@@ -600,7 +626,7 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
           <div class="msg ai" data-seq="ai" data-w="4"><span class="label who">Assistant</span><span class="sr-only">Your order is ready in Drive. Have a look, change anything you like, and send it when you're happy.</span><span class="vis" aria-hidden="true" data-type>Your order is ready in Drive. Have a look, change anything you like, and send it when you're happy.</span></div>
           <div class="typing gone" aria-hidden="true"><i></i><i></i><i></i></div>
         </div>
-        <div class="chat-foot"><span>Example. One question, and Monday's order is written.</span><button class="btn btn-ghost btn-sm" type="button" data-replay data-od-id="demo-replay">Play it again</button></div>
+        <div class="chat-foot"><span>Example. One question, the order is written, and no flour is over-ordered.</span><button class="btn btn-ghost btn-sm" type="button" data-replay data-od-id="demo-replay">Play it again</button></div>
       </div>
       <div class="wire-wrap rv" style="--d:2">
         <p class="label">What Anna got</p>
@@ -611,9 +637,9 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
           <li data-n="4"><span class="nd">AW</span><b>Her morning back</b><small>She checks it, sends it, and gets on with baking.</small></li>
         </ol>
         <ul class="gets" data-od-id="ai-gets">
-          <li><b>Set up</b>on the tools you already pay for</li>
-          <li><b>Taught</b>to you and your team, in plain words</li>
-          <li><b>Looked after</b>and improved every month</li>
+          <li><b>Set up</b>on the tools you already pay for, so no new bills</li>
+          <li><b>Taught</b>to you and your team, until asking beats doing it by hand</li>
+          <li><b>Looked after</b>and finding more hours to save every month</li>
         </ul>
       </div>
     </div>
@@ -628,11 +654,11 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
         <h2 class="h2">From one call to a <em>stable orbit.</em></h2>
       </div>
       <ol class="jr-steps" data-steps>
-        <li><span class="no">01 / 05</span><h3>A clear picture</h3><p>One call. We look at every tool, login and bill, and tell you what we'd keep.</p></li>
-        <li><span class="no">02 / 05</span><h3>Your own portal</h3><p>Your website, your plans and your bills, together in one place.</p></li>
-        <li><span class="no">03 / 05</span><h3>Your new website</h3><p>See it before anyone else does. Change anything you like.</p></li>
-        <li><span class="no">04 / 05</span><h3>Your choice, in writing</h3><p>Three options, each weighed against what the result is worth to you. You pick.</p></li>
-        <li><span class="no">05 / 05</span><h3>Looked after</h3><p>Your site kept fast and safe, and AI your team actually uses. Every month.</p></li>
+        <li><span class="no">01 / 05</span><h3>A clear picture</h3><p>One call. We find the hours and dollars your tools are costing you.</p></li>
+        <li><span class="no">02 / 05</span><h3>Your own portal</h3><p>Your website, plans and bills in one place. No more chasing logins.</p></li>
+        <li><span class="no">03 / 05</span><h3>Your new website</h3><p>Built to bring in orders and calls, not just to look nice. You see it first.</p></li>
+        <li><span class="no">04 / 05</span><h3>Your choice, in writing</h3><p>Three options, each weighed against what the result is worth to you. You pick, and you see it pay back.</p></li>
+        <li><span class="no">05 / 05</span><h3>Looked after</h3><p>One AI at the centre, your team using it daily, and the hours saved adding up every month.</p></li>
       </ol>
       <div class="jr-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
     </div>
@@ -643,11 +669,36 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
   <div class="wrap">
     <div class="sec-head rv"><p class="eyebrow">What we put in writing</p><h2 class="h2">Four promises, <em>on paper.</em></h2></div>
     <ol class="promises">
-      <li class="rv" data-od-id="promise-price"><span class="pno">01</span><h3>Fixed price</h3><p>One number, agreed before we start.</p></li>
-      <li class="rv" style="--d:1" data-od-id="promise-own"><span class="pno">02</span><h3>You own it all</h3><p>Accounts, code and data are in your name.</p></li>
-      <li class="rv" style="--d:2" data-od-id="promise-plain"><span class="pno">03</span><h3>Plain English</h3><p>Updates you can read on your phone.</p></li>
-      <li class="rv" style="--d:3" data-od-id="promise-lockin"><span class="pno">04</span><h3>No lock-in</h3><p>Leave any month. Keep everything.</p></li>
+      <li class="rv" data-od-id="promise-price"><span class="pno">01</span><h3>Fixed price</h3><p>One number, agreed before we start. No surprise invoices.</p></li>
+      <li class="rv" style="--d:1" data-od-id="promise-own"><span class="pno">02</span><h3>You own it all</h3><p>Accounts, code and data in your name. Nothing to buy back.</p></li>
+      <li class="rv" style="--d:2" data-od-id="promise-plain"><span class="pno">03</span><h3>Plain English</h3><p>Updates you read in a minute, on your phone.</p></li>
+      <li class="rv" style="--d:3" data-od-id="promise-lockin"><span class="pno">04</span><h3>No lock-in</h3><p>Leave any month. Keep everything you paid for.</p></li>
     </ol>
+  </div>
+</section>
+
+<section class="sec roi-sec" id="worth" data-od-id="roi" data-scene="roi">
+  <div class="wrap roi-grid">
+    <div class="roi-copy rv">
+      <p class="eyebrow">What it could be worth</p>
+      <h2 class="h2">Your numbers, <em>not ours.</em></h2>
+      <p class="lede">Small businesses that hand busywork to AI usually cut admin time by 20 to 40%. Put in yours and see the range.</p>
+      <p class="roi-note">An estimate from your own inputs. We check it with you on the call, then measure the real result in your portal.</p>
+    </div>
+    <form class="roi rv" style="--d:1" data-roi data-od-id="roi-calculator" onsubmit="return false">
+      <div class="roi-in">
+        <label class="roi-f"><span>People on your team</span><span class="roi-row"><input type="range" min="1" max="30" step="1" value="4" data-in="people" aria-describedby="roi-people-v"><output id="roi-people-v" data-out="people">4</output></span></label>
+        <label class="roi-f"><span>Hours a week each, on admin and busywork</span><span class="roi-row"><input type="range" min="1" max="30" step="1" value="8" data-in="hours" aria-describedby="roi-hours-v"><output id="roi-hours-v" data-out="hours">8 h</output></span></label>
+        <label class="roi-f"><span>What an hour of their time costs you</span><span class="roi-row"><input type="range" min="15" max="120" step="1" value="30" data-in="rate" aria-describedby="roi-rate-v"><output id="roi-rate-v" data-out="rate">$30</output></span></label>
+      </div>
+      <div class="roi-out" aria-live="polite">
+        <div class="roi-k" data-od-id="roi-time"><span class="label">Time saved</span><b data-out="time">—</b><small data-out="time-s">hours a week</small></div>
+        <div class="roi-k" data-od-id="roi-saved"><span class="label">Money saved</span><b data-out="saved">—</b><small>a year, in paid hours back</small></div>
+        <div class="roi-k" data-od-id="roi-made"><span class="label">Money made</span><b data-out="made">—</b><small data-out="made-s">a year, if half those hours go to customers</small></div>
+      </div>
+      <p class="roi-how"><span class="tag">Estimate</span> people × hours × 20–40% = hours saved a week. × your hourly cost × 48 weeks = money saved. Half the hours back put into selling and serving, valued at the same hourly cost = money made.</p>
+      <div class="roi-cta"><a class="btn btn-primary" href="mailto:hello@solenix.dev?subject=Book%20a%20call%20%E2%80%94%20my%20numbers" data-od-id="roi-cta">Book a call to check these</a></div>
+    </form>
   </div>
 </section>
 
@@ -658,7 +709,7 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
       <div class="cell c-lead rv" data-od-id="price-lead">
         <h3>No hourly billing.<br>No surprise invoice.</h3>
         <div style="display: grid; gap: var(--space-4);">
-          <p>Both numbers are agreed on the first call, before any work starts.</p>
+          <p>Both numbers are agreed on the first call, weighed against what you'll save and make.</p>
           <a class="ghostlink" href="mailto:hello@solenix.dev?subject=Book%20a%20call">Get your two numbers <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
       </div>
@@ -675,11 +726,11 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
       <h2 class="h2" style="font-size: var(--fs-h1);">Straight answers.</h2>
     </div>
     <div class="faq rv" style="--d:1">
-      <details><summary>Do I have to throw out what I have?</summary><p>Usually not. Most of it already connects. We start there.</p></details>
-      <details><summary>Will AI replace my staff?</summary><p>No. It drafts and prepares. Your people check and decide.</p></details>
-      <details><summary>Is it safe to connect AI to my accounts?</summary><p>We give it the least access that does the job. You can switch it off in one place.</p></details>
-      <details><summary>What if something breaks?</summary><p>We fix it. You see what happened, in plain words, in your portal.</p></details>
-      <details><summary>How do we start?</summary><p>Book a call. We look at what you have and tell you what we'd keep, connect and cut.</p></details>
+      <details><summary>I've barely used AI. Is that a problem?</summary><p>Not at all. We set it up and teach you in plain words, until asking it is quicker than doing the job yourself.</p></details>
+      <details><summary>Do I have to throw out what I have?</summary><p>Usually not. Most of it already connects, so you don't pay for new tools. We start there.</p></details>
+      <details><summary>Will AI replace my staff?</summary><p>No. It takes the busywork, so your people spend their hours on customers. They check and decide.</p></details>
+      <details><summary>Is it safe to connect AI to my accounts?</summary><p>We give it the least access that does the job, and you can switch it off in one place. No risk to the business you've built.</p></details>
+      <details><summary>What if something breaks?</summary><p>We fix it and tell you what happened, in plain words, so a broken page doesn't cost you a sale.</p></details>
     </div>
   </div>
 </section>
@@ -688,7 +739,7 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
 <section class="close-sec" id="close" data-od-id="closing" data-scene="close" aria-labelledby="close-h">
   <div class="wrap close-in">
     <h2 id="close-h" class="rv">Let's find your <em>stable orbit.</em></h2>
-    <p class="rv">A short call. We look at what you have and tell you what we'd keep.</p>
+    <p class="rv">A short call. We find where your hours and dollars are going, and what one AI at the centre would change.</p>
     <div class="close-ctas rv">
       <a class="btn btn-primary" href="mailto:hello@solenix.dev?subject=Book%20a%20call" data-od-id="closing-cta">Book a call</a>
       <a class="textlink" href="mailto:hello@solenix.dev">hello@solenix.dev</a>
@@ -717,7 +768,7 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
 <footer data-od-id="footer">
   <div class="wrap">
     <a class="brand" href="#top"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/><circle cx="16" cy="16" r="8" fill="url(#mk)"/><circle cx="27" cy="9" r="2.2" fill="var(--ring)"/></svg>Solenix</a>
-    <p>One tech expert for your business. St. John's, Newfoundland and Labrador.</p>
+    <p>One AI at the centre of your business. St. John's, Newfoundland and Labrador.</p>
     <ul><li><a href="/app">Client sign in</a></li><li><a href="/agents">Tools we use</a></li><li><a href="mailto:hello@solenix.dev">hello@solenix.dev</a></li></ul>
     <p class="mono" style="font-size: var(--fs-xs);">© 2026 Solenix</p>
   </div>
@@ -753,13 +804,14 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
     { sel: '.sky', f: 0.55, pin: 1, labels: 1, el: 27, az: -10, dist: 16.5, ox: 0.22, oy: 0.1 },
     { sel: '.sky', f: 1, pin: 1, labels: 0, el: 33, az: -22, dist: 17 },
     { sel: '#portal', f: 0.5, dim: 0.62, hud: 0, el: 40, az: -42, dist: 19, ox: -0.12, oy: 0.02, poy: 0.1 },
-    { sel: '#example', f: 0.15, conn: 1, k: 0.1, free: 0.3, dim: 0.66, el: 46, az: -22, dist: 15, ox: 0.08, oy: 0.04 },
+    { sel: '#example', f: 0.15, conn: 1, k: 0.1, free: 0.3, dim: 0.66, el: 46, az: -22, dist: 15, ox: -0.2, oy: 0.04 },
     { sel: '#example', f: 0.85, conn: 1, k: 0.45, free: 0.6, dim: 0.66, el: 54, az: -8, dist: 13.5 },
     { sel: '#after', f: 0, pin: 1, conn: 0, k: 0.9, free: 0.6, dim: 0, hud: 1, stops: 1, el: 64, az: 0, dist: 10.8, ox: 0.17, oy: 0.03, poy: 0.02, calm: 0.35 },
     { sel: '#after', f: 0.3, pin: 1, k: 1, free: 1, third: 0.6, poy: -0.02 },
     { sel: '#after', f: 0.86, pin: 1, k: 1, order: 1, ink: 1, third: 1, calm: 1, el: 70, az: 4 },
     { sel: '#after', f: 1, pin: 1, k: 0, agent: 1 },
     { sel: '#promises', f: 0.5, dim: 0.6, hud: 0, stops: 0, el: 50, az: 45, dist: 12.5, ox: 0, oy: 0.18, poy: 0.08 },
+    { sel: '#worth', f: 0.5, dim: 0.7, el: 70, az: 70, dist: 13, ox: 0.26, oy: 0.04 },
     { sel: '#pricing', f: 0.5, dim: 0.45, el: 78, az: 95, dist: 13, ox: 0.24 },
     { sel: '#faq', f: 0.5, dim: 0.62, el: 30, az: 150, dist: 11.5, ox: 0.16 },
     { sel: '#close', f: 1, dim: 0, hud: 0, el: 60, az: 180, dist: 13.5, ox: 0.24, oy: 0.08, poy: 0.08 }
@@ -839,6 +891,21 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
     const r = sky.getBoundingClientRect(), total = r.height - innerHeight;
     scrollTo({ top: scrollY + r.top + total * 0.62, behavior: S.motion ? 'smooth' : 'auto' });
   }));
+
+  /* ── What it could be worth: every figure comes from the three inputs, shown as a 20–40% range. ── */
+  { const f = $('[data-roi]'), ins = {}, outs = {};
+    $$('[data-in]', f).forEach(i => ins[i.dataset.in] = i); $$('[data-out]', f).forEach(o => outs[o.dataset.out] = o);
+    const money = n => '$' + (Math.round(n / 100) * 100).toLocaleString('en-CA');
+    const calc = () => {
+      const p = +ins.people.value, h = +ins.hours.value, r = +ins.rate.value;
+      Object.values(ins).forEach(i => i.style.setProperty('--fill', ((i.value - i.min) / (i.max - i.min) * 100).toFixed(1) + '%'));
+      outs.people.textContent = p; outs.hours.textContent = h + ' h'; outs.rate.textContent = '$' + r;
+      const lo = p * h * 0.2, hi = p * h * 0.4, fmtH = x => x < 10 ? x.toFixed(1).replace(/\.0$/, '') : Math.round(x);
+      outs.time.textContent = fmtH(lo) + '–' + fmtH(hi) + ' h';
+      outs.saved.textContent = money(lo * r * 48) + '–' + money(hi * r * 48);
+      outs.made.textContent = money(lo * 0.5 * r * 48) + '–' + money(hi * 0.5 * r * 48);
+    };
+    f.addEventListener('input', calc); calc(); }
 
   /* Reveal once, never again on scroll-back. */
   const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: 0.12 });
@@ -1199,7 +1266,7 @@ const ARC_FRAG = `uniform vec3 uCol,uHot; uniform float uAlpha,uTime,uPh; varyin
     float x=fract(vT-uTime*.38+uPh)-.5; float pulse=exp(-x*x*140.);
     vec3 c=mix(uCol,uHot,pulse)*(edge*.75+pulse*edge*2.2);
     gl_FragColor=vec4(c*ends*uAlpha,1.); }`;
-const HUB = new THREE.Vector3(0, 1.55, 0);
+const HUB = new THREE.Vector3(0, 0.95, 0);   // the AI: at the centre, above where the orbit crosses
 const arcs = Array.from({ length: 6 }, (_, i) => ribbon(40, (i < 3 ? C.sun1 : C.ring).clone(), i < 3 ? 0.034 : 0.028, ARC_FRAG, false));
 function layArc(r, a, b, lift) {
   const mx = (a.x + b.x) / 2, mz = (a.z + b.z) / 2, my = Math.max(a.y, b.y) + lift;
@@ -1361,8 +1428,10 @@ function frame(dtReal, still) {
 
   /* Wires and the AI hub: the connections that do the steering. */
   const B = bodyU.value, pairs = [[B[0], B[1]], [B[1], B[2]], [B[2], B[0]], [B[0], HUB], [B[1], HUB], [B[2], HUB]];
-  pairs.forEach(([p0, p1], i) => { arcs[i].mesh.visible = sc.conn > 0.002; if (sc.conn > 0.002) { layArc(arcs[i], p0, p1, i < 3 ? 0.25 + p0.distanceTo(p1) * 0.18 : 0.6); arcs[i].mesh.material.uniforms.uAlpha.value = sc.conn * 0.85; } });
-  hub.position.copy(HUB); hub.material.uniforms.uGain.value = sc.conn * 0.9;
+  /* Tool-to-tool wires show only while we connect; the wires to the AI at the centre stay once it holds the orbit. */
+  const aiA = Math.max(sc.conn, sc.free * 0.5);
+  pairs.forEach(([p0, p1], i) => { const al = i < 3 ? sc.conn : aiA; arcs[i].mesh.visible = al > 0.002; if (al > 0.002) { layArc(arcs[i], p0, p1, i < 3 ? 0.25 + p0.distanceTo(p1) * 0.18 : 0.35); arcs[i].mesh.material.uniforms.uAlpha.value = al * 0.8; } });
+  hub.position.copy(HUB); hub.material.uniforms.uGain.value = Math.max(sc.conn, sc.free * 0.75) * 0.9;
 
   /* The agent dot rides the loop once it holds. */
   const ap = phase * 2 + 0.17;

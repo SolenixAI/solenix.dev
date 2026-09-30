@@ -291,6 +291,27 @@ main.app { position: relative; z-index: var(--z-content); max-width: 76rem; marg
 .dl li:first-child { border-top: 0; }
 .dl .t { display: grid; gap: 2px; font-size: var(--fs-sm); font-weight: var(--fw-semibold); }
 .dl .t small { color: var(--muted); font-size: var(--fs-xs); font-weight: var(--fw-regular); }
+.roi-card { display: grid; gap: var(--space-5); padding: var(--space-6); }
+.roi-h { display: flex; justify-content: space-between; align-items: start; gap: var(--space-3); }
+.roi-h h2 { font-size: var(--fs-h2); font-weight: var(--fw-bold); letter-spacing: var(--track-heading); }
+.roi-cols, .roi-r { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.05fr); gap: var(--space-4); }
+.roi-rows { list-style: none; padding: 0; margin: 0; display: grid; }
+.roi-r { padding-block: var(--space-4); border-top: 1px solid var(--line); align-items: start; }
+.roi-t { display: grid; gap: 4px; }
+.roi-t b { font: var(--fw-bold) var(--fs-body)/1.25 var(--font-display); }
+.roi-t small, .roi-v small { color: var(--muted); font-size: var(--fs-xs); line-height: 1.45; }
+.roi-c { display: grid; gap: 4px; font-size: var(--fs-sm); align-content: start; }
+.roi-v strong { font: var(--fw-bold) var(--fs-h3)/1.1 var(--font-display); color: var(--accent-text); font-variant-numeric: tabular-nums; }
+.roi-m { display: none; }
+.roi-sum { display: flex; flex-wrap: wrap; align-items: end; gap: var(--space-4) var(--space-7); padding-top: var(--space-5); border-top: 1px solid var(--line-strong); }
+.roi-sum > div { display: grid; gap: 6px; }
+.roi-big { font: var(--fw-bold) var(--fs-stat)/1 var(--font-display); letter-spacing: var(--track-stat); font-variant-numeric: tabular-nums; }
+.roi-big small { font: var(--fw-medium) var(--fs-sm)/1 var(--font-text); color: var(--muted); letter-spacing: 0; }
+.payback { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); font-size: var(--fs-sm); color: var(--muted); }
+.roi-sum .badge { margin-left: auto; }
+.worth-line { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); background: var(--ok-tint); }
+.worth-line strong { font: var(--fw-bold) var(--fs-h3)/1 var(--font-display); color: var(--ok); }
+@media (max-width: 760px) { .roi-cols { display: none; } .roi-r { grid-template-columns: 1fr 1fr; } .roi-t { grid-column: 1 / -1; } .roi-v { grid-column: 1 / -1; } .roi-m { display: block; } .roi-sum .badge { margin-left: 0; } }
 .opts { display: grid; gap: var(--space-5); padding: var(--space-6); border-color: color-mix(in oklch, var(--accent) 30%, var(--line)); }
 .worth { display: grid; gap: var(--space-2); padding-bottom: var(--space-5); border-bottom: 1px solid var(--line); }
 .worth-v { justify-self: start; font-size: var(--fs-sm); padding: 9px 12px; }
@@ -611,6 +632,7 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
     <button type="button" data-jump="overview">4 · Overview</button>
     <button type="button" data-jump="initiative">5 · First initiative</button>
     <button type="button" data-jump="billing">6 · Billing</button>
+    <button type="button" data-jump="live">7 · Three months after launch</button>
     <hr>
     <button type="button" data-reset>Start over</button>
   </div>
@@ -625,7 +647,7 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
   const KEY = 'solenix-portal-v4';
   const fresh = () => ({ screen: 'email', tab: 'overview', view: 'list', email: 'anna@mapleandrye.ca', name: 'Anna Whelan', biz: 'Maple & Rye', site: 'mapleandrye.ca',
     street: '214 Water Street', city: "St. John's", post: 'A1C 1A9', prov: 'Newfoundland and Labrador', onb: 1,
-    detailsDone: false, seenSite: false, approved: false, option: null, paid: false, changes: [], loaded: {} });
+    detailsDone: false, seenSite: false, approved: false, option: null, paid: false, live: false, changes: [], loaded: {} });
   let S; try { S = Object.assign(fresh(), JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) { S = fresh(); }
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
   const first = () => S.name.trim().split(/\s+/)[0] || 'there';
@@ -656,11 +678,11 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
 
   /* ── Data, shaped like its sources. Initiative = a Linear project; billing = Stripe. ── */
   const INITIATIVE = {
-    id: 'website', title: 'New website', status: () => S.approved ? ['warn', 'Building'] : ['warn', 'Plan ready'],
-    progress: () => S.approved ? 40 : 25, target: 'date to confirm',
+    id: 'website', title: 'New website', status: () => S.live ? ['ok', 'Live'] : S.approved ? ['warn', 'Building'] : ['warn', 'Plan ready'],
+    progress: () => S.live ? 100 : S.approved ? 40 : 25, target: 'date to confirm',
     purpose: "Customers find you, see today's bread and order ahead.",
     value: 'More orders without more phone calls, and a site you never have to touch.',
-    impact: "We'll count visitors and online orders from launch day, and show them here.",
+    impact: "Hours back from fewer phone calls, a cheaper site, and orders made online. Measured from launch day, and shown here.",
     stages: [
       { name: 'Look', sub: 'We mapped every tool, login and bill', when: 'Sep 22' },
       { name: 'Plan', sub: 'Pages, wording and what to keep', when: 'Sep 29' },
@@ -669,7 +691,8 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
       { name: 'Look after', sub: 'Hosting, updates and fixes, monthly', when: 'ongoing' }
     ],
     updates: () => [
-      ...(S.approved ? [{ date: 'Today', health: ['ok', 'On track'], note: "Thanks for the OK. We've started the build. Your first preview of the menu page comes next." }] : []),
+      ...(S.live ? [{ date: 'Jan 6', health: ['ok', 'On track'], note: 'Three months live. Orders ahead are averaging 18 a week, and calls about hours and stock are down to a few a week.' }] : []),
+      ...(S.approved ? [{ date: S.live ? 'Sep 30' : 'Today', health: ['ok', 'On track'], note: "Thanks for the OK. We've started the build. Your first preview of the menu page comes next." }] : []),
       { date: 'Sep 29', health: ['ok', 'On track'], note: 'We mapped your tools: a Square till, Instagram, a Wix site and a Google profile. The plan keeps Square and Instagram and replaces the Wix site.' },
       { date: 'Sep 22', health: ['ok', 'On track'], note: 'Kick-off call done. We have your logins and the photos you sent.' }
     ],
@@ -823,32 +846,33 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
       </section>
       ${route()}</div></div>`;
   }
-  const rail = (stage, compact) => `<ol class="rail" style="--done:${stage}" aria-label="Stages">${INITIATIVE.stages.map((s, k) => `<li class="${k < stage ? 'done' : k === stage ? 'now' : ''}"${k === stage ? ' aria-current="step"' : ''}><span class="n">${k < stage ? '' : k + 1}</span><b>${s.name}</b>${compact ? '' : `<small>${k === stage ? 'Now' : s.when === 'date to confirm' ? '<span class="tbd">to confirm</span>' : s.when}</small>`}</li>`).join('')}</ol>`;
+  const rail = (stage, compact) => `<ol class="rail" style="--done:${stage}" aria-label="Stages">${INITIATIVE.stages.map((s, k) => `<li class="${k < stage ? 'done' : k === stage ? 'now' : ''}"${k === stage ? ' aria-current="step"' : ''}><span class="n">${k < stage ? '' : k + 1}</span><b>${s.name}</b>${compact ? '' : `<small>${k === stage ? 'Now' : k < stage && s.when === 'date to confirm' ? 'Done' : s.when === 'date to confirm' ? '<span class="tbd">to confirm</span>' : s.when}</small>`}</li>`).join('')}</ol>`;
   function initiatives() {
-    const I = INITIATIVE, st = I.status(), u = I.updates()[0], stage = S.approved ? 2 : 1;
-    return `<div><div class="page-h"><p class="eyebrow">Initiatives</p><h1>What we're working on.</h1><p>Each one shows where it is, what's next and what it costs.</p></div>
+    const I = INITIATIVE, st = I.status(), u = I.updates()[0], stage = S.live ? 4 : S.approved ? 2 : 1;
+    return `<div><div class="page-h"><p class="eyebrow">Initiatives</p><h1>What we're working on.</h1><p>Each one shows where it is, what's next, and what it's worth to you.</p></div>
     <div class="ini-list">
       <a class="card ini-card lit" href="#initiative" data-open-ini data-od-id="initiative-card-website">
         <div class="ini-top"><h2>${I.title}</h2><span class="badge ${st[0]}">${st[1]}</span></div>
         ${rail(stage, true)}
-        <div class="ini-meta"><div><span class="label">Progress</span><strong class="mono">${I.progress()}%</strong></div><div><span class="label">Stage</span><strong>${I.stages[stage].name}</strong></div><div><span class="label">Target</span><span class="tbd" style="justify-self:start">${I.target}</span></div></div>
+        <div class="ini-meta"><div><span class="label">Progress</span><strong class="mono">${I.progress()}%</strong></div><div><span class="label">Stage</span><strong>${I.stages[stage].name}</strong></div><div><span class="label">${S.live ? 'Launched' : 'Target'}</span>${S.live ? '<strong>Oct 7</strong>' : `<span class="tbd" style="justify-self:start">${I.target}</span>`}</div></div>
+        ${S.live ? `<p class="worth-line"><span class="label">Worth so far</span><strong>${cad(roiTotal())} a month</strong><span class="badge ok">Measured</span><span class="tag">Example</span></p>` : ''}
         <p class="upd"><strong style="color:var(--text)">${u.date}:</strong> ${u.note}</p>
       </a>
-      <div class="card ghost-card" data-od-id="initiative-next-placeholder"><span class="label">What comes next</span><h2 style="font-size:var(--fs-h3)">Your next initiative</h2><p class="small muted">Once your site is live, we'll suggest the next thing worth doing, like connecting your Square orders to AI. It shows up here as a plan you can say yes or no to.</p></div>
+      <div class="card ghost-card" data-od-id="initiative-next-placeholder"><span class="label">What comes next</span><h2 style="font-size:var(--fs-h3)">Your next initiative</h2><p class="small muted">Once your site is live, we'll suggest the next thing worth doing, like an AI that drafts your supplier orders from Square so you stop over-ordering. It shows up here with what it's worth, and you say yes or no.</p></div>
     </div></div>`;
   }
   function detail() {
-    const I = INITIATIVE, st = I.status(), stage = S.approved ? 2 : 1;
+    const I = INITIATIVE, st = I.status(), stage = S.live ? 4 : S.approved ? 2 : 1;
     return `<div><button class="btn btn-quiet back" type="button" data-back><svg aria-hidden="true"><use href="#i-back"/></svg>Initiatives</button>
     <div class="detail-h"><div class="t"><h1>${I.title}</h1><span class="badge ${st[0]}">${st[1]}</span></div>
       <section class="card lit" data-od-id="initiative-stages"><div class="card-h"><h2>Stages</h2><span class="label">Now: ${I.stages[stage].name}</span></div>${rail(stage, false)}</section></div>
     <div class="detail"><div class="detail-main">
-      ${optionsCard()}
+      ${S.live ? roiCard() + optionsCard() : optionsCard() + roiCard()}
       <section class="card" data-od-id="initiative-pvi"><div class="card-h"><h2>Why we're doing this</h2></div><div class="pvi">
         <div><span class="label">Purpose</span><p>${I.purpose}</p></div><div><span class="label">Value</span><p>${I.value}</p></div><div><span class="label">Impact</span><p>${I.impact}</p></div></div></section>
       <section class="card" data-od-id="initiative-updates"><div class="card-h"><h2>Latest updates</h2></div>${I.updates().map(u => `<div class="upd-item"><div class="upd-h"><span class="mono small muted">${u.date}</span><span class="badge ${u.health[0]}">${u.health[1]}</span></div><p class="small">${u.note}</p></div>`).join('')}</section>
     </div><div class="detail-side">
-      ${S.approved ? `<section class="card" data-od-id="initiative-approved"><div class="approved"><span class="badge ok">Approved</span><span class="small muted">You chose ${esc(chosen().name)}. ${S.paid ? "We're building." : 'Payment is the last step.'}</span></div>${S.changes.length ? `<p class="small muted" style="margin-top:var(--space-3)">${S.changes.length} change request${S.changes.length > 1 ? 's' : ''} on our list.</p>` : ''}</section>` : ''}
+      ${S.approved ? `<section class="card" data-od-id="initiative-approved"><div class="approved"><span class="badge ok">Approved</span><span class="small muted">You chose ${esc(chosen().name)}. ${S.live ? 'Live, and we look after it.' : S.paid ? "We're building." : 'Payment is the last step.'}</span></div>${S.changes.length ? `<p class="small muted" style="margin-top:var(--space-3)">${S.changes.length} change request${S.changes.length > 1 ? 's' : ''} on our list.</p>` : ''}</section>` : ''}
       <section class="card" data-od-id="initiative-deliverables"><div class="card-h"><h2>What you'll get</h2></div><ul class="dl">${I.deliverables().map(d => `<li><span class="t">${d.t}<small>${d.s}</small></span><span style="display:flex;gap:var(--space-2);align-items:center;"><span class="badge ${d.state[0]}">${d.state[1]}</span>${d.id !== 'home' || S.seenSite ? `<button class="btn btn-quiet btn-sm" type="button" data-deliv="${d.id}">Open</button>` : ''}</span></li>`).join('')}</ul></section>
       <section class="card cost" data-od-id="initiative-cost"><div class="card-h" style="margin:0"><h2>What it costs</h2></div>
         <div class="ln"><span>${chosen() ? esc(chosen().name) : 'Your option'}</span><span class="tbd">${chosen() ? 'amount to confirm' : 'choose one first'}</span></div>
@@ -856,6 +880,38 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
         <button class="btn btn-quiet btn-sm" type="button" data-to-billing style="justify-self:start">See it in Billing <svg aria-hidden="true"><use href="#i-arrow"/></svg></button></section>
     </div></div></div>`;
   }
+  /* ── What it's worth: the baseline from the first call, the prediction, and once live the measured result.
+     Every figure is built from the client's own numbers; the method is shown on each row. ── */
+  const cad = n => '$' + Math.round(n).toLocaleString('en-CA'), WK = 4.33;
+  const ROI = [
+    { k: 'time', t: 'Time saved', how: 'Anna and one staff member answering calls about hours, stock and orders. Her hour costs $28.',
+      before: '7 h a week', pred: '3–4 h back a week', now: '4.5 h back a week', vPred: [3 * 28 * WK, 4 * 28 * WK], vNow: 4.5 * 28 * WK, calc: 'hours back × $28 × 4.33 weeks' },
+    { k: 'saved', t: 'Money saved', how: 'Her Wix plan and a forms add-on, replaced by the new site.',
+      before: '$64 a month', pred: '$64 a month saved', now: '$64 a month saved', vPred: [64, 64], vNow: 64, calc: 'old monthly bills, cancelled' },
+    { k: 'made', t: 'Money made', how: 'Orders ahead for pickup, from Square. Average order $22 and 30% margin, her figures.',
+      before: '0 orders a week', pred: '10–20 orders a week', now: '18 orders a week', vPred: [10 * 22 * 0.3 * WK, 20 * 22 * 0.3 * WK], vNow: 18 * 22 * 0.3 * WK, calc: 'orders × $22 × 30% × 4.33 weeks' }
+  ];
+  const roiTotal = () => ROI.reduce((a, r) => a + r.vNow, 0);
+  function roiCard() {
+    const live = S.live, lo = ROI.reduce((a, r) => a + r.vPred[0], 0), hi = ROI.reduce((a, r) => a + r.vPred[1], 0);
+    return `<section class="card roi-card${live ? ' lit' : ''}" data-od-id="initiative-roi">
+      <div class="roi-h"><div style="display:grid;gap:6px"><span class="label">What it's worth to you</span><h2>${live ? 'Measured, three months live' : 'Predicted, measured from launch day'}</h2></div><span class="tag">Example</span></div>
+      <div class="roi-cols" aria-hidden="true"><span></span><span class="label">Before · from our call</span><span class="label">${live ? 'Now · measured' : 'Predicted'}</span><span class="label">Worth a month</span></div>
+      <ul class="roi-rows">${ROI.map(r => `<li class="roi-r" data-od-id="roi-${r.k}">
+        <div class="roi-t"><b>${r.t}</b><small>${r.how}</small></div>
+        <div class="roi-c"><span class="label roi-m">Before · from our call</span><span>${r.before}</span></div>
+        <div class="roi-c"><span class="label roi-m">${live ? 'Now · measured' : 'Predicted'}</span><span>${live ? r.now : r.pred}</span></div>
+        <div class="roi-c roi-v"><span class="label roi-m">Worth a month</span><strong>${live ? cad(r.vNow) : r.vPred[0] === r.vPred[1] ? cad(r.vPred[0]) : cad(r.vPred[0]) + '–' + cad(r.vPred[1])}</strong><small>${r.calc}</small></div>
+      </li>`).join('')}</ul>
+      <div class="roi-sum">
+        <div><span class="label">${live ? 'Total, measured' : 'Total, predicted'}</span><strong class="roi-big">${live ? cad(roiTotal()) : cad(lo) + '–' + cad(hi)}<small> a month</small></strong></div>
+        <div><span class="label">Months to pay back</span><span class="payback"><span class="tbd">${S.option ? 'price to confirm' : 'choose an option'}</span> ÷ ${live ? cad(roiTotal()) : cad(lo) + '–' + cad(hi)} a month</span></div>
+        <span class="badge ${live ? 'ok' : 'quiet'}">${live ? 'Measured' : 'Estimated'}</span>
+      </div>
+      <p class="small muted">${live ? 'Hours from your own call log, orders from Square, bills from your statements.' : 'Built from the numbers you gave us on the call. From launch day we measure the real result and replace these.'}</p>
+    </section>`;
+  }
+
   /* Value first, then three options, highest first. Choosing one approves the initiative and opens checkout. */
   function optionsCard() {
     const picked = S.option;
@@ -983,6 +1039,7 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
     if (['overview', 'initiative', 'billing'].includes(j)) S.detailsDone = true;
     if (j === 'overview') go('app', { tab: 'overview', view: 'list' });
     else if (j === 'initiative') go('app', { tab: 'initiatives', view: 'detail' });
+    else if (j === 'live') { Object.assign(S, { seenSite: true, approved: true, option: S.option || 'site', paid: true, live: true }); go('app', { tab: 'initiatives', view: 'detail' }); }
     else if (j === 'billing') { S.seenSite = true; S.approved = true; S.option = S.option || 'site'; go('app', { tab: 'billing' }); }
     else go(j);
   }));
