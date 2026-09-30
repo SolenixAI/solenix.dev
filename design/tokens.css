@@ -1,31 +1,21 @@
 /* ============================================================================
-   Solenix design tokens · v3
+   Solenix design tokens
    ----------------------------------------------------------------------------
    One source of truth for colour, light, type, space, radius, shadow, motion
    and data visualisation.
 
-   v1 compatibility
-     Every token name v1 and /assets/site.css use (--bg, --bg2, --surface,
-     --text, --muted, --faint, --line, --accent, --accent-ink, --sun1, --sun2,
-     --ring, --shadow …) still exists and still means the same thing. The
-     palette is unchanged. v2 added light, not colour. v3 adds the scene: night
-     sections, the two display sizes above --fs-statement, and the honest-
-     placeholder and scene-label tokens. Every v2 name still means the same.
-
    Theming
-     Light is the default. Dark arrives via prefers-color-scheme.
-     [data-theme="dark"] / [data-theme="light"] on <html> always wins, because
-     the media query is scoped to :root:not([data-theme]).
+     Dark only. Solenix has no light theme.
 
    Structure
-     §1  theme-varying colour        — duplicated per theme
+     §1  theme-varying colour        — dark only
      §2  derived colour and light    — written once, themes itself
      §3  type
      §4  space and layout
      §5  radius
      §6  motion
      §7  focus
-     §8  scene, night sections and page components (v3)
+     §8  scene, night sections and page components
      Anything that can be derived with color-mix() from a §1 token lives in §2
      and is written exactly once.
 
@@ -34,134 +24,12 @@
      - Derive tones with color-mix(in oklch, …), not new numbered tokens.
      - Action ember (a solid accent fill) is one per screen. Light ember —
        glow, gradient, orbit, lit edge, chart series one — is unlimited.
-       See DESIGN.md §5.
+       See DESIGN.md.
    ========================================================================== */
 
 /* ── 1. Theme-varying colour ──────────────────────────────────────────────── */
 
-:root {
-  color-scheme: light;
-
-  /* Surfaces */
-  --bg: #fbfaf8;                      /* page floor */
-  --bg2: #f3f1ed;                     /* ground, far corner */
-  --surface: rgba(255, 255, 255, 0.86); /* cards, nav, raised areas */
-  --surface-solid: #ffffff;           /* when translucency is not an option */
-  --surface-sunken: rgba(28, 25, 23, 0.05); /* code wells, inset rows */
-
-  /* Ink */
-  --text: #1c1917;                    /* headings, body            16.8:1 */
-  --muted: #57534e;                   /* secondary prose            7.3:1 */
-  --faint: #736d67;                   /* captions, metadata         4.9:1 */
-
-  /* Lines */
-  --line: rgba(28, 25, 23, 0.1);      /* hairlines over a surface */
-  --line-solid: #e4e0d9;              /* hairlines in SVG exports */
-  --line-strong: rgba(28, 25, 23, 0.22);
-
-  /* Accent — the ember. Solid fills stay rare; ember as light does not. */
-  --accent: #c2410c;                  /* on --bg                    5.0:1 */
-  --accent-hover: #9a3412;            /* darker: contrast goes up */
-  --accent-ink: #ffffff;              /* text on an --accent fill   5.2:1 */
-  --accent-text: #9a3412;             /* accent as small text on a tint 7.0:1 */
-
-  /* Sun — the mark's gradient and the ambient light source.
-     Never a page background. --sun1 is never a text colour: 1.60:1 here. */
-  --sun1: #fbbf24;
-  --sun2: #ea580c;
-  --ring: #ea580c;
-
-  /* Status — semantic, and deliberately not the accent hue except "building",
-     which borrows the ember on purpose: work in progress is the sun rising. */
-  --ok: #065f46;                      /* live       7.4:1 on --bg */
-  --warn: #9a3412;                    /* building   7.0:1 on --bg */
-  --down: #b91c1c;                    /* down       6.2:1 on --bg */
-
-  /* Chart — five series, ember first. Each clears 4.5:1 on --bg AND on its own
-     tint, so a series colour may also be its own label. */
-  --chart-1: #c2410c;                 /* ember   5.0:1 · on tint 4.5:1 */
-  --chart-2: #0f766e;                 /* teal    5.3:1 · on tint 4.8:1 */
-  --chart-3: #4338ca;                 /* indigo  7.6:1 · on tint 6.8:1 */
-  --chart-4: #86198f;                 /* fuchsia 7.9:1 · on tint 7.1:1 */
-  --chart-5: #0369a1;                 /* sky     5.7:1 · on tint 5.2:1 */
-  --chart-tint-alpha: 8%;             /* the measured maximum for this theme */
-
-  /* Glass — the same alphas as --surface, plus blur and a lit top edge.
-     These are the measured minimum; lowering one breaks AA through the panel. */
-  --glass-bg: rgba(255, 255, 255, 0.86);
-  --glass-edge: rgba(255, 255, 255, 0.9);
-
-  /* Texture and light */
-  --grid-line: rgba(28, 25, 23, 0.055);
-  --star: rgba(28, 25, 23, 0.16);
-  --sweep-light: rgba(255, 255, 255, 0.55);
-
-  /* Display-text gradient. Not --sun1 → --sun2: that is 1.60:1 here.
-     #9a3412 → #ea580c is 7.0:1 → 3.4:1, both AA at large text. */
-  --grad-headline: linear-gradient(96deg, var(--accent-hover), var(--sun2));
-
-  /* Elevation */
-  --shadow-sm: 0 1px 2px rgba(28, 25, 23, 0.05);
-  --shadow-md: 0 1px 2px rgba(28, 25, 23, 0.04), 0 8px 24px rgba(28, 25, 23, 0.06);
-  --shadow-lg: 0 2px 4px rgba(28, 25, 23, 0.05), 0 20px 48px rgba(28, 25, 23, 0.1);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) {
-    color-scheme: dark;
-
-    --bg: #0b0d12;
-    --bg2: #11141b;
-    --surface: rgba(20, 24, 32, 0.84);
-    --surface-solid: #141820;
-    --surface-sunken: rgba(244, 242, 238, 0.05);
-
-    --text: #f4f2ee;                  /* 17.4:1 */
-    --muted: #a39e97;                 /*  7.3:1 */
-    --faint: #8f8983;                 /*  5.6:1 */
-
-    --line: rgba(244, 242, 238, 0.09);
-    --line-solid: #1e222b;
-    --line-strong: rgba(244, 242, 238, 0.2);
-
-    --accent: #f59e0b;                /*  9.1:1 */
-    --accent-hover: #fbbf24;          /* lighter: contrast goes up */
-    --accent-ink: #1a1206;            /*  8.6:1 on an --accent fill */
-    --accent-text: #fbbf24;           /* 11.6:1 */
-
-    --sun1: #fbbf24;
-    --sun2: #f97316;
-    --ring: #f59e0b;
-
-    --ok: #34d399;                    /* 10.1:1 */
-    --warn: #fbbf24;                  /* 11.6:1 */
-    --down: #fb7185;                  /*  7.2:1 */
-
-    --chart-1: #f59e0b;               /* ember   9.1:1 · on tint 6.6:1 */
-    --chart-2: #2dd4bf;               /* teal   10.4:1 · on tint 7.4:1 */
-    --chart-3: #818cf8;               /* indigo  6.5:1 · on tint 4.9:1 */
-    --chart-4: #e879f9;               /* fuchsia 7.9:1 · on tint 5.9:1 */
-    --chart-5: #38bdf8;               /* sky     9.1:1 · on tint 6.6:1 */
-    --chart-tint-alpha: 14%;
-
-    --glass-bg: rgba(20, 24, 32, 0.84);
-    --glass-edge: rgba(244, 242, 238, 0.16);
-
-    --grid-line: rgba(244, 242, 238, 0.05);
-    --star: rgba(244, 242, 238, 0.32);
-    --sweep-light: rgba(255, 255, 255, 0.4);
-
-    /* #fbbf24 → #f97316 is 11.6:1 → 6.9:1 on this ground. */
-    --grad-headline: linear-gradient(96deg, var(--sun1), var(--sun2));
-
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 32px rgba(0, 0, 0, 0.35);
-    --shadow-lg: 0 2px 4px rgba(0, 0, 0, 0.35), 0 24px 56px rgba(0, 0, 0, 0.45);
-  }
-}
-
-/* Explicit override. Same values as the media query above — duplicated rather
-   than shared because a [data-theme] selector must outrank it in the cascade. */
+:root,
 [data-theme="dark"] {
   color-scheme: dark;
 
@@ -211,57 +79,6 @@
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 32px rgba(0, 0, 0, 0.35);
   --shadow-lg: 0 2px 4px rgba(0, 0, 0, 0.35), 0 24px 56px rgba(0, 0, 0, 0.45);
-}
-
-[data-theme="light"] {
-  color-scheme: light;
-
-  --bg: #fbfaf8;
-  --bg2: #f3f1ed;
-  --surface: rgba(255, 255, 255, 0.86);
-  --surface-solid: #ffffff;
-  --surface-sunken: rgba(28, 25, 23, 0.05);
-
-  --text: #1c1917;
-  --muted: #57534e;
-  --faint: #736d67;
-
-  --line: rgba(28, 25, 23, 0.1);
-  --line-solid: #e4e0d9;
-  --line-strong: rgba(28, 25, 23, 0.22);
-
-  --accent: #c2410c;
-  --accent-hover: #9a3412;
-  --accent-ink: #ffffff;
-  --accent-text: #9a3412;
-
-  --sun1: #fbbf24;
-  --sun2: #ea580c;
-  --ring: #ea580c;
-
-  --ok: #065f46;
-  --warn: #9a3412;
-  --down: #b91c1c;
-
-  --chart-1: #c2410c;
-  --chart-2: #0f766e;
-  --chart-3: #4338ca;
-  --chart-4: #86198f;
-  --chart-5: #0369a1;
-  --chart-tint-alpha: 8%;
-
-  --glass-bg: rgba(255, 255, 255, 0.86);
-  --glass-edge: rgba(255, 255, 255, 0.9);
-
-  --grid-line: rgba(28, 25, 23, 0.055);
-  --star: rgba(28, 25, 23, 0.16);
-  --sweep-light: rgba(255, 255, 255, 0.55);
-
-  --grad-headline: linear-gradient(96deg, var(--accent-hover), var(--sun2));
-
-  --shadow-sm: 0 1px 2px rgba(28, 25, 23, 0.05);
-  --shadow-md: 0 1px 2px rgba(28, 25, 23, 0.04), 0 8px 24px rgba(28, 25, 23, 0.06);
-  --shadow-lg: 0 2px 4px rgba(28, 25, 23, 0.05), 0 20px 48px rgba(28, 25, 23, 0.1);
 }
 
 /* ── 2. Derived colour and light ──────────────────────────────────────────── */
@@ -347,7 +164,7 @@
   --z-texture: 1;
   --z-content: 2;
   --z-nav: 20;
-  --z-sticky: 25;                     /* v3 · the one sticky CTA on phones */
+  --z-sticky: 25;                     /* the one sticky CTA on phones */
   --z-skip: 30;
 }
 
@@ -356,7 +173,7 @@
 :root {
   /* Three roles, three faces. Sora carries display — a geometric grotesque
      whose bowls are the same circles as the mark, holding at 96px. Text and
-     mono are unchanged from v1; mono still does real work on every eyebrow,
+     mono still does real work on every eyebrow,
      label, number, table header and status.
      brand/build.py still needs the same display face — see DESIGN.md §2. */
   --font-display: "Sora", ui-sans-serif, -apple-system, BlinkMacSystemFont,
@@ -367,8 +184,8 @@
     monospace;
 
   /* Size. clamp() so 375px and 1920px both land without a media query. */
-  --fs-beat: clamp(3.6rem, 12.5vw, 11rem);      /* v3 · story beat word, scene only */
-  --fs-hero: clamp(2.6rem, 7.4vw, 8.25rem);     /* v3 · scene headline, one per page */
+  --fs-beat: clamp(3.6rem, 12.5vw, 11rem);      /* story beat word, scene only */
+  --fs-hero: clamp(2.6rem, 7.4vw, 8.25rem);     /* scene headline, one per page */
   --fs-statement: clamp(2.75rem, 10vw, 6rem);   /* big statement, one per page */
   --fs-display: clamp(2.4rem, 7.2vw, 4.5rem);   /* page-owning headline */
   --fs-h1: clamp(1.9rem, 5vw, 2.6rem);
@@ -391,7 +208,7 @@
   --fw-black: 800;
 
   /* Line height */
-  --lh-hero: 0.98;                    /* v3 · --fs-hero and --fs-beat */
+  --lh-hero: 0.98;                    /* --fs-hero and --fs-beat */
   --lh-display: 1.04;
   --lh-heading: 1.2;
   --lh-body: 1.5;
@@ -399,8 +216,8 @@
 
   /* Tracking. Negative as type grows, positive as it shrinks into a label.
      Sora needs less negative tracking at size than the system stack did. */
-  --track-beat: -0.055em;             /* v3 */
-  --track-hero: -0.045em;             /* v3 */
+  --track-beat: -0.055em;             
+  --track-hero: -0.045em;             
   --track-statement: -0.04em;
   --track-display: -0.03em;
   --track-heading: -0.015em;
@@ -513,7 +330,7 @@
   outline-offset: var(--focus-offset);
 }
 
-/* ── 8. Scene, night sections and page components (v3) ───────────────────── */
+/* ── 8. Scene, night sections and page components ───────────────────── */
 /* A night section is a scene section scoped with data-theme="dark", so it is
    dark in both themes while the rest of the page follows the reader.
    --page-bg is resolved here at :root, so inside a night section it still

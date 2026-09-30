@@ -9,18 +9,8 @@
 @import "shadcn/tailwind.css";
 @import "../design/tokens.css";
 
-/* Dark follows the system unless [data-theme] on <html> says otherwise —
-   the same rule tokens.css uses, so shadcn's dark: styles and the tokens agree. */
-@custom-variant dark {
-  &:where([data-theme="dark"], [data-theme="dark"] *) {
-    @slot;
-  }
-  @media (prefers-color-scheme: dark) {
-    &:where(:root:not([data-theme]), :root:not([data-theme]) *) {
-      @slot;
-    }
-  }
-}
+/* Solenix is dark only, so shadcn's dark: styles always apply. */
+@custom-variant dark (&:where(:root, :root *));
 
 @theme inline {
   /* shadcn roles → tokens */

@@ -1,6 +1,5 @@
 import { ExternalLink, LogOut } from "lucide-react"
 import { Lockup } from "@/components/brand/mark"
-import { ThemeToggle } from "@/components/theme-toggle"
 import { Button } from "@/components/ui/button"
 import type { Viewer } from "@/lib/portal"
 import { Nav } from "./nav"
@@ -43,7 +42,6 @@ export function Shell({ viewer, children }: { viewer: Viewer; children: React.Re
               <span className="text-sm font-semibold">{who}</span>
               <span className="truncate text-xs text-faint">{viewer.profile.email}</span>
             </span>
-            <ThemeToggle />
           </div>
           <Button asChild variant="quiet" size="sm" className="w-full justify-start px-3 text-sm">
             <a href="/"><ExternalLink />Visit the website</a>
@@ -58,7 +56,6 @@ export function Shell({ viewer, children }: { viewer: Viewer; children: React.Re
           <Button asChild variant="quiet" size="icon" aria-label="Visit the website" title="Visit the website">
             <a href="/"><ExternalLink className="size-5" /></a>
           </Button>
-          <ThemeToggle />
           <SignOut compact />
         </div>
       </header>
