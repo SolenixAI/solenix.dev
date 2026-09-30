@@ -16,6 +16,10 @@ export type Client = {
   invited_at: string | null;
   onboarded_at: string | null;
   created_at: string;
+  /** The offer the client starts from the portal, in cents. */
+  setup_cents: number | null;
+  monthly_cents: number | null;
+  plan_name: string | null;
 };
 
 export type Profile = {

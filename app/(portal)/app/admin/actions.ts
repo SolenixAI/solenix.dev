@@ -126,6 +126,11 @@ export async function resendInvite(form: FormData) {
 const str = (f: FormData, k: string) => String(f.get(k) ?? "").trim()
 const opt = (f: FormData, k: string) => str(f, k) || null
 const uuid = (v: string) => (/^[0-9a-f-]{36}$/i.test(v) ? v : null)
+/** "1,500.00" or "1500" → 150000; empty or invalid → null. */
+const cents = (v: string) => {
+  const n = Number(v.replace(/[$,\s]/g, ""))
+  return v.trim() && Number.isFinite(n) && n >= 0 ? Math.round(n * 100) : null
+}
 const done = (clientId: string) => revalidatePath(`/app/admin/clients/${clientId}`, "layout")
 
 export async function saveClientDetails(form: FormData) {
@@ -139,6 +144,9 @@ export async function saveClientDetails(form: FormData) {
       contact_name: opt(form, "contact_name"),
       contact_email: str(form, "contact_email").toLowerCase(),
       billing_email: opt(form, "billing_email"),
+      plan_name: opt(form, "plan_name"),
+      setup_cents: cents(str(form, "setup")),
+      monthly_cents: cents(str(form, "monthly")),
     })
     .eq("id", id)
   done(id)

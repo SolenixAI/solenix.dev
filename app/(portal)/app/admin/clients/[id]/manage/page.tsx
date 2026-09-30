@@ -46,6 +46,13 @@ export default async function Manage({ params }: { params: Promise<{ id: string 
               <Text name="contact_email" label="Sign-in email" value={client.contact_email} type="email" required />
               <Text name="billing_email" label="Billing email" value={client.billing_email} type="email" />
             </FieldGroup>
+            <p className="label mt-6 mb-3">Their plan</p>
+            <FieldGroup className="grid gap-4 md:grid-cols-3">
+              <Text name="plan_name" label="Plan name" value={client.plan_name} placeholder="Website hosting and care" />
+              <Text name="setup" label="Setup fee ($)" value={client.setup_cents != null ? client.setup_cents / 100 : ""} type="number" placeholder="1500" />
+              <Text name="monthly" label="Monthly ($)" value={client.monthly_cents != null ? client.monthly_cents / 100 : ""} type="number" placeholder="150" />
+            </FieldGroup>
+            <p className="mt-2 text-xs text-faint">They see a Start my plan button; Stripe Checkout takes the setup fee and starts the monthly subscription together.</p>
             <div className="mt-6"><SubmitButton busy="Saving…" variant="ghost">Save details</SubmitButton></div>
           </form>
         </Card>

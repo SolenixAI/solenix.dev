@@ -1,7 +1,6 @@
 import { Mail } from "lucide-react"
 import { Lockup } from "@/components/brand/mark"
 import { Button } from "@/components/ui/button"
-import { ThemeToggle } from "@/components/theme-toggle"
 
 const SECTIONS = [
   { href: "/#demo", label: "See it work" },
@@ -12,7 +11,7 @@ const SECTIONS = [
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-(--z-nav) border-b border-line bg-[color-mix(in_srgb,var(--bg)_80%,transparent)] backdrop-blur-(--glass-blur)">
+    <header className="fixed inset-x-0 top-0 z-(--z-nav) border-b border-line bg-[color-mix(in_srgb,var(--bg)_55%,transparent)] backdrop-blur-(--glass-blur)">
       <div className="mx-auto flex min-h-nav w-full max-w-wide items-center gap-4 px-(--gutter)">
         <Lockup />
         <nav aria-label="Sections" className="ml-auto hidden items-center gap-1 lg:flex">
@@ -27,7 +26,6 @@ export function SiteHeader() {
           ))}
         </nav>
         <div className="ml-auto flex items-center gap-1 lg:ml-0">
-          <ThemeToggle />
           <Button asChild variant="ghost" size="sm">
             <a href="/app">Client sign in</a>
           </Button>

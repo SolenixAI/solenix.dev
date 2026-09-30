@@ -2,9 +2,11 @@ import { Reveals } from "@/components/brand/motion"
 import { SiteFooter, SiteHeader } from "@/components/site/chrome"
 import { Analytics } from "./analytics"
 
+// The public site is set in the design system's dark theme end to end: space is
+// the brand. The portal keeps each visitor's own light or dark choice.
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-dvh flex-col overflow-x-clip bg-(image:--grad-sky)">
+    <div data-theme="dark" className="flex min-h-dvh flex-col overflow-x-clip bg-background text-foreground">
       <a
         href="#content"
         className="absolute -top-24 left-4 z-(--z-skip) rounded-pill border border-line-strong bg-surface-solid px-6 py-3 font-semibold no-underline transition-[top] focus-visible:top-2"

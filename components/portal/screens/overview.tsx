@@ -7,6 +7,8 @@ import { today } from "@/lib/format"
 import { STAGES } from "@/components/data/timeline"
 import { Door, ExtLink, HeroPanel, PageHead, Section, StateBadge, type SiteState } from "../ui"
 import { AskCard } from "../asks"
+import { SitePreview } from "../site-preview"
+import { StartHere } from "../start-here"
 
 /** Overview: one hero line that says the most important thing, then three quiet doors. */
 export async function OverviewScreen({ client, base, canAnswer }: { client: Client; base: string; canAnswer: boolean }) {
@@ -45,12 +47,25 @@ export async function OverviewScreen({ client, base, canAnswer }: { client: Clie
     note = `${services.length === 1 ? "One account" : `${services.length} accounts`} checked and working. Nothing needs you.`
   }
 
+  const website = services.find((s) => s.site_domain)
+  const siteLive = website?.live === "live"
+  const previewUrl = current?.preview_url ?? null
+  const siteUrl = siteLive && website?.site_domain ? `https://${website.site_domain}` : previewUrl
+
   const monthly = services.reduce((t, s) => t + s.monthly_cents, 0)
   const onAi = services.filter((s) => s.ai === "connected" || s.ai === "hub").length
 
   return (
     <section aria-labelledby="h-overview">
       <PageHead eyebrow={today()} title={client.business_name} id="h-overview" lede="Everything we build, host and run for you — in one place, nothing to chase." />
+
+      <StartHere
+        client={client}
+        planActive={bill.kind === "ok" && Boolean(bill.plan)}
+        siteLive={siteLive}
+        previewUrl={previewUrl}
+        canAct={canAnswer}
+      />
 
       <HeroPanel>
         <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-3">
@@ -63,6 +78,14 @@ export async function OverviewScreen({ client, base, canAnswer }: { client: Clie
         </div>
         {action && <div className="mt-6 flex flex-wrap gap-3">{action}</div>}
       </HeroPanel>
+
+      {siteUrl && (
+        <SitePreview
+          url={siteUrl}
+          state={siteLive ? "live" : "building"}
+          label={siteLive ? "Your website" : "Your new website, in progress"}
+        />
+      )}
 
       <div className="mt-6 grid gap-3">
         <Door

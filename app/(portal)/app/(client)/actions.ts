@@ -1,5 +1,6 @@
 "use server"
 
+import type Stripe from "stripe"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 import { getViewer } from "@/lib/portal"
@@ -34,5 +35,40 @@ export async function openCustomerPortal() {
     customer: client.stripe_customer_id,
     return_url: `${origin}/app/billing`,
   })
+  redirect(session.url)
+}
+
+/**
+ * Start the client's plan: one Stripe Checkout page that takes the setup fee
+ * and starts the monthly subscription together. Stripe hosts the page; the
+ * resulting subscription is read back live, so nothing is stored here.
+ */
+export async function startPlan() {
+  const { client } = await getViewer()
+  if (!client?.stripe_customer_id || !client.monthly_cents) redirect("/app/billing")
+  const origin = await requestOrigin()
+  const name = client.plan_name || "Website hosting and care"
+  const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [
+    {
+      quantity: 1,
+      price_data: { currency: "cad", unit_amount: client.monthly_cents, recurring: { interval: "month" }, product_data: { name } },
+    },
+  ]
+  if (client.setup_cents) {
+    line_items.push({
+      quantity: 1,
+      price_data: { currency: "cad", unit_amount: client.setup_cents, product_data: { name: "Website build and setup" } },
+    })
+  }
+  const session = await getStripe().checkout.sessions.create({
+    mode: "subscription",
+    customer: client.stripe_customer_id,
+    line_items,
+    success_url: `${origin}/app?plan=started`,
+    cancel_url: `${origin}/app/billing`,
+    metadata: { client_id: client.id },
+    subscription_data: { metadata: { client_id: client.id } },
+  })
+  if (!session.url) redirect("/app/billing")
   redirect(session.url)
 }

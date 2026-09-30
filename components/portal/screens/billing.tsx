@@ -3,7 +3,8 @@ import type { Client } from "@/lib/portal"
 import { configured } from "@/lib/env"
 import { getInvoice, getPlan, listInvoices, money, type InvoiceRow } from "@/lib/stripe"
 import { day } from "@/lib/format"
-import { openCustomerPortal } from "@/app/(portal)/app/(client)/actions"
+import { openCustomerPortal, startPlan } from "@/app/(portal)/app/(client)/actions"
+import { SubmitButton } from "../submit-button"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -123,8 +124,15 @@ export async function BillingScreen({ client, base, asAdmin }: { client: Client;
             <span className="text-sm text-muted-foreground">
               {plan
                 ? `Since ${day(plan.since * 1000)} · cancel whenever you like, and you keep everything.`
-                : "A plan starts when your first site goes live, and covers hosting, updates, backups and small changes."}
+                : client.monthly_cents
+                  ? `${client.plan_name || "Website hosting and care"}: ${client.setup_cents ? `${money(client.setup_cents)} to set up, then ` : ""}${money(client.monthly_cents)} a month. Hosting, updates, backups and small changes.`
+                  : "A plan starts when your first site goes live, and covers hosting, updates, backups and small changes."}
             </span>
+            {!plan && client.monthly_cents && !asAdmin ? (
+              <form action={startPlan} className="mt-2">
+                <SubmitButton busy="Opening Stripe…">Start my plan</SubmitButton>
+              </form>
+            ) : null}
             {!asAdmin && (
               <form action={openCustomerPortal}>
                 <Button type="submit" variant="link" className="gap-1.5 text-sm">

@@ -1,7 +1,8 @@
 import type { Metadata } from "next"
 import { ArrowRight, Check, ListChecks, Star, X } from "lucide-react"
 import { AssistantDemo } from "@/components/site/assistant-demo"
-import { ClosingSky, HeroSky, StatementSky, lightStyle } from "@/components/site/sky"
+import { OrbitStory } from "@/components/site/orbit/orbit-story"
+import { ClosingSky, StatementSky, lightStyle } from "@/components/site/sky"
 import { CountUp } from "@/components/brand/motion"
 import { Spark, SparkAxis, Trend } from "@/components/data/spark"
 import { Timeline } from "@/components/data/timeline"
@@ -58,77 +59,17 @@ const Section = ({ id, className, children }: { id?: string; className?: string;
 export default function Home() {
   return (
     <>
-      {/* 1 · Hero — full-bleed feature */}
-      <section
-        className="lit pt-(--space-hero) pb-(--space-section)"
-        style={lightStyle({ x: "84%", y: "-6%", size: "30rem", strength: 0.55, orbit: "60rem" })}
-      >
-        <HeroSky />
-        <div className="texture" aria-hidden="true" />
-        <Wrap>
-          <p className="eyebrow reveal" style={{ "--i": 0 } as React.CSSProperties}>The tech person your business does not have</p>
-          <h1
-            className="reveal mt-4 mb-5 max-w-[22ch] font-display text-display leading-display font-bold tracking-display"
-            style={{ "--i": 1 } as React.CSSProperties}
-          >
-            Too many tools. Too many logins. <em className="lit-text">Nobody who knows.</em>
-          </h1>
-          <p className="reveal max-w-measure text-lede text-muted-foreground" style={{ "--i": 2 } as React.CSSProperties}>
-            A website somewhere, a booking app, three spreadsheets, a pile of subscriptions, and something your nephew
-            set up in 2023 that nobody dares touch. Every tool promised to help. None of them talk to each other, and
-            hiring an engineer to sort it out was never realistic.
-          </p>
-          <p className="reveal mt-4 max-w-measure text-lede text-muted-foreground" style={{ "--i": 3 } as React.CSSProperties}>
-            <strong className="text-foreground">The hard part is not the work. It is knowing.</strong> Knowing which of those tools
-            already talk to each other, which ones can be handed to AI, and which route gets you a result this week. That
-            is the job we take on: one person who knows the way, sets it up, teaches your team, and stays. More money in,
-            less spent on software, and hours back every week.
-          </p>
-          <div className="reveal mt-8 flex flex-wrap items-center gap-3" style={{ "--i": 4 } as React.CSSProperties}>
-            <Button asChild>
-              <a href="mailto:hello@solenix.dev?subject=Book%20a%20call">
-                Book a call
-                <ArrowRight />
-              </a>
-            </Button>
-            <Button asChild variant="ghost">
-              <a href="#calm">Show me what that looks like</a>
-            </Button>
-          </div>
-          <ul
-            className="reveal mt-12 flex flex-wrap gap-x-4 gap-y-2 border-t border-line pt-6"
-            style={{ "--i": 5 } as React.CSSProperties}
-          >
-            {["Fixed price, agreed before we start", "You own everything", "Updates in plain English", "No lock-in"].map((p) => (
-              <li key={p} className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Check className="size-[15px] text-ember-text" strokeWidth={2.2} aria-hidden="true" />
-                {p}
-              </li>
-            ))}
-          </ul>
-        </Wrap>
-      </section>
-
-      {/* 2 · Sprawl → calm — split with visual */}
-      <Section id="calm">
-        <Wrap>
-          <SectionHead
-            eyebrow="Before and after"
-            title="The same business, before and after someone takes it on"
-            body="Nothing on the left gets thrown away for the sake of it. We work out what earns its place, replace what does not, and connect what is left into one thing you can actually see."
-          />
-          <BeforeAfter />
-        </Wrap>
-      </Section>
+      {/* 1 · Hero and story: a live three-body system resolving into the figure-eight */}
+      <OrbitStory />
 
       {/* 3 · What we do — bento */}
       <Section id="what">
         <Wrap>
           <SectionHead
             eyebrow="What we do"
-            title="Mostly we switch on what you already pay for"
-            titleWidth="32ch"
-            body="Shopify, Google Workspace, QuickBooks, Square, Canva, your booking app — most of them already connect to each other, and most of them can now be handed to AI. Almost nobody tells owners that. Finding those connections and switching them on is most of the job. Building something new is the last resort — the fastest route to a result you can see wins."
+            title="Mostly, we switch on what you already pay for"
+            titleWidth="30ch"
+            body="Your tools already connect to each other, and most can now be handed to AI. Nobody told you. We do the connecting."
           />
           <div className="grid grid-cols-1 gap-4 xs:grid-cols-2 xl:auto-rows-[minmax(var(--bento-min),auto)] xl:grid-cols-4">
             <Tile i={0} className="justify-between xl:col-span-2 xl:row-span-2">
@@ -138,63 +79,33 @@ export default function Home() {
                 </span>
                 <H3>First: the list</H3>
                 <p className="text-sm text-muted-foreground">
-                  We go through every tool, login and subscription you pay for and write down what it does, what it costs,
-                  what depends on it, and — the part nobody ever shows you — what it already connects to. Most owners have
-                  never seen that list. Cancelling the overlap often pays for the work.
+                  Every tool, login and subscription you pay for: what it does, what it costs, what it already connects
+                  to. Cancelling the overlap often pays for the work. The list is yours either way.
                 </p>
-                <p className="text-sm text-muted-foreground">You get the list whether or not you hire us for anything else.</p>
               </div>
               <p className="text-xs text-faint">Then we switch on what is already there, set up what is missing, and retire what is not earning its keep.</p>
             </Tile>
             <Tile i={1}>
               <p className="label">More time</p>
               <H3>AI wired into your own tools</H3>
-              <p className="text-sm text-muted-foreground">A Claude or ChatGPT workspace connected to your store, your files and your inbox, so it works from your real numbers — then we sit with your staff until they use it daily.</p>
+              <p className="text-sm text-muted-foreground">Claude or ChatGPT, connected to your store, files and inbox — and a team that actually uses it.</p>
             </Tile>
             <Tile i={2}>
               <p className="label">Look professional</p>
               <H3>Email on your own domain</H3>
-              <p className="text-sm text-muted-foreground">Google Workspace set up properly — email at your own address, shared files and calendars — plus your Google Business Profile kept current so people can find you.</p>
+              <p className="text-sm text-muted-foreground">Google Workspace done properly, and a Business Profile people can find.</p>
             </Tile>
             <Tile i={3}>
               <p className="label">More money</p>
               <H3>Website and store, looked after</H3>
-              <p className="text-sm text-muted-foreground">Your Shopify store and website managed and updated — products, prices, hours, pages — so nothing sits stale and nothing needs your evening.</p>
+              <p className="text-sm text-muted-foreground">Products, prices, hours and pages kept current. Never your evening again.</p>
             </Tile>
             <Tile i={4} className="xl:col-span-2">
               <p className="label">Last resort</p>
               <H3>Build something new only when nothing fits</H3>
-              <p className="text-sm text-muted-foreground">Sometimes the off-the-shelf answer genuinely does not exist — a bakery needed 20-minute pickup holds no booking tool offered. Then we build it, at a fixed price, and run it alongside everything else.</p>
+              <p className="text-sm text-muted-foreground">When nothing off the shelf fits, we build it — at a fixed price — and run it with everything else.</p>
             </Tile>
           </div>
-        </Wrap>
-      </Section>
-
-      {/* 4 · The sequence — card grid */}
-      <Section id="sequence">
-        <Wrap>
-          <SectionHead
-            eyebrow="How it goes"
-            title="The same five steps, in the same order, every time"
-            titleWidth="30ch"
-            body="No discovery phase that never ends, no rebuild before we have understood what you have. Steps one and two are the ones almost nobody does for you."
-          />
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:[&>:last-child]:col-span-full xl:grid-cols-5 xl:[&>:last-child]:col-span-1">
-            {[
-              ["Look", "We go through everything you use — every tool, login and subscription — and write down what each one does and costs."],
-              ["Find", "We find the better options, and the connections you are already paying for and were never told about."],
-              ["Connect", "We set up your AI assistant and connect it to those tools, so it works from your real orders, files and inbox."],
-              ["Teach", "We sit with you and your team until you are using it on real work — not trying it once and going back to the old way."],
-              ["Keep it running", "We look after all of it and watch it, and you see the whole lot in one place. One monthly price, nothing to chase."],
-            ].map(([title, body], i) => (
-              <Tile key={title} i={i}>
-                <span className="font-mono text-2xs font-semibold tracking-label text-ember-text">Step {i + 1}</span>
-                <H3>{title}</H3>
-                <p className="text-sm text-muted-foreground">{body}</p>
-              </Tile>
-            ))}
-          </div>
-          <p className="mt-6 text-xs text-faint">Building something new only happens when steps one and two turn up nothing that fits. It is the last resort, not the plan.</p>
         </Wrap>
       </Section>
 
@@ -205,10 +116,8 @@ export default function Home() {
           <p className="mx-auto max-w-[26ch] font-display text-statement leading-display font-bold tracking-statement text-balance">
             You do not need an expert in everything. <em className="lit-text">You need one who knows the way.</em>
           </p>
-          <p className="mx-auto mt-8 max-w-[46ch] text-sm text-muted-foreground">
-            AI can now do most of the everyday work — the spreadsheets, the analytics, the storefront, the paperwork, and
-            the first draft of the legal, accounting and ad work. What a small business needs is not a specialist in each
-            of those. It is one person who knows which path is shorter.
+          <p className="mx-auto mt-8 max-w-[40ch] text-sm text-muted-foreground">
+            AI can do most of the everyday work now. What you need is one person who knows the shorter path.
           </p>
         </div>
       </section>
@@ -220,14 +129,11 @@ export default function Home() {
             <div className="flex max-w-measure flex-col gap-4">
               <p className="eyebrow">Your portal</p>
               <h2 className="font-display text-h2 leading-heading font-brand tracking-heading">Twelve logins become one</h2>
-              <p className="text-sm text-muted-foreground">
-                Everything we run for you, behind a single sign-in. It is a calm surface over the services doing the
-                work, so you read a plain status instead of learning another dashboard.
-              </p>
+              <p className="text-sm text-muted-foreground">Everything we run for you, behind one sign-in, in plain words.</p>
               <ul className="flex flex-col gap-4">
-                <li className="text-sm text-muted-foreground"><strong className="text-foreground">Your tech</strong> — every account and service we run for you: AI workspace, email, domain, website, store, local listing. What each costs a month, when it renews, and who on your team can get in.</li>
-                <li className="text-sm text-muted-foreground"><strong className="text-foreground">Projects</strong> — what stage the work is at, what happens next and when, and anything waiting on your approval.</li>
-                <li className="text-sm text-muted-foreground"><strong className="text-foreground">Billing</strong> — open and past invoices and your care plan. Payments and receipts are handled by Stripe.</li>
+                <li className="text-sm text-muted-foreground"><strong className="text-foreground">Your tech</strong> — every account, what it costs, who can get in.</li>
+                <li className="text-sm text-muted-foreground"><strong className="text-foreground">Projects</strong> — where the work is, what is next, what needs you.</li>
+                <li className="text-sm text-muted-foreground"><strong className="text-foreground">Billing</strong> — every invoice, paid in one click.</li>
               </ul>
               <div>
                 <Button asChild variant="secondary" size="sm"><a href="/app">Client sign in</a></Button>
@@ -245,7 +151,7 @@ export default function Home() {
             eyebrow="One honest example"
             title="Nothing new was built here. It just got connected."
             titleWidth="32ch"
-            body="A Claude workspace, a Shopify store and a Google account — all three already paid for by the owner, none of them talking to each other until someone connected them. This is the whole of what step three looks like."
+            body="Claude, Shopify and Google — already paid for, never talking to each other. Until they were."
           />
           <AssistantDemo />
         </Wrap>
@@ -261,13 +167,8 @@ export default function Home() {
                 <p className="eyebrow">How it works</p>
                 <H3 as="p">One person who knows the way, not an agency and not a hire</H3>
                 <p className="text-sm text-muted-foreground">
-                  You get one tech expert on the hook for choosing the tools, connecting them, teaching your team and
-                  keeping the lot running — at a fraction of the cost of employing someone, and without the layers an
-                  agency puts between you and the person doing the work.
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  Solenix is small and new, and says so. What does not change is the part that usually goes wrong: you
-                  always know the price, what is running, and what happens next.
+                  One expert on the hook for all of it — for a fraction of a hire, with no agency in between. Small and
+                  new, and honest about it.
                 </p>
               </div>
               <p className="text-xs text-faint">Based in St. John&apos;s, Newfoundland. Working with businesses anywhere.</p>
@@ -381,8 +282,7 @@ export default function Home() {
             Send us the list of what you are paying for.
           </h2>
           <p className="mx-auto mt-6 max-w-measure text-lede text-muted-foreground">
-            One call, no charge, no pitch. You get the plain list of what you have either way, and if we are not the right
-            fit we say so and point you at who is.
+            One call, no charge, no pitch. You keep the list either way.
           </p>
           <div className="mt-8 flex justify-center">
             <Button asChild>
@@ -402,88 +302,6 @@ export default function Home() {
 }
 
 // ── Sections with their own drawing ───────────────────────────────────────────
-
-function BeforeAfter() {
-  const chips: [string, React.CSSProperties, boolean?][] = [
-    ["Website", { left: "5%", top: "4%", rotate: "-4deg" }],
-    ["Booking app", { right: "6%", top: "12%", rotate: "5deg" }],
-    ["Three spreadsheets", { left: "8%", top: "32%", rotate: "3deg" }],
-    ["Invoices, elsewhere", { right: "5%", top: "42%", rotate: "-6deg" }],
-    ["12 logins", { left: "6%", top: "62%", rotate: "-2deg" }, true],
-    ["7 subscriptions", { right: "8%", top: "70%", rotate: "4deg" }, true],
-    ["That 2023 thing", { left: "10%", bottom: "2%", rotate: "2deg" }, true],
-  ]
-  const stage = "relative isolate aspect-[4/3] min-h-68 overflow-hidden rounded-2xl border border-line"
-  const cap = "absolute bottom-4 left-4 z-4 rounded-pill border border-line bg-surface-solid px-2.5 py-1 font-mono text-2xs font-semibold tracking-label text-muted-foreground uppercase"
-  return (
-    <div className="grid items-stretch gap-6 lg:grid-cols-[1fr_auto_1fr] lg:items-center lg:gap-8">
-      <div
-        className={cn(stage, "bg-sunken")}
-        role="img"
-        aria-label="What a small business usually has: a website, a booking app, spreadsheets, invoices in a separate tool, a dozen logins, monthly subscriptions, and something set up years ago that nobody understands — none of it connected."
-      >
-        <svg className="tangle absolute inset-0 z-1 size-full" viewBox="0 0 400 300" aria-hidden="true" preserveAspectRatio="none">
-          <path d="M70 60C140 90 120 150 200 130S300 90 330 150" />
-          <path d="M90 210C150 180 210 240 300 200" />
-          <path d="M60 140C110 160 90 220 160 250" />
-          <path d="M240 70C280 110 230 140 300 230" />
-          <path d="M120 100C180 120 150 190 230 170" />
-        </svg>
-        <div className="absolute inset-x-0 top-0 bottom-13 z-2">
-          {chips.map(([label, pos, dim]) => (
-            <span
-              key={label}
-              style={pos}
-              className={cn(
-                "absolute max-w-[46%] rounded-sm border bg-surface-solid px-2.5 py-1 text-2xs leading-tight font-semibold",
-                dim ? "border-dashed border-line-strong text-muted-foreground" : "border-line-strong text-foreground shadow-sm"
-              )}
-            >
-              {label}
-            </span>
-          ))}
-        </div>
-        <span className={cap}>What you have now</span>
-      </div>
-
-      <div className="grid place-items-center text-muted-foreground" aria-hidden="true">
-        <ArrowRight className="size-7 rotate-90 lg:rotate-0" strokeWidth={1.8} />
-      </div>
-
-      <div
-        className={cn(stage, "lit bg-(image:--grad-sky)")}
-        style={{ "--light-x": "50%", "--light-y": "50%", "--light-size": "15rem", "--light-strength": 0.5 } as React.CSSProperties}
-        role="img"
-        aria-label="The same work as one system: Solenix at the centre, with Your tech, Projects and Billing in orbit around it."
-      >
-        <div className="sky" aria-hidden="true"><div className="sky-light" /></div>
-        <svg className="orbitsys absolute inset-0 z-2 size-full" viewBox="0 0 400 300" aria-hidden="true">
-          <circle className="ring-line" cx="200" cy="150" r="78" />
-          <circle className="ring-line" cx="200" cy="150" r="115" />
-          <g className="spin"><circle className="node" cx="200" cy="72" r="4.5" /></g>
-          <g className="spin spin-b"><circle className="node" cx="85" cy="150" r="3.5" /></g>
-          <circle cx="200" cy="150" r="26" fill="url(#sun)" />
-        </svg>
-        <div className="absolute inset-x-0 top-0 bottom-13 z-3">
-          {[
-            ["Your tech", "50%", "11%"],
-            ["Projects", "22%", "78%"],
-            ["Billing", "78%", "78%"],
-          ].map(([label, left, top]) => (
-            <span
-              key={label}
-              style={{ left, top }}
-              className="absolute -translate-x-1/2 -translate-y-1/2 rounded-pill border border-line bg-surface-solid px-2.5 py-1 font-mono text-2xs font-semibold tracking-label whitespace-nowrap text-ember-text uppercase shadow-sm"
-            >
-              {label}
-            </span>
-          ))}
-        </div>
-        <span className={cap}>One place to see it</span>
-      </div>
-    </div>
-  )
-}
 
 /** A static picture of the portal with example figures, labelled as such. */
 function PortalPreview() {

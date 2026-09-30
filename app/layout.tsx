@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
@@ -28,16 +27,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400..800&display=swap" />
-        {/* Marks the page as scripted before paint, so reveals can hide safely. */}
-        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
+        {/* Before first paint: mark the page as scripted (so reveals can hide safely)
+            and apply a saved light/dark choice, so there is no flash. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "document.documentElement.classList.add('js');try{var t=localStorage.getItem('solenix-theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t)}catch(e){}",
+          }}
+        />
       </head>
       <body className="min-h-dvh">
-        {/* tokens.css reads [data-theme]; next-themes owns it and the saved choice. */}
-        <ThemeProvider attribute="data-theme" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <SharedDefs />
-          {children}
-          <Toaster position="bottom-right" />
-        </ThemeProvider>
+        <SharedDefs />
+        {children}
+        <Toaster position="bottom-right" />
       </body>
     </html>
   );
