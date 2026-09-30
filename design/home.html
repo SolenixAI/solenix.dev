@@ -1,1307 +1,1080 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-CA">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Solenix · the tech person your business does not have</title>
-<meta name="description" content="The hardest part of running a small business is knowing. Solenix finds the better options and the integrations you already pay for, connects your AI to the tools you already have, trains your team, and runs the lot from one place.">
-<meta name="color-scheme" content="light dark">
-<link rel="icon" href="assets/brand/logo-dark.svg" type="image/svg+xml" media="(prefers-color-scheme: dark)">
-<link rel="icon" href="assets/brand/logo-light.svg" type="image/svg+xml">
-
+<title>Solenix — Your business is a three-body problem</title>
+<meta name="description" content="One tech expert for small businesses in St. John's. We connect the tools you already have, wire them to AI, teach your team and keep it running for a flat monthly fee.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400..800&display=swap">
-
 <link rel="stylesheet" href="tokens.css">
+<script>document.documentElement.classList.add('js')</script>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.186.1/examples/jsm/"
+} }
+</script>
 <style>
-/* OD-LAYOUT-PRIMITIVES v1 — structure only: display, flex/grid, overflow, wrapping, ratio.
-   Put this @layer first; product CSS outside the layer always wins. */
-@layer od-layout {
-  :where(.od-stack,.od-row,.od-row-top,.od-cluster,.od-grid,.od-field,.od-stat,.od-cell,.od-tile) > :where(*) { min-width: 0; }
-  .od-stack   { display: flex; flex-direction: column; gap: var(--od-gap, 8px); }
-  .od-row     { display: flex; align-items: center; gap: var(--od-gap, 8px); }
-  .od-row-top { display: flex; align-items: flex-start; gap: var(--od-gap, 8px); }
-  .od-cluster { display: flex; flex-wrap: wrap; align-items: center; gap: var(--od-gap, 8px); }
-  .od-fill    { flex: 1 1 0; min-width: 0; }
-  .od-fixed   { flex: none; }
-  .od-grid    { display: grid; gap: var(--od-gap, 12px); grid-template-columns: repeat(var(--od-cols, 3), minmax(0, 1fr)); }
-  .od-stat, .od-field, .od-cell { display: grid; gap: var(--od-gap, 2px); }
-  :where(.od-stat,.od-field,.od-cell) > :where(*) { display: block; }
-  .od-tile { display: grid; grid-template-rows: auto 1fr; }
-  :where(.od-tile) > :where(*) { display: block; }
-  .od-media { display: block; width: 100%; height: auto; aspect-ratio: var(--od-ratio, auto); }
-  .od-media-cover { object-fit: cover; }
-  .od-truncate { display: block; max-width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-  .od-clamp-2, .od-clamp-3 { display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
-  .od-clamp-2 { -webkit-line-clamp: 2; }
-  .od-clamp-3 { -webkit-line-clamp: 3; }
-  .od-lines-2 { min-height: calc(2 * 1.4em); }
-  .od-nowrap  { white-space: nowrap; }
-  .od-keep    { word-break: keep-all; overflow-wrap: anywhere; }
-  .od-screen { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; height: 100%; }
-  .od-scroll { overflow-y: auto; overscroll-behavior: contain; min-height: 0; }
-  .od-rail { display: flex; gap: var(--od-gap, 8px); overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none;
-             padding-inline: var(--od-rail-pad, 16px); scroll-padding-inline: var(--od-rail-pad, 16px); }
-  .od-rail::-webkit-scrollbar { display: none; }
-  :where(.od-rail) > :where(*) { flex: none; scroll-snap-align: start; }
-  :where(.od-rail) > :where(:last-child) { margin-inline-end: var(--od-rail-pad, 16px); }
-  .od-spacer { flex: none; visibility: hidden; pointer-events: none; }
-  .od-touch  { min-width: 44px; min-height: 44px; }
+/* ── Local scale. The hero and the beats go past --fs-statement on purpose:
+   they are the page's two display moments. Everything else is on tokens. ── */
+:root {
+  --page-bg: var(--bg);            /* resolved at :root, so it survives into the dark sky */
+  --fs-hero: clamp(2.6rem, 7.4vw, 8.25rem);
+  --fs-beat: clamp(3.6rem, 12.5vw, 11rem);
+  --track-hero: -0.045em;
+  --section-pad: clamp(5rem, 14vh, 10rem);
 }
-/* /OD-LAYOUT-PRIMITIVES v1 */
-
-/* ===========================================================================
-   solenix.dev homepage · built on design system v2 (tokens.css).
-   No hex below this line — every value is a token.
-   =========================================================================== */
-
-*, *::before, *::after { box-sizing: border-box; }
-* { margin: 0; padding: 0; }
-html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; background: var(--bg); color: var(--text); }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
-body {
-  font-family: var(--font-text); font-size: var(--fs-body); line-height: var(--lh-body);
-  color: var(--text); background: var(--grad-sky); min-height: 100dvh;
-  display: flex; flex-direction: column; overflow-x: hidden; -webkit-font-smoothing: antialiased;
-}
-a { color: inherit; }
-img, svg { display: block; max-width: 100%; }
-button, input, select, textarea { font: inherit; color: inherit; }
-button { cursor: pointer; background: none; border: 0; }
+* { box-sizing: border-box; }
+html { background: var(--bg); color: var(--text); -webkit-text-size-adjust: 100%; }
+body { margin: 0; font: var(--fw-regular) var(--fs-body)/var(--lh-body) var(--font-text); background: var(--grad-sky); color: var(--text); overflow-x: clip; }
+h1, h2, h3, p, ul, ol, figure { margin: 0; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; }
 p { text-wrap: pretty; }
-h1, h2, h3 { text-wrap: balance; font-family: var(--font-display); }
-::selection { background: color-mix(in srgb, var(--accent) 30%, transparent); }
-
-/* ── layout ───────────────────────────────────────────────────────────────── */
-.wrap { width: 100%; max-width: var(--container); margin-inline: auto; padding-inline: var(--gutter); }
-.wrap-wide { max-width: var(--container-wide); }
-main { flex: 1; }
-.section { padding-block: var(--space-section); }
-.stack { display: flex; flex-direction: column; gap: var(--space-4); }
-.cluster { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
-.skip { position: absolute; left: var(--space-4); top: -6rem; z-index: var(--z-skip);
-  background: var(--surface-solid); border: 1px solid var(--line-strong); border-radius: var(--radius-pill);
-  padding: var(--space-3) var(--space-5); font-weight: var(--fw-semibold); text-decoration: none;
-  transition: top var(--dur-fast) var(--ease-out); }
-.skip:focus-visible { top: var(--space-2); }
-
-/* ── the ambient layer: scoped to its section, never fixed ────────────────── */
-.lit { position: relative; isolation: isolate; overflow: hidden; }
-.lit > .sky { position: absolute; inset: 0; z-index: var(--z-sky); pointer-events: none; }
-.lit > .texture { position: absolute; inset: 0; z-index: var(--z-texture); pointer-events: none;
-  background-image: var(--texture-grid); background-size: var(--grid-size) var(--grid-size);
-  mask-image: radial-gradient(120% 100% at var(--light-x, 78%) var(--light-y, -18%), black 0%, transparent 72%);
-  -webkit-mask-image: radial-gradient(120% 100% at var(--light-x, 78%) var(--light-y, -18%), black 0%, transparent 72%); }
-.lit > .wrap, .lit > .inner { position: relative; z-index: var(--z-content); }
-.sky-light { position: absolute; width: var(--light-size, 46rem); aspect-ratio: 1;
-  left: var(--light-x, 78%); top: var(--light-y, -18%); translate: -50% -50%;
-  background: var(--grad-sun); border-radius: 50%; filter: blur(1px);
-  opacity: var(--light-strength, .5); box-shadow: var(--glow-soft); }
-.sky-halo { position: absolute; width: calc(var(--light-size, 46rem) * 2); aspect-ratio: 1;
-  left: var(--light-x, 78%); top: var(--light-y, -18%); translate: -50% -50%; border-radius: 50%;
-  background: radial-gradient(circle, color-mix(in srgb, var(--sun2) 22%, transparent) 0%, transparent 62%); }
-.sky-stars { position: absolute; inset: 0; background-image: var(--texture-stars); background-size: 100% 100%; }
-.sky-veil { position: absolute; inset: 0; background: var(--grad-veil); }
-.sky-orbit { position: absolute; width: var(--orbit-size, 74rem); aspect-ratio: 1;
-  left: var(--light-x, 78%); top: var(--light-y, -18%); translate: -50% -50%; }
-.sky-orbit .ring { fill: none; stroke: var(--ring); stroke-opacity: .17; stroke-width: 1; vector-effect: non-scaling-stroke; }
-.sky-orbit .ring-faint { stroke-opacity: .1; }
-.sky-orbit .arc { fill: none; stroke: var(--ring); stroke-opacity: .34; stroke-width: 1.5; stroke-linecap: round; vector-effect: non-scaling-stroke; }
-.sky-orbit .track { transform-origin: 400px 400px; animation: orbit var(--orbit-1) var(--ease-orbit) infinite; }
-.sky-orbit .t2 { animation-duration: var(--orbit-2); animation-direction: reverse; }
-.sky-orbit .t3 { animation-duration: var(--orbit-3); }
-.sky-orbit .dot { fill: var(--ring); }
-@keyframes orbit { to { rotate: 360deg; } }
-@media (prefers-reduced-motion: reduce) { .sky-orbit .track { animation: none; } }
-
-/* ── type roles ───────────────────────────────────────────────────────────── */
-.display { font-size: var(--fs-display); line-height: var(--lh-display); letter-spacing: var(--track-display); font-weight: var(--fw-bold); }
-.statement { font-family: var(--font-display); font-size: var(--fs-statement); line-height: var(--lh-display);
-  letter-spacing: var(--track-statement); font-weight: var(--fw-bold); }
-.h2 { font-size: var(--fs-h2); line-height: var(--lh-heading); letter-spacing: var(--track-heading); font-weight: var(--fw-brand); }
-.h3 { font-size: var(--fs-h3); line-height: var(--lh-heading); letter-spacing: var(--track-heading); font-weight: var(--fw-brand); }
-.lede { font-size: var(--fs-lede); color: var(--muted); max-width: var(--measure); }
-.body { max-width: var(--measure); }
-.small { font-size: var(--fs-sm); color: var(--muted); }
-.caption { font-size: var(--fs-xs); color: var(--faint); }
-.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
-.eyebrow { display: inline-flex; align-items: center; gap: var(--space-2); font-family: var(--font-mono);
-  font-size: var(--fs-xs); font-weight: var(--fw-semibold); letter-spacing: var(--track-eyebrow);
-  text-transform: uppercase; color: var(--accent); }
-.eyebrow::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor;
-  box-shadow: 0 0 0 4px color-mix(in srgb, currentColor 18%, transparent); }
-.label { font-family: var(--font-mono); font-size: var(--fs-xs); font-weight: var(--fw-semibold);
-  letter-spacing: var(--track-label); text-transform: uppercase; color: var(--faint); }
-/* --grad-headline is display-size only: its light stop is 3.41:1, which clears
-   the 3:1 large-text floor and would fail as body text. DESIGN.md §4. */
-.lit-text { background-image: var(--grad-headline); -webkit-background-clip: text; background-clip: text;
-  color: transparent; font-style: normal; }
-@supports not ((background-clip: text) or (-webkit-background-clip: text)) {
-  .lit-text { color: var(--accent-text); }
-}
-.section-head { display: flex; flex-direction: column; gap: var(--space-3); margin-bottom: var(--space-6); }
-
-/* ── nav ──────────────────────────────────────────────────────────────────── */
-.topnav { position: sticky; top: 0; z-index: var(--z-nav);
-  background: color-mix(in srgb, var(--bg) 80%, transparent);
-  backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur));
-  border-bottom: 1px solid var(--line); }
-.topnav .wrap { display: flex; align-items: center; gap: var(--space-4); min-height: var(--nav-height); }
-.brand { display: inline-flex; align-items: center; gap: var(--space-2); font-family: var(--font-display);
-  font-weight: var(--fw-brand); letter-spacing: -.01em; text-decoration: none; flex: none; }
-.brand svg { width: 26px; height: 26px; flex: none; }
-.navlinks { display: none; margin-left: auto; align-items: center; gap: var(--space-1); }
-@media (min-width: 900px) { .navlinks { display: flex; } }
-.navlink { display: inline-flex; align-items: center; min-height: var(--tap-min); padding: 0 var(--space-3);
-  font-size: var(--fs-sm); color: var(--muted); text-decoration: none; border-radius: var(--radius-pill);
-  transition: color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out); }
-.navlink:hover { color: var(--text); background: var(--line); }
-.navsignin { margin-left: auto; }
-@media (min-width: 900px) { .navsignin { margin-left: 0; } }
-
-/* ── buttons ──────────────────────────────────────────────────────────────── */
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
-  min-height: var(--tap-min); padding: 0 var(--space-5); border-radius: var(--radius-pill);
-  font-size: var(--fs-sm); font-weight: var(--fw-semibold); text-decoration: none; white-space: nowrap;
-  border: 1px solid transparent; position: relative;
-  transition: background var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out),
-              color var(--dur-fast) var(--ease-out), translate var(--dur-base) var(--ease-out),
-              box-shadow var(--dur-base) var(--ease-out); }
-.btn svg { width: 16px; height: 16px; flex: none; }
-/* action ember — one solid fill per screen, always Book a call */
-.btn-primary { background: var(--grad-ember); color: var(--accent-ink); box-shadow: var(--glow-ember); }
-.btn-primary:hover { background: var(--accent-hover); color: var(--accent-ink);
-  translate: 0 var(--lift); box-shadow: var(--glow-ember), var(--shadow-accent); }
-.btn-primary:active { translate: 0 0; }
-.btn-ghost { border-color: var(--line-strong); color: var(--text); }
-.btn-ghost:hover { background: color-mix(in srgb, var(--text) 8%, transparent); color: var(--text); }
-.btn-quiet { background: var(--surface); border-color: var(--line); color: var(--text); }
-.btn-quiet:hover { background: color-mix(in srgb, var(--text) 8%, transparent); color: var(--text); }
-/* 44px floor: the review measured "Client sign in" and "Play it again" at 38px.
-   They stay visually small through padding and type size, not a small target. */
-.btn-sm { min-height: var(--tap-min); padding: 0 var(--space-4); font-size: var(--fs-xs); }
-
-/* ── glass, cards, badges ─────────────────────────────────────────────────── */
-.glass { background: var(--glass-bg); backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur)); border: 1px solid var(--line);
-  border-radius: var(--radius-2xl); box-shadow: var(--shadow-lg), var(--glass-inset); overflow: hidden; }
-.pad { padding: var(--space-5); }
-@media (min-width: 720px) { .pad { padding: var(--space-6); } }
-.card { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-5);
-  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-md);
-  transition: translate var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out),
-              border-color var(--dur-base) var(--ease-out); }
-.card-hover:hover { translate: 0 var(--lift-card);
-  border-color: color-mix(in srgb, var(--accent) 35%, transparent);
-  box-shadow: var(--shadow-lg), var(--glow-hover); }
-.chip { display: grid; place-items: center; width: 40px; height: 40px; flex: none;
-  border-radius: var(--radius-md); background: var(--accent-quiet); color: var(--accent-text); }
-.chip svg { width: 20px; height: 20px; }
-.badge { display: inline-flex; align-items: center; gap: var(--space-2); padding: var(--space-1) var(--space-3);
-  border-radius: var(--radius-pill); font-family: var(--font-mono); font-size: var(--fs-2xs);
-  font-weight: var(--fw-semibold); letter-spacing: var(--track-label); text-transform: uppercase; white-space: nowrap; }
-.badge::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex: none; }
-.badge-ok { background: var(--ok-tint); color: var(--ok); }
-.badge-warn { background: var(--warn-tint); color: var(--warn); }
-.badge-neutral { background: var(--surface-sunken); color: var(--muted); border: 1px solid var(--line); }
-.badge-neutral::before { background: var(--faint); }
-.badge-live::before { box-shadow: var(--glow-point); animation: pulse var(--pulse-period) var(--ease-in-out) infinite; }
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .4; } }
-@media (prefers-reduced-motion: reduce) { .badge-live::before { animation: none; } }
-/* a value Jager still has to fill in — visibly unfilled, never a fake number */
-.tbd { font-family: var(--font-mono); font-size: .92em; font-weight: var(--fw-semibold);
-  color: var(--accent-text); background: var(--accent-quiet); border: 1px dashed color-mix(in srgb, var(--accent) 45%, transparent);
-  border-radius: var(--radius-xs); padding: 0 var(--space-2); white-space: nowrap; }
-
-/* ── motion: reveal, sweep ────────────────────────────────────────────────── */
-.js .reveal { opacity: 0; translate: 0 var(--reveal-rise);
-  transition: opacity var(--dur-reveal) var(--ease-out), translate var(--dur-reveal) var(--ease-out);
-  transition-delay: calc(var(--i, 0) * var(--stagger)); }
-.js .reveal.in { opacity: 1; translate: 0 0; }
-@media (prefers-reduced-motion: reduce) { .js .reveal { opacity: 1; translate: 0 0; } }
-.sweepable { position: relative; overflow: hidden; }
-.sweepable::after { content: ""; position: absolute; inset: 0; background: var(--grad-sweep);
-  translate: -110% 0; pointer-events: none; }
-.sweepable.sweeping::after { animation: sweep var(--dur-sweep) var(--ease-out) 1; }
-@keyframes sweep { to { translate: 110% 0; } }
-@media (prefers-reduced-motion: reduce) { .sweepable::after { content: none; } }
-
-/* ── archetype 1: full-bleed hero ─────────────────────────────────────────── */
-.hero { padding-block: var(--space-hero) var(--space-section); }
-.hero .display { margin-block: var(--space-4) var(--space-5); max-width: 22ch; }
-.promises { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); margin-top: var(--space-7);
-  padding-top: var(--space-5); border-top: 1px solid var(--line); }
-.promises li { display: flex; align-items: center; gap: var(--space-2); font-size: var(--fs-sm);
-  color: var(--muted); list-style: none; }
-.promises svg { width: 15px; height: 15px; flex: none; color: var(--accent-text); }
-
-/* ── archetype 3: bento grid ──────────────────────────────────────────────── */
-.bento { display: grid; gap: var(--space-4); grid-template-columns: 1fr; }
-@media (min-width: 480px) { .bento { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (min-width: 1000px) {
-  .bento { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: minmax(var(--bento-min), auto); }
-  .bento .b-hero { grid-column: span 2; grid-row: span 2; }
-  .bento .b-wide { grid-column: span 2; }
-}
-.bento > * { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-5);
-  border-radius: var(--radius-xl); border: 1px solid var(--line); background: var(--surface);
-  box-shadow: var(--shadow-md); }
-
-/* The big bento cell carries a miniature of the thing it describes, so it is
-   not a large tile of empty space. Light and orbit at small scale. */
-.mini { position: relative; isolation: isolate; overflow: hidden; margin-top: auto;
-  border-radius: var(--radius-lg); border: 1px solid var(--line);
-  background: var(--surface-sunken); padding: var(--space-4); }
-.mini-sky { position: absolute; inset: 0; z-index: var(--z-sky); pointer-events: none; }
-.mini-light { position: absolute; width: 13rem; aspect-ratio: 1; right: -4.5rem; top: -7rem;
-  border-radius: 50%; background: var(--grad-sun); opacity: .18; filter: blur(1px); }
-.mini > * { position: relative; z-index: var(--z-content); }
-.mini-row { display: flex; gap: var(--space-2); align-items: flex-start; }
-.mini-row + .mini-row { margin-top: var(--space-3); }
-.mini-them { justify-content: flex-start; }
-.mini-us { flex-direction: row-reverse; }
-.mini-who { display: grid; place-items: center; width: 24px; height: 24px; flex: none; border-radius: 50%;
-  font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); }
-.mini-them .mini-who { background: var(--surface-solid); color: var(--muted); border: 1px solid var(--line); }
-.mini-us .mini-who { background: var(--accent-quiet); color: var(--accent-text); }
-.mini-who svg { width: 15px; height: 15px; }
-.mini-b { font-size: var(--fs-xs); line-height: 1.45; padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-md); max-width: 21rem; min-width: 0; overflow-wrap: anywhere; }
-.mini-them .mini-b { background: var(--surface-solid); border: 1px solid var(--line); border-top-left-radius: var(--radius-xs); }
-.mini-us .mini-b { background: var(--surface-solid); border: 1px solid var(--line-strong);
-  border-top-right-radius: var(--radius-xs); box-shadow: var(--shadow-sm); }
-.mini-foot { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center;
-  justify-content: space-between; margin-top: var(--space-4);
-  padding-top: var(--space-3); border-top: 1px solid var(--line); }
-
-
-/* ── Sprawl, then calm ───────────────────────────────────────────────────────
-   The page's one argument, drawn. Left: what an owner actually has — tools at
-   odd angles, tangled together, none of it the same shape. Right: the same
-   work as one orbiting system. Both panels are bounded boxes with their own
-   aspect ratio, so nothing escapes at any width. */
-.panelpair { display: grid; gap: var(--space-5); align-items: stretch; }
-@media (min-width: 900px) { .panelpair { grid-template-columns: 1fr auto 1fr; gap: var(--space-6); align-items: center; } }
-.panelpair > .arrow { display: grid; place-items: center; color: var(--muted); }
-.panelpair > .arrow svg { width: 28px; height: 28px; }
-@media (max-width: 899px) { .panelpair > .arrow svg { rotate: 90deg; } }
-
-.stage { position: relative; isolation: isolate; overflow: hidden;
-  border-radius: var(--radius-2xl); border: 1px solid var(--line);
-  aspect-ratio: 4 / 3; min-height: 17rem; }
-/* Chips and pills live in the field, which stops short of the caption band —
-   percentage positions can then never collide with the caption at any width. */
-.stage-field { position: absolute; inset: 0 0 3.25rem 0; z-index: 2; }
-.stage-cap { position: absolute; left: var(--space-4); bottom: var(--space-4); z-index: 4;
-  font: var(--fw-semibold) var(--fs-2xs)/1.2 var(--font-mono); letter-spacing: var(--track-label);
-  text-transform: uppercase; padding: 4px 9px; border-radius: var(--radius-pill);
-  background: var(--surface-solid); border: 1px solid var(--line); color: var(--muted); }
-
-/* Before: the tangle */
-.stage-before { background: var(--surface-sunken); }
-.tangle { position: absolute; inset: 0; z-index: 1; }
-.tangle path { fill: none; stroke: var(--line-strong); stroke-width: 1.2; stroke-linecap: round; }
-.chip-lo { position: absolute; z-index: 2; max-width: 46%;
-  font: var(--fw-semibold) var(--fs-2xs)/1.25 var(--font-text);
-  padding: 5px 9px; border-radius: var(--radius-sm);
-  background: var(--surface-solid); border: 1px solid var(--line-strong);
-  color: var(--text); box-shadow: var(--shadow-sm); }
-.chip-lo.dim { color: var(--muted); border-style: dashed; box-shadow: none; }
-
-/* After: one system */
-.stage-after { background: var(--grad-sky); }
-.stage-after .sky-light { width: 15rem; left: 50%; top: 50%; opacity: .5; }
-.orbitsys { position: absolute; inset: 0; z-index: 2; }
-.orbitsys .ring { fill: none; stroke: var(--ring); stroke-opacity: .22; stroke-width: 1; vector-effect: non-scaling-stroke; }
-.orbitsys .spin { transform-origin: 200px 150px; animation: orbit var(--orbit-2) var(--ease-orbit) infinite; }
-.orbitsys .spin-b { animation-duration: var(--orbit-3); animation-direction: reverse; }
-.orbitsys .node { fill: var(--accent); }
-.orbitsys .core { fill: url(#sun); }
-@media (prefers-reduced-motion: reduce) { .orbitsys .spin { animation: none; } }
-.sysnode { position: absolute; z-index: 3; transform: translate(-50%, -50%); max-width: 46%;
-  font: var(--fw-semibold) var(--fs-2xs)/1.2 var(--font-mono); letter-spacing: var(--track-label);
-  text-transform: uppercase; padding: 4px 9px; border-radius: var(--radius-pill);
-  background: var(--surface-solid); border: 1px solid var(--line);
-  color: var(--accent-text); white-space: nowrap; box-shadow: var(--shadow-sm); }
-
-/* ── archetype 2: split with visual — prose first below 900px ─────────────── */
-.split { display: grid; gap: var(--space-6); }
-@media (min-width: 900px) { .split { grid-template-columns: 1fr 1fr; gap: var(--space-8); align-items: center; } }
-.split-prose { display: flex; flex-direction: column; gap: var(--space-4); max-width: var(--measure); }
-
-
-/* How pricing works. MSP research is consistent that owners distrust "as needed"
-   and want flat, itemised, written deliverables — so this is a table of what is
-   included, not a range. Figures stay blank until Jager sets them. */
-.pricecols { display: grid; gap: var(--space-5); }
-@media (min-width: 860px) { .pricecols { grid-template-columns: 1fr 1fr; gap: var(--space-6); } }
-.pricecard { display: flex; flex-direction: column; gap: var(--space-4); padding: var(--space-6);
-  border: 1px solid var(--line); border-radius: var(--radius-xl); background: var(--surface);
-  box-shadow: var(--shadow-md); }
-.priceamt { font-family: var(--font-display); font-size: var(--fs-stat); font-weight: var(--fw-bold);
-  line-height: 1.05; letter-spacing: var(--track-stat); }
-.priceamt .per { font-size: .4em; font-weight: var(--fw-semibold); color: var(--muted); white-space: nowrap; }
-.included { list-style: none; display: grid; gap: var(--space-3); margin-top: auto; }
-.included li { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: var(--space-3);
-  font-size: var(--fs-sm); align-items: start; }
-.included svg { width: 16px; height: 16px; margin-top: 3px; color: var(--accent-text); }
-.included .no svg { color: var(--muted); }
-.included .no { color: var(--muted); }
-
-/* Reviews slot. Built to hold real Google Business Profile reviews and to say
-   plainly that there are none yet — never a placeholder that looks like proof. */
-.reviewslot { display: grid; gap: var(--space-4); padding: var(--space-6);
-  border: 1px dashed var(--line-strong); border-radius: var(--radius-xl);
-  background: var(--surface-sunken); }
-/* --faint measures 4.44:1 on --surface-sunken in light theme, so metadata on the
-   sunken slot steps up one level. */
-.reviewslot .caption { color: var(--muted); }
-.reviewslot .stars { display: inline-flex; gap: 3px; color: var(--muted); }
-.reviewslot .stars svg { width: 15px; height: 15px; }
-
-/* ── archetype 4: big statement ───────────────────────────────────────────── */
-.statementblock { text-align: center; padding-block: var(--space-9); }
-.statementblock .statement { max-width: 26ch; margin-inline: auto; }
-
-/* ── archetype 6: card grid ───────────────────────────────────────────────── */
-.cards { display: grid; gap: var(--space-4); grid-template-columns: 1fr; }
-@media (min-width: 640px) { .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (min-width: 1000px) { .cards-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
-/* Five steps read as a sequence when they sit on one row; below that the last
-   one spans so the grid never ends on a lonely half-width card. */
-@media (min-width: 640px) and (max-width: 1079.98px) { .cards-5 > :last-child { grid-column: 1 / -1; } }
-@media (min-width: 1080px) { .cards-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
-.step { counter-increment: step; }
-.stepnum { font-family: var(--font-mono); font-size: var(--fs-2xs); font-weight: var(--fw-semibold);
-  letter-spacing: var(--track-label); color: var(--accent-text); }
-
-/* ── archetype 5: the live demo panel — the chat ──────────────────────────── */
-.chat { display: flex; flex-direction: column; gap: var(--space-4); }
-/* What the assistant is allowed to read, named in the owner's own words. */
-.sources { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-3); list-style: none; margin: 0; padding: 0; }
-.sources li { display: inline-flex; align-items: center; gap: var(--space-2); min-width: 0;
-  padding: 5px var(--space-3); border-radius: var(--radius-pill);
-  border: 1px solid var(--line); background: var(--surface-sunken);
-  font: var(--fw-semibold) var(--fs-2xs)/1.3 var(--font-mono);
-  letter-spacing: var(--track-label); text-transform: uppercase; color: var(--muted); }
-.sources .dot { flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--ok); }
-.chathead { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); align-items: center;
-  justify-content: space-between; padding-bottom: var(--space-4); border-bottom: 1px solid var(--line); }
-.thread { display: flex; flex-direction: column; gap: var(--space-4); min-height: 22rem; }
-@media (min-width: 640px) { .thread { min-height: 19rem; } }
-.msg { display: flex; gap: var(--space-3); align-items: flex-start; max-width: 34rem; }
-.msg-them { align-self: flex-start; }
-.msg-us { align-self: flex-end; flex-direction: row-reverse; }
-.msg .who { display: grid; place-items: center; width: 32px; height: 32px; flex: none; border-radius: 50%;
-  font-family: var(--font-mono); font-size: var(--fs-2xs); font-weight: var(--fw-semibold); }
-.msg-them .who { background: var(--surface-sunken); color: var(--muted); border: 1px solid var(--line); }
-.msg-us .who { background: var(--accent-quiet); color: var(--accent-text); }
-.msg .bubble { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; overflow-wrap: anywhere; padding: var(--space-3) var(--space-4);
-  border-radius: var(--radius-lg); font-size: var(--fs-sm); }
-.msg-them .bubble { background: var(--surface-sunken); border: 1px solid var(--line); border-top-left-radius: var(--radius-xs); }
-.msg-us .bubble { background: var(--surface-solid); border: 1px solid var(--line-strong);
-  border-top-right-radius: var(--radius-xs); box-shadow: var(--shadow-sm); }
-/* --faint measures 4.44:1 on --surface-sunken in light theme, so metadata on a
-   sunken surface steps up one level. */
-.msg .when { font-family: var(--font-mono); font-size: var(--fs-2xs); color: var(--muted); }
-.quietcell .label { color: var(--muted); }
-.js .msg { opacity: 0; translate: 0 var(--reveal-rise);
-  transition: opacity var(--dur-slow) var(--ease-out), translate var(--dur-slow) var(--ease-out); }
-.js .msg.shown { opacity: 1; translate: 0 0; }
-@media (prefers-reduced-motion: reduce) { .js .msg { opacity: 1; translate: 0 0; } }
-.typing { display: inline-flex; gap: 4px; align-items: center; padding: var(--space-1) 0; }
-.typing i { width: 6px; height: 6px; border-radius: 50%; background: var(--faint);
-  animation: blink 1.2s var(--ease-in-out) infinite; }
-.typing i:nth-child(2) { animation-delay: .15s; }
-.typing i:nth-child(3) { animation-delay: .3s; }
-@keyframes blink { 0%, 60%, 100% { opacity: .3; } 30% { opacity: 1; } }
-@media (prefers-reduced-motion: reduce) { .typing { display: none; } }
-.chatfoot { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; justify-content: space-between;
-  padding-top: var(--space-4); border-top: 1px solid var(--line); }
-
-/* ── data visualisation (DESIGN.md §10) ───────────────────────────────────── */
-.panelrow { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; justify-content: space-between; }
-.spark { display: block; width: 100%; height: 46px; overflow: visible; }
-.spark .line { fill: none; stroke: var(--spark-line); stroke-width: 2; stroke-linejoin: round;
-  stroke-linecap: round; vector-effect: non-scaling-stroke; }
-.spark .area { fill: url(#sparkfill); }
-/* the end point is a zero-length path, not a circle: a stretched svg turns a
-   circle into an ellipse. DESIGN.md §10. */
-.spark .last { fill: none; stroke: var(--spark-point); stroke-width: 7; stroke-linecap: round;
-  vector-effect: non-scaling-stroke; }
-.sparkaxis { display: flex; justify-content: space-between; font-family: var(--font-mono);
-  font-size: var(--fs-2xs); color: var(--faint); }
-.stat .value { font-family: var(--font-display); font-size: var(--fs-stat); font-weight: var(--fw-bold);
-  line-height: 1.05; letter-spacing: var(--track-stat); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.stat .value .unit { font-size: .5em; font-weight: var(--fw-semibold); color: var(--muted); white-space: nowrap; }
-.trend { display: inline-flex; align-items: center; gap: var(--space-1); padding: 2px var(--space-2);
-  border-radius: var(--radius-pill); font-family: var(--font-mono); font-size: var(--fs-2xs);
-  font-weight: var(--fw-semibold); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.trend svg { width: 11px; height: 11px; }
-.trend[data-sentiment="good"] { color: var(--trend-up); background: var(--trend-up-tint); }
-.trend[data-sentiment="bad"] { color: var(--trend-down); background: var(--trend-down-tint); }
-/* progress timeline: stacked below 640px, left to right above it */
-.timeline { list-style: none; display: grid; gap: var(--space-4); }
-@media (min-width: 640px) { .timeline { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-3); } }
-.tstep { display: grid; grid-template-columns: 14px 1fr; gap: var(--space-3); align-items: start; }
-@media (min-width: 640px) { .tstep { grid-template-columns: 1fr; gap: var(--space-2); } }
-.tnode { width: 14px; height: 14px; border-radius: 50%; margin-top: 4px; flex: none;
-  background: var(--chart-track); border: 1.5px solid var(--line-strong); }
-@media (min-width: 640px) { .tnode { margin-top: 0; } }
-.tstep[data-state="done"] .tnode { background: var(--accent); border-color: transparent; }
-.tstep[data-state="now"] .tnode { background: var(--accent); border-color: transparent;
-  box-shadow: var(--glow-point); animation: pulse var(--pulse-period) var(--ease-in-out) infinite; }
-@media (prefers-reduced-motion: reduce) { .tstep[data-state="now"] .tnode { animation: none; } }
-.tbody { display: grid; gap: 2px; }
-.tname { font-size: var(--fs-sm); font-weight: var(--fw-semibold); }
-.tmeta { font-family: var(--font-mono); font-size: var(--fs-2xs); color: var(--faint); }
-.tstep[data-state="next"] .tname { color: var(--muted); font-weight: var(--fw-regular); }
-.tnow { font-family: var(--font-mono); font-size: var(--fs-2xs); font-weight: var(--fw-semibold);
-  letter-spacing: var(--track-label); text-transform: uppercase; color: var(--accent-text); }
-.invoice { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-3); align-items: center;
-  justify-content: space-between; padding: var(--space-3) 0; border-top: 1px solid var(--line); }
-.invoice .amt { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: var(--fs-sm); white-space: nowrap; }
-
-/* ── FAQ ──────────────────────────────────────────────────────────────────── */
-.faq { display: grid; gap: var(--space-3); max-width: 46rem; }
-.faq details { border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); }
-.faq details[open] { border-color: var(--line-strong); }
-.faq summary { display: flex; align-items: center; gap: var(--space-3); justify-content: space-between;
-  min-height: var(--tap-min); padding: var(--space-4) var(--space-5); cursor: pointer;
-  font-weight: var(--fw-semibold); list-style: none; }
-.faq summary::-webkit-details-marker { display: none; }
-.faq summary::after { content: ""; width: 9px; height: 9px; flex: none; border-right: 2px solid var(--faint);
-  border-bottom: 2px solid var(--faint); rotate: 45deg; transition: rotate var(--dur-fast) var(--ease-out); }
-.faq details[open] summary::after { rotate: -135deg; }
-.faq .answer { padding: 0 var(--space-5) var(--space-5); color: var(--muted); max-width: var(--measure); }
-
-/* ── footer ───────────────────────────────────────────────────────────────── */
-footer { border-top: 1px solid var(--line); margin-top: var(--space-section); padding-block: var(--space-7); }
-footer .wrap { display: flex; flex-wrap: wrap; gap: var(--space-5); justify-content: space-between; align-items: flex-start; }
-footer a { text-decoration: none; color: var(--muted); }
-footer a:hover { color: var(--text); }
-/* Inline footer links take the 24px-plus-spacing route rather than becoming
-   44px blocks: each link is 24px tall with 24px of clear space around it. */
-.footlinks { display: flex; flex-wrap: wrap; gap: var(--space-3) var(--space-6); font-size: var(--fs-sm); }
-.footlinks a { display: inline-flex; align-items: center; min-height: 24px; }
-.footcontact { display: inline-flex; align-items: center; gap: var(--space-2);
-  min-height: var(--tap-min); font-weight: var(--fw-semibold); text-decoration: none; }
-.footcontact svg { width: 16px; height: 16px; flex: none; }
-@media (hover: hover) { .footcontact:hover { text-decoration: underline; text-underline-offset: 3px; } }
+a { color: inherit; }
+img, svg { display: block; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.skip { position: absolute; left: var(--space-4); top: -100px; z-index: var(--z-skip); background: var(--surface-solid); color: var(--text); padding: var(--space-3) var(--space-4); border-radius: var(--radius-pill); }
+.skip:focus { top: var(--space-4); }
+.wrap { max-width: var(--container-wide); margin-inline: auto; padding-inline: var(--gutter); }
+
+.eyebrow { font: var(--fw-semibold) var(--fs-xs)/1 var(--font-mono); letter-spacing: var(--track-eyebrow); text-transform: uppercase; color: var(--accent); display: inline-flex; align-items: center; gap: var(--space-3); }
+.eyebrow::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; box-shadow: 0 0 10px currentColor; }
+.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.label { font: var(--fw-semibold) var(--fs-2xs)/1.2 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--muted); }
+.h2 { font-size: var(--fs-display); font-weight: var(--fw-bold); letter-spacing: var(--track-display); line-height: var(--lh-display); }
+.lede { font-size: var(--fs-lede); color: var(--muted); max-width: var(--measure); }
+
+/* Buttons. One solid ember per screen: hero and closing only. */
+.btn { position: relative; isolation: isolate; overflow: hidden; display: inline-flex; align-items: center; justify-content: center; gap: var(--space-3); min-height: 52px; padding: 0 var(--space-6); border-radius: var(--radius-pill); font: var(--fw-semibold) var(--fs-body)/1 var(--font-text); text-decoration: none; border: 1px solid transparent; cursor: pointer; transition: background-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out), border-color var(--dur-fast); }
+.btn svg { width: 18px; height: 18px; flex: none; }
+.btn-primary { background: var(--grad-ember); color: var(--accent-ink); box-shadow: var(--glow-ember), var(--shadow-accent); }
+.btn-primary::after { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--grad-sweep); transform: translateX(-120%); }
+.btn-primary:hover { background: var(--accent-hover); box-shadow: var(--glow-ember), var(--glow-hover); transform: translateY(var(--lift)); }
+.btn-primary:hover::after { transform: translateX(120%); transition: transform var(--dur-sweep) var(--ease-out); }
+.btn-primary:active { transform: none; }
+.btn-ghost { background: transparent; color: var(--text); border-color: var(--line-strong); }
+.btn-ghost:hover { background: color-mix(in oklch, var(--text) 8%, transparent); transform: translateY(var(--lift)); }
+.nav-signin { gap: 0; }
+.btn-sm { min-height: var(--tap-min); padding: 0 var(--space-4); font-size: var(--fs-sm); }
+
+/* ── Nav ── */
+.nav { position: fixed; inset: 0 0 auto; z-index: var(--z-nav); height: var(--nav-height); color: var(--text); transition: background-color var(--dur-slow) var(--ease-out), border-color var(--dur-slow); border-bottom: 1px solid transparent; }
+.nav.is-solid { background: var(--glass-bg); backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); border-bottom-color: var(--line); }
+.nav .wrap { height: 100%; display: flex; align-items: center; gap: var(--space-5); }
+.brand { display: inline-flex; align-items: center; gap: var(--space-2); text-decoration: none; font: var(--fw-brand) 1.15rem/1 var(--font-display); letter-spacing: -0.01em; min-height: var(--tap-min); }
+.brand svg { width: 28px; height: 28px; }
+.nav-links { display: flex; gap: var(--space-1); margin-left: auto; list-style: none; padding: 0; }
+.nav-links a { display: inline-flex; align-items: center; min-height: var(--tap-min); padding: 0 var(--space-3); border-radius: var(--radius-pill); text-decoration: none; font-size: var(--fs-sm); color: var(--muted); transition: background-color var(--dur-fast), color var(--dur-fast); }
+.nav-links a:hover { background: var(--line); color: var(--text); }
+.nav-actions { display: flex; align-items: center; gap: var(--space-2); }
+.motion-toggle { display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--tap-min); padding: 0 var(--space-3); background: transparent; color: var(--text); border: 1px solid var(--line-strong); border-radius: var(--radius-pill); font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; cursor: pointer; transition: background-color var(--dur-fast); }
+.motion-toggle:hover { background: color-mix(in oklch, var(--text) 8%, transparent); }
+.motion-toggle .pip { width: 26px; height: 14px; border-radius: 99px; border: 1px solid var(--line-strong); position: relative; }
+.motion-toggle .pip::after { content: ""; position: absolute; top: 2px; left: 2px; width: 8px; height: 8px; border-radius: 50%; background: var(--muted); transition: transform var(--dur-base) var(--ease-out), background-color var(--dur-base); }
+.motion-toggle[aria-checked="true"] .pip::after { transform: translateX(12px); background: var(--ring); box-shadow: 0 0 8px var(--ring); }
+@media (max-width: 860px) { .nav-links { display: none; } .nav-actions { margin-left: auto; } }
+@media (max-width: 420px) { .nav-signin .long { display: none; } .motion-toggle .word { display: none; } }
+
+/* ── Sky: hero + pinned story. Sticky, never fixed; the light is clipped here. ── */
+.sky { position: relative; height: 420vh; height: 420svh; background: var(--bg); color: var(--text); border-radius: 0 0 var(--radius-2xl) var(--radius-2xl); overflow: clip; isolation: isolate; }
+.stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
+.stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; z-index: var(--z-sky); }
+.fallback { position: absolute; inset: 0; z-index: var(--z-sky); display: grid; place-items: center; background: radial-gradient(60% 50% at 62% 42%, color-mix(in oklch, var(--sun2) 22%, transparent), transparent 70%), var(--texture-stars); }
+.fallback svg { width: min(78vw, 900px); translate: 8% -12%; }
+.stage.gl-on .fallback { display: none; }
+.veil { position: absolute; inset: 0; z-index: var(--z-texture); pointer-events: none; background:
+  linear-gradient(to top, color-mix(in oklch, var(--bg) 92%, transparent) 0%, color-mix(in oklch, var(--bg) 40%, transparent) 30%, transparent 52%),
+  linear-gradient(100deg, color-mix(in oklch, var(--bg) 70%, transparent) 0%, transparent 48%); }
+.stage-ui { position: absolute; inset: 0; z-index: var(--z-content); pointer-events: none; }
+.stage-ui a, .stage-ui button { pointer-events: auto; }
+
+.hero-copy { position: absolute; left: 0; right: 0; bottom: clamp(1.75rem, 9vh, 6.5rem); }
+.hero-copy .eyebrow { color: var(--accent-text); margin-bottom: var(--space-5); }
+.h1 { font-size: var(--fs-hero); font-weight: var(--fw-bold); letter-spacing: var(--track-hero); line-height: 0.98; max-width: 12.5ch; }
+.h1 .w { display: inline-block; overflow: clip; padding-block: 0.06em 0.12em; margin-block: -0.06em -0.12em; vertical-align: top; }
+.h1 .w > span { display: inline-block; }
+.h1 .g > span { background: var(--grad-headline); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hero-sub { margin-top: var(--space-5); font-size: var(--fs-lede); color: var(--muted); max-width: 30rem; }
+.hero-ctas { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-6); }
+
+.beats { position: absolute; left: 0; right: 0; bottom: clamp(2rem, 10vh, 7rem); }
+.beat { position: absolute; left: var(--gutter); right: var(--gutter); bottom: 0; max-width: var(--container-wide); margin-inline: auto; opacity: 0; will-change: opacity, transform; }
+.beat-no { font: var(--fw-semibold) var(--fs-xs)/1 var(--font-mono); letter-spacing: var(--track-eyebrow); color: var(--accent-text); display: flex; align-items: center; gap: var(--space-3); }
+.beat-no::after { content: ""; width: 56px; height: 1px; background: linear-gradient(90deg, var(--ring), transparent); }
+.beat h3 { font-size: var(--fs-beat); font-weight: var(--fw-black); letter-spacing: -0.055em; line-height: 0.92; margin: var(--space-3) 0 var(--space-4) -0.04em; }
+.beat p { font-size: var(--fs-lede); color: var(--muted); max-width: 26rem; }
+
+.hud { position: absolute; right: var(--gutter); bottom: clamp(1.75rem, 9vh, 6.5rem); display: grid; grid-template-columns: auto auto; gap: 6px var(--space-4); font: var(--fw-medium) var(--fs-2xs)/1.3 var(--font-mono); letter-spacing: 0.06em; color: var(--muted); font-variant-numeric: tabular-nums; padding: var(--space-3) var(--space-4); border-left: 1px solid var(--line-strong); }
+.hud dt { color: var(--faint); text-transform: uppercase; }
+.hud dd { margin: 0; color: var(--text); text-align: right; min-width: 11ch; }
+.hud .state { display: inline-flex; align-items: center; gap: 6px; justify-content: flex-end; }
+.hud .state::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--warn); box-shadow: 0 0 8px var(--warn); }
+.hud[data-state="stable"] .state::before { background: var(--ok); box-shadow: 0 0 8px var(--ok); }
+.scroll-cue { position: absolute; left: 50%; bottom: var(--space-5); translate: -50% 0; font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--faint); display: none; }
+
+.ret { position: absolute; left: 0; top: 0; width: 84px; height: 84px; margin: -42px 0 0 -42px; opacity: 0; will-change: transform, opacity;
+  background:
+    linear-gradient(var(--ring), var(--ring)) 0 0 / 14px 1px no-repeat, linear-gradient(var(--ring), var(--ring)) 0 0 / 1px 14px no-repeat,
+    linear-gradient(var(--ring), var(--ring)) 100% 0 / 14px 1px no-repeat, linear-gradient(var(--ring), var(--ring)) 100% 0 / 1px 14px no-repeat,
+    linear-gradient(var(--ring), var(--ring)) 0 100% / 14px 1px no-repeat, linear-gradient(var(--ring), var(--ring)) 0 100% / 1px 14px no-repeat,
+    linear-gradient(var(--ring), var(--ring)) 100% 100% / 14px 1px no-repeat, linear-gradient(var(--ring), var(--ring)) 100% 100% / 1px 14px no-repeat; }
+.ret span { position: absolute; left: calc(100% + 8px); top: -4px; padding: 3px 6px; border-radius: 4px; background: color-mix(in oklch, var(--bg) 72%, transparent); white-space: nowrap; font: var(--fw-semibold) var(--fs-2xs)/1.35 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--text); }
+.ret span b { display: block; font-weight: var(--fw-medium); color: var(--muted); letter-spacing: 0.06em; }
+.ret-ai { width: 44px; height: 44px; margin: -22px 0 0 -22px; }
+.ret.flip span { left: auto; right: calc(100% + 10px); text-align: right; }
+.anchor { position: absolute; left: 0; top: 78svh; width: 1px; height: 1px; }
+
+@media (min-width: 900px) { .scroll-cue { display: block; } }
+@media (max-width: 720px) {
+  .hud { top: calc(var(--nav-height) + var(--space-2)); bottom: auto; right: auto; left: var(--gutter); grid-template-columns: repeat(3, auto); gap: 2px var(--space-3); border-left: 0; padding: 0; }
+  .hud dt:nth-of-type(n+4), .hud dd:nth-of-type(n+4) { display: none; }
+  .hud dd { text-align: left; min-width: 0; }
+  .hud { grid-auto-flow: column; grid-template-rows: auto auto; grid-template-columns: none; }
+  .ret { width: 60px; height: 60px; margin: -30px 0 0 -30px; }
+}
+/* No JavaScript: nothing pins, everything reads in order. */
+html:not(.js) .sky { height: auto; }
+html:not(.js) .stage { position: relative; height: auto; min-height: 100svh; }
+html:not(.js) .stage-ui { position: relative; }
+html:not(.js) .hero-copy, html:not(.js) .beats, html:not(.js) .beat { position: relative; bottom: auto; opacity: 1; padding-block: var(--space-8); }
+html:not(.js) .hud, html:not(.js) .ret { display: none; }
+
+/* ── Sections ── */
+.sec { position: relative; padding-block: var(--section-pad); overflow: clip; isolation: isolate; }
+.sec-head { display: grid; gap: var(--space-5); margin-bottom: var(--space-8); }
+
+/* Portal: split with visual */
+.portal-sec .wrap { display: grid; gap: var(--space-8); align-items: center; }
+@media (min-width: 960px) { .portal-sec .wrap { grid-template-columns: minmax(0, 5.4fr) minmax(0, 6.6fr); gap: var(--space-7); } }
+.portal-light { position: absolute; z-index: var(--z-sky); width: 70vmax; height: 70vmax; right: -20vmax; top: 50%; translate: 0 -50%; background: radial-gradient(closest-side, color-mix(in oklch, var(--sun2) 18%, transparent), color-mix(in oklch, var(--sun1) 6%, transparent) 55%, transparent); pointer-events: none; }
+.logins { margin-top: var(--space-6); display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); font: var(--fw-medium) var(--fs-xs)/1.5 var(--font-mono); color: var(--faint); max-width: 27rem; list-style: none; padding: 0; }
+.logins li { text-decoration: line-through; text-decoration-color: color-mix(in oklch, var(--faint) 60%, transparent); }
+.logins-one { margin-top: var(--space-4); font: var(--fw-semibold) var(--fs-sm)/1 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--text); display: flex; align-items: center; gap: var(--space-3); }
+.logins-one::before { content: ""; width: 40px; height: 1px; background: var(--ring); box-shadow: 0 0 8px var(--ring); }
+.tilt { perspective: 1800px; position: relative; z-index: var(--z-content); }
+.portal { --rx: 16deg; --ry: -18deg; --rz: 4deg; transform: rotateX(var(--rx)) rotateY(var(--ry)) rotateZ(var(--rz)); transform-origin: 50% 60%; background: var(--surface-solid); border: 1px solid var(--line); border-radius: var(--radius-xl); box-shadow: var(--shadow-lg), var(--glass-inset), 0 40px 120px color-mix(in srgb, var(--sun2) 14%, transparent); overflow: hidden; will-change: transform; }
+.p-bar { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-5); border-bottom: 1px solid var(--line); font-size: var(--fs-sm); }
+.p-bar svg { width: 20px; height: 20px; }
+.p-bar strong { font-family: var(--font-display); font-weight: var(--fw-semibold); }
+.p-bar .tag { margin-left: auto; }
+.tag { font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--muted); border: 1px dashed var(--line-strong); padding: 5px 8px; border-radius: var(--radius-pill); }
+.p-body { padding: var(--space-5); display: grid; gap: var(--space-4); }
+.p-hero { display: grid; gap: var(--space-4); padding: var(--space-5); border-radius: var(--radius-lg); background: var(--surface-sunken); position: relative; overflow: hidden; }
+.p-hero::before { content: ""; position: absolute; inset: auto -20% -60% 30%; height: 120%; background: radial-gradient(closest-side, color-mix(in oklch, var(--sun2) 16%, transparent), transparent); pointer-events: none; }
+.p-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; position: relative; }
+.p-site { font: var(--fw-bold) var(--fs-h2)/1.1 var(--font-display); letter-spacing: var(--track-heading); }
+.badge { display: inline-flex; align-items: center; gap: 7px; font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; padding: 6px 10px; border-radius: var(--radius-pill); }
+.badge.ok { color: var(--ok); background: var(--ok-tint); }
+.badge.warn { color: var(--warn); background: var(--warn-tint); }
+.badge.quiet { color: var(--muted); background: var(--surface-sunken); }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; position: relative; }
+.pulse::after { content: ""; position: absolute; inset: -4px; border-radius: 50%; border: 1px solid currentColor; opacity: 0; }
+html[data-motion="on"] .pulse::after { animation: pulse 2.4s var(--ease-out) infinite; }
+@keyframes pulse { 0% { transform: scale(.6); opacity: .9; } 100% { transform: scale(2.2); opacity: 0; } }
+.p-stat { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--space-4); position: relative; }
+.p-num { font: var(--fw-bold) var(--fs-stat)/1 var(--font-display); letter-spacing: var(--track-stat); font-variant-numeric: tabular-nums; }
+.spark { width: min(52%, 260px); height: 56px; overflow: visible; color: var(--chart-1); }
+.spark .ln { fill: none; stroke: var(--spark-line); stroke-width: 2; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.spark .pt { fill: none; stroke: var(--spark-point); stroke-width: 8; stroke-linecap: round; vector-effect: non-scaling-stroke; filter: drop-shadow(0 0 6px currentColor); }
+.p-grid { display: grid; gap: var(--space-4); }
+@media (min-width: 560px) { .p-grid { grid-template-columns: 1fr 1fr; } }
+.p-card { border: 1px solid var(--line); border-radius: var(--radius-lg); padding: var(--space-4); display: grid; gap: var(--space-3); align-content: start; }
+.tl { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); position: relative; }
+.tl::before { content: ""; position: absolute; left: 8px; right: 8px; top: 7px; height: 2px; background: var(--chart-track); }
+.tl::after { content: ""; position: absolute; left: 8px; width: calc(62% - 8px); top: 7px; height: 2px; background: linear-gradient(90deg, var(--accent), var(--ring)); }
+.tl li { position: relative; z-index: 1; display: grid; gap: 6px; justify-items: start; font-size: var(--fs-xs); }
+.tl .n { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--chart-track); background: var(--surface-solid); }
+.tl .done .n { background: var(--accent); border-color: var(--accent); }
+.tl .now .n { background: var(--accent); border-color: var(--accent); color: var(--accent); box-shadow: var(--glow-point); }
+.tl b { font-weight: var(--fw-semibold); }
+.tl small { font: var(--fw-medium) var(--fs-2xs)/1 var(--font-mono); color: var(--muted); letter-spacing: 0.04em; }
+.tl .now small { color: var(--accent-text); }
+.p-next { display: grid; gap: 4px; padding-top: var(--space-3); border-top: 1px solid var(--line); font-size: var(--fs-sm); }
+.p-next .label { color: var(--faint); }
+.inv { display: grid; grid-template-columns: 1fr auto; gap: 2px var(--space-3); align-items: center; padding-block: var(--space-2); border-top: 1px solid var(--line); font-size: var(--fs-sm); }
+.inv:first-of-type { border-top: 0; }
+.inv small { color: var(--muted); font-size: var(--fs-xs); }
+.inv .r { display: grid; justify-items: end; gap: 4px; }
+.tbd { font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: 0.04em; color: var(--warn); background: var(--warn-tint); border: 1px dashed color-mix(in oklch, var(--warn) 55%, transparent); padding: 5px 8px; border-radius: var(--radius-xs); white-space: nowrap; }
+.p-pay { font-size: var(--fs-xs); color: var(--text); border: 1px solid var(--line-strong); border-radius: var(--radius-pill); padding: 4px 10px; }
+
+/* Demo: live demo panel */
+.demo-sec .sec-head { justify-items: center; text-align: center; }
+.chat { max-width: 44rem; margin-inline: auto; background: var(--glass-bg); backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); border: 1px solid var(--line); border-radius: var(--radius-2xl); box-shadow: var(--shadow-lg), var(--glass-inset); overflow: hidden; }
+.chat-top { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-4) var(--space-5); border-bottom: 1px solid var(--line); }
+.chat-top svg { width: 24px; height: 24px; }
+.chat-top div { display: grid; line-height: 1.25; }
+.chat-top strong { font: var(--fw-semibold) var(--fs-body) var(--font-display); }
+.chat-top small { color: var(--muted); font-size: var(--fs-xs); }
+.chat-top .tag { margin-left: auto; }
+.chat-log { padding: var(--space-5); display: grid; gap: var(--space-4); min-height: 28rem; align-content: start; }
+.msg { max-width: 86%; padding: var(--space-3) var(--space-4); border-radius: var(--radius-lg); line-height: var(--lh-body); transition: opacity var(--dur-slow) var(--ease-out), transform var(--dur-slow) var(--ease-out); }
+.msg.me { justify-self: end; background: var(--surface-sunken); border-bottom-right-radius: var(--radius-xs); }
+.msg.ai { justify-self: start; border: 1px solid var(--line); border-bottom-left-radius: var(--radius-xs); background: var(--surface-solid); }
+.msg .who { display: block; margin-bottom: 4px; }
+.step { display: flex; align-items: center; gap: var(--space-3); font: var(--fw-medium) var(--fs-xs)/1.4 var(--font-mono); color: var(--muted); transition: opacity var(--dur-slow); }
+.step i { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--line-strong); flex: none; display: grid; place-items: center; font-style: normal; }
+.step.done i { border-color: var(--ok); color: var(--ok); }
+.step.done i::before { content: "✓"; font-size: 11px; line-height: 1; }
+.step.run i { border-top-color: var(--ring); animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(1turn); } }
+.order { margin-top: var(--space-3); border-top: 1px solid var(--line); padding-top: var(--space-3); display: grid; grid-template-columns: 1fr auto; gap: 6px var(--space-4); font-size: var(--fs-sm); transition: opacity var(--dur-slow); }
+.order .mono { color: var(--text); }
+.typing { display: inline-flex; gap: 4px; padding: var(--space-3) var(--space-4); border: 1px solid var(--line); border-radius: var(--radius-lg); justify-self: start; }
+.typing i { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); animation: blink 1s infinite; }
+.typing i:nth-child(2) { animation-delay: .15s; } .typing i:nth-child(3) { animation-delay: .3s; }
+@keyframes blink { 50% { opacity: .25; } }
+.wait { opacity: 0; transform: translateY(8px); }
+.gone { display: none !important; }
+.chat-foot { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; padding: var(--space-4) var(--space-5); border-top: 1px solid var(--line); font-size: var(--fs-sm); color: var(--muted); }
+
+/* Promises: ruled row */
+.promises { list-style: none; padding: 0; display: grid; border-top: 1px solid var(--line-strong); }
+@media (min-width: 560px) { .promises { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 960px) { .promises { grid-template-columns: repeat(4, 1fr); } }
+.promises li { padding: var(--space-6) var(--space-5) var(--space-6) 0; border-bottom: 1px solid var(--line); display: grid; gap: var(--space-3); align-content: start; }
+@media (min-width: 960px) { .promises li + li { padding-left: var(--space-5); border-left: 1px solid var(--line); } .promises li { border-bottom: 0; } }
+.promises .mono { font-size: var(--fs-xs); color: var(--accent); letter-spacing: var(--track-label); }
+.promises h3 { font-size: var(--fs-h2); font-weight: var(--fw-bold); letter-spacing: var(--track-heading); line-height: var(--lh-heading); }
+.promises p { color: var(--muted); }
+
+/* Pricing: two numbers */
+.price { display: grid; gap: var(--space-5); margin-top: var(--space-9); }
+@media (min-width: 900px) { .price { grid-template-columns: 1.25fr 1fr 1fr; align-items: start; } }
+.price-card { border: 1px solid var(--line); border-radius: var(--radius-xl); padding: var(--space-6); background: var(--surface); box-shadow: var(--shadow-md), var(--glass-inset); display: grid; gap: var(--space-4); }
+.price-card h3 { font-size: var(--fs-h3); font-weight: var(--fw-brand); letter-spacing: var(--track-heading); }
+.amt { display: flex; align-items: baseline; gap: var(--space-2); font: var(--fw-bold) var(--fs-stat)/1 var(--font-display); letter-spacing: var(--track-stat); }
+.amt .tbd { font-size: var(--fs-xs); padding: 8px 10px; }
+.amt small { font: var(--fw-medium) var(--fs-sm)/1 var(--font-text); color: var(--muted); letter-spacing: 0; }
+.incl { list-style: none; padding: 0; display: grid; gap: var(--space-2); font-size: var(--fs-sm); }
+.incl li { display: flex; gap: var(--space-3); }
+.incl li::before { content: ""; flex: none; width: 6px; height: 6px; margin-top: .55em; border-radius: 50%; background: var(--ring); box-shadow: 0 0 6px var(--ring); }
+
+/* FAQ */
+.faq-sec .wrap { display: grid; gap: var(--space-7); }
+@media (min-width: 960px) { .faq-sec .wrap { grid-template-columns: 4fr 8fr; } }
+.faq { border-top: 1px solid var(--line-strong); }
+.faq details { border-bottom: 1px solid var(--line); }
+.faq summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: var(--space-4); min-height: 72px; padding-block: var(--space-4); font: var(--fw-semibold) var(--fs-h3)/1.3 var(--font-display); letter-spacing: var(--track-heading); }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: ""; flex: none; width: 14px; height: 14px; background: linear-gradient(currentColor, currentColor) center / 14px 1.5px no-repeat, linear-gradient(currentColor, currentColor) center / 1.5px 14px no-repeat; transition: transform var(--dur-base) var(--ease-out); }
+.faq details[open] summary::after { transform: rotate(45deg); }
+.faq summary:hover { color: var(--text); }
+.faq p { padding-bottom: var(--space-5); color: var(--muted); max-width: var(--measure); }
+
+/* Closing: big statement */
+.close-sec { text-align: center; padding-block: calc(var(--section-pad) * 1.4); }
+.close-sec h2 { font-size: var(--fs-statement); font-weight: var(--fw-black); letter-spacing: var(--track-statement); line-height: var(--lh-display); max-width: 14ch; margin-inline: auto; }
+.close-sec p { margin: var(--space-5) auto 0; color: var(--muted); font-size: var(--fs-lede); max-width: 28rem; }
+.close-ctas { margin-top: var(--space-7); display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: var(--space-5); }
+.textlink { display: inline-flex; align-items: center; min-height: var(--tap-min); text-decoration: none; font-weight: var(--fw-medium); }
+.textlink:hover { text-decoration: underline; text-underline-offset: 3px; }
+.close-sec .wrap { position: relative; }
+.eight { display: block; width: min(100%, 880px); margin: 0 auto calc(var(--space-7) * -1); overflow: visible; pointer-events: none; }
+.close-sec h2 { position: relative; }
+.eight .base { fill: none; stroke: var(--ring); stroke-opacity: .28; stroke-width: 1.25; vector-effect: non-scaling-stroke; }
+.eight .run { fill: none; stroke: var(--ring); stroke-width: 2; stroke-linecap: round; stroke-dasharray: 110 890; vector-effect: non-scaling-stroke; filter: drop-shadow(0 0 6px var(--ring)); }
+html[data-motion="on"] .eight .run { animation: trace 14s linear infinite; }
+@keyframes trace { from { stroke-dashoffset: 1000; } to { stroke-dashoffset: 0; } }
+.eight .sun { fill: url(#mk); filter: drop-shadow(0 0 10px color-mix(in srgb, var(--sun2) 60%, transparent)); }
+.eight .agent { fill: var(--ring); }
+
+footer { border-top: 1px solid var(--line); padding-block: var(--space-7); font-size: var(--fs-sm); color: var(--muted); }
+footer .wrap { display: flex; flex-wrap: wrap; gap: var(--space-5) var(--space-7); align-items: center; justify-content: space-between; }
+footer ul { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); }
+footer a { display: inline-flex; align-items: center; min-height: 24px; padding-block: var(--space-2); text-decoration: none; color: var(--text); }
+footer a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+/* Reveal: hidden only when script is here and motion is on. */
+html.js[data-motion="on"] .rv:not(.in) { opacity: 0; transform: translateY(var(--reveal-rise)); }
+.rv { transition: opacity var(--dur-reveal) var(--ease-out), transform var(--dur-reveal) var(--ease-out); transition-delay: calc(var(--d, 0) * var(--stagger)); }
+html.js[data-motion="on"] .h1:not(.play) .w > span { transform: translateY(110%); }
+html.js .h1 .w > span { transition: transform 1.1s var(--ease-out); transition-delay: calc(var(--i) * 70ms + 150ms); }
+html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="off"] *::after { animation-play-state: paused !important; }
+@media (prefers-reduced-motion: reduce) { .btn-primary:hover::after { transition: none; } }
 </style>
 </head>
 <body>
-<a class="skip" href="#content">Skip to content</a>
+<a class="skip" href="#main">Skip to content</a>
 
-<svg aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden">
-  <defs>
-    <radialGradient id="sun" cx=".42" cy=".38" r=".62">
-      <stop offset="0" style="stop-color:var(--sun1)"/>
-      <stop offset="1" style="stop-color:var(--sun2)"/>
-    </radialGradient>
-    <linearGradient id="sparkfill" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" style="stop-color:var(--spark-line);stop-opacity:.22"/>
-      <stop offset="1" style="stop-color:var(--spark-line);stop-opacity:0"/>
-    </linearGradient>
-  </defs>
-</svg>
-
-<header class="topnav">
-  <div class="wrap wrap-wide">
-    <a class="brand" href="/" aria-label="Solenix home">
-      <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/><circle cx="16" cy="16" r="8" fill="url(#sun)"/><circle cx="27" cy="9" r="2.2" fill="var(--ring)"/></svg>
+<header class="nav" data-theme="dark" data-od-id="nav">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Solenix home">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><defs><radialGradient id="mk" cx=".42" cy=".38" r=".62"><stop offset="0" stop-color="var(--sun1)"/><stop offset="1" stop-color="var(--sun2)"/></radialGradient></defs><circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/><circle cx="16" cy="16" r="8" fill="url(#mk)"/><circle cx="27" cy="9" r="2.2" fill="var(--ring)"/></svg>
       Solenix
     </a>
-    <nav class="navlinks" aria-label="Sections">
-      <a class="navlink" href="#demo">See it work</a>
-      <a class="navlink" href="#what">What we do</a>
-      <a class="navlink" href="#portal">Your portal</a>
-      <a class="navlink" href="#faq">Questions</a>
-    </nav>
-    <a class="btn btn-ghost btn-sm navsignin" href="/app">Client sign in</a>
+    <ul class="nav-links">
+      <li><a href="#settle">How it settles</a></li>
+      <li><a href="#portal">Portal</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#faq">Questions</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="motion-toggle" type="button" role="switch" aria-checked="true" data-od-id="motion-toggle"><span class="word">Motion</span><span class="sr-only">Motion</span><span class="pip" aria-hidden="true"></span></button>
+      <a class="btn btn-ghost btn-sm nav-signin" href="/app" data-od-id="nav-signin"><span class="long">Client&nbsp;</span>sign in</a>
+    </div>
   </div>
 </header>
 
-<main id="content">
-
-<!-- ═══ 1 · hero — full-bleed feature ═════════════════════════════════════ -->
-<section class="lit hero" style="--light-x: 84%; --light-y: -6%; --light-size: 30rem; --light-strength: .55; --orbit-size: 60rem;">
-  <div class="sky" aria-hidden="true">
-    <div class="sky-halo"></div>
-    <div class="sky-light"></div>
-    <div class="sky-stars"></div>
-    <svg class="sky-orbit" viewBox="0 0 800 800">
-      <circle class="ring" cx="400" cy="400" r="250"/>
-      <circle class="ring ring-faint" cx="400" cy="400" r="330"/>
-      <circle class="ring ring-faint" cx="400" cy="400" r="395"/>
-      <path class="arc" d="M150 400a250 250 0 0 1 250-250"/>
-      <g class="track"><circle class="dot" cx="400" cy="150" r="6"/></g>
-      <g class="track t2"><circle class="dot" cx="70" cy="400" r="5"/></g>
-      <g class="track t3"><circle class="dot" cx="400" cy="795" r="4"/></g>
-    </svg>
-    <div class="sky-veil"></div>
-  </div>
-  <div class="texture" aria-hidden="true"></div>
-
-  <div class="wrap wrap-wide">
-    <p class="eyebrow reveal" style="--i:0">The tech person your business does not have</p>
-    <h1 class="display reveal" style="--i:1">Too many tools. Too many logins. <em class="lit-text">Nobody who knows.</em></h1>
-    <p class="lede reveal" style="--i:2">
-      A website somewhere, a booking app, three spreadsheets, a pile of
-      subscriptions, and something your nephew set up in 2023 that nobody dares
-      touch. Every tool promised to help. None of them talk to each other, and
-      hiring an engineer to sort it out was never realistic.
-    </p>
-    <p class="lede reveal" style="--i:3; margin-top: var(--space-4)">
-      <strong>The hard part is not the work. It is knowing.</strong> Knowing which of
-      those tools already talk to each other, which ones can be handed to AI, and which
-      route gets you a result this week. That is the job we take on: one person who knows
-      the way, sets it up, teaches your team, and stays. More money in, less spent on
-      software, and hours back every week.
-    </p>
-    <div class="cluster reveal" style="--i:4; margin-top: var(--space-6);">
-      <a class="btn btn-primary" href="mailto:hello@solenix.dev?subject=Book%20a%20call">
-        Book a call
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </a>
-      <a class="btn btn-ghost" href="#calm">Show me what that looks like</a>
+<main id="main">
+<section class="sky" id="top" data-theme="dark" data-od-id="hero-story" aria-label="Your business is a three-body problem">
+  <span class="anchor" id="settle" aria-hidden="true"></span>
+  <div class="stage">
+    <div class="fallback" aria-hidden="true">
+      <svg viewBox="0 0 600 220"><path d="M300 110L283.4 125.3L266.5 140.3L249.2 154.7L231.2 168L212.6 179.9L193.3 189.9L173.7 197.8L154.1 203.2L134.8 206.1L116.5 206.6L99.4 204.8L83.8 201.2L69.9 196.2L57.7 190.1L47.1 183.1L38.1 175.6L30.5 167.8L24.2 159.7L19.1 151.5L15 143.2L11.9 134.9L9.8 126.6L8.5 118.3L8.1 110L8.5 101.7L9.8 93.4L11.9 85.1L15 76.8L19.1 68.5L24.2 60.3L30.5 52.2L38.1 44.4L47.1 36.9L57.7 29.9L69.9 23.8L83.8 18.8L99.4 15.2L116.5 13.4L134.8 13.9L154.1 16.8L173.7 22.2L193.3 30.1L212.6 40.1L231.2 52L249.2 65.3L266.5 79.7L283.4 94.7L300 110L316.6 125.3L333.5 140.3L350.8 154.7L368.8 168L387.4 179.9L406.7 189.9L426.3 197.8L445.9 203.2L465.2 206.1L483.5 206.6L500.6 204.8L516.2 201.2L530.1 196.2L542.3 190.1L552.9 183.1L561.9 175.6L569.5 167.8L575.8 159.7L580.9 151.5L585 143.2L588.1 134.9L590.2 126.6L591.5 118.3L591.9 110L591.5 101.7L590.2 93.4L588.1 85.1L585 76.8L580.9 68.5L575.8 60.3L569.5 52.2L561.9 44.4L552.9 36.9L542.3 29.9L530.1 23.8L516.2 18.8L500.6 15.2L483.5 13.4L465.2 13.9L445.9 16.8L426.3 22.2L406.7 30.1L387.4 40.1L368.8 52L350.8 65.3L333.5 79.7L316.6 94.7Z" fill="none" stroke="var(--ring)" stroke-width="2" stroke-opacity=".7"/><circle cx="300" cy="110" r="14" fill="var(--sun1)"/><circle cx="99.4" cy="204.8" r="14" fill="var(--sun2)"/><circle cx="483.5" cy="13.4" r="14" fill="var(--sun2)"/></svg>
     </div>
-    <ul class="promises reveal" style="--i:5">
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Fixed price, agreed before we start</li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>You own everything</li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Updates in plain English</li>
-      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>No lock-in</li>
-    </ul>
-  </div>
-</section>
+    <canvas id="gl" aria-hidden="true"></canvas>
+    <div class="veil" aria-hidden="true"></div>
 
-<!-- ═══ 2 · sprawl → calm — split with visual ═════════════════════════════ -->
-<section class="section" id="calm" data-od-id="sprawl-to-calm">
-  <div class="wrap wrap-wide">
-    <div class="section-head">
-      <p class="eyebrow">Before and after</p>
-      <h2 class="h2" style="max-width: 34ch;">The same business, before and after someone takes it on</h2>
-      <p class="small body">Nothing on the left gets thrown away for the sake of it. We work out what earns
-        its place, replace what does not, and connect what is left into one thing you can actually see.</p>
-    </div>
+    <div class="stage-ui">
+      <div class="ret" aria-hidden="true"><span>A · Website<b>host, domain, email</b></span></div>
+      <div class="ret" aria-hidden="true"><span>B · Bookings<b>calendar, reminders</b></span></div>
+      <div class="ret" aria-hidden="true"><span>C · Payments<b>till, invoices, bank</b></span></div>
+      <div class="ret ret-ai" aria-hidden="true"><span>AI<b>Claude or ChatGPT</b></span></div>
 
-    <div class="panelpair">
-      <!-- what an owner actually has -->
-      <div class="stage stage-before" data-od-id="stage-sprawl"
-           role="img" aria-label="What a small business usually has: a website, a booking app, spreadsheets, invoices in a separate tool, a dozen logins, monthly subscriptions, and something set up years ago that nobody understands — none of it connected.">
-        <svg class="tangle" viewBox="0 0 400 300" aria-hidden="true" preserveAspectRatio="none">
-          <path d="M70 60C140 90 120 150 200 130S300 90 330 150"/>
-          <path d="M90 210C150 180 210 240 300 200"/>
-          <path d="M60 140C110 160 90 220 160 250"/>
-          <path d="M240 70C280 110 230 140 300 230"/>
-          <path d="M120 100C180 120 150 190 230 170"/>
-        </svg>
-        <div class="stage-field">
-          <span class="chip-lo" style="left: 5%;  top: 4%;  rotate: -4deg;">Website</span>
-          <span class="chip-lo" style="right: 6%; top: 12%; rotate: 5deg;">Booking app</span>
-          <span class="chip-lo" style="left: 8%;  top: 32%; rotate: 3deg;">Three spreadsheets</span>
-          <span class="chip-lo" style="right: 5%; top: 42%; rotate: -6deg;">Invoices, elsewhere</span>
-          <span class="chip-lo dim" style="left: 6%; top: 62%; rotate: -2deg;">12 logins</span>
-          <span class="chip-lo dim" style="right: 8%; top: 70%; rotate: 4deg;">7 subscriptions</span>
-          <span class="chip-lo dim" style="left: 10%; bottom: 2%; rotate: 2deg;">That 2023 thing</span>
-        </div>
-        <span class="stage-cap">What you have now</span>
-      </div>
-
-      <div class="arrow" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15m0 0-5-5m5 5-5 5"/></svg>
-      </div>
-
-      <!-- the same work, as one system -->
-      <div class="stage stage-after lit" data-od-id="stage-calm"
-           role="img" aria-label="The same work as one system: Solenix at the centre, with Your tech, Projects and Billing in orbit around it.">
-        <div class="sky" aria-hidden="true"><div class="sky-light"></div></div>
-        <svg class="orbitsys" viewBox="0 0 400 300" aria-hidden="true">
-          <circle class="ring" cx="200" cy="150" r="78"/>
-          <circle class="ring" cx="200" cy="150" r="115"/>
-          <g class="spin"><circle class="node" cx="200" cy="72" r="4.5"/></g>
-          <g class="spin spin-b"><circle class="node" cx="85" cy="150" r="3.5"/></g>
-          <circle class="core" cx="200" cy="150" r="26"/>
-        </svg>
-        <div class="stage-field">
-          <span class="sysnode" style="left: 50%; top: 11%;">Your tech</span>
-          <span class="sysnode" style="left: 22%; top: 78%;">Projects</span>
-          <span class="sysnode" style="left: 78%; top: 78%;">Billing</span>
-        </div>
-        <span class="stage-cap">One place to see it</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══ 3 · what we do — bento ════════════════════════════════════════════ -->
-<section class="section" id="what" data-od-id="what-we-do">
-  <div class="wrap wrap-wide">
-    <div class="section-head">
-      <p class="eyebrow">What we do</p>
-      <h2 class="h2" style="max-width: 32ch;">Mostly we switch on what you already pay for</h2>
-      <p class="small body">Shopify, Google Workspace, QuickBooks, Square, Canva, your booking app — most
-        of them already connect to each other, and most of them can now be handed to AI. Almost nobody
-        tells owners that. Finding those connections and switching them on is most of the job. Building
-        something new is the last resort — the fastest route to a result you can see wins.</p>
-    </div>
-
-    <div class="bento">
-      <div class="b-hero reveal" style="--i:0; justify-content: space-between;" data-od-id="move-sort">
-        <div class="stack">
-          <span class="chip" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M4 12h10M4 18h6"/><path d="M17 15l2.5 2.5L23 13"/></svg></span>
-          <h3 class="h3">First: the list</h3>
-          <p class="small">
-            We go through every tool, login and subscription you pay for and write down
-            what it does, what it costs, what depends on it, and — the part nobody ever
-            shows you — what it already connects to. Most owners have never seen that list.
-            Cancelling the overlap often pays for the work.
-          </p>
-          <p class="small">You get the list whether or not you hire us for anything else.</p>
-        </div>
-        <p class="caption">Then we switch on what is already there, set up what is missing, and retire what is not earning its keep.</p>
-      </div>
-
-      <div class="reveal" style="--i:1" data-od-id="move-ai">
-        <p class="label">More time</p>
-        <h3 class="h3">AI wired into your own tools</h3>
-        <p class="small">A Claude or ChatGPT workspace connected to your store, your files and your inbox,
-          so it works from your real numbers — then we sit with your staff until they use it daily.</p>
-      </div>
-      <div class="reveal" style="--i:2" data-od-id="move-google">
-        <p class="label">Look professional</p>
-        <h3 class="h3">Email on your own domain</h3>
-        <p class="small">Google Workspace set up properly — email at your own address, shared files and
-          calendars — plus your Google Business Profile kept current so people can find you.</p>
-      </div>
-      <div class="reveal" style="--i:3" data-od-id="move-store">
-        <p class="label">More money</p>
-        <h3 class="h3">Website and store, looked after</h3>
-        <p class="small">Your Shopify store and website managed and updated — products, prices, hours,
-          pages — so nothing sits stale and nothing needs your evening.</p>
-      </div>
-      <div class="reveal b-wide" style="--i:4" data-od-id="move-build">
-        <p class="label">Last resort</p>
-        <h3 class="h3">Build something new only when nothing fits</h3>
-        <p class="small">Sometimes the off-the-shelf answer genuinely does not exist — a bakery needed
-          20-minute pickup holds no booking tool offered. Then we build it, at a fixed price, and run it
-          alongside everything else.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══ 4 · the sequence — card grid ═══════════════════════════ -->
-<section class="section" id="sequence" data-od-id="the-sequence">
-  <div class="wrap wrap-wide">
-    <div class="section-head">
-      <p class="eyebrow">How it goes</p>
-      <h2 class="h2" style="max-width: 30ch;">The same five steps, in the same order, every time</h2>
-      <p class="small body">No discovery phase that never ends, no rebuild before we have understood what
-        you have. Steps one and two are the ones almost nobody does for you.</p>
-    </div>
-    <div class="cards cards-5">
-      <div class="card step reveal" style="--i:0">
-        <span class="stepnum">Step 1</span>
-        <h3 class="h3">Look</h3>
-        <p class="small">We go through everything you use — every tool, login and subscription — and write down what each one does and costs.</p>
-      </div>
-      <div class="card step reveal" style="--i:1">
-        <span class="stepnum">Step 2</span>
-        <h3 class="h3">Find</h3>
-        <p class="small">We find the better options, and the connections you are already paying for and were never told about.</p>
-      </div>
-      <div class="card step reveal" style="--i:2">
-        <span class="stepnum">Step 3</span>
-        <h3 class="h3">Connect</h3>
-        <p class="small">We set up your AI assistant and connect it to those tools, so it works from your real orders, files and inbox.</p>
-      </div>
-      <div class="card step reveal" style="--i:3">
-        <span class="stepnum">Step 4</span>
-        <h3 class="h3">Teach</h3>
-        <p class="small">We sit with you and your team until you are using it on real work — not trying it once and going back to the old way.</p>
-      </div>
-      <div class="card step reveal" style="--i:4">
-        <span class="stepnum">Step 5</span>
-        <h3 class="h3">Keep it running</h3>
-        <p class="small">We look after all of it and watch it, and you see the whole lot in one place. One monthly price, nothing to chase.</p>
-      </div>
-    </div>
-    <p class="caption" style="margin-top: var(--space-5);">Building something new only happens when steps one and two
-      turn up nothing that fits. It is the last resort, not the plan.</p>
-  </div>
-</section>
-
-<!-- ═══ 5 · big statement ═════════════════════════════════════════════════ -->
-<section class="lit statementblock" style="--light-x: 50%; --light-y: 120%; --light-size: 26rem; --light-strength: .32; --orbit-size: 52rem;">
-  <div class="sky" aria-hidden="true">
-    <svg class="sky-orbit" viewBox="0 0 800 800">
-      <path class="arc" d="M120 400a280 280 0 0 1 560 0"/>
-      <circle class="ring ring-faint" cx="400" cy="400" r="340"/>
-    </svg>
-    <div class="sky-light"></div>
-  </div>
-  <div class="wrap inner">
-    <p class="statement">You do not need an expert in everything.
-      <em class="lit-text">You need one who knows the way.</em></p>
-    <p class="small body" style="max-width: 46ch; margin: var(--space-6) auto 0; text-align: center;">
-      AI can now do most of the everyday work — the spreadsheets, the analytics, the storefront,
-      the paperwork, and the first draft of the legal, accounting and ad work. What a small business
-      needs is not a specialist in each of those. It is one person who knows which path is shorter.
-    </p>
-  </div>
-</section>
-
-<!-- ═══ 6 · your portal — split with visual ═══════════════════════════════ -->
-<section class="section" id="portal">
-  <div class="wrap wrap-wide">
-    <div class="split">
-      <div class="split-prose">
-        <p class="eyebrow">Your portal</p>
-        <h2 class="h2">Twelve logins become one</h2>
-        <p class="small">
-          Everything we run for you, behind a single sign-in. It is a calm surface over
-          the services doing the work, so you read a plain status instead of learning
-          another dashboard.
-        </p>
-        <ul class="stack" style="gap: var(--space-4); list-style: none;">
-          <li class="small"><strong>Your tech</strong> &mdash; every account and service we run for you:
-            AI workspace, email, domain, website, store, local listing. What each costs a month, when it
-            renews, and who on your team can get in.</li>
-          <li class="small"><strong>Projects</strong> &mdash; what stage the work is at, what happens
-            next and when, and anything waiting on your approval.</li>
-          <li class="small"><strong>Billing</strong> &mdash; open and past invoices and your care plan.
-            Payments and receipts are handled by Stripe.</li>
-        </ul>
-        <div class="cluster">
-          <a class="btn btn-quiet btn-sm" href="/app">Client sign in</a>
-        </div>
-      </div>
-
-      <div class="glass pad" data-panel>
-        <div class="panelrow" style="margin-bottom: var(--space-5);">
-          <p class="label">Maple &amp; Rye · your portal</p>
-          <span class="badge badge-neutral">Example</span>
-        </div>
-
-        <!-- site health -->
-        <div class="panelrow">
-          <div>
-            <p class="label">Your website</p>
-            <p class="small" style="margin-top: var(--space-1);">maple-and-rye.ca</p>
-          </div>
-          <span class="badge badge-ok badge-live">Live</span>
-        </div>
-
-        <div class="od-stat stat" style="margin-top: var(--space-4);">
-          <span class="value od-nowrap" data-count-to="1248">1,248<span class="unit">visits</span></span>
-          <span class="caption">Last 30 days</span>
-          <span><span class="trend" data-sentiment="good">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 17 12 9l3 3 5-6"/></svg>
-            12% more than the month before
-          </span></span>
-        </div>
-
-        <svg class="spark" viewBox="0 0 300 46" preserveAspectRatio="none" role="img"
-             aria-label="Visits over the last 30 days, example data: rising from about 38 a day to about 78 a day.">
-          <path class="area" d="M0,37.6 L27.3,34.3 L54.5,36 L81.8,29.9 L109.1,31.6 L136.4,26.6 L163.6,28.3 L190.9,23.3 L218.2,25 L245.5,18.9 L272.7,20.6 L300,15.6 L300,46 L0,46 Z"/>
-          <path class="line" d="M0,37.6 L27.3,34.3 L54.5,36 L81.8,29.9 L109.1,31.6 L136.4,26.6 L163.6,28.3 L190.9,23.3 L218.2,25 L245.5,18.9 L272.7,20.6 L300,15.6"/>
-          <path class="last" d="M300,15.6 l0 0"/>
-        </svg>
-        <p class="sparkaxis"><span>30 days ago</span><span>Today</span></p>
-
-        <!-- project timeline -->
-        <p class="label" style="margin-top: var(--space-6);">Your project</p>
-        <ol class="timeline" style="margin-top: var(--space-3);">
-          <li class="tstep" data-state="done">
-            <span class="tnode" aria-hidden="true"></span>
-            <span class="tbody"><span class="tname">Call</span><span class="tmeta">Done · 2 Sep</span></span>
-          </li>
-          <li class="tstep" data-state="done">
-            <span class="tnode" aria-hidden="true"></span>
-            <span class="tbody"><span class="tname">Plan</span><span class="tmeta">Done · 11 Sep</span></span>
-          </li>
-          <li class="tstep" data-state="now" aria-current="step">
-            <span class="tnode" aria-hidden="true"></span>
-            <span class="tbody"><span class="tname">Build</span><span class="tnow">Now</span><span class="tmeta">You'll see it Thursday</span></span>
-          </li>
-          <li class="tstep" data-state="next">
-            <span class="tnode" aria-hidden="true"></span>
-            <span class="tbody"><span class="tname">Care</span><span class="tmeta">Not started</span></span>
-          </li>
-        </ol>
-
-        <!-- invoices -->
-        <p class="label" style="margin-top: var(--space-6);">Your invoices</p>
-        <div style="margin-top: var(--space-2);">
-          <div class="invoice">
-            <span class="small">Website build · final</span>
-            <span class="cluster" style="gap: var(--space-3);">
-              <span class="badge badge-ok">Paid</span>
-              <span class="amt">$1,850.00</span>
-            </span>
-          </div>
-          <div class="invoice">
-            <span class="small">Ordering assistant</span>
-            <span class="cluster" style="gap: var(--space-3);">
-              <span class="badge badge-warn">Due 8 Oct</span>
-              <span class="amt">$920.00</span>
-            </span>
+      <div class="hero-copy" data-od-id="hero-copy">
+        <div class="wrap">
+          <p class="eyebrow">Solenix · St. John's, NL</p>
+          <h1 class="h1" data-od-id="hero-headline"><span class="w" style="--i:0"><span>Your</span></span> <span class="w" style="--i:1"><span>business</span></span> <span class="w" style="--i:2"><span>is</span></span> <span class="w" style="--i:3"><span>a</span></span> <span class="w g" style="--i:4"><span>three&#8209;body</span></span> <span class="w g" style="--i:5"><span>problem.</span></span></h1>
+          <p class="hero-sub">A dozen tools pulling on each other. Nothing settles. We find the stable orbit.</p>
+          <div class="hero-ctas">
+            <a class="btn btn-primary" href="mailto:hello@solenix.dev?subject=Book%20a%20call" data-od-id="hero-cta">Book a call</a>
+            <a class="btn btn-ghost" href="#settle" data-od-id="hero-see">See how it settles
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a>
           </div>
         </div>
-        <p class="caption" style="margin-top: var(--space-4);">Example figures for a made-up bakery. Your portal shows your own.</p>
       </div>
+
+      <div class="beats">
+        <h2 class="sr-only">How it settles</h2>
+        <article class="beat" data-od-id="beat-look"><p class="beat-no">01 / 03</p><h3>Look.</h3><p>We map every tool, login and bill you have. Nothing gets missed.</p></article>
+        <article class="beat" data-od-id="beat-connect"><p class="beat-no">02 / 03</p><h3>Connect.</h3><p>We wire them to each other, and to AI like Claude or ChatGPT.</p></article>
+        <article class="beat" data-od-id="beat-orbit"><p class="beat-no">03 / 03</p><h3>Orbit.</h3><p>One stable system. We teach your team, then keep it running.</p></article>
+      </div>
+
+      <dl class="hud" data-od-id="sim-hud" aria-label="Live simulation readout">
+        <dt>t</dt><dd data-hud="t">0.00</dd>
+        <dt>ΔE/E₀</dt><dd data-hud="e">—</dd>
+        <dt>State</dt><dd><span class="state" data-hud="s">Chaotic</span></dd>
+        <dt>Step</dt><dd>Verlet · dt 0.004</dd>
+        <dt>Bodies</dt><dd data-hud="n">3 · dust —</dd>
+      </dl>
+      <p class="scroll-cue" aria-hidden="true">Scroll to settle it</p>
     </div>
   </div>
 </section>
 
-<!-- ═══ 7 · one honest example — full-bleed-ish demo panel ══════════════ -->
-<section class="section" id="demo" data-od-id="connected-example">
-  <div class="wrap wrap-wide">
-    <div class="section-head">
+<section class="sec portal-sec" id="portal" data-od-id="portal">
+  <div class="portal-light" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="rv">
+      <p class="eyebrow">Your portal</p>
+      <h2 class="h2" style="margin-top: var(--space-5);">Twelve logins become one.</h2>
+      <p class="lede" style="margin-top: var(--space-5);">Your site, your project and your bills. One place. Nothing to chase.</p>
+      <ul class="logins" aria-label="The logins it replaces">
+        <li>web host</li><li>domain</li><li>email</li><li>bookings</li><li>till</li><li>Shopify</li><li>Google profile</li><li>spreadsheets</li><li>accounting</li><li>payroll</li><li>social</li><li>backups</li>
+      </ul>
+      <p class="logins-one">One sign-in</p>
+    </div>
+    <div class="tilt rv" style="--d:2">
+      <figure class="portal" aria-label="Example of the client portal: website live, visitors this month, project timeline and two invoices" data-od-id="portal-panel">
+        <div class="p-bar">
+          <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/><circle cx="16" cy="16" r="8" fill="url(#mk)"/><circle cx="27" cy="9" r="2.2" fill="var(--ring)"/></svg>
+          <strong>Maple &amp; Rye</strong><span style="color: var(--muted);">Overview</span>
+          <span class="tag">Example</span>
+        </div>
+        <div class="p-body">
+          <div class="p-hero">
+            <div class="p-row"><span class="p-site">mapleandrye.ca</span><span class="badge ok"><span class="dot pulse"></span>Live</span></div>
+            <div class="p-stat">
+              <div><p class="label">Visitors · last 30 days</p><p class="p-num" style="margin-top: var(--space-2);"><span class="count" data-to="1284">1,284</span></p></div>
+              <svg class="spark" viewBox="0 0 300 56" preserveAspectRatio="none" role="img" aria-label="Visitors over 30 days, rising gently from about 30 to 55 a day">
+                <defs><linearGradient id="sf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--chart-1)" stop-opacity=".26"/><stop offset="1" stop-color="var(--chart-1)" stop-opacity="0"/></linearGradient></defs>
+                <path d="M0 56L0 26.3L10.3 28.8L20.7 25.2L31 27.7L41.4 23.5L51.7 30.2L62.1 24.4L72.4 22.7L82.8 26.1L93.1 21.8L103.4 24.6L113.8 20.2L124.1 25.8L134.5 19.6L144.8 21.4L155.2 17.9L165.5 22.1L175.9 18.3L186.2 16.4L196.6 20.5L206.9 15.1L217.2 17.7L227.6 13.9L237.9 18.8L248.3 12.6L258.6 14.9L269 11.2L279.3 13.8L289.7 9.8L300 8.4L300 56Z" fill="url(#sf)"/>
+                <path class="ln" d="M0 26.3L10.3 28.8L20.7 25.2L31 27.7L41.4 23.5L51.7 30.2L62.1 24.4L72.4 22.7L82.8 26.1L93.1 21.8L103.4 24.6L113.8 20.2L124.1 25.8L134.5 19.6L144.8 21.4L155.2 17.9L165.5 22.1L175.9 18.3L186.2 16.4L196.6 20.5L206.9 15.1L217.2 17.7L227.6 13.9L237.9 18.8L248.3 12.6L258.6 14.9L269 11.2L279.3 13.8L289.7 9.8L300 8.4"/>
+                <path class="pt" d="M300 8.4h0"/>
+              </svg>
+            </div>
+          </div>
+          <div class="p-grid">
+            <div class="p-card">
+              <p class="label">Project · new booking page</p>
+              <ol class="tl">
+                <li class="done"><span class="n"></span><b>Call</b><small>Sep 8</small></li>
+                <li class="done"><span class="n"></span><b>Plan</b><small>Sep 15</small></li>
+                <li class="now" aria-current="step"><span class="n"></span><b>Build</b><small>Now</small></li>
+                <li><span class="n"></span><b>Care</b><small>Next</small></li>
+              </ol>
+              <div class="p-next"><span class="label">Next step</span><span>Preview link ready for you · Oct 3</span></div>
+              <div class="p-next"><span class="label">Waiting on you</span><span>Approve the menu photos</span></div>
+            </div>
+            <div class="p-card">
+              <p class="label">Invoices</p>
+              <div>
+                <div class="inv"><span>Care plan · October<br><small>Due Oct 15</small></span><span class="r"><span class="tbd">to confirm</span><span class="p-pay">Pay · opens Stripe</span></span></div>
+                <div class="inv"><span>Project · stage 1<br><small>Paid Sep 16</small></span><span class="r"><span class="tbd">to confirm</span><span class="badge quiet">Paid</span></span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="sec demo-sec" id="example" data-od-id="demo">
+  <div class="wrap">
+    <div class="sec-head rv">
       <p class="eyebrow">One honest example</p>
-      <h2 class="h2" style="max-width: 32ch;">Nothing new was built here. It just got connected.</h2>
-      <p class="small body">A Claude workspace, a Shopify store and a Google account — all three already
-      paid for by the owner, none of them talking to each other until someone connected them. This is
-      the whole of what step three looks like.</p>
+      <h2 class="h2">It drafts. You decide.</h2>
     </div>
-
-    <div class="glass pad sweepable" data-demo>
-      <div class="chat">
-        <div class="chathead">
-          <div>
-            <p class="label">Maple &amp; Rye Bakery · Monday, 7:20am</p>
-            <p class="caption" style="margin-top: var(--space-1);">Anna asking her own assistant, before opening</p>
-          </div>
-          <span class="badge badge-neutral">Example</span>
+    <div class="chat rv" style="--d:1" data-od-id="demo-chat">
+      <div class="chat-top">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/><circle cx="16" cy="16" r="8" fill="url(#mk)"/><circle cx="27" cy="9" r="2.2" fill="var(--ring)"/></svg>
+        <div><strong>Maple &amp; Rye assistant</strong><small>Connected to Shopify and Google Drive</small></div>
+        <span class="tag">Example</span>
+      </div>
+      <div class="chat-log" data-chat>
+        <div class="msg me" data-seq="me"><span class="label who">Anna · owner</span>What should I order from the mill this week?</div>
+        <div class="step" data-seq="step"><i></i>Reading Shopify orders · September</div>
+        <div class="msg ai" data-seq="ai"><span class="label who">Assistant</span><span class="sr-only">Sourdough and rye sold most in September. Croissants dipped in the last week. Here's what that means for flour.</span><span class="vis" aria-hidden="true" data-type>Sourdough and rye sold most in September. Croissants dipped in the last week. Here's what that means for flour.</span>
+          <div class="order" data-after><span>Bread flour</span><span class="mono">8 bags</span><span>Dark rye</span><span class="mono">3 bags</span><span>Pastry flour</span><span class="mono">2 bags</span></div>
         </div>
+        <div class="step" data-seq="step"><i></i>Writing a draft in Google Drive · “Mill order, Oct 6”</div>
+        <div class="msg ai" data-seq="ai"><span class="label who">Assistant</span><span class="sr-only">The draft is in your Drive. I have not sent it. I don't send orders or spend money.</span><span class="vis" aria-hidden="true" data-type>The draft is in your Drive. I have not sent it. I don't send orders or spend money.</span></div>
+        <div class="typing gone" aria-hidden="true"><i></i><i></i><i></i></div>
+      </div>
+      <div class="chat-foot"><span>Example. The AI drafts. Anna checks it and sends it.</span><button class="btn btn-ghost btn-sm" type="button" data-replay data-od-id="demo-replay">Play it again</button></div>
+    </div>
+  </div>
+</section>
 
-        <ul class="sources" aria-label="What this assistant can read">
-          <li><span class="dot" aria-hidden="true"></span>Shopify orders</li>
-          <li><span class="dot" aria-hidden="true"></span>Google Docs and Sheets</li>
-          <li><span class="dot" aria-hidden="true"></span>The shop inbox</li>
-        </ul>
-
-        <div class="thread" data-thread aria-live="polite">
-          <div class="msg msg-them" data-msg>
-            <span class="who" aria-hidden="true">AM</span>
-            <div class="bubble">
-              <span class="sr-only">Anna:</span>
-              <p>What should I order in for next week?</p>
-              <span class="when">7:20am</span>
-            </div>
-          </div>
-
-          <div class="msg msg-us" data-msg data-typing="1">
-            <span class="who" aria-hidden="true">
-              <svg viewBox="0 0 32 32" width="18" height="18" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-opacity=".5" stroke-width="2"/><circle cx="16" cy="16" r="7" fill="url(#sun)"/></svg>
-            </span>
-            <div class="bubble">
-              <span class="sr-only">Assistant:</span>
-              <p>I went through last month in your Shopify orders. Sourdough sold out six days in eight. The gluten-free sponge sold four. Chelsea buns barely moved — fourteen all month, and you baked forty.</p>
-              <span class="when">7:20am</span>
-            </div>
-          </div>
-
-          <div class="msg msg-them" data-msg>
-            <span class="who" aria-hidden="true">AM</span>
-            <div class="bubble">
-              <span class="sr-only">Anna:</span>
-              <p>So more sourdough, fewer buns.</p>
-              <span class="when">7:21am</span>
-            </div>
-          </div>
-
-          <div class="msg msg-us" data-msg data-typing="1">
-            <span class="who" aria-hidden="true">
-              <svg viewBox="0 0 32 32" width="18" height="18" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-opacity=".5" stroke-width="2"/><circle cx="16" cy="16" r="7" fill="url(#sun)"/></svg>
-            </span>
-            <div class="bubble">
-              <span class="sr-only">Assistant:</span>
-              <p>That is what the numbers say. I have put a draft order in your Google Drive against your supplier's current price list — more flour, same on the gluten-free, buns halved. Read it and change what you like. I have not sent it; I do not send orders or spend money.</p>
-              <span class="when">7:21am</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="chatfoot">
-          <p class="caption" style="max-width: 46ch;">
-            Example figures for a made-up bakery. A real one reads your own orders, your own
-            files and your own inbox. It does the reading, the sums and the first draft —
-            you check it and you decide. It never sends, buys or commits to anything on its own.
-          </p>
-          <button class="btn btn-quiet btn-sm" type="button" data-replay>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5"/></svg>
-            Play it again
-          </button>
-        </div>
+<section class="sec" id="pricing" data-od-id="promises-pricing">
+  <div class="wrap">
+    <div class="sec-head rv"><p class="eyebrow">What we put in writing</p><h2 class="h2">Four promises. Two numbers.</h2></div>
+    <ul class="promises">
+      <li class="rv" style="--d:0" data-od-id="promise-price"><span class="mono">01</span><h3>Fixed price</h3><p>One number, agreed before we start.</p></li>
+      <li class="rv" style="--d:1" data-od-id="promise-own"><span class="mono">02</span><h3>You own everything</h3><p>Accounts, code and data are in your name.</p></li>
+      <li class="rv" style="--d:2" data-od-id="promise-plain"><span class="mono">03</span><h3>Plain English</h3><p>Updates you can read on your phone.</p></li>
+      <li class="rv" style="--d:3" data-od-id="promise-lockin"><span class="mono">04</span><h3>No lock-in</h3><p>Leave any month. Keep everything.</p></li>
+    </ul>
+    <div class="price">
+      <div class="rv">
+        <h3 class="h2" style="font-size: clamp(1.7rem, 2.6vw, 2.25rem);">No hourly billing.<br>No surprise invoice.</h3>
+        <p class="lede" style="margin-top: var(--space-4);">Both numbers are agreed on the first call, before any work starts.</p>
+      </div>
+      <div class="price-card rv" style="--d:1" data-od-id="price-setup">
+        <p class="label">One-off</p><h3>Set up, fixed price</h3>
+        <p class="amt"><span class="tbd">amount to confirm</span></p>
+        <ul class="incl"><li>A written map of every tool, login and bill</li><li>Your tools connected, with AI wired in</li><li>Training for you and your team, recorded</li></ul>
+      </div>
+      <div class="price-card rv" style="--d:2" data-od-id="price-care">
+        <p class="label">Monthly, flat</p><h3>Looked after</h3>
+        <p class="amt"><span class="tbd">amount to confirm</span><small>/month</small></p>
+        <ul class="incl"><li>Hosting, domains, backups and updates</li><li>We fix what breaks, in plain words</li><li>Your portal, and a person who answers</li></ul>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══ 8 · what we put in writing — bento ═══════════════════════════════ -->
-<section class="section" id="promises">
-  <div class="wrap wrap-wide">
-    <div class="section-head">
-      <p class="eyebrow">What we put in writing</p>
-      <h2 class="h2">The four things that usually go wrong, closed off up front</h2>
-    </div>
-
-    <div class="bento">
-      <div class="b-hero reveal" style="--i:0; justify-content: space-between;">
-        <div class="stack">
-          <p class="eyebrow">How it works</p>
-          <p class="h3">One person who knows the way, not an agency and not a hire</p>
-          <p class="small">
-            You get one tech expert on the hook for choosing the tools, connecting them,
-            teaching your team and keeping the lot running — at a fraction of the cost of
-            employing someone, and without the layers an agency puts between you and the
-            person doing the work.
-          </p>
-          <p class="small">
-            Solenix is small and new, and says so. What does not change is the part that
-            usually goes wrong: you always know the price, what is running, and what
-            happens next.
-          </p>
-        </div>
-        <p class="caption">Based in St. John's, Newfoundland. Working with businesses anywhere.</p>
-      </div>
-
-      <div class="reveal" style="--i:1">
-        <p class="label">Promise 1</p>
-        <h3 class="h3">Fixed price up front</h3>
-        <p class="small">Agreed in writing before work starts. A wrong estimate is ours to absorb, not yours to cover.</p>
-      </div>
-      <div class="reveal" style="--i:2">
-        <p class="label">Promise 2</p>
-        <h3 class="h3">You own everything</h3>
-        <p class="small">Code, accounts, domain and data, in your name from day one — not ours.</p>
-      </div>
-      <div class="reveal" style="--i:3">
-        <p class="label">Promise 3</p>
-        <h3 class="h3">Plain-English updates</h3>
-        <p class="small">Every change described in words you already use. No jargon, no status theatre.</p>
-      </div>
-      <div class="reveal" style="--i:4">
-        <p class="label">Promise 4</p>
-        <h3 class="h3">No lock-in</h3>
-        <p class="small">Leave whenever you like and take all of it. We help you move it out.</p>
-      </div>
+<section class="sec faq-sec" id="faq" data-od-id="faq">
+  <div class="wrap">
+    <div class="rv"><p class="eyebrow">Questions</p><h2 class="h2" style="margin-top: var(--space-5); font-size: var(--fs-h1);">Straight answers.</h2></div>
+    <div class="faq rv" style="--d:1">
+      <details><summary>Do I have to throw out what I have?</summary><p>Usually not. Most of it already connects. We start there.</p></details>
+      <details><summary>Will AI replace my staff?</summary><p>No. It drafts and prepares. Your people check and decide.</p></details>
+      <details><summary>Is it safe to connect AI to my accounts?</summary><p>We give it the least access that does the job. You can switch it off in one place.</p></details>
+      <details><summary>What if something breaks?</summary><p>We fix it. You see what happened, in plain words, in your portal.</p></details>
+      <details><summary>How do we start?</summary><p>Book a call. We look at what you have and tell you what we'd keep, connect and cut.</p></details>
     </div>
   </div>
 </section>
 
-<!-- ═══ 9 · how pricing works — card grid ═════════════════════════════════ -->
-<section class="section" id="pricing" data-od-id="how-pricing-works">
-  <div class="wrap wrap-wide">
-    <div class="section-head">
-      <p class="eyebrow">How pricing works</p>
-      <h2 class="h2" style="max-width: 32ch;">Two numbers, both agreed before anything starts</h2>
-      <p class="small body">No hourly billing, no "as needed", no surprise invoice. A fixed price for the
-        work, and a flat monthly amount to keep it all running. Both written down before you commit.</p>
-    </div>
-
-    <div class="pricecols">
-      <div class="pricecard" data-od-id="price-project">
-        <div class="stack" style="gap: var(--space-2);">
-          <p class="label">One-off</p>
-          <h3 class="h3">The project price</h3>
-          <p class="priceamt"><span class="tbd">amount to confirm</span></p>
-          <p class="small">Quoted as one number for the whole job after the first call. If the estimate
-            was wrong, that is ours to absorb.</p>
-        </div>
-        <ul class="included">
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>The written list of what you have, what it costs and what to cut</span></li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Setting up and connecting every account in the plan</span></li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Training sessions with you and your staff, recorded so new hires can watch them</span></li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Anything built from scratch, when nothing existing fits</span></li>
-        </ul>
-      </div>
-
-      <div class="pricecard" data-od-id="price-care">
-        <div class="stack" style="gap: var(--space-2);">
-          <p class="label">Monthly, flat</p>
-          <h3 class="h3">The care plan</h3>
-          <p class="priceamt"><span class="tbd">amount to confirm</span><span class="per"> /month</span></p>
-          <p class="small">The same amount every month regardless of how much we do. Cancel any month
-            and keep everything.</p>
-        </div>
-        <ul class="included">
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Hosting, domains, certificates and backups</span></li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Monitoring, and fixing what breaks — usually before you notice</span></li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Content and price updates on your site, store and listing</span></li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Your portal, and a person who answers</span></li>
-          <li class="no"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg><span>Not included: what each vendor bills you directly — you see those amounts in your portal</span></li>
-        </ul>
-      </div>
-    </div>
-
-    <p class="caption" style="margin-top: var(--space-5);">
-      Both figures are still to be set — we do not print a number we have not committed to.
-      The list of what is included does not change once it is in writing.
-    </p>
-  </div>
-</section>
-
-<!-- ═══ 10 · reviews — slot, empty until real ═════════════════════════════ -->
-<section class="section" id="reviews" data-od-id="reviews">
-  <div class="wrap wrap-wide">
-    <div class="reviewslot">
-      <div class="cluster" style="justify-content: space-between;">
-        <p class="label">Reviews</p>
-        <span class="stars" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 3.5 2.6 5.5 6 .8-4.4 4.2 1.1 6-5.3-3-5.3 3 1.1-6L3.4 9.8l6-.8z"/></svg>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 3.5 2.6 5.5 6 .8-4.4 4.2 1.1 6-5.3-3-5.3 3 1.1-6L3.4 9.8l6-.8z"/></svg>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 3.5 2.6 5.5 6 .8-4.4 4.2 1.1 6-5.3-3-5.3 3 1.1-6L3.4 9.8l6-.8z"/></svg>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 3.5 2.6 5.5 6 .8-4.4 4.2 1.1 6-5.3-3-5.3 3 1.1-6L3.4 9.8l6-.8z"/></svg>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m12 3.5 2.6 5.5 6 .8-4.4 4.2 1.1 6-5.3-3-5.3 3 1.1-6L3.4 9.8l6-.8z"/></svg>
-        </span>
-      </div>
-      <p class="h3" style="max-width: 34ch;">No reviews yet, and we will not invent any</p>
-      <p class="small body">This is where our Google Business Profile reviews will appear, pulled from
-        Google rather than retyped by us. Until a real client has left one, it stays empty on purpose —
-        an empty slot is worth more than a testimonial you cannot check.</p>
-      <p class="caption">We ask every client for an honest review at the end, good or bad.</p>
-    </div>
-  </div>
-</section>
-
-<!-- ═══ 11 · FAQ ═══════════════════════════════════════════════════════════ -->
-<section class="section" id="faq">
-  <div class="wrap wrap-wide">
-    <div class="section-head">
-      <p class="eyebrow">Questions</p>
-      <h2 class="h2">What owners ask first</h2>
-    </div>
-    <div class="faq">
-      <details>
-        <summary>I already pay for a lot of tools. Will this cost more?</summary>
-        <p class="answer">Often it costs less. The first thing we do is list what you are paying for and what
-          each thing actually does; cancelling the overlap usually covers a meaningful part of our fee. We will
-          tell you honestly if it does not in your case.</p>
-      </details>
-      <details>
-        <summary>Do I have to throw out what I already have?</summary>
-        <p class="answer">No. Anything that works and earns its place stays. We are looking for the tools
-          nothing depends on, the ones you pay for twice, and the ones nobody can log into — not a reason
-          to rebuild everything.</p>
-      </details>
-      <details>
-        <summary>Will AI replace my staff?</summary>
-        <p class="answer">Not in the way people mean when they ask. What it takes over is the hour someone
-          spends retyping an order, hunting for a price, tidying a spreadsheet or writing the same email for
-          the tenth time. Your staff still decide things, still talk to customers, still do the work that
-          needs a person who knows your business. Every draft it produces is checked by someone before it
-          goes anywhere. If your goal is to cut your team, we are honestly not the right fit — we are good
-          at making the people you already have go further.</p>
-      </details>
-      <details>
-        <summary>Is it safe to connect AI to my accounts?</summary>
-        <p class="answer">It is, if it is set up properly — which is most of the reason to have someone do
-          it rather than clicking "allow" yourself. Every account stays in your name. We give the assistant
-          the narrowest access that does the job: read your orders, yes; move money or send on your behalf,
-          no. The business plans we set up on Claude and ChatGPT do not use your data to train their models,
-          and we show you the terms and the setting that say so rather than asking you to take our word.
-          Your portal lists who and what has access to every account, and we show you where to switch any
-          of it off.</p>
-      </details>
-      <details>
-        <summary>What does it cost?</summary>
-        <p class="answer">Two numbers, both agreed before anything starts: a fixed price for the work and a flat monthly amount to keep it running. What each one includes is listed under <a href="#pricing" style="color: var(--accent-text)">how pricing works</a>. No hourly billing and no "as needed".</p>
-      </details>
-      <details>
-        <summary>How long does it take?</summary>
-        <p class="answer">Setting up accounts that already exist is usually days, not weeks — that is most of the work and why we start there. Anything genuinely built from scratch takes longer, and the plan gives you an actual date rather than a range.</p>
-      </details>
-      <details>
-        <summary>I'm not technical. Is that a problem?</summary>
-        <p class="answer">No. You are the one who knows how the business runs, which is the part we cannot work out on our own. Everything gets explained in plain words, and we will not ask you to decide something you do not have the information for.</p>
-      </details>
-      <details>
-        <summary>I already have a website. Do I have to start over?</summary>
-        <p class="answer">Usually not. If your site, store or email already works, we keep it and take over looking after it. Replacing something is a decision we argue for in writing, not a default.</p>
-      </details>
-      <details>
-        <summary>Who owns the code and the accounts?</summary>
-        <p class="answer">You do. Everything is set up in your name from the start — domain, hosting, accounts, code. If we stop working together, nothing needs to be handed over, because it was never mine.</p>
-      </details>
-      <details>
-        <summary>What happens if it breaks?</summary>
-        <p class="answer">We monitor it, so usually we know first and it is fixed before you ask. When something is down you get told it is down, what we are doing and when we will know more — not a status page dressing it up.</p>
-      </details>
-    </div>
-  </div>
-</section>
-
-<!-- ═══ 12 · closing CTA ══════════════════════════════════════════════════ -->
-<section class="lit section" style="--light-x: 20%; --light-y: 110%; --light-size: 32rem; --light-strength: .4; --orbit-size: 56rem;">
-  <div class="sky" aria-hidden="true">
-    <div class="sky-halo"></div>
-    <div class="sky-light"></div>
-    <svg class="sky-orbit" viewBox="0 0 800 800">
-      <circle class="ring ring-faint" cx="400" cy="400" r="300"/>
-      <path class="arc" d="M400 100a300 300 0 0 1 300 300"/>
-      <g class="track"><circle class="dot" cx="400" cy="100" r="5"/></g>
+<section class="sec close-sec" data-od-id="closing">
+  <div class="wrap">
+    <svg class="eight" viewBox="-10 -10 620 240" aria-hidden="true">
+      <path id="eightp" class="base" pathLength="1000" d="M300 110L283.4 125.3L266.5 140.3L249.2 154.7L231.2 168L212.6 179.9L193.3 189.9L173.7 197.8L154.1 203.2L134.8 206.1L116.5 206.6L99.4 204.8L83.8 201.2L69.9 196.2L57.7 190.1L47.1 183.1L38.1 175.6L30.5 167.8L24.2 159.7L19.1 151.5L15 143.2L11.9 134.9L9.8 126.6L8.5 118.3L8.1 110L8.5 101.7L9.8 93.4L11.9 85.1L15 76.8L19.1 68.5L24.2 60.3L30.5 52.2L38.1 44.4L47.1 36.9L57.7 29.9L69.9 23.8L83.8 18.8L99.4 15.2L116.5 13.4L134.8 13.9L154.1 16.8L173.7 22.2L193.3 30.1L212.6 40.1L231.2 52L249.2 65.3L266.5 79.7L283.4 94.7L300 110L316.6 125.3L333.5 140.3L350.8 154.7L368.8 168L387.4 179.9L406.7 189.9L426.3 197.8L445.9 203.2L465.2 206.1L483.5 206.6L500.6 204.8L516.2 201.2L530.1 196.2L542.3 190.1L552.9 183.1L561.9 175.6L569.5 167.8L575.8 159.7L580.9 151.5L585 143.2L588.1 134.9L590.2 126.6L591.5 118.3L591.9 110L591.5 101.7L590.2 93.4L588.1 85.1L585 76.8L580.9 68.5L575.8 60.3L569.5 52.2L561.9 44.4L552.9 36.9L542.3 29.9L530.1 23.8L516.2 18.8L500.6 15.2L483.5 13.4L465.2 13.9L445.9 16.8L426.3 22.2L406.7 30.1L387.4 40.1L368.8 52L350.8 65.3L333.5 79.7L316.6 94.7Z"/>
+      <use href="#eightp" class="run"/>
+      <circle class="sun" r="7"><animateMotion dur="21s" repeatCount="indefinite" begin="0s"><mpath href="#eightp"/></animateMotion></circle>
+      <circle class="sun" r="7"><animateMotion dur="21s" repeatCount="indefinite" begin="-7s"><mpath href="#eightp"/></animateMotion></circle>
+      <circle class="sun" r="7"><animateMotion dur="21s" repeatCount="indefinite" begin="-14s"><mpath href="#eightp"/></animateMotion></circle>
+      <circle class="agent" r="3.5"><animateMotion dur="9s" repeatCount="indefinite"><mpath href="#eightp"/></animateMotion></circle>
     </svg>
-  </div>
-  <div class="wrap inner" style="text-align: center;">
-    <h2 class="display" style="max-width: 26ch; margin-inline: auto;">Send us the list of what you are paying for.</h2>
-    <p class="lede" style="margin: var(--space-5) auto 0;">
-      One call, no charge, no pitch. You get the plain list of what you have either way,
-      and if we are not the right fit we say so and point you at who is.
-    </p>
-    <div class="cluster" style="justify-content: center; margin-top: var(--space-6);">
-      <a class="btn btn-primary" href="mailto:hello@solenix.dev?subject=Book%20a%20call">
-        Book a call
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </a>
+    <h2 class="rv">Let's find your stable orbit.</h2>
+    <p class="rv">A short call. We look at what you have and tell you what we'd keep.</p>
+    <div class="close-ctas rv">
+      <a class="btn btn-primary" href="mailto:hello@solenix.dev?subject=Book%20a%20call" data-od-id="closing-cta">Book a call</a>
+      <a class="textlink" href="mailto:hello@solenix.dev">hello@solenix.dev</a>
     </div>
-    <p class="caption" style="margin-top: var(--space-4);">Or email <a href="mailto:hello@solenix.dev" style="color: var(--accent-text);">hello@solenix.dev</a></p>
   </div>
 </section>
-
 </main>
 
-<footer>
-  <div class="wrap wrap-wide">
-    <div class="stack" style="gap: var(--space-2);">
-      <a class="brand" href="/" aria-label="Solenix home">
-        <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/><circle cx="16" cy="16" r="8" fill="url(#sun)"/><circle cx="27" cy="9" r="2.2" fill="var(--ring)"/></svg>
-        Solenix
-      </a>
-      <p class="caption">The tech person your business does not have · St. John's, Newfoundland</p>
-    </div>
-    <div class="stack" style="gap: var(--space-3);">
-      <a class="footcontact" href="mailto:hello@solenix.dev">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
-        hello@solenix.dev
-      </a>
-      <nav class="footlinks" aria-label="Footer">
-        <a href="/app">Client sign in</a>
-        <a href="/agents">Tools we use</a>
-      </nav>
-      <p class="caption">&copy; <span data-year>2026</span> Solenix</p>
-    </div>
+<footer data-od-id="footer">
+  <div class="wrap">
+    <a class="brand" href="#top"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/><circle cx="16" cy="16" r="8" fill="url(#mk)"/><circle cx="27" cy="9" r="2.2" fill="var(--ring)"/></svg>Solenix</a>
+    <p>One tech expert for your business. St. John's, Newfoundland and Labrador.</p>
+    <ul><li><a href="/app">Client sign in</a></li><li><a href="/agents">Tools we use</a></li><li><a href="mailto:hello@solenix.dev">hello@solenix.dev</a></li></ul>
+    <p class="mono" style="font-size: var(--fs-xs);">© 2026 Solenix</p>
   </div>
 </footer>
 
 <script>
-document.documentElement.classList.add('js');
-/* The year fills itself, so a stale copyright can never ship. */
-document.querySelectorAll('[data-year]').forEach(el => {
-  el.textContent = String(new Date().getFullYear());
-});
-(() => {
-  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+/* ── Page UI: motion switch, scroll story, reveals, portal, demo. No WebGL here,
+   so everything below works even if the 3D fails to load. ── */
+(function () {
+  const root = document.documentElement;
+  const S = window.solenix = { p: 0, beat: 0, motion: true, vh: innerHeight };
+  const $ = (s, el = document) => el.querySelector(s), $$ = (s, el = document) => [...el.querySelectorAll(s)];
+  const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+  const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a)); return t * t * (3 - 2 * t); };
+  S.smooth = smooth;
 
-  /* ── scroll-linked reveals: once per element, never on the way back up ── */
-  const reveals = [...document.querySelectorAll('.reveal')];
-  const counters = [...document.querySelectorAll('[data-count-to]')];
-  if (still || !('IntersectionObserver' in window)) {
-    reveals.forEach(el => el.classList.add('in'));
-    counters.forEach(setFinal);
-  } else {
-    const io = new IntersectionObserver((entries) => {
-      for (const e of entries) {
-        if (!e.isIntersecting) continue;
-        e.target.classList.add('in');
-        io.unobserve(e.target);
-        if (e.target.hasAttribute('data-count-to')) countUp(e.target);
-      }
-    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.15 });
-    [...reveals, ...counters].forEach(el => io.observe(el));
+  /* Motion: on by default unless the visitor asked for less. Always pausable. */
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+  let saved = null; try { saved = localStorage.getItem('solenix-motion'); } catch (e) {}
+  S.motion = saved ? saved === 'on' : !reduce.matches;
+  const toggle = $('.motion-toggle');
+  function applyMotion() {
+    root.dataset.motion = S.motion ? 'on' : 'off';
+    toggle.setAttribute('aria-checked', String(S.motion));
+    $$('svg.eight').forEach(s => s.pauseAnimations && (S.motion ? s.unpauseAnimations() : s.pauseAnimations()));
+    if (!S.motion) { $$('.rv').forEach(el => el.classList.add('in')); finishChat(); countAll(true); }
+    dispatchEvent(new Event('solenix:motion'));
+    onScroll();
   }
+  toggle.addEventListener('click', () => { S.motion = !S.motion; try { localStorage.setItem('solenix-motion', S.motion ? 'on' : 'off'); } catch (e) {} applyMotion(); });
 
-  function setFinal(el) {
-    const n = Number(el.dataset.countTo);
-    const unit = el.querySelector('.unit');
-    el.innerHTML = n.toLocaleString('en-CA') + (unit ? unit.outerHTML : '');
+  /* Scroll story. Ranges are shared with the WebGL module through window.solenix. */
+  const sky = $('.sky'), nav = $('.nav'), hero = $('.hero-copy'), beats = $$('.beat'), rets = $$('.ret:not(.ret-ai)'), retAi = $('.ret-ai');
+  const cue = $('.scroll-cue');
+  const RANGES = [[0.15, 0.40], [0.42, 0.66], [0.68, 1.2]];
+  S.ranges = RANGES;
+  const portal = $('.portal');
+  let ticking = false;
+  function onScroll() {
+    ticking = false;
+    const r = sky.getBoundingClientRect(), total = r.height - innerHeight;
+    const p = clamp(-r.top / total);
+    S.p = p;
+    const beat = p < 0.14 ? 0 : p < 0.41 ? 1 : p < 0.67 ? 2 : 3;
+    if (beat !== S.beat) { S.beat = beat; dispatchEvent(new Event('solenix:beat')); }
+    const m = S.motion;
+    const ho = m ? 1 - smooth(0.035, 0.12, p) : (beat === 0 ? 1 : 0);
+    hero.style.opacity = ho;
+    hero.style.transform = m ? `translateY(${-p * 260}px)` : '';
+    hero.style.visibility = ho < 0.02 ? 'hidden' : '';
+    if (cue) cue.style.opacity = 1 - smooth(0.0, 0.05, p);
+    beats.forEach((b, i) => {
+      const [a, z] = RANGES[i];
+      let o, y = 0;
+      if (m) { const inn = smooth(a, a + 0.05, p), out = smooth(z - 0.05, z, p); o = inn * (1 - out); y = (1 - inn) * 40 - out * 40; }
+      else o = beat === i + 1 ? 1 : 0;
+      b.style.opacity = o; b.style.transform = y ? `translateY(${y}px)` : '';
+    });
+    S.aiAlpha = m ? smooth(0.44, 0.49, p) * (1 - smooth(0.58, 0.63, p)) : (beat === 2 ? 1 : 0);
+    S.retAlpha = m ? smooth(0.15, 0.2, p) * (1 - smooth(0.36, 0.42, p)) : (beat === 1 ? 1 : 0);
+    const solid = r.bottom < 72;
+    nav.classList.toggle('is-solid', solid || (-r.top > 40 && r.bottom < innerHeight * 0.2));
+    if (solid) nav.removeAttribute('data-theme'); else nav.setAttribute('data-theme', 'dark');
+    if (portal) {
+      const pr = portal.getBoundingClientRect();
+      const q = m ? smooth(0.05, 0.75, (innerHeight - pr.top) / (innerHeight + pr.height * 0.4)) : 0.8, k = innerWidth < 720 ? 0.45 : 1;
+      portal.style.setProperty('--rx', ((16 - 12 * q) * k).toFixed(2) + 'deg');
+      portal.style.setProperty('--ry', ((-18 + 12 * q) * k).toFixed(2) + 'deg');
+      portal.style.setProperty('--rz', ((4 - 3 * q) * k).toFixed(2) + 'deg');
+    }
   }
-  function countUp(el) {
-    const target = Number(el.dataset.countTo);
-    if (!Number.isFinite(target)) return;
-    const unit = el.querySelector('.unit');
-    const suffix = unit ? unit.outerHTML : '';
-    const t0 = performance.now();
-    const tick = (now) => {
-      const p = Math.min(1, (now - t0) / 1200);
-      const eased = 1 - Math.pow(1 - p, 3);
-      el.innerHTML = Math.round(target * eased).toLocaleString('en-CA') + suffix;
-      if (p < 1) requestAnimationFrame(tick);
-    };
-    requestAnimationFrame(tick);
-  }
+  S.rets = rets; S.retAi = retAi;
+  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
+  addEventListener('resize', () => { S.vh = innerHeight; onScroll(); });
 
-  /* ── the assistant demo ─────────────────────────────────────────────────
-     Every message is in the markup, so with JavaScript off or reduced motion
-     on, the whole conversation is simply already there. */
-  const demo = document.querySelector('[data-demo]');
-  const thread = document.querySelector('[data-thread]');
-  if (!demo || !thread) return;
-  const msgs = [...thread.querySelectorAll('[data-msg]')];
-  const replay = demo.querySelector('[data-replay]');
-  let timers = [];
+  /* "See how it settles" lands on beat one. The anchor makes it work without script. */
+  $$('a[href="#settle"]').forEach(a => a.addEventListener('click', e => {
+    e.preventDefault();
+    const r = sky.getBoundingClientRect(), total = r.height - innerHeight;
+    scrollTo({ top: scrollY + r.top + total * 0.24, behavior: S.motion ? 'smooth' : 'auto' });
+  }));
 
-  const showAll = () => msgs.forEach(m => m.classList.add('shown'));
-  const clearTimers = () => { timers.forEach(clearTimeout); timers = []; };
-  const dropTyping = () => thread.querySelectorAll('[data-typingrow]').forEach(n => n.remove());
+  /* Reveal once, never again on scroll-back. */
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: 0.12 });
+  $$('.rv').forEach(el => io.observe(el));
 
-  function typingRow() {
-    const row = document.createElement('div');
-    row.className = 'msg msg-us shown';
-    row.setAttribute('data-typingrow', '');
-    row.setAttribute('aria-hidden', 'true');
-    row.innerHTML = '<span class="who"><svg viewBox="0 0 32 32" width="18" height="18">'
-      + '<circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-opacity=".5" stroke-width="2"/>'
-      + '<circle cx="16" cy="16" r="7" fill="url(#sun)"/></svg></span>'
-      + '<div class="bubble"><span class="typing"><i></i><i></i><i></i></span></div>';
-    return row;
-  }
+  /* Headline, word by word. */
+  const h1 = $('.h1');
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(() => requestAnimationFrame(() => h1.classList.add('play')));
+  setTimeout(() => h1.classList.add('play'), 1200);
 
-  function play() {
-    clearTimers(); dropTyping();
-    if (still) { showAll(); return; }
-    msgs.forEach(m => m.classList.remove('shown'));
-    let t = 400;
-    msgs.forEach((m) => {
-      if (m.hasAttribute('data-typing')) {
-        timers.push(setTimeout(() => { dropTyping(); thread.appendChild(typingRow()); }, t));
-        t += 1500;
-        timers.push(setTimeout(() => { dropTyping(); thread.appendChild(m); m.classList.add('shown'); }, t));
-      } else {
-        timers.push(setTimeout(() => { dropTyping(); thread.appendChild(m); m.classList.add('shown'); }, t));
-      }
-      t += 1100;
+  /* Count-up. The final value is the real text before, during and after. */
+  function countAll(jump) {
+    $$('.count').forEach(el => {
+      const to = +el.dataset.to, fmt = n => n.toLocaleString('en-CA');
+      if (jump || !S.motion) { el.textContent = fmt(to); return; }
+      if (el.dataset.done) return; el.dataset.done = 1;
+      const t0 = performance.now(), d = 1200;
+      (function f(t) { const k = clamp((t - t0) / d), e = 1 - Math.pow(1 - k, 3); el.textContent = fmt(Math.round(to * e)); if (k < 1) requestAnimationFrame(f); })(t0);
     });
   }
+  const cio = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { countAll(false); cio.disconnect(); } }), { threshold: 0.4 });
+  $$('.count').forEach(el => cio.observe(el));
 
-  if (still || !('IntersectionObserver' in window)) {
-    showAll();
-  } else {
-    const dio = new IntersectionObserver((entries) => {
-      for (const e of entries) {
-        if (!e.isIntersecting) continue;
-        dio.unobserve(e.target);
-        demo.classList.add('sweeping');
-        demo.addEventListener('animationend', () => demo.classList.remove('sweeping'), { once: true });
-        play();
+  /* The demo types itself. Full text is always in the DOM for screen readers. */
+  const log = $('[data-chat]'), seq = $$('[data-seq]', log), typing = $('.typing', log);
+  let run = 0;
+  const texts = new Map(); $$('[data-type]', log).forEach(el => texts.set(el, el.textContent));
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+  function finishChat() {
+    run++; typing.classList.add('gone');
+    seq.forEach(el => { el.classList.remove('wait', 'run'); if (el.classList.contains('step')) el.classList.add('done'); });
+    texts.forEach((t, el) => el.textContent = t);
+    $$('[data-after]', log).forEach(el => el.style.opacity = '');
+  }
+  async function playChat() {
+    if (!S.motion) return finishChat();
+    const id = ++run;
+    seq.forEach(el => { el.classList.add('wait'); el.classList.remove('done', 'run'); });
+    texts.forEach((t, el) => el.textContent = '');
+    $$('[data-after]', log).forEach(el => el.style.opacity = 0);
+    await wait(400);
+    for (const el of seq) {
+      if (id !== run) return;
+      const kind = el.dataset.seq;
+      if (kind === 'me') { el.classList.remove('wait'); await wait(900); }
+      else if (kind === 'step') { el.classList.remove('wait'); el.classList.add('run'); await wait(1300); if (id !== run) return; el.classList.remove('run'); el.classList.add('done'); await wait(300); }
+      else {
+        log.insertBefore(typing, el); typing.classList.remove('gone'); await wait(900); if (id !== run) return;
+        typing.classList.add('gone'); el.classList.remove('wait');
+        const tEl = $('[data-type]', el), full = texts.get(tEl);
+        for (let i = 1; i <= full.length; i++) { if (id !== run) return; tEl.textContent = full.slice(0, i); await wait(16); }
+        const after = $('[data-after]', el); if (after) { await wait(250); after.style.opacity = ''; }
+        await wait(600);
       }
-    }, { threshold: 0.3 });
-    dio.observe(demo);
+    }
+  }
+  const chatIo = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { playChat(); chatIo.disconnect(); } }), { threshold: 0.35 });
+  if (S.motion) { seq.forEach(el => el.classList.add('wait')); chatIo.observe(log); }
+  $('[data-replay]').addEventListener('click', playChat);
+
+  applyMotion();
+})();
+</script>
+
+<script type="module">
+/* ── The sky. A real three-body integration (velocity Verlet, G = m = 1).
+   Chaos: softened, loosely held so no sun leaves the frame.
+   Order: the Chenciner–Montgomery figure-eight, unsoftened.
+   Scrolling blends what you see from one solution to the other. ── */
+import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+
+const S = window.solenix;
+const sky = document.querySelector('.sky'), stage = sky.querySelector('.stage'), canvas = document.getElementById('gl');
+const hud = { t: sky.querySelector('[data-hud="t"]'), e: sky.querySelector('[data-hud="e"]'), s: sky.querySelector('[data-hud="s"]'), n: sky.querySelector('[data-hud="n"]'), root: sky.querySelector('.hud') };
+
+/* Colours come from tokens.css — resolved inside the dark sky. */
+const css = getComputedStyle(sky);
+const tok = n => new THREE.Color(css.getPropertyValue(n).trim());
+const WHITE = new THREE.Color(1, 1, 1);
+const C = { bg: tok('--bg'), sun1: tok('--sun1'), sun2: tok('--sun2'), ring: tok('--ring'), text: tok('--text'), sky: tok('--chart-5') };
+
+/* ── Physics ── */
+const DT = 0.004, T8 = 6.32591398, CHAOS_SCALE = 0.86, SC = 2.1, SUN_Y = 0.15;
+function system(p, v, soft, conf) { const s = { p: Float64Array.from(p), v: Float64Array.from(v), a: new Float64Array(6), soft2: soft * soft, conf, t: 0 }; accel(s); s.E0 = energy(s); return s; }
+function accel(s) {
+  const p = s.p, a = s.a; a.fill(0);
+  for (let i = 0; i < 3; i++) for (let j = i + 1; j < 3; j++) {
+    const dx = p[j * 2] - p[i * 2], dy = p[j * 2 + 1] - p[i * 2 + 1], r2 = dx * dx + dy * dy + s.soft2, inv = 1 / (r2 * Math.sqrt(r2));
+    a[i * 2] += dx * inv; a[i * 2 + 1] += dy * inv; a[j * 2] -= dx * inv; a[j * 2 + 1] -= dy * inv;
+  }
+  if (s.conf) for (let i = 0; i < 3; i++) { const x = p[i * 2], y = p[i * 2 + 1], r = Math.hypot(x, y); if (r > s.conf.R) { const k = s.conf.k * (r - s.conf.R) / r; a[i * 2] -= k * x; a[i * 2 + 1] -= k * y; } }
+}
+function energy(s) {
+  const p = s.p, v = s.v; let E = 0;
+  for (let i = 0; i < 3; i++) E += 0.5 * (v[i * 2] ** 2 + v[i * 2 + 1] ** 2);
+  for (let i = 0; i < 3; i++) for (let j = i + 1; j < 3; j++) { const dx = p[j * 2] - p[i * 2], dy = p[j * 2 + 1] - p[i * 2 + 1]; E -= 1 / Math.sqrt(dx * dx + dy * dy + s.soft2); }
+  if (s.conf) for (let i = 0; i < 3; i++) { const r = Math.hypot(p[i * 2], p[i * 2 + 1]); if (r > s.conf.R) E += 0.5 * s.conf.k * (r - s.conf.R) ** 2; }
+  return E;
+}
+function step(s) {
+  const p = s.p, v = s.v, a = s.a;
+  for (let k = 0; k < 6; k++) { v[k] += 0.5 * DT * a[k]; p[k] += DT * v[k]; }
+  accel(s);
+  for (let k = 0; k < 6; k++) v[k] += 0.5 * DT * a[k];
+  s.t += DT;
+}
+const cv = [0.1, 0.45, -0.35, -0.2, 0.25, -0.25].map(x => x * 2.6), cp = [0.9, 0.3, -0.7, 0.6, -0.2, -0.9];
+for (const arr of [cv, cp]) { const mx = (arr[0] + arr[2] + arr[4]) / 3, my = (arr[1] + arr[3] + arr[5]) / 3; for (let i = 0; i < 3; i++) { arr[i * 2] -= mx; arr[i * 2 + 1] -= my; } }
+const chaos = system(cp, cv, 0.35, { R: 1.2, k: 5 });
+const X1 = [-0.97000436, 0.24308753], V3 = [-0.93240737, -0.86473146];
+const eight = system([X1[0], X1[1], -X1[0], -X1[1], 0, 0], [-V3[0] / 2, -V3[1] / 2, -V3[0] / 2, -V3[1] / 2, V3[0], V3[1]], 0, null);
+
+/* The figure-eight curve itself, sampled by time from a separate run: body three's path. */
+const LUT_N = 1024, LUT = new Float32Array(LUT_N * 2);
+{ const s = system(Array.from(eight.p), Array.from(eight.v), 0, null), per = Math.round(T8 / DT);
+  for (let i = 0; i < per; i++) { const k = Math.floor(i / per * LUT_N); LUT[k * 2] = s.p[4]; LUT[k * 2 + 1] = s.p[5]; step(s); } }
+function curve(u, out) { u = ((u % 1) + 1) % 1; const f = u * LUT_N, i = Math.floor(f), j = (i + 1) % LUT_N, t = f - i; out[0] = LUT[i * 2] + (LUT[j * 2] - LUT[i * 2]) * t; out[1] = LUT[i * 2 + 1] + (LUT[j * 2 + 1] - LUT[i * 2 + 1]) * t; return out; }
+
+/* Trail history, pushed by simulation time so a full loop fits exactly. */
+const HN = 300, PUSH = T8 / HN;
+const hist = { c: new Float32Array(HN * 6), e: new Float32Array(HN * 6), head: 0, next: 0 };
+function push() { const i = hist.head = (hist.head + 1) % HN; for (let k = 0; k < 6; k++) { hist.c[i * 6 + k] = chaos.p[k] * CHAOS_SCALE; hist.e[i * 6 + k] = eight.p[k]; } }
+function advance(simDt) {
+  const n = Math.round(simDt / DT);
+  for (let i = 0; i < n; i++) { step(chaos); step(eight); if (chaos.t >= hist.next) { push(); hist.next += PUSH; } }
+}
+advance(24); // warm up: fills the trails and lands somewhere lively
+
+/* ── Renderer ── */
+const isSmall = Math.min(innerWidth, innerHeight) < 700;
+let renderer;
+try { renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance' }); }
+catch (e) { throw new Error('WebGL unavailable'); }
+let dprMax = Math.min(devicePixelRatio || 1, 2), dpr = dprMax;
+renderer.setPixelRatio(dpr);
+renderer.setClearColor(C.bg, 1);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 0.92;
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 400);
+
+const NOISE = `
+vec3 mod289(vec3 x){return x-floor(x*(1./289.))*289.;} vec4 mod289(vec4 x){return x-floor(x*(1./289.))*289.;}
+vec4 permute(vec4 x){return mod289(((x*34.)+1.)*x);} vec4 tis(vec4 r){return 1.79284291400159-.85373472095314*r;}
+float snoise(vec3 v){const vec2 C=vec2(1./6.,1./3.);const vec4 D=vec4(0.,.5,1.,2.);
+vec3 i=floor(v+dot(v,C.yyy));vec3 x0=v-i+dot(i,C.xxx);vec3 g=step(x0.yzx,x0.xyz);vec3 l=1.-g;vec3 i1=min(g.xyz,l.zxy);vec3 i2=max(g.xyz,l.zxy);
+vec3 x1=x0-i1+C.xxx;vec3 x2=x0-i2+C.yyy;vec3 x3=x0-D.yyy;i=mod289(i);
+vec4 p=permute(permute(permute(i.z+vec4(0.,i1.z,i2.z,1.))+i.y+vec4(0.,i1.y,i2.y,1.))+i.x+vec4(0.,i1.x,i2.x,1.));
+float n_=.142857142857;vec3 ns=n_*D.wyz-D.xzx;vec4 j=p-49.*floor(p*ns.z*ns.z);vec4 x_=floor(j*ns.z);vec4 y_=floor(j-7.*x_);
+vec4 x=x_*ns.x+ns.yyyy;vec4 y=y_*ns.x+ns.yyyy;vec4 h=1.-abs(x)-abs(y);vec4 b0=vec4(x.xy,y.xy);vec4 b1=vec4(x.zw,y.zw);
+vec4 s0=floor(b0)*2.+1.;vec4 s1=floor(b1)*2.+1.;vec4 sh=-step(h,vec4(0.));vec4 a0=b0.xzyw+s0.xzyw*sh.xxyy;vec4 a1=b1.xzyw+s1.xzyw*sh.zzww;
+vec3 p0=vec3(a0.xy,h.x);vec3 p1=vec3(a0.zw,h.y);vec3 p2=vec3(a1.xy,h.z);vec3 p3=vec3(a1.zw,h.w);
+vec4 nm=tis(vec4(dot(p0,p0),dot(p1,p1),dot(p2,p2),dot(p3,p3)));p0*=nm.x;p1*=nm.y;p2*=nm.z;p3*=nm.w;
+vec4 m=max(.6-vec4(dot(x0,x0),dot(x1,x1),dot(x2,x2),dot(x3,x3)),0.);m=m*m;
+return 42.*dot(m*m,vec4(dot(p0,x0),dot(p1,x1),dot(p2,x2),dot(p3,x3)));}
+float fbm(vec3 p){float f=0.,a=.5;for(int i=0;i<4;i++){f+=a*snoise(p);p*=2.03;a*=.5;}return f;}`;
+const additive = { transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending };
+const bodyU = { value: [new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()] };
+const timeU = { value: 0 };
+
+/* Starfield: two shells for parallax. */
+function stars(n, r0, r1, size) {
+  const g = new THREE.BufferGeometry(), pos = new Float32Array(n * 3), seed = new Float32Array(n);
+  for (let i = 0; i < n; i++) { const u = Math.random() * 2 - 1, t = Math.random() * Math.PI * 2, r = r0 + Math.random() * (r1 - r0), s = Math.sqrt(1 - u * u);
+    pos[i * 3] = r * s * Math.cos(t); pos[i * 3 + 1] = r * u; pos[i * 3 + 2] = r * s * Math.sin(t); seed[i] = Math.random(); }
+  g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('aSeed', new THREE.BufferAttribute(seed, 1));
+  const m = new THREE.ShaderMaterial({ ...additive, uniforms: { uTime: timeU, uPx: { value: size }, uWarm: { value: C.sun1 }, uCool: { value: C.sky } },
+    vertexShader: `attribute float aSeed; uniform float uTime,uPx; varying float vA; varying float vS;
+      void main(){ vec4 mv=modelViewMatrix*vec4(position,1.); gl_Position=projectionMatrix*mv; vS=aSeed;
+        vA=(0.25+0.75*pow(aSeed,3.))*(0.7+0.3*sin(uTime*(1.+aSeed*2.)+aSeed*40.)); gl_PointSize=uPx*(0.6+pow(aSeed,4.)*2.2); }`,
+    fragmentShader: `uniform vec3 uWarm,uCool; varying float vA; varying float vS;
+      void main(){ float d=length(gl_PointCoord-.5); float a=smoothstep(.5,0.,d); a*=a; vec3 c=mix(vec3(.9),vS>.8?uWarm:uCool,.22); gl_FragColor=vec4(c*a*vA*.9,1.); }` });
+  const pts = new THREE.Points(g, m); pts.frustumCulled = false; pts.renderOrder = 0; return pts;
+}
+scene.add(stars(isSmall ? 1400 : 2600, 70, 140, 2.2), stars(isSmall ? 300 : 600, 22, 40, 2.6));
+
+/* Spacetime: a plane dipped by the summed potential of the three suns. */
+const gridU = { uB: bodyU, uTime: timeU, uDepth: { value: 0.95 }, uChaos: { value: 1 }, uBase: { value: -0.35 }, uSoft: { value: 0.8 }, uCell: { value: 0.5 },
+  uLine: { value: C.text.clone().multiplyScalar(0.34) }, uWarm: { value: C.sun2.clone() }, uAlpha: { value: 1 } };
+const grid = new THREE.Mesh(new THREE.PlaneGeometry(48, 48, isSmall ? 150 : 240, isSmall ? 150 : 240).rotateX(-Math.PI / 2), new THREE.ShaderMaterial({ ...additive, uniforms: gridU,
+  vertexShader: `uniform vec3 uB[3]; uniform float uTime,uDepth,uChaos,uBase,uSoft; varying vec3 vW; varying float vPot;
+    void main(){ vec3 p=position; float s=0., rip=0.;
+      for(int i=0;i<3;i++){ vec2 d=p.xz-uB[i].xz; float r2=dot(d,d); s+=1./sqrt(r2+uSoft); float r=sqrt(r2); rip+=sin(r*2.3-uTime*2.6+float(i)*2.1)*exp(-r*.32); }
+      p.y=uBase-uDepth*s+rip*.07*uChaos; vPot=s; vW=p; gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.); }`,
+  fragmentShader: `uniform vec3 uB[3]; uniform vec3 uLine,uWarm; uniform float uCell,uAlpha,uChaos; varying vec3 vW; varying float vPot;
+    float gl(vec2 c,float w){ vec2 f=fwidth(c); vec2 g=abs(fract(c-.5)-.5)/f; return (1.-min(min(g.x,g.y)/w,1.))*(1.-smoothstep(.22,.55,max(f.x,f.y))); }
+    void main(){ vec2 c=vW.xz/uCell; float minor=gl(c,1.), major=gl(c/4.,1.3);
+      float well=smoothstep(.75,2.4,vPot); float fade=1.-smoothstep(8.,21.,length(vW.xz));
+      float glow=0.; for(int i=0;i<3;i++){ vec2 d=vW.xz-uB[i].xz; glow+=exp(-dot(d,d)*.45); }
+      vec3 col=mix(uLine,uWarm*1.25,well);
+      float a=(minor*.32+major*.6)*(.4+1.9*well)*fade;
+      gl_FragColor=vec4((col*a+uWarm*glow*.045*fade)*uAlpha,1.); }` }));
+grid.frustumCulled = false; grid.renderOrder = 1; scene.add(grid);
+function gridY(x, z) { let s = 0; for (const b of bodyU.value) { const dx = x - b.x, dz = z - b.z; s += 1 / Math.sqrt(dx * dx + dz * dz + 0.8); } return gridU.uBase.value - gridU.uDepth.value * s; }
+
+/* Dust: test particles pulled by the same three suns. */
+const DN = isSmall ? 3200 : 7000;
+const D = { x: new Float32Array(DN), y: new Float32Array(DN), vx: new Float32Array(DN), vy: new Float32Array(DN), ph: new Float32Array(DN), off: new Float32Array(DN), j: new Float32Array(DN) };
+const dPos = new Float32Array(DN * 3), dSeed = new Float32Array(DN);
+const disp = new Float64Array(6), dispV = new Float64Array(6);
+function spawn(i) {
+  const u = Math.random(), t = Math.random() * Math.PI * 2;
+  if (u < 0.8) { const k = i % 3, r = 0.16 + Math.pow(Math.random(), 1.7) * 1.1, sp = Math.sqrt(1 / r) * (0.92 + Math.random() * 0.22);
+    D.x[i] = disp[k * 2] + r * Math.cos(t); D.y[i] = disp[k * 2 + 1] + r * Math.sin(t); D.vx[i] = -Math.sin(t) * sp + dispV[k * 2]; D.vy[i] = Math.cos(t) * sp + dispV[k * 2 + 1]; }
+  else { const r = 1.3 + Math.random() * 2.4, sp = Math.sqrt(3 / r) * (0.85 + Math.random() * 0.2);
+    D.x[i] = r * Math.cos(t); D.y[i] = r * Math.sin(t); D.vx[i] = -Math.sin(t) * sp; D.vy[i] = Math.cos(t) * sp; }
+}
+function gauss() { return Math.sqrt(-2 * Math.log(Math.random() + 1e-9)) * Math.cos(Math.random() * 6.2832); }
+function updateDisplay(e) {
+  const a = 1 - e;
+  for (let k = 0; k < 6; k++) { disp[k] = chaos.p[k] * CHAOS_SCALE * a + eight.p[k] * e; dispV[k] = chaos.v[k] * CHAOS_SCALE * a + eight.v[k] * e; }
+  for (let i = 0; i < 3; i++) bodyU.value[i].set(disp[i * 2] * SC, SUN_Y, disp[i * 2 + 1] * SC);
+}
+updateDisplay(0);
+for (let i = 0; i < DN; i++) { spawn(i); D.ph[i] = Math.random(); D.off[i] = gauss() * (Math.random() < 0.85 ? 0.035 : 0.12); D.j[i] = gauss(); dSeed[i] = Math.random(); }
+function stepDust(h) {
+  for (let i = 0; i < DN; i++) {
+    let ax = 0, ay = 0, dead = false; const x = D.x[i], y = D.y[i];
+    for (let k = 0; k < 3; k++) { const dx = disp[k * 2] - x, dy = disp[k * 2 + 1] - y, r2 = dx * dx + dy * dy; if (r2 < 0.006) dead = true; const q = r2 + 0.004, inv = 1 / (q * Math.sqrt(q)); ax += dx * inv; ay += dy * inv; }
+    D.vx[i] += ax * h; D.vy[i] += ay * h; D.x[i] += D.vx[i] * h; D.y[i] += D.vy[i] * h;
+    if (dead || D.x[i] * D.x[i] + D.y[i] * D.y[i] > 28) spawn(i);
+  }
+}
+for (let i = 0; i < 120; i++) stepDust(0.008);
+const dustGeo = new THREE.BufferGeometry();
+dustGeo.setAttribute('position', new THREE.BufferAttribute(dPos, 3).setUsage(THREE.DynamicDrawUsage));
+dustGeo.setAttribute('aSeed', new THREE.BufferAttribute(dSeed, 1));
+const dustU = { uB: bodyU, uTime: timeU, uPx: { value: 1 }, uOrder: { value: 0 }, uWarm: { value: C.sun1.clone().lerp(WHITE, 0.25) }, uCool: { value: C.text.clone() } };
+const dust = new THREE.Points(dustGeo, new THREE.ShaderMaterial({ ...additive, uniforms: dustU,
+  vertexShader: `attribute float aSeed; uniform vec3 uB[3]; uniform float uTime,uPx,uOrder; varying float vA; varying float vN;
+    void main(){ vec4 mv=modelViewMatrix*vec4(position,1.); gl_Position=projectionMatrix*mv;
+      float n=0.; for(int i=0;i<3;i++){ vec3 d=position-uB[i]; n+=1./(1.+dot(d.xz,d.xz)*3.); }
+      vN=clamp(n,0.,1.); float tw=.7+.3*sin(uTime*2.+aSeed*60.);
+      vA=(.12+vN*.5+uOrder*.3)*tw; gl_PointSize=uPx*(.8+aSeed*aSeed*2.2)*(14./-mv.z); }`,
+  fragmentShader: `uniform vec3 uWarm,uCool; varying float vA; varying float vN;
+    void main(){ float d=length(gl_PointCoord-.5); float a=smoothstep(.5,.05,d); gl_FragColor=vec4(mix(uCool*.6,uWarm*1.1,vN)*a*vA,1.); }` }));
+dust.frustumCulled = false; dust.renderOrder = 2; scene.add(dust);
+
+/* Ribbons: thick, tapered, camera-facing. */
+function ribbon(n, col, width, frag, taper = true) {
+  const g = new THREE.BufferGeometry(), pos = new Float32Array(n * 6), t = new Float32Array(n * 2), sd = new Float32Array(n * 2), idx = [];
+  for (let i = 0; i < n; i++) { t[i * 2] = t[i * 2 + 1] = i / (n - 1); sd[i * 2] = -1; sd[i * 2 + 1] = 1; if (i < n - 1) { const a = i * 2; idx.push(a, a + 1, a + 2, a + 1, a + 3, a + 2); } }
+  g.setAttribute('position', new THREE.BufferAttribute(pos, 3).setUsage(THREE.DynamicDrawUsage)); g.setAttribute('aT', new THREE.BufferAttribute(t, 1)); g.setAttribute('aS', new THREE.BufferAttribute(sd, 1)); g.setIndex(idx);
+  const m = new THREE.ShaderMaterial({ ...additive, uniforms: { uCol: { value: col }, uHot: { value: col.clone().lerp(WHITE, 0.55) }, uAlpha: { value: 1 }, uTime: timeU, uPh: { value: Math.random() } },
+    vertexShader: `attribute float aT,aS; varying float vT,vS; void main(){ vT=aT; vS=aS; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.); }`,
+    fragmentShader: frag || `uniform vec3 uCol,uHot; uniform float uAlpha; varying float vT,vS;
+      void main(){ float edge=1.-abs(vS); edge=edge*edge*(3.-2.*edge); float core=pow(edge,6.);
+        float a=pow(vT,1.4)*uAlpha; vec3 c=mix(uCol,uHot,core*.5)*(edge*.6+core*.85)*(1.+1.2*pow(vT,14.)); gl_FragColor=vec4(c*a,1.); }` });
+  const mesh = new THREE.Mesh(g, m); mesh.frustumCulled = false; mesh.renderOrder = 3; scene.add(mesh);
+  return { mesh, pos, n, width, taper, pts: new Float32Array(n * 3) };
+}
+const _a = new THREE.Vector3(), _b = new THREE.Vector3(), _c = new THREE.Vector3(), _d = new THREE.Vector3();
+function layRibbon(r, widthScale = 1) {
+  const { pts, pos, n } = r, cam = camera.position;
+  for (let i = 0; i < n; i++) {
+    const i0 = Math.max(0, i - 1), i1 = Math.min(n - 1, i + 1);
+    _a.set(pts[i1 * 3] - pts[i0 * 3], pts[i1 * 3 + 1] - pts[i0 * 3 + 1], pts[i1 * 3 + 2] - pts[i0 * 3 + 2]);
+    _b.set(cam.x - pts[i * 3], cam.y - pts[i * 3 + 1], cam.z - pts[i * 3 + 2]);
+    _c.crossVectors(_a, _b).normalize();
+    const t = i / (n - 1), w = r.width * widthScale * (r.taper ? 0.08 + 0.92 * Math.pow(t, 0.75) : 1);
+    pos[i * 6] = pts[i * 3] - _c.x * w; pos[i * 6 + 1] = pts[i * 3 + 1] - _c.y * w; pos[i * 6 + 2] = pts[i * 3 + 2] - _c.z * w;
+    pos[i * 6 + 3] = pts[i * 3] + _c.x * w; pos[i * 6 + 4] = pts[i * 3 + 1] + _c.y * w; pos[i * 6 + 5] = pts[i * 3 + 2] + _c.z * w;
+  }
+  r.mesh.geometry.attributes.position.needsUpdate = true;
+}
+const SUNCOL = [C.sun1.clone().lerp(C.sun2, 0.35), C.sun2.clone(), C.sun1.clone().lerp(WHITE, 0.2)];
+const trails = SUNCOL.map(c => ribbon(HN + 1, c, 0.07));
+const agentTrail = ribbon(110, C.ring.clone().lerp(WHITE, 0.15), 0.05);
+
+/* Wires: arcs from each tool to the others, and up to AI above the centre. Pulses travel along them. */
+const ARC_FRAG = `uniform vec3 uCol,uHot; uniform float uAlpha,uTime,uPh; varying float vT,vS;
+  void main(){ float edge=1.-abs(vS); edge=edge*edge*(3.-2.*edge);
+    float ends=smoothstep(0.,.14,vT)*smoothstep(1.,.86,vT);
+    float x=fract(vT-uTime*.38+uPh)-.5; float pulse=exp(-x*x*140.);
+    vec3 c=mix(uCol,uHot,pulse)*(edge*.75+pulse*edge*2.2);
+    gl_FragColor=vec4(c*ends*uAlpha,1.); }`;
+const HUB = new THREE.Vector3(0, 1.55, 0);
+const arcs = Array.from({ length: 6 }, (_, i) => ribbon(40, (i < 3 ? C.sun1 : C.ring).clone(), i < 3 ? 0.034 : 0.028, ARC_FRAG, false));
+function layArc(r, a, b, lift) {
+  const mx = (a.x + b.x) / 2, mz = (a.z + b.z) / 2, my = Math.max(a.y, b.y) + lift;
+  for (let k = 0; k < r.n; k++) { const t = k / (r.n - 1), u = 1 - t;
+    r.pts[k * 3] = u * u * a.x + 2 * u * t * mx + t * t * b.x; r.pts[k * 3 + 1] = u * u * a.y + 2 * u * t * my + t * t * b.y; r.pts[k * 3 + 2] = u * u * a.z + 2 * u * t * mz + t * t * b.z; }
+  layRibbon(r);
+}
+
+/* Suns: billboarded plasma, corona, anamorphic streak. HDR so bloom takes them. */
+function sunMat(col, seed, size, r) {
+  return new THREE.ShaderMaterial({ ...additive, uniforms: { uTime: timeU, uSeed: { value: seed }, uSize: { value: size }, uR: { value: r }, uQ: { value: 2.8 },
+      uEdge: { value: col.clone().multiplyScalar(0.8) }, uHot: { value: col.clone().lerp(WHITE, 0.12) }, uCore: { value: col.clone().lerp(WHITE, 0.6) }, uGain: { value: 1 }, uFlare: { value: 1 } },
+    vertexShader: `uniform float uSize,uQ; varying vec2 vP; void main(){ vP=position.xy*vec2(uQ,1.); vec4 mv=modelViewMatrix*vec4(0.,0.,0.,1.); mv.xy+=vP*uSize; gl_Position=projectionMatrix*mv; }`,
+    fragmentShader: NOISE + `uniform float uTime,uSeed,uR,uQ,uGain,uFlare; uniform vec3 uEdge,uHot,uCore; varying vec2 vP;
+      void main(){ vec2 p=vP; float r=length(p), d=r/uR, t=uTime*.1+uSeed*7.;
+        vec3 col=vec3(0.);
+        if(d<1.){ vec3 n=vec3(p/uR,sqrt(max(0.,1.-d*d))); float ca=cos(t*.9),sa=sin(t*.9); vec3 q=vec3(ca*n.x+sa*n.z,n.y,-sa*n.x+ca*n.z);
+          float gran=1.-abs(snoise(q*7.+vec3(0.,0.,t*3.))); float flow=fbm(q*2.2+vec3(t*.6,0.,uSeed));
+          float limb=pow(n.z,.55); float heat=clamp(.35+.35*gran*gran+.45*flow,0.,1.2);
+          vec3 s=mix(uEdge,uHot,clamp(heat*limb*1.1,0.,1.)); s=mix(s,uCore,smoothstep(.5,1.,heat*limb));
+          col=s*(.7+1.25*limb)*smoothstep(1.,.965,d); }
+        float ang=atan(p.y,p.x);
+        float rays=snoise(vec3(cos(ang)*1.8,sin(ang)*1.8,t*1.3-d*.06))*.5+.5;
+        float out1=max(d-1.,0.);
+        float cor=exp(-out1*(3.4-rays*1.8));
+        float halo=.5/(1.+out1*out1*7.+out1*5.);
+        float e=smoothstep(1.,.55,abs(p.y))*smoothstep(uQ,uQ*.4,abs(p.x));
+        vec3 corona=mix(uEdge,uHot,exp(-out1*2.))*(cor*.85+halo*.14)*step(1.,d+.035)*e;
+        float streak=exp(-abs(p.y)*80.)*exp(-abs(p.x)*1.5)*.85*uFlare + exp(-abs(p.y)*20.)*exp(-abs(p.x)*3.5)*.1*uFlare;
+        float shimmer=.94+.06*sin(uTime*6.3+uSeed*11.)+.04*snoise(vec3(uTime*.8,uSeed,0.));
+        col+=corona*shimmer+uHot*streak*e;
+        gl_FragColor=vec4(col*uGain,1.); }` });
+}
+const quad = new THREE.PlaneGeometry(2, 2);
+const suns = SUNCOL.map((c, i) => { const m = new THREE.Mesh(quad, sunMat(c, i * 1.7 + 0.3, 2.2, 0.25 - i * 0.015)); m.frustumCulled = false; m.renderOrder = 5; scene.add(m); return m; });
+const agent = new THREE.Mesh(quad, sunMat(C.ring.clone(), 9.1, 0.9, 0.12)); agent.material.uniforms.uQ.value = 3.4; agent.frustumCulled = false; agent.renderOrder = 6; scene.add(agent);
+const hub = new THREE.Mesh(quad, sunMat(C.ring.clone().lerp(WHITE, 0.3), 4.2, 0.45, 0.16)); hub.frustumCulled = false; hub.renderOrder = 6; scene.add(hub);
+
+/* ── Post ── */
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+const bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.62, 0.45, 0.88);
+composer.addPass(bloom);
+composer.addPass(new OutputPass());
+const finalPass = new ShaderPass({ uniforms: { tDiffuse: { value: null }, uTime: { value: 0 }, uRes: { value: new THREE.Vector2(1, 1) }, uCA: { value: 0.008 }, uGrain: { value: 0.045 } },
+  vertexShader: `varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.); }`,
+  fragmentShader: `uniform sampler2D tDiffuse; uniform float uTime,uCA,uGrain; uniform vec2 uRes; varying vec2 vUv;
+    float h(vec2 p){ return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453); }
+    void main(){ vec2 c=vUv-.5; float d=dot(c,c); vec2 o=c*d*uCA*4.;
+      vec3 col=vec3(texture2D(tDiffuse,vUv+o).r,texture2D(tDiffuse,vUv).g,texture2D(tDiffuse,vUv-o).b);
+      col*=1.-smoothstep(.12,.62,d*1.15)*.6;
+      col+=(h(floor(vUv*uRes)+fract(uTime*7.)*97.)-.5)*uGrain;
+      gl_FragColor=vec4(col,1.); }` });
+composer.addPass(finalPass);
+
+/* ── Layout ── */
+let W = 1, H = 1, portrait = false;
+function resize() {
+  W = stage.clientWidth; H = stage.clientHeight; portrait = W / H < 0.85;
+  renderer.setPixelRatio(dpr); renderer.setSize(W, H, false);
+  composer.setPixelRatio(dpr); composer.setSize(W, H);
+  bloom.resolution.set(W / 2, H / 2);
+  finalPass.uniforms.uRes.value.set(W * dpr, H * dpr);
+  dustU.uPx.value = dpr * (portrait ? 1.2 : 1.35);
+  camera.aspect = W / H; camera.fov = portrait ? 50 : (W / H > 2 ? 30 : 34); camera.updateProjectionMatrix();
+}
+
+/* ── Frame ── */
+const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
+addEventListener('pointermove', e => { mouse.tx = e.clientX / innerWidth * 2 - 1; mouse.ty = e.clientY / innerHeight * 2 - 1; }, { passive: true });
+const tmp2 = [0, 0], tgt = new THREE.Vector3(), proj = new THREE.Vector3();
+let clockT = 0, eShown = 0, settleShown = 0, hudNext = 0;
+const smooth = S.smooth, lerp = (a, b, t) => a + (b - a) * t;
+
+function frame(dtReal, still) {
+  const p = S.p;
+  let e, conn, order, settle, agentA;
+  if (still) {
+    const b = S.beat; e = b >= 3 ? 1 : b === 2 ? 0.25 : 0; conn = b === 2 ? 1 : 0; order = b >= 3 ? 1 : b === 2 ? 0.15 : 0; settle = b >= 3 ? 1 : b === 2 ? 0.4 : 0; agentA = b >= 3 ? 1 : 0;
+  } else {
+    e = smooth(0.5, 0.68, p);
+    conn = smooth(0.43, 0.49, p) * (1 - smooth(0.6, 0.7, p));
+    order = smooth(0.54, 0.74, p);
+    settle = smooth(0.46, 0.84, p);
+    agentA = smooth(0.72, 0.8, p);
+  }
+  eShown = still ? e : lerp(eShown, e, 1 - Math.exp(-dtReal * 6));
+  settleShown = still ? settle : lerp(settleShown, settle, 1 - Math.exp(-dtReal * 4));
+  const E = eShown;
+  updateDisplay(E);
+
+  /* Grid calms as order arrives. */
+  gridU.uChaos.value = 1 - E; gridU.uDepth.value = lerp(0.95, 0.62, E);
+
+  /* Camera: tilted into the plane, drifting, rising toward top-down as it settles. */
+  mouse.x += (mouse.tx - mouse.x) * 0.04; mouse.y += (mouse.ty - mouse.y) * 0.04;
+  const el = THREE.MathUtils.degToRad(lerp(portrait ? 36 : 31, portrait ? 60 : 50, settleShown) + mouse.y * 3);
+  const az = (portrait ? Math.PI / 2 : 0) + Math.sin(clockT * 0.045) * 0.14 + mouse.x * 0.07;
+  const dist = portrait ? lerp(20.5, 19, settleShown) : lerp(18.5, 15.8, settleShown);
+  tgt.set(0, lerp(-0.6, -0.1, settleShown), 0);
+  camera.position.set(tgt.x + dist * Math.cos(el) * Math.sin(az), tgt.y + dist * Math.sin(el), tgt.z + dist * Math.cos(el) * Math.cos(az));
+  camera.lookAt(tgt);
+  const ox = portrait ? 0 : lerp(0.215, 0.17, settleShown), oy = portrait ? lerp(0.15, 0.13, settleShown) : lerp(0.12, 0.1, settleShown);
+  camera.setViewOffset(W, H, -W * ox, H * oy, W, H);
+
+  /* Trails: blended history, current position as the head. */
+  for (let b = 0; b < 3; b++) {
+    const pts = trails[b].pts;
+    for (let k = 0; k < HN; k++) { const i = (hist.head + 1 + k) % HN, o = i * 6 + b * 2;
+      pts[k * 3] = (hist.c[o] * (1 - E) + hist.e[o] * E) * SC; pts[k * 3 + 1] = SUN_Y; pts[k * 3 + 2] = (hist.c[o + 1] * (1 - E) + hist.e[o + 1] * E) * SC; }
+    const v = bodyU.value[b]; pts[HN * 3] = v.x; pts[HN * 3 + 1] = v.y; pts[HN * 3 + 2] = v.z;
+    layRibbon(trails[b], 1 + E * 0.35);
+    trails[b].mesh.material.uniforms.uAlpha.value = 0.95;
+    suns[b].position.copy(v);
   }
 
-  replay?.addEventListener('click', () => {
-    demo.classList.remove('sweeping');
-    void demo.offsetWidth;
-    demo.classList.add('sweeping');
-    demo.addEventListener('animationend', () => demo.classList.remove('sweeping'), { once: true });
-    play();
-  });
-})();
+  /* Dust: gravity, then pulled onto the loop as order arrives. */
+  if (!still) { const h = Math.min(dtReal, 1 / 30) * 0.55 / 2; stepDust(h); stepDust(h); }
+  dustU.uOrder.value = order;
+  const phase = eight.t / T8;
+  for (let i = 0; i < DN; i++) {
+    let x = D.x[i] * SC, z = D.y[i] * SC, y = gridY(x, z) * 0.7 + SUN_Y * 0.3 + D.j[i] * 0.06;
+    if (order > 0) {
+      curve(D.ph[i] + phase, tmp2); const ax = tmp2[0], ay = tmp2[1];
+      curve(D.ph[i] + phase + 0.002, tmp2); let nx = -(tmp2[1] - ay), ny = tmp2[0] - ax; const nl = Math.hypot(nx, ny) || 1;
+      const tx = (ax + nx / nl * D.off[i]) * SC, tz = (ay + ny / nl * D.off[i]) * SC, ty = SUN_Y + D.j[i] * 0.03;
+      const o = order * order * (3 - 2 * order);
+      x += (tx - x) * o; y += (ty - y) * o; z += (tz - z) * o;
+    }
+    dPos[i * 3] = x; dPos[i * 3 + 1] = y; dPos[i * 3 + 2] = z;
+  }
+  dustGeo.attributes.position.needsUpdate = true;
+
+  /* Wires and the AI hub. */
+  const B = bodyU.value, pairs = [[B[0], B[1]], [B[1], B[2]], [B[2], B[0]], [B[0], HUB], [B[1], HUB], [B[2], HUB]];
+  pairs.forEach(([a, b], i) => { arcs[i].mesh.visible = conn > 0.002; if (conn > 0.002) { layArc(arcs[i], a, b, i < 3 ? 0.25 + a.distanceTo(b) * 0.18 : 0.6); arcs[i].mesh.material.uniforms.uAlpha.value = conn; } });
+  hub.position.copy(HUB); hub.material.uniforms.uGain.value = conn * 1.2;
+
+  /* The agent dot rides the loop once it is stable. */
+  const ap = phase * 2 + 0.17;
+  curve(ap, tmp2); agent.position.set(tmp2[0] * SC, SUN_Y, tmp2[1] * SC); agent.material.uniforms.uGain.value = agentA * 1.8;
+  for (let k = 0; k < agentTrail.n; k++) { curve(ap - (agentTrail.n - 1 - k) * 0.0018, tmp2); agentTrail.pts[k * 3] = tmp2[0] * SC; agentTrail.pts[k * 3 + 1] = SUN_Y; agentTrail.pts[k * 3 + 2] = tmp2[1] * SC; }
+  layRibbon(agentTrail); agentTrail.mesh.material.uniforms.uAlpha.value = agentA;
+
+  timeU.value = clockT; finalPass.uniforms.uTime.value = clockT;
+  composer.render();
+
+  /* Reticles on the three suns during "Look". */
+  const ra = S.retAlpha || 0;
+  S.rets.forEach((el, i) => { if (ra <= 0.001) { el.style.opacity = 0; return; }
+    proj.copy(B[i]).project(camera); const sx = (proj.x + 1) / 2 * W, sy = (1 - proj.y) / 2 * H;
+    el.classList.toggle('flip', sx > W - 230); el.style.opacity = ra; el.style.transform = `translate3d(${sx.toFixed(1)}px, ${sy.toFixed(1)}px, 0)`; });
+
+  { const el = S.retAi, a = S.aiAlpha || 0; el.style.opacity = a;
+    if (a > 0.001) { proj.copy(HUB).project(camera); const sx = (proj.x + 1) / 2 * W, sy = (1 - proj.y) / 2 * H; el.classList.toggle('flip', sx > W - 230); el.style.transform = `translate3d(${sx.toFixed(1)}px, ${sy.toFixed(1)}px, 0)`; } }
+
+  /* HUD: the real numbers from the integrator. */
+  if (still || clockT > hudNext) {
+    hudNext = clockT + 0.1;
+    const sys = E > 0.5 ? eight : chaos, drift = (energy(sys) - sys.E0) / Math.abs(sys.E0);
+    hud.t.textContent = sys.t.toFixed(2);
+    hud.e.textContent = (drift >= 0 ? '+' : '−') + Math.abs(drift).toExponential(1).replace('e', '×10^').replace(/\^([+-]?)(\d+)/, (m, s, d) => '^' + (s === '-' ? '−' : '') + d);
+    const st = E < 0.02 ? 'Chaotic' : E < 0.985 ? 'Resolving' : 'Stable · figure-8';
+    hud.s.textContent = st; hud.root.dataset.state = E >= 0.985 ? 'stable' : 'chaos';
+    hud.n.textContent = `3 · dust ${DN.toLocaleString('en-CA')}`;
+  }
+}
+
+/* ── Loop: runs only when visible, the tab is shown and motion is on. ── */
+let running = false, visible = true, last = 0, raf = 0, slow = 0, fast = 0;
+function tick(now) {
+  raf = requestAnimationFrame(tick);
+  const dt = Math.min((now - last) / 1000 || 0.016, 0.1); last = now;
+  clockT += dt;
+  advance(Math.min(dt, 1 / 20) * 0.55);
+  frame(dt, false);
+  /* Adaptive quality: drop resolution if frames run long, restore if they recover. */
+  if (dt > 0.024) { slow++; fast = 0; } else { fast++; slow = Math.max(0, slow - 1); }
+  if (slow > 45 && dpr > 1) { dpr = Math.max(1, dpr - 0.35); resize(); slow = 0; }
+  if (fast > 600 && dpr < dprMax) { dpr = Math.min(dprMax, dpr + 0.25); resize(); fast = 0; }
+}
+function sync() {
+  const want = visible && !document.hidden && S.motion;
+  if (want && !running) { running = true; last = performance.now(); raf = requestAnimationFrame(tick); }
+  else if (!want && running) { running = false; cancelAnimationFrame(raf); }
+  if (!S.motion && visible) frame(0, true);
+}
+new IntersectionObserver(es => { visible = es[0].isIntersecting; sync(); }, { rootMargin: '100px' }).observe(sky);
+document.addEventListener('visibilitychange', sync);
+addEventListener('solenix:motion', sync);
+addEventListener('solenix:beat', () => { if (!S.motion) frame(0, true); });
+addEventListener('resize', () => { resize(); if (!S.motion) frame(0, true); });
+resize();
+frame(0.016, !S.motion);
+stage.classList.add('gl-on');
+sync();
 </script>
 </body>
 </html>
