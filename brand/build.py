@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SolenixAI brand assets, generated from one set of tokens (matches index.html).
+"""Solenix brand assets, generated from one set of tokens (matches index.html).
 
 Run: python3 brand/build.py  -> writes public/brand/out/*.svg (served at /brand/out/)
 Assets: logo mark, org avatar, org banner (light/dark), Jager's profile banner (light/dark).
@@ -91,12 +91,12 @@ if __name__ == "__main__":
         "avatar.svg": avatar(),
     }
     for m in ("dark", "light"):
-        files[f"banner-org-{m}.svg"] = banner(m, "AI · WEBSITES · OPEN SOURCE", "SolenixAI",
+        files[f"banner-org-{m}.svg"] = banner(m, "AI · WEBSITES · OPEN SOURCE", "Solenix",
             "AI and websites for small businesses", "Open-source tools that make AI agents easy to set up",
             "AI and websites for small businesses. Open-source tools that make AI agents easy to set up.")
         files[f"banner-jager-{m}.svg"] = banner(m, "FOUNDER · SOLENIXAI", "Jager Cooper",
             "AI and websites for small businesses", "Open-source tools for AI agents",
-            "Founder of SolenixAI. AI and websites for small businesses, open-source tools for AI agents.")
+            "Founder of Solenix. AI and websites for small businesses, open-source tools for AI agents.")
     for name, svg in files.items():
         (OUT / name).write_text(svg)
         print(f"{name}: {len(svg.encode())} bytes")
