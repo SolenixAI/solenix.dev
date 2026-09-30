@@ -47,7 +47,7 @@ The system behind solenix.dev. Solenix is one tech expert for small businesses i
 ### Messaging pillars
 - Your business is a three-body problem: a dozen tools pulling on each other. We find the stable orbit and keep it there.
 - One tech expert for small businesses in Newfoundland & Labrador — we rebuild your website, host it and look after it every month.
-- AI, set up properly: for example Claude for a law firm, connected to your documents and taught to your team. AI drafts and prepares; you or your professional check and sign off.
+- AI your team actually uses: we set it up inside the tools you already have and teach you and your staff to get real value from it every day.
 - True trust only: fixed price in writing, you own everything, based in St. John's. No invented numbers, no testimonials we don't have, no scarcity.
 - One place to see it all: the client portal — Overview, Initiatives, Billing. Nothing to chase.
 
@@ -76,5 +76,5 @@ The system behind solenix.dev. Solenix is one tech expert for small businesses i
 - Three depth layers in fixed order: light and orbit (z 0), texture (z 1), content and glass (z 2). A glass panel at rest carries shadow-md plus the lit inset edge.
 - Every state is a colour and a word: Live (#34d399), Building (#fbbf24), Down (#fb7185). Charts: five series max, baseline at zero, every series labelled in words.
 - 44px minimum tap target on every control; focus is 2px solid ember at a 3px offset on :focus-visible. Hover never greys text — glow grows, lift -1px (buttons) or -3px (cards).
-- Motion explains, then stops: orbits at 90/140/200s, one light sweep, first-time reveals, count-ups. Any motion over 5s gets a Motion switch; prefers-reduced-motion freezes everything with every value still on screen.
+- Motion explains, then stops: orbits at 90/140/200s, one light sweep, first-time reveals, count-ups. No on-page Motion switch; the operating system's prefers-reduced-motion setting freezes everything with every value still on screen.
 - Numbers you don't have yet are a dashed 'to confirm' chip; sample data wears an Example tag; a missing photo is a dashed 'Photo to come' circle.
