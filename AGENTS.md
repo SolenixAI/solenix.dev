@@ -17,6 +17,7 @@ Solenix's website and client portal. Next.js on Vercel · Supabase · Stripe · 
 - Change a design in Open Design first, then the app. Don't hand-edit `design/*.html`.
 - Dark only. There is no light theme.
 - Latest stable versions. No secrets in code or output.
+- `npm run check` enforces these rules. The git pre-commit hook and Claude Code's hooks (`.claude/settings.json`) run it. When you find a new failure mode, add a check for it.
 
 ## Open Design
 
