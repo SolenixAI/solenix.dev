@@ -19,6 +19,10 @@ grep -rn -E '· v[0-9]|\(v[0-9]\)|/\* v[0-9]|\bv[0-9] ·' design/DESIGN.md desig
 grep -rn -E 'data-theme="light"|prefers-color-scheme: *light' design/tokens.css app components lib 2>/dev/null \
   | while read -r l; do echo "check: light theme: $l"; done | grep . && fail=1
 
+# No on-page Motion switch; the OS reduced-motion setting is the control.
+grep -n -E 'motion-toggle|class="word">Motion<' design/*.html 2>/dev/null \
+  | while read -r l; do echo "check: Motion switch (remove it; honour prefers-reduced-motion): ${l:0:80}"; done | grep . && fail=1
+
 # Every source of truth named in AGENTS.md exists.
 for f in design/DESIGN.md design/tokens.css design/home.html design/app.html supabase/config.toml; do
   [ -f "$f" ] || bad "missing source of truth: $f"

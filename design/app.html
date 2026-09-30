@@ -291,6 +291,22 @@ main.app { position: relative; z-index: var(--z-content); max-width: 76rem; marg
 .dl li:first-child { border-top: 0; }
 .dl .t { display: grid; gap: 2px; font-size: var(--fs-sm); font-weight: var(--fw-semibold); }
 .dl .t small { color: var(--muted); font-size: var(--fs-xs); font-weight: var(--fw-regular); }
+.opts { display: grid; gap: var(--space-5); padding: var(--space-6); border-color: color-mix(in oklch, var(--accent) 30%, var(--line)); }
+.worth { display: grid; gap: var(--space-2); padding-bottom: var(--space-5); border-bottom: 1px solid var(--line); }
+.worth-v { justify-self: start; font-size: var(--fs-sm); padding: 9px 12px; }
+.opts-h { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-3); flex-wrap: wrap; }
+.opts-h h2 { font-size: var(--fs-h2); font-weight: var(--fw-bold); letter-spacing: var(--track-heading); }
+.opt-list { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-3); }
+.opt { border: 1px solid var(--line); border-radius: var(--radius-lg); padding: var(--space-5); display: grid; gap: var(--space-4); background: color-mix(in oklch, var(--bg) 40%, transparent); transition: border-color var(--dur-base), opacity var(--dur-base); }
+.opt:first-child { border-color: color-mix(in oklch, var(--accent) 35%, var(--line)); }
+.opt.on { border-color: var(--ok); box-shadow: 0 0 0 1px color-mix(in oklch, var(--ok) 40%, transparent); }
+.opt.off { opacity: .55; }
+.opt-top { display: grid; grid-template-columns: auto 1fr auto; gap: var(--space-3) var(--space-4); align-items: start; }
+.opt-no { font-size: var(--fs-xs); color: var(--accent-text); padding-top: .35em; }
+.opt-t { display: grid; gap: 4px; }
+.opt h3 { font: var(--fw-bold) var(--fs-h3)/1.25 var(--font-display); letter-spacing: var(--track-heading); }
+.opt-act { display: flex; gap: var(--space-3); align-items: center; flex-wrap: wrap; }
+@media (max-width: 560px) { .opt-act .opens { display: none; } .opt-top { grid-template-columns: auto 1fr; } .opt-top .tbd { grid-column: 2; justify-self: start; } .opt-act .btn { width: 100%; } }
 .approve { display: grid; gap: var(--space-4); border-color: color-mix(in oklch, var(--accent) 34%, var(--line)); box-shadow: var(--shadow-md), var(--glass-inset), 0 0 60px color-mix(in srgb, var(--sun2) 12%, transparent); }
 .approve h2 { font-size: var(--fs-h2); font-weight: var(--fw-bold); letter-spacing: var(--track-heading); }
 .approve .acts { display: flex; gap: var(--space-2); flex-wrap: wrap; }
@@ -562,8 +578,8 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
     <button class="btn btn-quiet" type="button" data-close style="justify-self: start;"><svg aria-hidden="true"><use href="#i-back"/></svg>Back to your portal</button>
     <div style="display: grid; gap: var(--space-2);"><span class="label">Pay Solenix</span><h2 id="co-t" style="font-size: var(--fs-h2); letter-spacing: var(--track-heading);">Website plan</h2></div>
     <div>
-      <div class="co-line"><span>Setup, one time</span><span class="tbd">amount to confirm</span></div>
-      <div class="co-line"><span>Care, monthly</span><span class="tbd">amount to confirm</span></div>
+      <div class="co-line"><span data-co-opt>New website · your option</span><span class="tbd">amount to confirm</span></div>
+      <div class="co-line"><span>Care plan, monthly</span><span class="tbd">amount to confirm</span></div>
       <div class="co-line"><strong>Due today</strong><span class="tbd">amount to confirm</span></div>
     </div>
     <p class="co-proto">Prototype: this stands in for Stripe Checkout, Stripe's own payment page. Card details are only ever entered there.</p>
@@ -609,7 +625,7 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
   const KEY = 'solenix-portal-v4';
   const fresh = () => ({ screen: 'email', tab: 'overview', view: 'list', email: 'anna@mapleandrye.ca', name: 'Anna Whelan', biz: 'Maple & Rye', site: 'mapleandrye.ca',
     street: '214 Water Street', city: "St. John's", post: 'A1C 1A9', prov: 'Newfoundland and Labrador', onb: 1,
-    detailsDone: false, seenSite: false, approved: false, paid: false, changes: [], loaded: {} });
+    detailsDone: false, seenSite: false, approved: false, option: null, paid: false, changes: [], loaded: {} });
   let S; try { S = Object.assign(fresh(), JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) { S = fresh(); }
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
   const first = () => S.name.trim().split(/\s+/)[0] || 'there';
@@ -664,17 +680,28 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
     ]
   };
   const INVOICES = () => S.paid ? [
-    { no: 'SLNX-0001', t: 'Setup', date: 'Today', status: ['ok', 'Paid'] },
-    { no: 'SLNX-0002', t: 'Care · first month', date: 'Next month', status: ['quiet', 'Upcoming'] }
+    { no: 'SLNX-0001', t: 'New website · your option', date: 'Today', status: ['ok', 'Paid'] },
+    { no: 'SLNX-0002', t: 'Care plan · first month', date: 'Next month', status: ['quiet', 'Upcoming'] }
   ] : [];
+
+  /* ── Pricing, per initiative. Value first: what the result is worth to you, in your own number
+     from the call. Then three options, highest first. Amounts stay marked until Solenix sets them. ── */
+  const WORTH = { note: 'Your number from our call, Sep 22', basis: 'More orders online, and fewer calls about hours and stock.' };
+  const OPTIONS = [
+    { id: 'full', name: 'Website, ordering and AI', gist: 'The whole job, done once.', incl: ['The new website, written with you', 'Order ahead for pickup, from Square', 'An assistant that drafts your supplier orders', 'Training for you and your team'] },
+    { id: 'site', name: 'Website and ordering', gist: 'The site, and customers ordering from it.', incl: ['The new website, written with you', 'Order ahead for pickup, from Square', 'Training for you'] },
+    { id: 'lite', name: 'Website', gist: 'A clean new site on your own address.', incl: ['The new website, written with you', 'Hours, menu and map kept current'] }
+  ];
+  const CARE = { incl: ['Hosting, backups and updates', 'Changes when you ask, fixes in plain words', 'Your portal, and a person who answers'] };
+  const chosen = () => OPTIONS.find(o => o.id === S.option) || (S.approved ? OPTIONS[1] : null);
 
   /* ── Your route: the homepage's five stops, completing themselves from what has happened. ── */
   const STEPS = () => [
-    { id: 'call', t: 'Book a call', done: true, note: 'Sep 22' },
-    { id: 'details', t: 'Accept your invite', done: S.detailsDone, note: 'Done' },
+    { id: 'call', t: 'A clear picture', done: true, note: 'Sep 22' },
+    { id: 'details', t: 'Your own portal', done: S.detailsDone, note: 'Done' },
     { id: 'site', t: 'See your new site', done: S.seenSite, act: 'Open the preview', go: () => openPreview() },
-    { id: 'approve', t: 'Approve your first initiative', done: S.approved, act: 'Review the plan', go: () => go('app', { tab: 'initiatives', view: 'detail' }) },
-    { id: 'pay', t: 'Start your plan', done: S.paid, act: 'Start my plan', go: () => go('app', { tab: 'billing' }) }
+    { id: 'approve', t: 'Choose your option', done: S.approved, act: 'See the options', go: () => go('app', { tab: 'initiatives', view: 'detail' }) },
+    { id: 'pay', t: 'Looked after', done: S.paid, act: 'Finish payment', go: () => openDlg('checkout') }
   ];
   const nextStep = () => STEPS().find(s => !s.done);
 
@@ -767,8 +794,8 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
     if (!n) return `<section class="card next lit" data-od-id="waiting-on-you"><span class="label">Waiting on you</span><h2>Nothing needs you.</h2><p>Your plan is running and we're building. We'll post here when there's something to see.</p></section>`;
     const copy = {
       site: ['Take a look at your new site.', "It's a private preview. Nobody else can see it yet."],
-      approve: ['Your website plan is ready for your OK.', 'Read what we found and what we propose. It takes about five minutes.'],
-      pay: ['Start your plan so we can build.', 'Setup plus a flat monthly amount, both agreed with you in writing.']
+      approve: ['Your three options are ready.', 'Each one is weighed against what the result is worth to you. Pick the one that fits.'],
+      pay: ['One step left: payment.', 'Your chosen option plus your monthly care plan, on one secure page.']
     }[n.id];
     return `<section class="card next lit" data-od-id="waiting-on-you"><span class="label">Waiting on you</span><h2>${copy[0]}</h2><p>${copy[1]}</p><button class="btn btn-primary" type="button" data-next>${n.act}<svg aria-hidden="true"><use href="#i-arrow"/></svg></button></section>`;
   }
@@ -816,41 +843,55 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
     <div class="detail-h"><div class="t"><h1>${I.title}</h1><span class="badge ${st[0]}">${st[1]}</span></div>
       <section class="card lit" data-od-id="initiative-stages"><div class="card-h"><h2>Stages</h2><span class="label">Now: ${I.stages[stage].name}</span></div>${rail(stage, false)}</section></div>
     <div class="detail"><div class="detail-main">
-      ${S.approved ? '' : approveCard()}
+      ${optionsCard()}
       <section class="card" data-od-id="initiative-pvi"><div class="card-h"><h2>Why we're doing this</h2></div><div class="pvi">
         <div><span class="label">Purpose</span><p>${I.purpose}</p></div><div><span class="label">Value</span><p>${I.value}</p></div><div><span class="label">Impact</span><p>${I.impact}</p></div></div></section>
       <section class="card" data-od-id="initiative-updates"><div class="card-h"><h2>Latest updates</h2></div>${I.updates().map(u => `<div class="upd-item"><div class="upd-h"><span class="mono small muted">${u.date}</span><span class="badge ${u.health[0]}">${u.health[1]}</span></div><p class="small">${u.note}</p></div>`).join('')}</section>
     </div><div class="detail-side">
-      ${S.approved ? `<section class="card" data-od-id="initiative-approved"><div class="approved"><span class="badge ok">Approved</span><span class="small muted">You said yes. We're building.</span></div>${S.changes.length ? `<p class="small muted" style="margin-top:var(--space-3)">${S.changes.length} change request${S.changes.length > 1 ? 's' : ''} on our list.</p>` : ''}</section>` : ''}
+      ${S.approved ? `<section class="card" data-od-id="initiative-approved"><div class="approved"><span class="badge ok">Approved</span><span class="small muted">You chose ${esc(chosen().name)}. ${S.paid ? "We're building." : 'Payment is the last step.'}</span></div>${S.changes.length ? `<p class="small muted" style="margin-top:var(--space-3)">${S.changes.length} change request${S.changes.length > 1 ? 's' : ''} on our list.</p>` : ''}</section>` : ''}
       <section class="card" data-od-id="initiative-deliverables"><div class="card-h"><h2>What you'll get</h2></div><ul class="dl">${I.deliverables().map(d => `<li><span class="t">${d.t}<small>${d.s}</small></span><span style="display:flex;gap:var(--space-2);align-items:center;"><span class="badge ${d.state[0]}">${d.state[1]}</span>${d.id !== 'home' || S.seenSite ? `<button class="btn btn-quiet btn-sm" type="button" data-deliv="${d.id}">Open</button>` : ''}</span></li>`).join('')}</ul></section>
       <section class="card cost" data-od-id="initiative-cost"><div class="card-h" style="margin:0"><h2>What it costs</h2></div>
-        <div class="ln"><span>Setup, one time</span><span class="tbd">amount to confirm</span></div>
-        <div class="ln"><span>Care, monthly</span><span class="tbd">amount to confirm</span></div>
+        <div class="ln"><span>${chosen() ? esc(chosen().name) : 'Your option'}</span><span class="tbd">${chosen() ? 'amount to confirm' : 'choose one first'}</span></div>
+        <div class="ln"><span>Care plan, monthly</span><span class="tbd">amount to confirm</span></div>
         <button class="btn btn-quiet btn-sm" type="button" data-to-billing style="justify-self:start">See it in Billing <svg aria-hidden="true"><use href="#i-arrow"/></svg></button></section>
     </div></div></div>`;
   }
-  const approveCard = () => `<section class="card approve lit" data-od-id="initiative-approval"><span class="label">Waiting on you</span><h2>Does the plan look right?</h2>
-    <p class="small muted">Read the site plan and the tool map. If it looks right, we start building. If not, tell us what to change.</p>
-    <div class="acts"><button class="btn btn-primary" type="button" data-approve data-od-id="approve-looks-right">Looks right</button><button class="btn btn-ghost" type="button" data-ask data-od-id="approve-ask-change">Ask for a change</button></div></section>`;
+  /* Value first, then three options, highest first. Choosing one approves the initiative and opens checkout. */
+  function optionsCard() {
+    const picked = S.option;
+    return `<section class="card opts lit" data-od-id="initiative-options">
+      <div class="worth"><span class="label">What this is worth to you</span><span class="tbd worth-v">value to confirm</span><p class="small muted">${WORTH.note}. ${WORTH.basis}</p></div>
+      <div class="opts-h"><h2>${picked ? 'Your choice' : 'Choose your option'}</h2><span class="label">Three options, highest first</span></div>
+      <ol class="opt-list">${OPTIONS.map((o, k) => `<li class="opt${picked === o.id ? ' on' : ''}${picked && picked !== o.id ? ' off' : ''}" data-od-id="option-${o.id}">
+        <div class="opt-top"><span class="opt-no mono">0${k + 1}</span><div class="opt-t"><h3>${o.name}</h3><p class="small muted">${o.gist}</p></div><span class="tbd">amount to confirm</span></div>
+        <ul class="incl">${o.incl.map(i => `<li>${i}</li>`).join('')}</ul>
+        ${picked === o.id ? `<div class="opt-act"><span class="badge ok">Chosen</span>${S.paid ? '' : '<button class="btn btn-ghost btn-sm" type="button" data-checkout>Finish payment <span class="opens">opens Stripe</span></button>'}</div>`
+          : picked ? '' : `<div class="opt-act"><button class="btn ${k === 0 ? 'btn-primary' : 'btn-ghost'}" type="button" data-choose="${o.id}">Choose this option</button></div>`}
+      </li>`).join('')}</ol>
+      ${picked ? '' : `<p class="small muted">Choosing approves this initiative and takes you to Stripe to pay. Not sure? <button class="textbtn link" type="button" data-ask>Ask for a change</button>.</p>`}
+    </section>`;
+  }
 
   const RING_ONCE = `<svg class="ring" viewBox="0 0 64 64" aria-hidden="true"><circle class="r" cx="32" cy="32" r="25"/><circle class="s" cx="32" cy="32" r="10"/></svg>`;
   const RING_MONTH = `<svg class="ring" viewBox="0 0 64 64" aria-hidden="true"><circle class="r" cx="32" cy="32" r="25"/><circle class="s" cx="32" cy="32" r="10"/><circle class="ag" cx="49.7" cy="14.3" r="3.5"/></svg>`;
   function billing() {
     const inv = INVOICES();
+    const o = chosen();
+    const careCol = `<div class="plan-col">${RING_MONTH}<span class="label">Care plan, monthly</span><div class="amt"><span class="tbd">amount to confirm</span><span class="small muted">/month</span></div><p class="small muted">Set for ${esc(S.biz)}, not a public price.</p><ul class="incl">${CARE.incl.map(i => `<li>${i}</li>`).join('')}</ul></div>`;
     const plan = S.paid
-      ? `<section class="card plan lit" data-od-id="billing-plan"><div class="card-h" style="margin:0"><div style="display:grid;gap:6px;"><span class="label">Your plan</span><h2>Website plan</h2></div><span class="badge ok">Active</span></div>
-          <div class="plan-cols"><div class="plan-col">${RING_ONCE}<span class="label">Setup</span><div class="amt"><span class="tbd">amount to confirm</span><span class="badge ok">Paid</span></div></div><div class="plan-col">${RING_MONTH}<span class="label">Care, monthly</span><div class="amt"><span class="tbd">amount to confirm</span><span class="small muted">/month</span></div><span class="small muted">Next bill: <span class="tbd">date to confirm</span></span></div></div>
+      ? `<section class="card plan lit" data-od-id="billing-plan"><div class="card-h" style="margin:0"><div style="display:grid;gap:6px;"><span class="label">Your plan</span><h2>${esc(o.name)}</h2></div><span class="badge ok">Active</span></div>
+          <div class="plan-cols"><div class="plan-col">${RING_ONCE}<span class="label">New website · your option</span><div class="amt"><span class="tbd">amount to confirm</span><span class="badge ok">Paid</span></div></div>${careCol.replace('</div><p', '</div><span class="small muted">Next bill: <span class="tbd">date to confirm</span></span><p')}</div>
           <div class="site-act"><button class="btn btn-ghost btn-sm" type="button" data-toast="Opening your billing settings on Stripe">Manage billing <span class="opens">opens Stripe</span></button></div></section>`
-      : `<section class="card plan lit" data-od-id="billing-plan"><div style="display:grid;gap:var(--space-2);"><span class="label">Your plan</span><h2>Website plan</h2><p class="muted small">Two amounts, agreed with you in writing before anything starts. No hourly billing.</p></div>
+      : `<section class="card plan lit" data-od-id="billing-plan"><div style="display:grid;gap:var(--space-2);"><span class="label">Your plan</span><h2>${o ? esc(o.name) : 'New website'}</h2><p class="muted small">${o ? 'Your chosen option, plus your monthly care plan. Both agreed in writing.' : 'Your price comes from the option you choose in your initiative, plus a monthly care plan set for you.'}</p></div>
           <div class="plan-cols">
-            <div class="plan-col">${RING_ONCE}<span class="label">Setup, one time</span><div class="amt"><span class="tbd">amount to confirm</span></div><ul class="incl"><li>Your tool map and site plan</li><li>Design and build of the new site</li><li>Moving your address and email over</li></ul></div>
-            <div class="plan-col">${RING_MONTH}<span class="label">Care, monthly</span><div class="amt"><span class="tbd">amount to confirm</span><span class="small muted">/month</span></div><ul class="incl"><li>Hosting, backups and updates</li><li>Menu and price changes when you ask</li><li>We fix what breaks, in plain words</li></ul></div>
+            <div class="plan-col">${RING_ONCE}<span class="label">New website · ${o ? 'your option' : 'not chosen yet'}</span><div class="amt"><span class="tbd">${o ? 'amount to confirm' : 'choose an option'}</span></div>${o ? `<ul class="incl">${o.incl.map(i => `<li>${i}</li>`).join('')}</ul>` : '<p class="small muted">Three options, weighed against what the result is worth to you.</p>'}</div>
+            ${careCol}
           </div>
-          ${S.approved ? `<button class="btn btn-primary" type="button" data-checkout data-od-id="billing-start-plan" style="justify-self:start">Start my plan<svg aria-hidden="true"><use href="#i-arrow"/></svg></button>` : `<div class="site-act"><button class="btn btn-ghost" type="button" disabled>Start my plan</button><span class="small muted">Approve the plan first, then start here.</span></div>`}
-          <p class="small muted">You pay on Stripe's secure page. Cancel the monthly plan any month and keep everything.</p></section>`;
+          ${o ? `<button class="btn btn-primary" type="button" data-checkout data-od-id="billing-start-plan" style="justify-self:start">Finish payment<svg aria-hidden="true"><use href="#i-arrow"/></svg></button>` : `<button class="btn btn-primary" type="button" data-to-options data-od-id="billing-see-options" style="justify-self:start">See your options<svg aria-hidden="true"><use href="#i-arrow"/></svg></button>`}
+          <p class="small muted">You pay on Stripe's secure page. Cancel the care plan any month and keep everything.</p></section>`;
     const list = inv.length
       ? `<ul class="inv">${inv.map((v, k) => `<li><button type="button" data-inv="${k}"><span class="t">${v.t}<small class="mono">${v.no} · ${v.date}</small></span><span class="r"><span class="badge ${v.status[0]}">${v.status[1]}</span></span></button></li>`).join('')}</ul>`
-      : `<div class="empty"><p class="small muted">Invoices show up here once your plan starts. They'll look like this:</p><div class="ghost-row" aria-hidden="true"><span>Setup · SLNX-0001</span><span>Paid</span></div><div class="ghost-row" aria-hidden="true"><span>Care · first month</span><span>Upcoming</span></div></div>`;
+      : `<div class="empty"><p class="small muted">Invoices show up here once your plan starts. They'll look like this:</p><div class="ghost-row" aria-hidden="true"><span>New website · SLNX-0001</span><span>Paid</span></div><div class="ghost-row" aria-hidden="true"><span>Care plan · first month</span><span>Upcoming</span></div></div>`;
     return `<div><div class="page-h"><p class="eyebrow">Billing</p><h1>One bill, not seven.</h1><p>What it costs, what you've paid, and what's next.</p></div>
       <div class="bill">${plan}<section class="card" data-od-id="billing-invoices"><div class="card-h"><h2>Invoices</h2></div>${list}</section></div></div>`;
   }
@@ -863,11 +904,12 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
     else if (t.matches('[data-preview]')) openPreview();
     else if (t.matches('[data-open-ini]')) { e.preventDefault(); go('app', { tab: 'initiatives', view: 'detail' }); }
     else if (t.matches('[data-back]')) go('app', { tab: 'initiatives', view: 'list' });
-    else if (t.matches('[data-approve]')) { S.approved = true; save(); renderApp(); toast('Plan approved. We start building.'); }
+    else if (t.matches('[data-choose]')) { S.option = t.dataset.choose; S.approved = true; save(); renderApp(); fillCheckout(); openDlg('checkout'); }
+    else if (t.matches('[data-to-options]')) go('app', { tab: 'initiatives', view: 'detail' });
     else if (t.matches('[data-ask]')) { $('#ch-text').value = ''; $('#ch-err').hidden = true; openDlg('change'); }
     else if (t.matches('[data-deliv]')) openDeliv(t.dataset.deliv);
     else if (t.matches('[data-to-billing]')) go('app', { tab: 'billing' });
-    else if (t.matches('[data-checkout]')) openDlg('checkout');
+    else if (t.matches('[data-checkout]')) { fillCheckout(); openDlg('checkout'); }
     else if (t.matches('[data-inv]')) openInvoice(+t.dataset.inv);
   });
   $$('[data-go]').forEach(b => b.addEventListener('click', () => go(b.dataset.go)));
@@ -916,6 +958,8 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
     }, 1100);
   });
 
+  function fillCheckout() { const o = chosen(); $('[data-co-opt]').textContent = o ? o.name : 'New website · your option'; $('#co-t').textContent = 'New website'; }
+
   /* ── Dialogs ── */
   let lastFocus = null;
   function openDlg(name) { lastFocus = document.activeElement; $$('dialog[open]').forEach(d => d.close()); $(`dialog[data-dlg="${name}"]`).showModal(); }
@@ -939,7 +983,7 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
     if (['overview', 'initiative', 'billing'].includes(j)) S.detailsDone = true;
     if (j === 'overview') go('app', { tab: 'overview', view: 'list' });
     else if (j === 'initiative') go('app', { tab: 'initiatives', view: 'detail' });
-    else if (j === 'billing') { S.seenSite = true; S.approved = true; go('app', { tab: 'billing' }); }
+    else if (j === 'billing') { S.seenSite = true; S.approved = true; S.option = S.option || 'site'; go('app', { tab: 'billing' }); }
     else go(j);
   }));
   $('[data-reset]').addEventListener('click', () => { S = fresh(); save(); pMenu.hidden = true; go('email'); });

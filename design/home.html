@@ -28,7 +28,7 @@
 }
 * { box-sizing: border-box; }
 html { background: var(--bg); color: var(--text); -webkit-text-size-adjust: 100%; }
-body { margin: 0; font: var(--fw-regular) var(--fs-body)/var(--lh-body) var(--font-text); background: var(--grad-sky); color: var(--text); overflow-x: clip; }
+body { margin: 0; font: var(--fw-regular) var(--fs-body)/var(--lh-body) var(--font-text); background: var(--bg); color: var(--text); overflow-x: clip; }
 h1, h2, h3, p, ul, ol, figure { margin: 0; }
 h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; }
 p { text-wrap: pretty; }
@@ -69,27 +69,31 @@ img, svg { display: block; }
 .nav-links a { display: inline-flex; align-items: center; min-height: var(--tap-min); padding: 0 var(--space-3); border-radius: var(--radius-pill); text-decoration: none; font-size: var(--fs-sm); color: var(--muted); transition: background-color var(--dur-fast), color var(--dur-fast); }
 .nav-links a:hover { background: var(--line); color: var(--text); }
 .nav-actions { display: flex; align-items: center; gap: var(--space-2); }
-.motion-toggle { display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--tap-min); padding: 0 var(--space-3); background: transparent; color: var(--text); border: 1px solid var(--line-strong); border-radius: var(--radius-pill); font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; cursor: pointer; transition: background-color var(--dur-fast); }
-.motion-toggle:hover { background: color-mix(in oklch, var(--text) 8%, transparent); }
-.motion-toggle .pip { width: 26px; height: 14px; border-radius: 99px; border: 1px solid var(--line-strong); position: relative; }
-.motion-toggle .pip::after { content: ""; position: absolute; top: 2px; left: 2px; width: 8px; height: 8px; border-radius: 50%; background: var(--muted); transition: transform var(--dur-base) var(--ease-out), background-color var(--dur-base); }
-.motion-toggle[aria-checked="true"] .pip::after { transform: translateX(12px); background: var(--ring); box-shadow: 0 0 8px var(--ring); }
 @media (max-width: 860px) { .nav-links { display: none; } .nav-actions { margin-left: auto; } }
-@media (max-width: 420px) { .nav-signin .long { display: none; } .motion-toggle .word { display: none; } }
+@media (max-width: 420px) { .nav-signin .long { display: none; } }
 
-/* ── Sky: hero + pinned story. Sticky, never fixed; the light is clipped here. ── */
-.sky { position: relative; height: 420vh; height: 420svh; background: var(--bg); color: var(--text); border-radius: 0 0 var(--radius-2xl) var(--radius-2xl); overflow: clip; isolation: isolate; }
-.stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
-.stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; z-index: var(--z-sky); }
-.fallback { position: absolute; inset: 0; z-index: var(--z-sky); display: grid; place-items: center; background: radial-gradient(60% 50% at 62% 42%, color-mix(in oklch, var(--sun2) 22%, transparent), transparent 70%), var(--texture-stars); }
+/* ── The world: one three-body scene behind the whole page. The canvas stays put and
+   every section scrolls over it; the scroll decides which moment of the story you see. ── */
+.world { position: fixed; inset: 0; z-index: 0; background: var(--bg); pointer-events: none; }
+.world canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.fallback { position: absolute; inset: 0; display: grid; place-items: center; background: radial-gradient(60% 50% at 62% 42%, color-mix(in oklch, var(--sun2) 22%, transparent), transparent 70%), var(--texture-stars); }
 .fallback svg { width: min(78vw, 900px); translate: 8% -12%; }
-.stage.gl-on .fallback { display: none; }
-.veil { position: absolute; inset: 0; z-index: var(--z-texture); pointer-events: none; background:
-  linear-gradient(to top, color-mix(in oklch, var(--bg) 92%, transparent) 0%, color-mix(in oklch, var(--bg) 40%, transparent) 30%, transparent 52%),
-  linear-gradient(100deg, color-mix(in oklch, var(--bg) 70%, transparent) 0%, transparent 48%); }
-.stage-ui { position: absolute; inset: 0; z-index: var(--z-content); pointer-events: none; }
-.stage-ui a, .stage-ui button { pointer-events: auto; }
-
+.world.gl-on .fallback { display: none; }
+/* The veil darkens the scene behind reading sections; --dim is set by the scroll. */
+.world .veil { position: absolute; inset: 0; pointer-events: none; opacity: var(--dim, 0); background: radial-gradient(120% 90% at 50% 50%, color-mix(in oklch, var(--bg) 55%, transparent), color-mix(in oklch, var(--bg) 78%, transparent)); }
+.scene-ui { position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
+main { position: relative; z-index: 2; }
+footer { position: relative; z-index: 2; }
+.sky { position: relative; height: 230vh; height: 230svh; }
+.stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; pointer-events: none; }
+.stage a, .stage button { pointer-events: auto; }
+.stop-mk { position: absolute; left: 0; top: 0; opacity: 0; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%; display: grid; place-items: center; font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: .04em; color: var(--muted); background: color-mix(in oklch, var(--bg) 82%, transparent); border: 1px solid var(--line-strong); will-change: transform, opacity; transition: background-color var(--dur-slow), color var(--dur-slow), border-color var(--dur-slow), box-shadow var(--dur-slow); }
+.stop-mk span { position: absolute; left: calc(100% + 10px); top: 50%; translate: 0 -50%; white-space: nowrap; padding: 5px 9px; border-radius: var(--radius-xs); background: color-mix(in oklch, var(--bg) 82%, transparent); border: 1px solid var(--line-strong); color: var(--text); letter-spacing: var(--track-label); text-transform: uppercase; opacity: 0; transition: opacity var(--dur-slow); }
+.stop-mk.flip span { left: auto; right: calc(100% + 10px); }
+.stop-mk.lit { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.stop-mk.cur { box-shadow: 0 0 0 6px var(--accent-quiet), 0 0 24px color-mix(in srgb, var(--ring) 45%, transparent); }
+.stop-mk.cur span { opacity: 1; }
+@media (max-width: 720px) { .stop-mk { width: 28px; height: 28px; margin: -14px 0 0 -14px; } .stop-mk span { display: none; } }
 .hero-copy { position: absolute; left: 0; right: 0; bottom: clamp(1.75rem, 9vh, 6.5rem); }
 .hero-copy .eyebrow { color: var(--accent-text); margin-bottom: var(--space-5); }
 .h1 { font-size: var(--fs-hero); font-weight: var(--fw-bold); letter-spacing: var(--track-hero); line-height: 0.98; max-width: 12.5ch; }
@@ -100,7 +104,7 @@ img, svg { display: block; }
 .hero-ctas { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-6); }
 
 /* The story, scrubbed by scroll: a three-stop rail, then headlines that build word by word. */
-.beats { position: absolute; left: var(--gutter); right: var(--gutter); bottom: clamp(1.75rem, 8vh, 6rem); max-width: var(--container-wide); margin-inline: auto; display: grid; gap: var(--space-5); pointer-events: none; }
+.beats { position: absolute; left: var(--gutter); right: var(--gutter); bottom: clamp(1.75rem, 8vh, 6rem); max-width: var(--container-wide); margin-inline: auto; display: grid; pointer-events: none; }
 .scrub { display: flex; align-items: center; gap: var(--space-4); width: min(100%, 30rem); opacity: 0; font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--faint); position: relative; padding-bottom: var(--space-3); }
 .scrub span { transition: color var(--dur-base); white-space: nowrap; }
 .scrub span.on { color: var(--text); }
@@ -109,17 +113,17 @@ img, svg { display: block; }
 .scrub i b { position: absolute; inset: 0 auto 0 0; width: 0; background: linear-gradient(90deg, var(--sun1), var(--sun2)); box-shadow: 0 0 10px var(--ring); }
 .scrub i b::after { content: ""; position: absolute; right: -3px; top: -3px; width: 7px; height: 7px; border-radius: 50%; background: var(--sun1); box-shadow: 0 0 10px var(--sun2); }
 .beat-stack { display: grid; }
-.beat { grid-area: 1 / 1; align-self: end; visibility: hidden; }
+.beat { visibility: hidden; }
 .beat-no { font: var(--fw-semibold) var(--fs-xs)/1 var(--font-mono); letter-spacing: var(--track-eyebrow); color: var(--accent-text); }
-.beat h3 { font-size: clamp(2.4rem, 6.2vw, 6.25rem); font-weight: var(--fw-black); letter-spacing: -0.045em; line-height: 0.98; margin: var(--space-3) 0 var(--space-4) -0.03em; max-width: 11ch; }
-.beat h3 em { font-style: normal; }
+.beat .beat-h { font-size: clamp(2.4rem, 6.2vw, 6.25rem); font-weight: var(--fw-black); letter-spacing: -0.045em; line-height: 0.98; margin: var(--space-3) 0 var(--space-4) -0.03em; max-width: 11ch; }
+.beat .beat-h em { font-style: normal; }
 .beat .bw { display: inline-block; will-change: transform, opacity; }
-.beat h3 em .bw { background: var(--grad-headline); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .04em; }
+.beat .beat-h em .bw { background: var(--grad-headline); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .04em; }
 .beat p:not(.beat-no) { font-size: var(--fs-lede); color: var(--muted); max-width: 27rem; }
 .beat .bl { will-change: transform, opacity; }
 
 /* Live readout. The big number is the real distance from the figure-eight. */
-.hud { position: absolute; right: var(--gutter); bottom: clamp(1.75rem, 8vh, 6rem); display: grid; gap: var(--space-3); padding: var(--space-3) 0 var(--space-3) var(--space-5); border-left: 1px solid var(--line-strong); font: var(--fw-medium) var(--fs-2xs)/1.3 var(--font-mono); letter-spacing: 0.06em; color: var(--muted); font-variant-numeric: tabular-nums; min-width: 15rem; }
+.hud { position: fixed; z-index: 3; pointer-events: none; opacity: 0; transition: opacity var(--dur-slow) var(--ease-out); right: var(--gutter); bottom: clamp(1.75rem, 8vh, 6rem); background: linear-gradient(90deg, color-mix(in oklch, var(--bg) 70%, transparent), transparent); display: grid; gap: var(--space-3); padding: var(--space-3) 0 var(--space-3) var(--space-5); border-left: 1px solid var(--line-strong); font: var(--fw-medium) var(--fs-2xs)/1.3 var(--font-mono); letter-spacing: 0.06em; color: var(--muted); font-variant-numeric: tabular-nums; min-width: 15rem; }
 .hud-big { display: grid; gap: 6px; }
 .hud-k { text-transform: uppercase; color: var(--faint); letter-spacing: var(--track-label); }
 .hud-v { font: var(--fw-bold) clamp(2.2rem, 3.4vw, 3.25rem)/1 var(--font-display); letter-spacing: -0.03em; color: var(--text); font-variant-numeric: tabular-nums; }
@@ -133,6 +137,9 @@ img, svg { display: block; }
 .hud .state::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--warn); box-shadow: 0 0 8px var(--warn); }
 .hud[data-state="stable"] .state::before, .hud[data-state="stable"] .hud-v { color: var(--ok); }
 .hud[data-state="stable"] .state::before { background: var(--ok); box-shadow: 0 0 8px var(--ok); }
+.hud.flash .hud-v { animation: lockflash 1.6s var(--ease-out); }
+@keyframes lockflash { 0% { text-shadow: 0 0 0 transparent; transform: scale(1); } 18% { text-shadow: 0 0 28px var(--ok); transform: scale(1.08); } 100% { text-shadow: 0 0 0 transparent; transform: scale(1); } }
+.hud-v { transform-origin: left center; display: inline-block; }
 .scroll-cue { position: absolute; left: 50%; bottom: var(--space-5); translate: -50% 0; font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--faint); display: none; }
 
 /* Look: small brackets on the suns; the names live in a tidy column with leader lines, so they never pile up. */
@@ -157,7 +164,7 @@ img, svg { display: block; }
 
 @media (min-width: 900px) { .scroll-cue { display: block; } }
 @media (max-width: 720px) {
-  .hud { top: calc(var(--nav-height) + var(--space-2)); bottom: auto; right: var(--gutter); left: var(--gutter); min-width: 0; border-left: 0; padding: 0; grid-template-columns: auto 1fr; align-items: end; gap: var(--space-2) var(--space-4); }
+  .hud { background: linear-gradient(180deg, color-mix(in oklch, var(--bg) 80%, transparent), transparent); padding-bottom: var(--space-3); top: calc(var(--nav-height) + var(--space-2)); bottom: auto; right: var(--gutter); left: var(--gutter); min-width: 0; border-left: 0; padding: 0; grid-template-columns: auto 1fr; align-items: end; gap: var(--space-2) var(--space-4); }
   .hud-big { grid-row: span 2; }
   .hud-v { font-size: 1.9rem; }
   .hud-bar { grid-column: 1 / -1; order: 3; }
@@ -165,12 +172,12 @@ img, svg { display: block; }
   .hud dt:nth-of-type(n+3), .hud dd:nth-of-type(n+3) { display: none; }
   .tool { padding: 6px 8px; }
   .tool span { display: none; }
-  .beat h3 { max-width: 12ch; }
+  .beat .beat-h { max-width: 12ch; }
 }
 /* No JavaScript: nothing pins, everything reads in order. */
 html:not(.js) .sky { height: auto; }
+html:not(.js) .jr { height: auto; } html:not(.js) .jr-pin { position: relative; height: auto; } html:not(.js) .jr-steps li { position: relative; opacity: 1; visibility: visible; }
 html:not(.js) .stage { position: relative; height: auto; min-height: 100svh; }
-html:not(.js) .stage-ui { position: relative; }
 html:not(.js) .hero-copy, html:not(.js) .beats, html:not(.js) .beat { position: relative; bottom: auto; opacity: 1; visibility: visible; padding-block: var(--space-8); }
 html:not(.js) .beat-stack { display: block; }
 html:not(.js) .hud, html:not(.js) .ret, html:not(.js) .tool, html:not(.js) .scrub, html:not(.js) .leaders { display: none; }
@@ -267,30 +274,24 @@ html[data-motion="on"] .pulse::after { animation: pulse 2.4s var(--ease-out) inf
 .tbd { font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: 0.04em; color: var(--warn); background: var(--warn-tint); border: 1px dashed color-mix(in oklch, var(--warn) 55%, transparent); padding: 5px 8px; border-radius: var(--radius-xs); white-space: nowrap; }
 .p-pay { font-size: var(--fs-xs); color: var(--text); border: 1px solid var(--line-strong); border-radius: var(--radius-pill); padding: 4px 10px; white-space: nowrap; }
 
-/* ── 2 · After you book: the real figure-eight as a route with five stops ── */
-.jr .light { --ls: 70vmax; left: 50%; top: 42%; }
-.jr .tex { --tx: 50%; --ty: 40%; }
-.jr .sec-head { justify-items: center; text-align: center; margin-bottom: var(--space-6); }
-.jr .sec-head .lede { margin-inline: auto; }
-.track { position: relative; max-width: 60rem; margin-inline: auto; }
-.track svg { width: 100%; height: auto; overflow: visible; }
-.track .base { fill: none; stroke: var(--ring); stroke-opacity: .2; stroke-width: 1.25; vector-effect: non-scaling-stroke; }
-.track .lit { fill: none; stroke: url(#trk); stroke-width: 2.5; stroke-linecap: round; filter: drop-shadow(0 0 6px var(--ring)); }
-.track .stop circle { fill: var(--surface-solid); stroke: var(--line-strong); stroke-width: 1.5; vector-effect: non-scaling-stroke; transition: fill var(--dur-slow), stroke var(--dur-slow); }
-.track .stop text { font: var(--fw-semibold) 13px/1 var(--font-mono); fill: var(--muted); text-anchor: middle; dominant-baseline: central; letter-spacing: .04em; transition: fill var(--dur-slow); }
-.track .stop.on circle { fill: var(--accent); stroke: var(--accent); }
-.track .stop.on text { fill: var(--accent-ink); }
-.track .agent { fill: var(--sun1); filter: drop-shadow(0 0 8px var(--sun2)); }
-.steps5 { list-style: none; padding: 0; margin: var(--space-7) auto 0; max-width: var(--container-wide); display: grid; gap: var(--space-4); counter-reset: s; }
-@media (min-width: 700px) { .steps5 { grid-template-columns: repeat(5, 1fr); gap: var(--space-5); } }
-.steps5 li { display: grid; gap: var(--space-2); align-content: start; padding-top: var(--space-4); border-top: 1px solid var(--line); transition: border-color var(--dur-slow); }
-.steps5 .no { font: var(--fw-semibold) var(--fs-xs)/1 var(--font-mono); letter-spacing: var(--track-label); color: var(--faint); transition: color var(--dur-slow); }
-.steps5 h3 { font-size: var(--fs-h3); font-weight: var(--fw-bold); letter-spacing: var(--track-heading); }
-.steps5 p { color: var(--muted); font-size: var(--fs-sm); }
-.steps5 .where { font: var(--fw-medium) var(--fs-2xs)/1.3 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--faint); }
-.steps5 li.on { border-top-color: var(--ring); }
-.steps5 li.on .no { color: var(--accent-text); }
-@media (max-width: 699px) { .steps5 li { grid-template-columns: 2.25rem 1fr; column-gap: var(--space-3); } .steps5 li > :not(.no) { grid-column: 2; } .steps5 .no { grid-row: 1 / span 3; padding-top: .3em; } }
+/* ── After you book: a pinned stretch where the eight forms in the scene itself.
+   The five stops sit on the real orbit; the card shows what you get at each one. ── */
+.jr { position: relative; height: 380vh; height: 380svh; }
+.jr-pin { position: sticky; top: 0; height: 100vh; height: 100svh; }
+.jr-in { height: 100%; display: grid; grid-template-rows: auto 1fr auto; padding-top: calc(var(--nav-height) + clamp(1.5rem, 6vh, 4rem)); padding-bottom: clamp(2rem, 9vh, 6rem); }
+.jr-head { display: grid; gap: var(--space-4); max-width: 30rem; }
+.jr-head .h2 { font-size: clamp(2.1rem, 4.4vw, 3.6rem); }
+.jr.locked .jr-head .h2 em { filter: drop-shadow(0 0 18px color-mix(in srgb, var(--sun2) 55%, transparent)); }
+.jr-steps { list-style: none; padding: 0; margin: 0; display: grid; align-self: end; max-width: 26rem; }
+.jr-steps li { grid-area: 1 / 1; display: grid; gap: var(--space-3); align-content: end; opacity: 0; visibility: hidden; transform: translateY(14px); transition: opacity 420ms var(--ease-out), transform 420ms var(--ease-out), visibility 0s linear 420ms; }
+.jr-steps li.on { opacity: 1; visibility: visible; transform: none; transition: opacity 420ms var(--ease-out), transform 420ms var(--ease-out), visibility 0s; }
+.jr-steps .no { font: var(--fw-semibold) var(--fs-xs)/1 var(--font-mono); letter-spacing: var(--track-eyebrow); color: var(--accent-text); }
+.jr-steps h3 { font-size: clamp(1.9rem, 3.4vw, 2.9rem); font-weight: var(--fw-bold); letter-spacing: var(--track-display); line-height: 1.04; }
+.jr-steps p { font-size: var(--fs-lede); color: var(--muted); }
+.jr-dots { display: flex; gap: 6px; margin-top: var(--space-5); }
+.jr-dots i { width: 28px; height: 3px; border-radius: 2px; background: var(--line-strong); transition: background-color var(--dur-slow), box-shadow var(--dur-slow); }
+.jr-dots i.on { background: var(--ring); box-shadow: 0 0 8px var(--ring); }
+@media (max-width: 720px) { .jr-in { padding-top: calc(var(--nav-height) + 5.5rem); } .jr-head .h2 { font-size: 1.9rem; } .jr-steps h3 { font-size: 1.7rem; } }
 
 /* ── 3 · Demo: the chat, and the wires it actually uses ── */
 .demo-sec .light { --ls: 70vmax; left: 18%; top: 60%; }
@@ -341,7 +342,10 @@ html[data-motion="on"] .pulse::after { animation: pulse 2.4s var(--ease-out) inf
 html[data-motion="on"] .wire li.flow::after { animation: flow 1.1s var(--ease-in-out) infinite; }
 @keyframes flow { from { top: -50%; opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } to { top: 45%; opacity: 0; } }
 .wire .gate { grid-column: 2; justify-self: start; margin-top: 6px; }
-.wire-note { font-size: var(--fs-sm); color: var(--muted); max-width: 26rem; }
+.gets { list-style: none; padding: var(--space-5) 0 0; margin: 0; display: grid; gap: var(--space-3); border-top: 1px solid var(--line); }
+.gets li { display: grid; grid-template-columns: 7.5rem 1fr; gap: var(--space-3); align-items: baseline; color: var(--muted); }
+.gets b { font: var(--fw-semibold) var(--fs-xs)/1.3 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--accent-text); }
+@media (max-width: 999px) { .gets li { grid-template-columns: 1fr; gap: 2px; } }
 @media (max-width: 999px) {
   .wire { grid-template-columns: repeat(4, 1fr); }
   .wire li { grid-template-columns: 1fr; justify-items: center; text-align: center; padding: 0; gap: var(--space-2); }
@@ -354,20 +358,20 @@ html[data-motion="on"] .wire li.flow::after { animation: flow 1.1s var(--ease-in
   .demo-grid .wire-wrap { order: -1; }
 }
 
-/* ── 4 · Promises as one big statement, lit line by line ── */
-.stmt-sec .light { --ls: 60vmax; left: 92%; top: 30%; }
-.stmt { list-style: none; padding: 0; margin: var(--space-6) 0 0; display: grid; gap: clamp(var(--space-4), 3vw, var(--space-6)); }
-.stmt li { --lit: 1; display: grid; gap: var(--space-2) var(--space-6); align-items: baseline; }
-@media (min-width: 900px) { .stmt li { grid-template-columns: minmax(0, 1fr) 17rem; } }
-.stmt .s-line { font: var(--fw-black) var(--fs-statement)/0.98 var(--font-display); letter-spacing: var(--track-statement); opacity: calc(.22 + .78 * var(--lit)); transition: opacity var(--dur-base) linear; }
-.stmt .s-line i { font-style: normal; background: var(--grad-headline); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.stmt .s-note { display: grid; gap: 6px; color: var(--muted); font-size: var(--fs-body); max-width: 22rem; opacity: calc(.3 + .7 * var(--lit)); }
-.stmt .s-note b { font: var(--fw-semibold) var(--fs-xs)/1 var(--font-mono); letter-spacing: var(--track-label); color: var(--accent-text); }
+/* ── Promises: four equal columns, one calm step in size from title to line. ── */
+.promises { list-style: none; padding: 0; margin: 0; display: grid; gap: 0; border-top: 1px solid var(--line-strong); }
+@media (min-width: 640px) { .promises { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1000px) { .promises { grid-template-columns: repeat(4, 1fr); } }
+.promises li { display: grid; gap: var(--space-3); align-content: start; padding: var(--space-6) var(--space-5) var(--space-6) 0; border-bottom: 1px solid var(--line); }
+@media (min-width: 1000px) { .promises li { border-bottom: 0; } .promises li + li { padding-left: var(--space-5); border-left: 1px solid var(--line); } }
+.pno { font: var(--fw-semibold) var(--fs-xs)/1 var(--font-mono); letter-spacing: var(--track-label); color: var(--accent-text); }
+.promises h3 { font-size: clamp(1.4rem, 2.2vw, 1.85rem); font-weight: var(--fw-bold); letter-spacing: var(--track-heading); line-height: 1.15; }
+.promises p { color: var(--muted); font-size: var(--fs-body); max-width: 18rem; }
 
 /* ── 5 · Pricing bento: one closed ring, one ring that keeps going ── */
 .px .light { --ls: 60vmax; left: 12%; top: 20%; }
 .bento { display: grid; gap: var(--space-4); }
-@media (min-width: 960px) { .bento { grid-template-columns: 1.15fr 1fr 1fr; } }
+@media (min-width: 960px) { .bento { max-width: 34rem; } }
 .cell { position: relative; overflow: hidden; isolation: isolate; border: 1px solid var(--line); border-radius: var(--radius-2xl); padding: var(--space-6); background: var(--surface); box-shadow: var(--shadow-md), var(--glass-inset); display: grid; gap: var(--space-4); align-content: start; transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base); }
 .cell:hover { transform: translateY(var(--lift-card)); box-shadow: var(--shadow-lg), var(--glass-inset), var(--glow-soft); }
 .cell::before { content: ""; position: absolute; z-index: -1; width: 26rem; aspect-ratio: 1; right: -9rem; top: -11rem; border-radius: 50%; background: radial-gradient(closest-side, color-mix(in oklch, var(--sun2) 16%, transparent), transparent); }
@@ -411,29 +415,22 @@ html[data-motion="on"] .faq-side .mk .spin { animation: orbit 24s linear infinit
 .faq details[open] summary::after { transform: rotate(45deg); }
 .faq p { padding: 0 0 var(--space-5) calc(2.5rem + var(--space-4)); color: var(--muted); max-width: calc(var(--measure) + 4rem); }
 
-/* ── 7 · Closing: the same three bodies, still in their figure-eight ── */
-.close-sec { position: relative; overflow: clip; isolation: isolate; min-height: 100svh; display: grid; grid-template-rows: minmax(46svh, 1fr) auto; background: var(--bg); border-radius: var(--radius-2xl) var(--radius-2xl) 0 0; border-top: 1px solid var(--line); }
-.close-gl { position: absolute; inset: 0; width: 100%; height: 100%; z-index: var(--z-sky); display: block; }
-.close-fallback { position: absolute; inset: 0 0 auto; height: 55%; z-index: var(--z-sky); display: grid; place-items: center; }
-.close-fallback svg { width: min(86vw, 880px); overflow: visible; }
-.close-fallback path { fill: none; stroke: var(--ring); stroke-opacity: .5; stroke-width: 1.5; vector-effect: non-scaling-stroke; }
-.close-sec.gl-on .close-fallback { display: none; }
-.close-veil { position: absolute; inset: 0; z-index: var(--z-texture); pointer-events: none; background: linear-gradient(to bottom, transparent 40%, color-mix(in oklch, var(--bg) 85%, transparent) 70%, var(--bg)); }
-.close-hud { position: absolute; z-index: var(--z-content); left: var(--gutter); top: calc(var(--nav-height) + var(--space-4)); display: flex; gap: var(--space-4); flex-wrap: wrap; font: var(--fw-medium) var(--fs-2xs)/1.3 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-variant-numeric: tabular-nums; }
-.close-hud .st { display: inline-flex; align-items: center; gap: 6px; color: var(--text); }
-.close-hud .st::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 8px var(--ok); }
-.close-in { position: relative; z-index: var(--z-content); grid-row: 2; text-align: center; padding-bottom: var(--space-9); }
-.close-sec h2 { font-size: var(--fs-statement); font-weight: var(--fw-black); letter-spacing: var(--track-statement); line-height: var(--lh-display); max-width: 13ch; margin-inline: auto; }
+/* ── Closing: no box, no second canvas. The same orbit, seen whole, above the words. ── */
+.close-sec { position: relative; min-height: 100vh; min-height: 100svh; display: grid; align-items: center; }
+.close-in { padding-block: var(--space-9); display: grid; justify-items: start; }
+.close-in > * { max-width: 36rem; }
+@media (min-width: 900px) { .close-in { padding-right: 40%; } }
+.close-sec h2 { font-size: clamp(2.6rem, 6vw, 5.25rem); font-weight: var(--fw-black); letter-spacing: var(--track-statement); line-height: var(--lh-display); max-width: 12ch; }
 .close-sec h2 em { font-style: normal; background: var(--grad-headline); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.close-sec .close-in > p { margin: var(--space-5) auto 0; color: var(--muted); font-size: var(--fs-lede); max-width: 28rem; }
-.close-ctas { margin-top: var(--space-7); display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: var(--space-5); }
+.close-sec .close-in > p { margin: var(--space-5) 0 0; color: var(--muted); font-size: var(--fs-lede); max-width: 28rem; }
+.close-ctas { margin-top: var(--space-7); display: flex; flex-wrap: wrap; justify-content: flex-start; align-items: center; gap: var(--space-5); }
 .textlink { display: inline-flex; align-items: center; min-height: var(--tap-min); text-decoration: none; font-weight: var(--fw-medium); }
 .textlink:hover { text-decoration: underline; text-underline-offset: 3px; }
-.trust { list-style: none; padding: 0; margin: var(--space-7) auto 0; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: var(--space-3) var(--space-5); font-size: var(--fs-sm); color: var(--muted); }
+.trust { list-style: none; padding: 0; margin: var(--space-7) 0 0; display: flex; flex-wrap: wrap; justify-content: flex-start; align-items: center; gap: var(--space-3) var(--space-5); font-size: var(--fs-sm); color: var(--muted); }
 .trust li { display: inline-flex; align-items: center; gap: var(--space-2); }
 .trust li + li::before { content: ""; width: 4px; height: 4px; border-radius: 50%; background: var(--line-strong); margin-right: var(--space-3); }
 .trust .who { color: var(--text); font-weight: var(--fw-semibold); }
-@media (max-width: 640px) { .trust { display: grid; grid-template-columns: 1fr 1fr; justify-items: center; gap: var(--space-3); } .trust li:first-child { grid-column: 1 / -1; } .trust li + li::before { display: none; } }
+@media (max-width: 640px) { .trust { display: grid; grid-template-columns: 1fr 1fr; justify-items: start; gap: var(--space-3); } .trust li:first-child { grid-column: 1 / -1; } .trust li + li::before { display: none; } .close-in { padding-bottom: 46svh; } }
 .photo { width: 36px; height: 36px; border-radius: 50%; border: 1px dashed var(--line-strong); display: grid; place-items: center; font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); color: var(--muted); letter-spacing: .04em; }
 
 footer { border-top: 1px solid var(--line); padding-block: var(--space-7); font-size: var(--fs-sm); color: var(--muted); background: var(--bg); }
@@ -467,33 +464,37 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
       <li><a href="#faq">Questions</a></li>
     </ul>
     <div class="nav-actions">
-      <button class="motion-toggle" type="button" role="switch" aria-checked="true" data-od-id="motion-toggle"><span class="word">Motion</span><span class="sr-only">Motion</span><span class="pip" aria-hidden="true"></span></button>
       <a class="btn btn-ghost btn-sm nav-signin" href="/app" data-od-id="nav-signin"><span class="long">Client&nbsp;</span>sign in</a>
     </div>
   </div>
 </header>
 
-<main id="main">
-<section class="sky" id="top" data-theme="dark" data-od-id="hero-story" aria-label="Your business is a three-body problem">
-  <span class="anchor" id="settle" aria-hidden="true"></span>
-  <div class="stage">
-    <div class="fallback" aria-hidden="true">
+<div class="world" aria-hidden="true">
+  <div class="fallback" aria-hidden="true">
       <svg viewBox="0 0 600 220"><path d="M300 110L283.4 125.3L266.5 140.3L249.2 154.7L231.2 168L212.6 179.9L193.3 189.9L173.7 197.8L154.1 203.2L134.8 206.1L116.5 206.6L99.4 204.8L83.8 201.2L69.9 196.2L57.7 190.1L47.1 183.1L38.1 175.6L30.5 167.8L24.2 159.7L19.1 151.5L15 143.2L11.9 134.9L9.8 126.6L8.5 118.3L8.1 110L8.5 101.7L9.8 93.4L11.9 85.1L15 76.8L19.1 68.5L24.2 60.3L30.5 52.2L38.1 44.4L47.1 36.9L57.7 29.9L69.9 23.8L83.8 18.8L99.4 15.2L116.5 13.4L134.8 13.9L154.1 16.8L173.7 22.2L193.3 30.1L212.6 40.1L231.2 52L249.2 65.3L266.5 79.7L283.4 94.7L300 110L316.6 125.3L333.5 140.3L350.8 154.7L368.8 168L387.4 179.9L406.7 189.9L426.3 197.8L445.9 203.2L465.2 206.1L483.5 206.6L500.6 204.8L516.2 201.2L530.1 196.2L542.3 190.1L552.9 183.1L561.9 175.6L569.5 167.8L575.8 159.7L580.9 151.5L585 143.2L588.1 134.9L590.2 126.6L591.5 118.3L591.9 110L591.5 101.7L590.2 93.4L588.1 85.1L585 76.8L580.9 68.5L575.8 60.3L569.5 52.2L561.9 44.4L552.9 36.9L542.3 29.9L530.1 23.8L516.2 18.8L500.6 15.2L483.5 13.4L465.2 13.9L445.9 16.8L426.3 22.2L406.7 30.1L387.4 40.1L368.8 52L350.8 65.3L333.5 79.7L316.6 94.7Z" fill="none" stroke="var(--ring)" stroke-width="2" stroke-opacity=".7"/><circle cx="300" cy="110" r="14" fill="var(--sun1)"/><circle cx="99.4" cy="204.8" r="14" fill="var(--sun2)"/><circle cx="483.5" cy="13.4" r="14" fill="var(--sun2)"/></svg>
     </div>
-    <canvas id="gl" aria-hidden="true"></canvas>
-    <div class="veil" aria-hidden="true"></div>
+  <canvas id="gl"></canvas>
+  <div class="veil"></div>
+</div>
+<div class="scene-ui" aria-hidden="true">
+  <svg class="leaders"><path/><path/><path/><circle r="2.5"/><circle r="2.5"/><circle r="2.5"/></svg>
+  <div class="ret"></div><div class="ret"></div><div class="ret"></div>
+  <div class="tool"><b data-n="A">Website</b><span>host, domain, email</span></div>
+  <div class="tool"><b data-n="B">Bookings</b><span>calendar, reminders</span></div>
+  <div class="tool"><b data-n="C">Payments</b><span>till, invoices, bank</span></div>
+  <div class="ret ret-ai"><span>AI<b>Claude or ChatGPT</b></span></div>
+  <div class="stop-mk" data-k="0">01<span>A clear picture</span></div>
+  <div class="stop-mk" data-k="1">02<span>Your own portal</span></div>
+  <div class="stop-mk" data-k="2">03<span>Your new website</span></div>
+  <div class="stop-mk" data-k="3">04<span>Your choice</span></div>
+  <div class="stop-mk" data-k="4">05<span>Looked after</span></div>
+</div>
 
-    <div class="stage-ui">
-      <svg class="leaders" aria-hidden="true"><path/><path/><path/><circle r="2.5"/><circle r="2.5"/><circle r="2.5"/></svg>
-      <div class="ret" aria-hidden="true"></div>
-      <div class="ret" aria-hidden="true"></div>
-      <div class="ret" aria-hidden="true"></div>
-      <div class="tool" aria-hidden="true"><b data-n="A">Website</b><span>host, domain, email</span></div>
-      <div class="tool" aria-hidden="true"><b data-n="B">Bookings</b><span>calendar, reminders</span></div>
-      <div class="tool" aria-hidden="true"><b data-n="C">Payments</b><span>till, invoices, bank</span></div>
-      <div class="ret ret-ai" aria-hidden="true"><span>AI<b>Claude or ChatGPT</b></span></div>
-
-      <div class="hero-copy" data-od-id="hero-copy">
+<main id="main">
+<section class="sky" id="top" data-od-id="hero-story" data-scene="hero" aria-label="Your business is a three-body problem">
+  <span class="anchor" id="settle" aria-hidden="true"></span>
+  <div class="stage">
+    <div class="hero-copy" data-od-id="hero-copy">
         <div class="wrap">
           <p class="eyebrow">Solenix · St. John's, NL</p>
           <h1 class="h1" data-od-id="hero-headline"><span class="w" style="--i:0"><span>Your</span></span> <span class="w" style="--i:1"><span>business</span></span> <span class="w" style="--i:2"><span>is</span></span> <span class="w" style="--i:3"><span>a</span></span> <span class="w g" style="--i:4"><span>three&#8209;body</span></span> <span class="w g" style="--i:5"><span>problem.</span></span></h1>
@@ -507,33 +508,13 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
       </div>
 
       <div class="beats">
-        <h2 class="sr-only">How it settles</h2>
-        <div class="scrub" aria-hidden="true"><span>01 Look</span><span>02 Connect</span><span>03 Orbit</span><i><b></b></i></div>
-        <div class="beat-stack">
-          <article class="beat" data-od-id="beat-look"><p class="beat-no bl">01 · Look</p><h3>Every tool pulling <em>its own way.</em></h3><p class="bl">We map every tool, login and bill you have. Nothing gets missed.</p></article>
-          <article class="beat" data-od-id="beat-connect"><p class="beat-no bl">02 · Connect</p><h3>Wire them, and <em>steer.</em></h3><p class="bl">We connect them to each other, and to AI like Claude or ChatGPT.</p></article>
-          <article class="beat" data-od-id="beat-orbit"><p class="beat-no bl">03 · Orbit</p><h3>Now it holds <em>on its own.</em></h3><p class="bl">One stable system. We teach your team, then keep it running.</p></article>
-        </div>
+        <article class="beat" data-od-id="beat-look"><p class="beat-no bl">01 · Look</p><h2 class="beat-h">Every tool pulling <em>its own way.</em></h2><p class="bl">We map every tool, login and bill you have. Nothing gets missed.</p></article>
       </div>
-
-      <div class="hud" data-od-id="sim-hud" role="group" aria-label="Live simulation readout">
-        <p class="hud-big"><span class="hud-k">Off the stable orbit</span><span class="hud-v" data-hud="d">—</span></p>
-        <div class="hud-bar" aria-hidden="true"><b data-hud="bar"></b></div>
-        <dl>
-          <dt>Steering</dt><dd data-hud="k">0%</dd>
-          <dt>State</dt><dd><span class="state" data-hud="s">Chaotic</span></dd>
-          <dt>t</dt><dd data-hud="t">0.00</dd>
-          <dt>Step</dt><dd>Verlet · dt 0.004</dd>
-        </dl>
-      </div>
-      <p class="scroll-cue" aria-hidden="true">Scroll to settle it</p>
-    </div>
+      <p class="scroll-cue" aria-hidden="true">Scroll · it settles as you go</p>
   </div>
 </section>
 
-
-<section class="sec pt" id="portal" data-od-id="portal">
-  <div class="light" aria-hidden="true"></div><div class="tex" aria-hidden="true"></div>
+<section class="sec pt" id="portal" data-od-id="portal" data-scene="portal">
   <div class="wrap pt-grid">
     <div class="pt-copy rv">
       <p class="eyebrow">Your portal</p>
@@ -582,8 +563,8 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
               <div class="p-card">
                 <p class="label">Billing</p>
                 <div>
-                  <div class="inv"><span>Care · October<br><small>Due Oct 15</small></span><span class="r"><span class="tbd">to confirm</span><span class="p-pay">Pay · opens Stripe</span></span></div>
-                  <div class="inv"><span>Setup<br><small>Paid Sep 16</small></span><span class="r"><span class="tbd">to confirm</span><span class="badge quiet">Paid</span></span></div>
+                  <div class="inv"><span>Care · October<br><small>Due Oct 15</small></span><span class="r"><span class="p-pay">Pay · opens Stripe</span></span></div>
+                  <div class="inv"><span>Setup<br><small>Paid Sep 16</small></span><span class="r"><span class="badge quiet">Paid</span></span></div>
                 </div>
               </div>
             </div>
@@ -594,39 +575,13 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
   </div>
 </section>
 
-<section class="sec jr" id="after" data-od-id="journey">
-  <div class="light" aria-hidden="true"></div><div class="tex" aria-hidden="true"></div>
-  <div class="wrap">
-    <div class="sec-head rv">
-      <p class="eyebrow">After you book</p>
-      <h2 class="h2">From one call to a <em>stable orbit.</em></h2>
-      <p class="lede">Five stops. Each one shows up in your portal, so you always know what's next.</p>
-    </div>
-    <div class="track" data-track aria-hidden="true">
-      <svg viewBox="-20 -24 640 268">
-        <defs><linearGradient id="trk" x1="0" x2="1"><stop offset="0" stop-color="var(--sun1)"/><stop offset="1" stop-color="var(--sun2)"/></linearGradient></defs>
-        <path class="base" d="M8.1 110L8.5 101.7L9.8 93.4L11.9 85.1L15 76.8L19.1 68.5L24.2 60.3L30.5 52.2L38.1 44.4L47.1 36.9L57.7 29.9L69.9 23.8L83.8 18.8L99.4 15.2L116.5 13.4L134.8 13.9L154.1 16.8L173.7 22.2L193.3 30.1L212.6 40.1L231.2 52L249.2 65.3L266.5 79.7L283.4 94.7L300 110L316.6 125.3L333.5 140.3L350.8 154.7L368.8 168L387.4 179.9L406.7 189.9L426.3 197.8L445.9 203.2L465.2 206.1L483.5 206.6L500.6 204.8L516.2 201.2L530.1 196.2L542.3 190.1L552.9 183.1L561.9 175.6L569.5 167.8L575.8 159.7L580.9 151.5L585 143.2L588.1 134.9L590.2 126.6L591.5 118.3L591.9 110L591.5 101.7L590.2 93.4L588.1 85.1L585 76.8L580.9 68.5L575.8 60.3L569.5 52.2L561.9 44.4L552.9 36.9L542.3 29.9L530.1 23.8L516.2 18.8L500.6 15.2L483.5 13.4L465.2 13.9L445.9 16.8L426.3 22.2L406.7 30.1L387.4 40.1L368.8 52L350.8 65.3L333.5 79.7L316.6 94.7L300 110L283.4 125.3L266.5 140.3L249.2 154.7L231.2 168L212.6 179.9L193.3 189.9L173.7 197.8L154.1 203.2L134.8 206.1L116.5 206.6L99.4 204.8L83.8 201.2L69.9 196.2L57.7 190.1L47.1 183.1L38.1 175.6L30.5 167.8L24.2 159.7L19.1 151.5L15 143.2L11.9 134.9L9.8 126.6L8.5 118.3Z"/>
-        <path class="lit" d="M8.1 110L8.5 101.7L9.8 93.4L11.9 85.1L15 76.8L19.1 68.5L24.2 60.3L30.5 52.2L38.1 44.4L47.1 36.9L57.7 29.9L69.9 23.8L83.8 18.8L99.4 15.2L116.5 13.4L134.8 13.9L154.1 16.8L173.7 22.2L193.3 30.1L212.6 40.1L231.2 52L249.2 65.3L266.5 79.7L283.4 94.7L300 110L316.6 125.3L333.5 140.3L350.8 154.7L368.8 168L387.4 179.9L406.7 189.9L426.3 197.8L445.9 203.2L465.2 206.1L483.5 206.6L500.6 204.8L516.2 201.2L530.1 196.2L542.3 190.1L552.9 183.1L561.9 175.6L569.5 167.8L575.8 159.7L580.9 151.5L585 143.2L588.1 134.9L590.2 126.6L591.5 118.3L591.9 110L591.5 101.7L590.2 93.4L588.1 85.1L585 76.8L580.9 68.5L575.8 60.3L569.5 52.2L561.9 44.4L552.9 36.9L542.3 29.9L530.1 23.8L516.2 18.8L500.6 15.2L483.5 13.4L465.2 13.9L445.9 16.8L426.3 22.2L406.7 30.1L387.4 40.1L368.8 52L350.8 65.3L333.5 79.7L316.6 94.7L300 110L283.4 125.3L266.5 140.3L249.2 154.7L231.2 168L212.6 179.9L193.3 189.9L173.7 197.8L154.1 203.2L134.8 206.1L116.5 206.6L99.4 204.8L83.8 201.2L69.9 196.2L57.7 190.1L47.1 183.1L38.1 175.6L30.5 167.8L24.2 159.7L19.1 151.5L15 143.2L11.9 134.9L9.8 126.6L8.5 118.3Z" pathLength="1000" stroke-dasharray="1000" stroke-dashoffset="0"/>
-        <g class="stops"></g>
-        <circle class="agent" r="5" cx="300" cy="110"/>
-      </svg>
-    </div>
-    <ol class="steps5" data-steps>
-      <li><span class="no">01</span><h3>Book a call</h3><p>We look at what you have and what it costs you.</p><span class="where">On the phone</span></li>
-      <li><span class="no">02</span><h3>Your invite</h3><p>A link to your portal. No password to remember.</p><span class="where">Email · portal</span></li>
-      <li><span class="no">03</span><h3>See your site</h3><p>Your new website in a private preview, before anyone else.</p><span class="where">Portal · Overview</span></li>
-      <li><span class="no">04</span><h3>Approve the plan</h3><p>Looks right, or ask for a change. Nothing starts without your OK.</p><span class="where">Portal · Initiatives</span></li>
-      <li><span class="no">05</span><h3>Start your plan</h3><p>Setup plus a flat monthly amount. Then we look after it.</p><span class="where">Portal · Billing</span></li>
-    </ol>
-  </div>
-</section>
 
-<section class="sec demo-sec" id="example" data-od-id="demo">
-  <div class="light" aria-hidden="true"></div><div class="tex" aria-hidden="true"></div>
+<section class="sec demo-sec" id="example" data-od-id="demo" data-scene="demo">
   <div class="wrap">
     <div class="sec-head rv">
-      <p class="eyebrow">One honest example</p>
-      <h2 class="h2">It drafts. <em>You decide.</em></h2>
+      <p class="eyebrow">AI, set up properly</p>
+      <h2 class="h2">Your business, with an assistant <em>that knows it.</em></h2>
+      <p class="lede">We connect AI to the tools you already use, then teach you and your team to get real value from it every day.</p>
     </div>
     <div class="demo-grid">
       <div class="chat rv" style="--d:1" data-od-id="demo-chat">
@@ -641,42 +596,62 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
           <div class="msg ai" data-seq="ai" data-w="2"><span class="label who">Assistant</span><span class="sr-only">Sourdough and rye sold most in September. Croissants dipped in the last week. Here's what that means for flour.</span><span class="vis" aria-hidden="true" data-type>Sourdough and rye sold most in September. Croissants dipped in the last week. Here's what that means for flour.</span>
             <div class="order" data-after><span>Bread flour</span><span class="mono">8 bags</span><span>Dark rye</span><span class="mono">3 bags</span><span>Pastry flour</span><span class="mono">2 bags</span></div>
           </div>
-          <div class="step" data-seq="step" data-w="3"><i></i>Writing a draft in Google Drive · “Mill order, Oct 6”</div>
-          <div class="msg ai" data-seq="ai" data-w="4"><span class="label who">Assistant</span><span class="sr-only">The draft is in your Drive. I have not sent it. I don't send orders or spend money.</span><span class="vis" aria-hidden="true" data-type>The draft is in your Drive. I have not sent it. I don't send orders or spend money.</span></div>
+          <div class="step" data-seq="step" data-w="3"><i></i>Writing the order in Google Drive · “Mill order, Oct 6”</div>
+          <div class="msg ai" data-seq="ai" data-w="4"><span class="label who">Assistant</span><span class="sr-only">Your order is ready in Drive. Have a look, change anything you like, and send it when you're happy.</span><span class="vis" aria-hidden="true" data-type>Your order is ready in Drive. Have a look, change anything you like, and send it when you're happy.</span></div>
           <div class="typing gone" aria-hidden="true"><i></i><i></i><i></i></div>
         </div>
-        <div class="chat-foot"><span>Example. The AI drafts. Anna checks it and sends it.</span><button class="btn btn-ghost btn-sm" type="button" data-replay data-od-id="demo-replay">Play it again</button></div>
+        <div class="chat-foot"><span>Example. One question, and Monday's order is written.</span><button class="btn btn-ghost btn-sm" type="button" data-replay data-od-id="demo-replay">Play it again</button></div>
       </div>
       <div class="wire-wrap rv" style="--d:2">
-        <p class="label">What it's connected to</p>
-        <ol class="wire" data-wire aria-label="How the assistant is wired: Shopify, the assistant, Google Drive, then Anna">
-          <li data-n="1"><span class="nd">SH</span><b>Shopify</b><small>Reads last month's orders. Read only.</small></li>
-          <li data-n="2"><span class="nd"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/><circle cx="16" cy="16" r="8" fill="url(#mk)"/><circle cx="27" cy="9" r="2.2" fill="var(--ring)"/></svg></span><b>Assistant</b><small>Works out what sold, and drafts.</small></li>
-          <li data-n="3"><span class="nd">GD</span><b>Drive</b><small>Saves a draft order in her own Drive.</small></li>
-          <li data-n="4"><span class="nd">AW</span><b>Anna</b><small>Checks it and sends it. Or doesn't.</small><span class="gate badge ok">Her call</span></li>
+        <p class="label">What Anna got</p>
+        <ol class="wire" data-wire aria-label="How the assistant works for Anna: her orders, the assistant, her Drive, and Anna">
+          <li data-n="1"><span class="nd">SH</span><b>Her orders</b><small>Every sale in Shopify, finally put to work.</small></li>
+          <li data-n="2"><span class="nd"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/><circle cx="16" cy="16" r="8" fill="url(#mk)"/><circle cx="27" cy="9" r="2.2" fill="var(--ring)"/></svg></span><b>An assistant</b><small>Knows her bakery, and works out what's needed.</small></li>
+          <li data-n="3"><span class="nd">GD</span><b>Her Drive</b><small>The order, written and waiting.</small></li>
+          <li data-n="4"><span class="nd">AW</span><b>Her morning back</b><small>She checks it, sends it, and gets on with baking.</small></li>
         </ol>
-        <p class="wire-note">We connect what you already pay for. Nothing new to learn, and no step where AI spends your money.</p>
+        <ul class="gets" data-od-id="ai-gets">
+          <li><b>Set up</b>on the tools you already pay for</li>
+          <li><b>Taught</b>to you and your team, in plain words</li>
+          <li><b>Looked after</b>and improved every month</li>
+        </ul>
       </div>
     </div>
   </div>
 </section>
 
-<section class="sec stmt-sec" id="promises" data-od-id="promises">
-  <div class="light" aria-hidden="true"></div>
+<section class="jr" id="after" data-od-id="journey" data-scene="journey">
+  <div class="jr-pin">
+    <div class="wrap jr-in">
+      <div class="jr-head">
+        <p class="eyebrow">After you book</p>
+        <h2 class="h2">From one call to a <em>stable orbit.</em></h2>
+      </div>
+      <ol class="jr-steps" data-steps>
+        <li><span class="no">01 / 05</span><h3>A clear picture</h3><p>One call. We look at every tool, login and bill, and tell you what we'd keep.</p></li>
+        <li><span class="no">02 / 05</span><h3>Your own portal</h3><p>Your website, your plans and your bills, together in one place.</p></li>
+        <li><span class="no">03 / 05</span><h3>Your new website</h3><p>See it before anyone else does. Change anything you like.</p></li>
+        <li><span class="no">04 / 05</span><h3>Your choice, in writing</h3><p>Three options, each weighed against what the result is worth to you. You pick.</p></li>
+        <li><span class="no">05 / 05</span><h3>Looked after</h3><p>Your site kept fast and safe, and AI your team actually uses. Every month.</p></li>
+      </ol>
+      <div class="jr-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec pr-sec" id="promises" data-od-id="promises" data-scene="promises">
   <div class="wrap">
-    <p class="eyebrow">What we put in writing</p>
-    <h2 class="sr-only">Four promises</h2>
-    <ol class="stmt" data-stmt>
-      <li data-od-id="promise-price"><span class="s-line">Fixed <i>price.</i></span><span class="s-note"><b>01</b>One number, agreed before we start.</span></li>
-      <li data-od-id="promise-own"><span class="s-line">You own it all.</span><span class="s-note"><b>02</b>Accounts, code and data are in your name.</span></li>
-      <li data-od-id="promise-plain"><span class="s-line">Plain English.</span><span class="s-note"><b>03</b>Updates you can read on your phone.</span></li>
-      <li data-od-id="promise-lockin"><span class="s-line">No lock-in.</span><span class="s-note"><b>04</b>Leave any month. Keep everything.</span></li>
+    <div class="sec-head rv"><p class="eyebrow">What we put in writing</p><h2 class="h2">Four promises, <em>on paper.</em></h2></div>
+    <ol class="promises">
+      <li class="rv" data-od-id="promise-price"><span class="pno">01</span><h3>Fixed price</h3><p>One number, agreed before we start.</p></li>
+      <li class="rv" style="--d:1" data-od-id="promise-own"><span class="pno">02</span><h3>You own it all</h3><p>Accounts, code and data are in your name.</p></li>
+      <li class="rv" style="--d:2" data-od-id="promise-plain"><span class="pno">03</span><h3>Plain English</h3><p>Updates you can read on your phone.</p></li>
+      <li class="rv" style="--d:3" data-od-id="promise-lockin"><span class="pno">04</span><h3>No lock-in</h3><p>Leave any month. Keep everything.</p></li>
     </ol>
   </div>
 </section>
 
-<section class="sec px" id="pricing" data-od-id="pricing">
-  <div class="light" aria-hidden="true"></div>
+<section class="sec px" id="pricing" data-od-id="pricing" data-scene="pricing">
   <div class="wrap">
     <div class="sec-head rv"><p class="eyebrow">What it costs</p><h2 class="h2">Two numbers. <em>Both in writing.</em></h2></div>
     <div class="bento">
@@ -687,24 +662,12 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
           <a class="ghostlink" href="mailto:hello@solenix.dev?subject=Book%20a%20call">Get your two numbers <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
       </div>
-      <div class="cell rv" style="--d:1" data-od-id="price-setup">
-        <svg class="ring" viewBox="0 0 88 88" aria-hidden="true"><circle class="r" cx="44" cy="44" r="34"/><circle class="s" cx="44" cy="44" r="14"/></svg>
-        <p class="label">One-off</p><h3 class="t">Set up, fixed price</h3>
-        <p class="amt"><span class="tbd">amount to confirm</span></p>
-        <ul class="incl"><li>A written map of every tool, login and bill</li><li>Your new website, or your tools wired to AI</li><li>Training for you and your team, recorded</li></ul>
-      </div>
-      <div class="cell rv" style="--d:2" data-od-id="price-care">
-        <svg class="ring" viewBox="0 0 88 88" aria-hidden="true"><circle class="r" cx="44" cy="44" r="34"/><circle class="s" cx="44" cy="44" r="14"/><g class="spin"><circle class="ag" cx="68" cy="20" r="4"/></g></svg>
-        <p class="label">Monthly, flat</p><h3 class="t">Looked after</h3>
-        <p class="amt"><span class="tbd">amount to confirm</span><small>/month</small></p>
-        <ul class="incl"><li>Hosting, domains, backups and updates</li><li>Changes when you ask, fixes in plain words</li><li>Your portal, and a person who answers</li></ul>
-      </div>
     </div>
   </div>
 </section>
 
-<section class="sec faq-sec" id="faq" data-od-id="faq">
-  <div class="light" aria-hidden="true"></div>
+
+<section class="sec faq-sec" id="faq" data-od-id="faq" data-scene="faq">
   <div class="wrap faq-grid">
     <div class="faq-side rv">
       <svg class="mk" viewBox="0 0 120 120" aria-hidden="true"><circle class="r" cx="60" cy="60" r="52"/><circle class="s" cx="60" cy="60" r="26"/><g class="spin"><circle class="ag" cx="96.8" cy="23.2" r="5"/></g></svg>
@@ -721,11 +684,8 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
   </div>
 </section>
 
-<section class="close-sec" id="close" data-od-id="closing" aria-labelledby="close-h">
-  <div class="close-fallback" aria-hidden="true"><svg viewBox="-10 -10 620 240"><path d="M300 110L283.4 125.3L266.5 140.3L249.2 154.7L231.2 168L212.6 179.9L193.3 189.9L173.7 197.8L154.1 203.2L134.8 206.1L116.5 206.6L99.4 204.8L83.8 201.2L69.9 196.2L57.7 190.1L47.1 183.1L38.1 175.6L30.5 167.8L24.2 159.7L19.1 151.5L15 143.2L11.9 134.9L9.8 126.6L8.5 118.3L8.1 110L8.5 101.7L9.8 93.4L11.9 85.1L15 76.8L19.1 68.5L24.2 60.3L30.5 52.2L38.1 44.4L47.1 36.9L57.7 29.9L69.9 23.8L83.8 18.8L99.4 15.2L116.5 13.4L134.8 13.9L154.1 16.8L173.7 22.2L193.3 30.1L212.6 40.1L231.2 52L249.2 65.3L266.5 79.7L283.4 94.7L300 110L316.6 125.3L333.5 140.3L350.8 154.7L368.8 168L387.4 179.9L406.7 189.9L426.3 197.8L445.9 203.2L465.2 206.1L483.5 206.6L500.6 204.8L516.2 201.2L530.1 196.2L542.3 190.1L552.9 183.1L561.9 175.6L569.5 167.8L575.8 159.7L580.9 151.5L585 143.2L588.1 134.9L590.2 126.6L591.5 118.3L591.9 110L591.5 101.7L590.2 93.4L588.1 85.1L585 76.8L580.9 68.5L575.8 60.3L569.5 52.2L561.9 44.4L552.9 36.9L542.3 29.9L530.1 23.8L516.2 18.8L500.6 15.2L483.5 13.4L465.2 13.9L445.9 16.8L426.3 22.2L406.7 30.1L387.4 40.1L368.8 52L350.8 65.3L333.5 79.7L316.6 94.7Z"/></svg></div>
-  <canvas class="close-gl" aria-hidden="true"></canvas>
-  <div class="close-veil" aria-hidden="true"></div>
-  <p class="close-hud" aria-hidden="true"><span class="st">Stable · figure-8</span><span>t <span data-ct>0.00</span></span><span>Three bodies · real sim</span></p>
+
+<section class="close-sec" id="close" data-od-id="closing" data-scene="close" aria-labelledby="close-h">
   <div class="wrap close-in">
     <h2 id="close-h" class="rv">Let's find your <em>stable orbit.</em></h2>
     <p class="rv">A short call. We look at what you have and tell you what we'd keep.</p>
@@ -743,6 +703,17 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
 </section>
 </main>
 
+<div class="hud" data-od-id="sim-hud" role="group" aria-label="Live simulation readout">
+  <p class="hud-big"><span class="hud-k">Off the stable orbit</span><span class="hud-v" data-hud="d">—</span></p>
+  <div class="hud-bar" aria-hidden="true"><b data-hud="bar"></b></div>
+  <dl>
+    <dt>Steering</dt><dd data-hud="k">0%</dd>
+    <dt>State</dt><dd><span class="state" data-hud="s">Chaotic</span></dd>
+    <dt>t</dt><dd data-hud="t">0.00</dd>
+    <dt>Step</dt><dd>Verlet · dt 0.004</dd>
+  </dl>
+</div>
+
 <footer data-od-id="footer">
   <div class="wrap">
     <a class="brand" href="#top"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/><circle cx="16" cy="16" r="8" fill="url(#mk)"/><circle cx="27" cy="9" r="2.2" fill="var(--ring)"/></svg>Solenix</a>
@@ -753,93 +724,120 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
 </footer>
 
 <script>
-/* ── Page UI: motion switch, scroll story, reveals, and the sections after the sky.
-   No WebGL here, so everything below works even if the 3D fails to load. ── */
+/* ── Page UI: reduced motion, the scroll-to-scene keyframes, reveals and section behaviour.
+   No WebGL here: the page still reads in full if the 3D fails to load. ── */
 (function () {
   const root = document.documentElement;
-  const S = window.solenix = { p: 0, beat: 0, motion: true, vh: innerHeight };
+  const S = window.solenix = { p: 0, motion: true, vh: innerHeight, scene: {}, sceneIdx: 0 };
   const $ = (s, el = document) => el.querySelector(s), $$ = (s, el = document) => [...el.querySelectorAll(s)];
   const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
   const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a)); return t * t * (3 - 2 * t); };
   S.smooth = smooth;
-  const E8 = $('.track .base').getAttribute('d');
 
-  /* Motion: on by default unless the visitor asked for less. Always pausable. */
+  /* Motion follows the operating system. Reduced motion freezes the scene; every value stays on screen. */
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
-  let saved = null; try { saved = localStorage.getItem('solenix-motion'); } catch (e) {}
-  S.motion = saved ? saved === 'on' : !reduce.matches;
-  const toggle = $('.motion-toggle');
   function applyMotion() {
+    S.motion = !reduce.matches;
     root.dataset.motion = S.motion ? 'on' : 'off';
-    toggle.setAttribute('aria-checked', String(S.motion));
     if (!S.motion) { $$('.rv').forEach(el => el.classList.add('in')); finishChat(); countAll(true); }
     dispatchEvent(new Event('solenix:motion'));
     onScroll(); loop();
   }
-  toggle.addEventListener('click', () => { S.motion = !S.motion; try { localStorage.setItem('solenix-motion', S.motion ? 'on' : 'off'); } catch (e) {} applyMotion(); });
+  reduce.addEventListener('change', applyMotion);
 
-  /* Scroll story. Ranges are shared with the WebGL module through window.solenix. */
-  const sky = $('.sky'), nav = $('.nav'), hero = $('.hero-copy'), beats = $$('.beat'), rets = $$('.ret:not(.ret-ai)'), retAi = $('.ret-ai'), tools = $$('.tool'), scrub = $('.scrub'), scrubFill = $('.scrub b'), scrubLab = $$('.scrub span');
-  /* Split each beat headline into words so the scroll can build it word by word. */
-  beats.forEach(b => { const h = $('h3', b); h.setAttribute('aria-label', h.textContent); h.querySelectorAll(':scope, em').forEach(el => [...el.childNodes].forEach(n => { if (n.nodeType === 3 && n.textContent.trim()) { const f = document.createDocumentFragment(); n.textContent.split(/(\s+)/).forEach(w => { if (!w) return; if (/^\s+$/.test(w)) f.append(w); else { const sp = document.createElement('span'); sp.className = 'bw'; sp.setAttribute('aria-hidden', 'true'); sp.textContent = w; f.append(sp); } }); n.replaceWith(f); } })); });
-  const cue = $('.scroll-cue');
-  const RANGES = [[0.14, 0.40], [0.40, 0.66], [0.66, 1.3]];
-  S.ranges = RANGES;
+  /* ── The story, as keyframes on the page. Each one pins the scene at a point in the scroll:
+     where the camera is, how hard the suns are steered, how far the orbit is drawn in.
+     Values not given carry over from the keyframe before. ── */
+  const KEYS = [
+    { sel: '.sky', f: 0, pin: 1, k: 0, free: 0, order: 0, ink: 0, third: 0, el: 22, az: 0, dist: 18.5, ox: 0.2, oy: 0.12, poy: 0.14, calm: 0, dim: 0, labels: 0, conn: 0, agent: 0, hud: 1, stops: 0 },
+    { sel: '.sky', f: 0.55, pin: 1, labels: 1, el: 27, az: -10, dist: 16.5, ox: 0.22, oy: 0.1 },
+    { sel: '.sky', f: 1, pin: 1, labels: 0, el: 33, az: -22, dist: 17 },
+    { sel: '#portal', f: 0.5, dim: 0.62, hud: 0, el: 40, az: -42, dist: 19, ox: -0.12, oy: 0.02, poy: 0.1 },
+    { sel: '#example', f: 0.15, conn: 1, k: 0.1, free: 0.3, dim: 0.66, el: 46, az: -22, dist: 15, ox: 0.08, oy: 0.04 },
+    { sel: '#example', f: 0.85, conn: 1, k: 0.45, free: 0.6, dim: 0.66, el: 54, az: -8, dist: 13.5 },
+    { sel: '#after', f: 0, pin: 1, conn: 0, k: 0.9, free: 0.6, dim: 0, hud: 1, stops: 1, el: 64, az: 0, dist: 10.8, ox: 0.17, oy: 0.03, poy: 0.02, calm: 0.35 },
+    { sel: '#after', f: 0.3, pin: 1, k: 1, free: 1, third: 0.6, poy: -0.02 },
+    { sel: '#after', f: 0.86, pin: 1, k: 1, order: 1, ink: 1, third: 1, calm: 1, el: 70, az: 4 },
+    { sel: '#after', f: 1, pin: 1, k: 0, agent: 1 },
+    { sel: '#promises', f: 0.5, dim: 0.6, hud: 0, stops: 0, el: 50, az: 45, dist: 12.5, ox: 0, oy: 0.18, poy: 0.08 },
+    { sel: '#pricing', f: 0.5, dim: 0.45, el: 78, az: 95, dist: 13, ox: 0.24 },
+    { sel: '#faq', f: 0.5, dim: 0.62, el: 30, az: 150, dist: 11.5, ox: 0.16 },
+    { sel: '#close', f: 1, dim: 0, hud: 0, el: 60, az: 180, dist: 13.5, ox: 0.24, oy: 0.08, poy: 0.08 }
+  ];
+  const PARAMS = Object.keys(KEYS[0]).filter(k => !['sel', 'f', 'pin'].includes(k));
+  for (let i = 1; i < KEYS.length; i++) PARAMS.forEach(k => { if (KEYS[i][k] === undefined) KEYS[i][k] = KEYS[i - 1][k]; });
+  let keyY = [];
+  function layoutKeys() {
+    keyY = KEYS.map(K => { const el = $(K.sel), top = el.getBoundingClientRect().top + scrollY, h = el.offsetHeight;
+      return K.pin ? top + K.f * (h - innerHeight) : top + K.f * h - innerHeight * 0.5; });
+    const maxY = document.documentElement.scrollHeight - innerHeight; keyY[keyY.length - 1] = Math.min(keyY[keyY.length - 1], maxY);
+    for (let i = 1; i < keyY.length; i++) keyY[i] = Math.max(keyY[i], keyY[i - 1] + 1);
+  }
+  function sceneAt(y) {
+    if (y <= keyY[0]) return [0, 0];
+    for (let i = 1; i < keyY.length; i++) if (y < keyY[i]) return [i - 1, smooth(0, 1, (y - keyY[i - 1]) / (keyY[i] - keyY[i - 1]))];
+    return [KEYS.length - 1, 0];
+  }
+  function updateScene() {
+    const y = scrollY, [i, t] = sceneAt(y), A = KEYS[i], B = KEYS[Math.min(i + 1, KEYS.length - 1)], sc = S.scene;
+    if (S.motion) PARAMS.forEach(k => sc[k] = A[k] + (B[k] - A[k]) * t);
+    else { const n = t < 0.5 ? i : Math.min(i + 1, KEYS.length - 1); PARAMS.forEach(k => sc[k] = KEYS[n][k]); if (n !== S.sceneIdx) { S.sceneIdx = n; dispatchEvent(new Event('solenix:scene')); } }
+    world.style.setProperty('--dim', Math.min(0.9, sc.dim * (innerWidth < 720 ? 1.4 : 1)).toFixed(3));
+    hudEl.style.opacity = sc.hud.toFixed(3);
+  }
+
+  const sky = $('.sky'), nav = $('.nav'), hero = $('.hero-copy'), beat = $('.beat'), cue = $('.scroll-cue'), world = $('.world'), hudEl = $('.hud');
+  const rets = $$('.scene-ui .ret:not(.ret-ai)'), retAi = $('.ret-ai'), tools = $$('.tool');
+  S.rets = rets; S.retAi = retAi; S.tools = tools; S.leaders = $('.leaders'); S.stops = $$('.stop-mk'); S.hud = hudEl;
+  /* The Look headline builds word by word with the scroll, and unbuilds when you scroll back. */
+  { const h = $('.beat-h', beat); h.setAttribute('aria-label', h.textContent); h.querySelectorAll(':scope, em').forEach(el => [...el.childNodes].forEach(n => { if (n.nodeType === 3 && n.textContent.trim()) { const f = document.createDocumentFragment(); n.textContent.split(/(\s+)/).forEach(w => { if (!w) return; if (/^\s+$/.test(w)) f.append(w); else { const sp = document.createElement('span'); sp.className = 'bw'; sp.setAttribute('aria-hidden', 'true'); sp.textContent = w; f.append(sp); } }); n.replaceWith(f); } })); }
+  const bwords = $$('.bw', beat), bblocks = $$('.bl', beat);
+  const jr = $('#after'), jSteps = $$('[data-steps] li'), jDots = $$('.jr-dots i'), demo = $('#example');
   const portal = $('.portal');
   let ticking = false;
   function onScroll() {
     ticking = false;
-    const r = sky.getBoundingClientRect(), total = r.height - innerHeight;
-    const p = clamp(-r.top / total);
+    const m = S.motion, vh = innerHeight;
+    updateScene();
+    /* Hero and the Look beat, inside the pinned sky. */
+    const r = sky.getBoundingClientRect(), p = clamp(-r.top / (r.height - vh));
     S.p = p;
-    const beat = p < 0.14 ? 0 : p < 0.40 ? 1 : p < 0.66 ? 2 : 3;
-    if (beat !== S.beat) { S.beat = beat; dispatchEvent(new Event('solenix:beat')); }
-    const m = S.motion;
-    const ho = m ? 1 - smooth(0.035, 0.12, p) : (beat === 0 ? 1 : 0);
-    hero.style.opacity = ho;
-    hero.style.transform = m ? `translateY(${-p * 260}px)` : '';
-    hero.style.visibility = ho < 0.02 ? 'hidden' : '';
-    if (cue) cue.style.opacity = 1 - smooth(0.0, 0.05, p);
-    /* Beats build and unbuild with the scroll, word by word, in both directions. */
-    beats.forEach((b, i) => {
-      const [a, z] = RANGES[i], words = $$('.bw', b), blocks = $$('.bl', b);
-      let any = 0;
-      const put = (el, k, n) => {
-        let o, y;
-        if (m) { const a0 = a + 0.004 + k * 0.008, inn = smooth(a0, a0 + 0.04, p), z0 = z - 0.034 + k * 0.003, out = smooth(z0, z0 + 0.026, p); o = inn * (1 - out); y = (1 - inn) * 0.55 - out * 0.35; }
-        else { o = beat === i + 1 ? 1 : 0; y = 0; }
-        any = Math.max(any, o); el.style.opacity = o.toFixed(3); el.style.transform = y ? `translateY(${y.toFixed(3)}em)` : '';
-      };
-      put(blocks[0], 0); words.forEach((w, k) => put(w, k + 1)); put(blocks[1], words.length + 1);
-      b.style.visibility = any > 0.01 ? 'visible' : 'hidden';
-    });
-    const sp = m ? clamp((p - 0.14) / (0.92 - 0.14)) : [0, 0.12, 0.5, 1][beat];
-    scrub.style.opacity = m ? smooth(0.1, 0.15, p) : (beat ? 1 : 0);
-    scrubFill.style.width = (sp * 100).toFixed(2) + '%';
-    scrubLab.forEach((l, i) => { l.classList.toggle('on', beat === i + 1); l.classList.toggle('done', beat > i + 1); });
-    S.aiAlpha = m ? smooth(0.42, 0.47, p) * (1 - smooth(0.6, 0.65, p)) : (beat === 2 ? 1 : 0);
-    S.retAlpha = m ? smooth(0.15, 0.2, p) * (1 - smooth(0.37, 0.42, p)) : (beat === 1 ? 1 : 0);
-    const solid = r.bottom < 72;
-    nav.classList.toggle('is-solid', solid || (-r.top > 40 && r.bottom < innerHeight * 0.2));
-    if (solid) nav.removeAttribute('data-theme'); else nav.setAttribute('data-theme', 'dark');
+    const ho = m ? 1 - smooth(0.06, 0.3, p) : (p < 0.3 ? 1 : 0);
+    hero.style.opacity = ho; hero.style.transform = m ? `translateY(${-p * 200}px)` : ''; hero.style.visibility = ho < 0.02 ? 'hidden' : '';
+    if (cue) cue.style.opacity = 1 - smooth(0, 0.08, p);
+    let any = 0;
+    const put = (el, k) => { let o, y; if (m) { const a0 = 0.34 + k * 0.022, inn = smooth(a0, a0 + 0.1, p); o = inn; y = (1 - inn) * 0.55; } else { o = p >= 0.3 ? 1 : 0; y = 0; }
+      any = Math.max(any, o); el.style.opacity = o.toFixed(3); el.style.transform = y ? `translateY(${y.toFixed(3)}em)` : ''; };
+    put(bblocks[0], 0); bwords.forEach((w, k) => put(w, k + 1)); put(bblocks[1], bwords.length + 1);
+    beat.style.visibility = any > 0.01 ? 'visible' : 'hidden';
+    S.retAlpha = S.scene.labels;
+    const dr = demo.getBoundingClientRect();
+    S.aiAlpha = m ? smooth(vh * 0.85, vh * 0.45, dr.top) * (1 - smooth(vh * 0.55, vh * 0.1, dr.bottom)) : (dr.top < vh * 0.5 && dr.bottom > vh * 0.5 ? 1 : 0);
+    /* The journey: one card at a time, keyed to how far the orbit is inked in. */
+    const jrR = jr.getBoundingClientRect(), inJ = jrR.top < vh * 0.4 && jrR.bottom > vh * 0.3, ink = S.scene.ink;
+    const cur = inJ ? Math.max(0, Math.min(4, Math.floor(ink * 5 - 0.4))) : -1;
+    S.jCur = cur;
+    jSteps.forEach((li, i) => li.classList.toggle('on', i === Math.max(0, cur) && (inJ || jrR.top < vh)));
+    jDots.forEach((d, i) => d.classList.toggle('on', i <= cur));
+    nav.classList.toggle('is-solid', scrollY > 40);
     if (portal) {
       const pr = portal.getBoundingClientRect();
-      const q = m ? smooth(0.05, 0.75, (innerHeight - pr.top) / (innerHeight + pr.height * 0.4)) : 0.8, k = innerWidth < 720 ? 0.45 : 1;
+      const q = m ? smooth(0.05, 0.75, (vh - pr.top) / (vh + pr.height * 0.4)) : 0.8, k = innerWidth < 720 ? 0.45 : 1;
       portal.style.setProperty('--rx', ((16 - 12 * q) * k).toFixed(2) + 'deg');
       portal.style.setProperty('--ry', ((-18 + 12 * q) * k).toFixed(2) + 'deg');
       portal.style.setProperty('--rz', ((4 - 3 * q) * k).toFixed(2) + 'deg');
     }
-    scenes();
+    pull = S.motion ? smooth(0, 0.62, through(stage, 0.95, 0.3)) : 1;
+    drawChips(performance.now());
   }
-  S.rets = rets; S.retAi = retAi; S.tools = tools; S.leaders = $('.leaders');
   addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
-  addEventListener('resize', () => { S.vh = innerHeight; layoutRing(); layoutTrack(); sizeClose(); onScroll(); });
+  addEventListener('resize', () => { S.vh = innerHeight; layoutKeys(); layoutRing(); onScroll(); });
 
-  /* "See how it settles" lands on beat one. The anchor makes it work without script. */
+  /* "See how it settles" lands on the Look beat. */
   $$('a[href="#settle"]').forEach(a => a.addEventListener('click', e => {
     e.preventDefault();
     const r = sky.getBoundingClientRect(), total = r.height - innerHeight;
-    scrollTo({ top: scrollY + r.top + total * 0.24, behavior: S.motion ? 'smooth' : 'auto' });
+    scrollTo({ top: scrollY + r.top + total * 0.62, behavior: S.motion ? 'smooth' : 'auto' });
   }));
 
   /* Reveal once, never again on scroll-back. */
@@ -851,7 +849,6 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
   (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(() => requestAnimationFrame(() => h1.classList.add('play')));
   setTimeout(() => h1.classList.add('play'), 1200);
 
-  /* How far a section has travelled through the viewport: 0 as it enters, 1 as it leaves. */
   const through = (el, a = 0.9, b = 0.25) => { const r = el.getBoundingClientRect(); return clamp((innerHeight * a - r.top) / (innerHeight * (a - b) + r.height * 0.35)); };
 
   /* ── 1 · Twelve logins, scattered, pulled onto one ring around the portal ── */
@@ -882,131 +879,12 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
     stage.classList.toggle('settled', e > 0.96); ptSec.classList.toggle('settled', e > 0.96);
   }
 
-  /* ── 2 · The route: the real figure-eight path, lit by scroll, five stops ── */
-  const track = $('[data-track]'), tPath = $('.lit', track), tBase = $('.base', track), tAgent = $('.agent', track), steps = $$('[data-steps] li');
-  const STOPS = [0.02, 0.19, 0.375, 0.56, 0.8];
-  let tLen = 1;
-  function layoutTrack() {
-    tLen = tBase.getTotalLength();
-    const sc = (track.clientWidth || 640) / 640, r = Math.max(13, 12 / sc), fs = Math.max(13, 11.5 / sc);
-    $('.stops', track).innerHTML = STOPS.map((f, k) => { const p = tBase.getPointAtLength(f * tLen); return `<g class="stop" transform="translate(${p.x.toFixed(1)} ${p.y.toFixed(1)})"><circle r="${r.toFixed(1)}"/><text style="font-size:${fs.toFixed(1)}px">${String(k + 1).padStart(2, '0')}</text></g>`; }).join('');
-    tAgent.setAttribute('r', Math.max(5, 4.5 / sc).toFixed(1));
-  }
-  function drawTrack() {
-    const q = S.motion ? smooth(0, 1, through(track, 0.8, 0.02)) : 1;
-    tPath.setAttribute('stroke-dashoffset', (1000 - q * 1000).toFixed(1));
-    const p = tBase.getPointAtLength(Math.min(q, 0.999) * tLen);
-    tAgent.setAttribute('cx', p.x.toFixed(1)); tAgent.setAttribute('cy', p.y.toFixed(1));
-    const stops = $$('.stop', track);
-    STOPS.forEach((f, k) => { const on = q >= f - 0.005; stops[k] && stops[k].classList.toggle('on', on); steps[k].classList.toggle('on', on); });
-  }
-
-  /* ── 4 · The statement lights one line at a time as it crosses the middle ── */
-  const lines = $$('[data-stmt] li');
-  function drawStmt() {
-    lines.forEach(li => {
-      if (!S.motion) return li.style.setProperty('--lit', 1);
-      const r = li.getBoundingClientRect(), c = r.top + r.height / 2;
-      li.style.setProperty('--lit', smooth(innerHeight * 0.9, innerHeight * 0.55, c).toFixed(3));
-    });
-  }
-
-  function scenes() {
-    pull = S.motion ? smooth(0, 0.62, through(stage, 0.95, 0.3)) : 1;
-    drawChips(performance.now()); drawTrack(); drawStmt();
-  }
-
-  /* ── 7 · Closing: the Chenciner–Montgomery figure-eight, integrated live ── */
-  const close = $('.close-sec'), cv = $('.close-gl'), ctx = cv.getContext('2d'), ctEl = $('[data-ct]'), closeIn = $('.close-in');
-  const css = n => getComputedStyle(root).getPropertyValue(n).trim();
-  const rgba = (hex, a) => { const h = hex.replace('#', ''), n = parseInt(h.length === 3 ? h.replace(/./g, '$&$&') : h, 16); return `rgba(${n >> 16 & 255}, ${n >> 8 & 255}, ${n & 255}, ${a})`; };
-  const COL = { sun1: css('--sun1'), sun2: css('--sun2'), ring: css('--ring'), bg: css('--bg'), star: css('--text') };
-  const B = [{ x: -0.97000436, y: 0.24308753 }, { x: 0.97000436, y: -0.24308753 }, { x: 0, y: 0 }];
-  const V = [{ x: 0.466203685, y: 0.43236573 }, { x: 0.466203685, y: 0.43236573 }, { x: -0.93240737, y: -0.86473146 }];
-  const DT = 0.004, TRAIL = 140, trails = B.map(() => []);
-  let simT = 0, A = accel();
-  function accel() {
-    const a = B.map(() => ({ x: 0, y: 0 }));
-    for (let i = 0; i < 3; i++) for (let j = i + 1; j < 3; j++) {
-      const dx = B[j].x - B[i].x, dy = B[j].y - B[i].y, r2 = dx * dx + dy * dy + 1e-6, k = 1 / (r2 * Math.sqrt(r2));
-      a[i].x += dx * k; a[i].y += dy * k; a[j].x -= dx * k; a[j].y -= dy * k;
-    }
-    return a;
-  }
-  function step() {
-    for (let i = 0; i < 3; i++) { V[i].x += A[i].x * DT / 2; V[i].y += A[i].y * DT / 2; B[i].x += V[i].x * DT; B[i].y += V[i].y * DT; }
-    A = accel();
-    for (let i = 0; i < 3; i++) { V[i].x += A[i].x * DT / 2; V[i].y += A[i].y * DT / 2; }
-    simT += DT;
-  }
-  /* One full period, recorded from the same integrator, is the faint orbit line. */
-  const PERIOD = 6.32591398, orbit = [];
-  { const b0 = B.map(b => ({ ...b })), v0 = V.map(v => ({ ...v })); for (let n = 0; n * DT < PERIOD; n++) { if (n % 6 === 0) orbit.push({ ...B[2] }); step(); } B.forEach((b, i) => Object.assign(b, b0[i])); V.forEach((v, i) => Object.assign(v, v0[i])); A = accel(); simT = 0; }
-  for (let n = 0; n < 300; n++) { step(); if (n % 2 === 0) B.forEach((b, i) => trails[i].push({ ...b })); }
-  const stars = Array.from({ length: 160 }, () => ({ x: Math.random(), y: Math.random(), r: Math.random() * 1.1 + 0.2, a: Math.random() * 0.5 + 0.15 }));
-  let CW = 1, CH = 1, dpr = 1, view = { cx: 0, cy: 0, s: 1 };
-  function sizeClose() {
-    dpr = Math.min(2, devicePixelRatio || 1); CW = close.clientWidth; CH = close.clientHeight;
-    cv.width = CW * dpr; cv.height = CH * dpr;
-    const top = closeIn.offsetTop, portrait = CW < 640, nh = 72, band = Math.max(160, top - nh);
-    view = { cx: CW / 2, cy: nh + band * 0.52, s: Math.min(CW * (portrait ? 0.42 : 0.3), band * 0.78 / 0.7) };
-  }
-  const P = p => [view.cx + p.x * view.s, view.cy - p.y * view.s];
-  function drawClose() {
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, CW, CH);
-    const g0 = ctx.createRadialGradient(view.cx, view.cy, 0, view.cx, view.cy, view.s * 1.6);
-    g0.addColorStop(0, rgba(COL.sun2, 0.14)); g0.addColorStop(1, rgba(COL.sun2, 0));
-    ctx.fillStyle = COL.bg; ctx.fillRect(0, 0, CW, CH);
-    ctx.fillStyle = g0; ctx.fillRect(0, 0, CW, CH);
-    stars.forEach(s => { ctx.globalAlpha = s.a; ctx.fillStyle = COL.star; ctx.beginPath(); ctx.arc(s.x * CW, s.y * CH, s.r, 0, 6.283); ctx.fill(); });
-    ctx.globalAlpha = 1;
-    ctx.lineWidth = 1; ctx.strokeStyle = COL.ring; ctx.globalAlpha = 0.22; ctx.beginPath();
-    orbit.forEach((p, i) => { const [x, y] = P(p); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }); ctx.closePath(); ctx.stroke();
-    ctx.globalCompositeOperation = 'lighter';
-    trails.forEach(tr => {
-      for (let i = 1; i < tr.length; i++) {
-        const k = i / tr.length, [x0, y0] = P(tr[i - 1]), [x1, y1] = P(tr[i]);
-        ctx.globalAlpha = k * k * 0.9; ctx.lineWidth = 0.5 + k * 3.5; ctx.strokeStyle = k > 0.6 ? COL.sun1 : COL.sun2;
-        ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
-      }
-    });
-    const R = Math.max(7, view.s * 0.045);
-    B.forEach(b => {
-      const [x, y] = P(b), g = ctx.createRadialGradient(x, y, 0, x, y, R * 5);
-      g.addColorStop(0, COL.sun1); g.addColorStop(0.18, COL.sun1); g.addColorStop(0.32, COL.sun2);
-      g.addColorStop(0.55, rgba(COL.sun2, 0.22)); g.addColorStop(1, rgba(COL.sun2, 0));
-      ctx.globalAlpha = 1; ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R * 5, 0, 6.283); ctx.fill();
-    });
-    /* The agent dot rides the same loop, a little faster than the suns. */
-    const ai = Math.floor((simT * 1.6 / PERIOD % 1) * orbit.length), [ax, ay] = P(orbit[ai] || orbit[0]);
-    ctx.globalAlpha = 1; ctx.fillStyle = COL.ring; ctx.shadowColor = COL.ring; ctx.shadowBlur = 12;
-    ctx.beginPath(); ctx.arc(ax, ay, 3.5, 0, 6.283); ctx.fill(); ctx.shadowBlur = 0;
-    ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
-    ctEl.textContent = simT.toFixed(2);
-  }
-  let closeSeen = false, ptSeen = false, last = 0, raf = 0, simAcc = 0;
-  new IntersectionObserver(es => es.forEach(e => { closeSeen = e.isIntersecting; loop(); }), { rootMargin: '100px' }).observe(close);
+  /* The login ring keeps turning once it has settled. */
+  let ptSeen = false, last = 0, raf = 0;
   new IntersectionObserver(es => es.forEach(e => { ptSeen = e.isIntersecting; loop(); }), { rootMargin: '100px' }).observe(stage);
-  function frame(t) {
-    raf = 0;
-    const dt = Math.min(0.05, (t - (last || t)) / 1000); last = t;
-    if (ptSeen) { rot += dt * (Math.PI * 2 / 70) * smooth(0.9, 1, pull); drawChips(t); }
-    if (closeSeen) {
-      simAcc += dt * 0.55;
-      while (simAcc >= DT) { step(); simAcc -= DT; if (Math.round(simT / DT) % 2 === 0) B.forEach((b, i) => { trails[i].push({ ...b }); if (trails[i].length > TRAIL) trails[i].shift(); }); }
-      drawClose();
-    }
-    loop();
-  }
-  function loop() {
-    const want = S.motion && !document.hidden && (closeSeen || ptSeen);
-    if (want && !raf) { last = 0; raf = requestAnimationFrame(frame); }
-    else if (!want && raf) { cancelAnimationFrame(raf); raf = 0; }
-    if (!S.motion) drawClose();
-  }
+  function frame(t) { raf = 0; const dt = Math.min(0.05, (t - (last || t)) / 1000); last = t; rot += dt * (Math.PI * 2 / 70) * smooth(0.9, 1, pull); drawChips(t); loop(); }
+  function loop() { const want = S.motion && !document.hidden && ptSeen; if (want && !raf) { last = 0; raf = requestAnimationFrame(frame); } else if (!want && raf) { cancelAnimationFrame(raf); raf = 0; } }
   document.addEventListener('visibilitychange', loop);
-  close.classList.add('gl-on');
 
   /* Count-up. The final value is the real text before, during and after. */
   function countAll(jump) {
@@ -1062,8 +940,9 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
   if (S.motion) { seq.forEach(el => el.classList.add('wait')); chatIo.observe(log); }
   $('[data-replay]').addEventListener('click', playChat);
 
-  layoutRing(); layoutTrack(); sizeClose();
-  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(() => { layoutRing(); sizeClose(); onScroll(); });
+  layoutKeys(); layoutRing();
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(() => { layoutKeys(); layoutRing(); onScroll(); });
+  addEventListener('load', () => { layoutKeys(); onScroll(); });
   applyMotion();
 })();
 </script>
@@ -1081,11 +960,12 @@ import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
 const S = window.solenix;
-const sky = document.querySelector('.sky'), stage = sky.querySelector('.stage'), canvas = document.getElementById('gl');
-const hud = { t: sky.querySelector('[data-hud="t"]'), d: sky.querySelector('[data-hud="d"]'), k: sky.querySelector('[data-hud="k"]'), s: sky.querySelector('[data-hud="s"]'), bar: sky.querySelector('[data-hud="bar"]'), root: sky.querySelector('.hud') };
+const stage = document.querySelector('.world'), canvas = document.getElementById('gl');
+const q = s => document.querySelector(s);
+const hud = { t: q('[data-hud="t"]'), d: q('[data-hud="d"]'), k: q('[data-hud="k"]'), s: q('[data-hud="s"]'), bar: q('[data-hud="bar"]'), root: q('.hud') };
 
 /* Colours come from tokens.css — resolved inside the dark sky. */
-const css = getComputedStyle(sky);
+const css = getComputedStyle(document.documentElement);
 const tok = n => new THREE.Color(css.getPropertyValue(n).trim());
 const WHITE = new THREE.Color(1, 1, 1);
 const C = { bg: tok('--bg'), sun1: tok('--sun1'), sun2: tok('--sun2'), ring: tok('--ring'), text: tok('--text'), sky: tok('--chart-5') };
@@ -1113,8 +993,11 @@ const eight = makeSys(P8, V8);   // the exact orbit, never touched
 const sys = makeSys(cp, cv);     // what you see
 const W8 = 4;                  // steering stiffness, in sim time
 const ctrlA = new Float64Array(6);
+/* Your cursor (or finger) is a faint fourth mass on the plane. It tugs the suns and the dust. */
+const cur = { x: 0, y: 0, m: 0 };
 function accelSys() {
   gravity(sys, ctl.soft * ctl.soft, ctl.conf);
+  if (cur.m > 0.001) for (let i = 0; i < 3; i++) { const dx = cur.x - sys.p[i * 2], dy = cur.y - sys.p[i * 2 + 1], r2 = dx * dx + dy * dy + 0.09, f = cur.m * 0.05 / (r2 * Math.sqrt(r2)); sys.a[i * 2] += dx * f; sys.a[i * 2 + 1] += dy * f; }
   const kp = ctl.k * W8 * W8, kd = ctl.k * 2 * W8;
   for (let k = 0; k < 6; k++) { ctrlA[k] = kp * (eight.p[k] - sys.p[k]) + kd * (eight.v[k] - sys.v[k]); sys.a[k] += ctrlA[k]; }
 }
@@ -1163,7 +1046,7 @@ let dprMax = Math.min(devicePixelRatio || 1, 2), dpr = dprMax;
 renderer.setPixelRatio(dpr);
 renderer.setClearColor(C.bg, 1);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 0.92;
+renderer.toneMappingExposure = 0.86;
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 400);
 
@@ -1184,6 +1067,13 @@ return 42.*dot(m*m,vec4(dot(p0,x0),dot(p1,x1),dot(p2,x2),dot(p3,x3)));}
 float fbm(vec3 p){float f=0.,a=.5;for(int i=0;i<4;i++){f+=a*snoise(p);p*=2.03;a*=.5;}return f;}`;
 const additive = { transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending };
 const bodyU = { value: [new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()] };
+/* Lensing: each sun bends the light behind it. Vertices are moved to where a point lens puts
+   the primary image, r' = (r + sqrt(r² + 4θE²)) / 2, so stars and grid pile up around each sun. */
+const lensU = { value: [new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()] }, aspU = { value: 1 };
+const LENS = `uniform vec3 uLens[3]; uniform float uAsp;
+vec4 lens(vec4 cp){ if(cp.w<=0.) return cp; vec2 n=cp.xy/cp.w;
+  for(int i=0;i<3;i++){ vec2 d=n-uLens[i].xy; d.x*=uAsp; float r=length(d)+1e-4, te=uLens[i].z; float r2=.5*(r+sqrt(r*r+4.*te*te)); d*=r2/r; d.x/=uAsp; n=uLens[i].xy+d; }
+  cp.xy=n*cp.w; return cp; }`;
 const timeU = { value: 0 };
 
 /* Starfield: two shells for parallax. */
@@ -1192,9 +1082,9 @@ function stars(n, r0, r1, size) {
   for (let i = 0; i < n; i++) { const u = Math.random() * 2 - 1, t = Math.random() * Math.PI * 2, r = r0 + Math.random() * (r1 - r0), s = Math.sqrt(1 - u * u);
     pos[i * 3] = r * s * Math.cos(t); pos[i * 3 + 1] = r * u; pos[i * 3 + 2] = r * s * Math.sin(t); seed[i] = Math.random(); }
   g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('aSeed', new THREE.BufferAttribute(seed, 1));
-  const m = new THREE.ShaderMaterial({ ...additive, uniforms: { uTime: timeU, uPx: { value: size }, uWarm: { value: C.sun1 }, uCool: { value: C.sky } },
-    vertexShader: `attribute float aSeed; uniform float uTime,uPx; varying float vA; varying float vS;
-      void main(){ vec4 mv=modelViewMatrix*vec4(position,1.); gl_Position=projectionMatrix*mv; vS=aSeed;
+  const m = new THREE.ShaderMaterial({ ...additive, uniforms: { uTime: timeU, uPx: { value: size }, uWarm: { value: C.sun1 }, uCool: { value: C.sky }, uLens: lensU, uAsp: aspU },
+    vertexShader: LENS + `attribute float aSeed; uniform float uTime,uPx; varying float vA; varying float vS;
+      void main(){ vec4 mv=modelViewMatrix*vec4(position,1.); gl_Position=lens(projectionMatrix*mv); vS=aSeed;
         vA=(0.25+0.75*pow(aSeed,3.))*(0.7+0.3*sin(uTime*(1.+aSeed*2.)+aSeed*40.)); gl_PointSize=uPx*(0.6+pow(aSeed,4.)*2.2); }`,
     fragmentShader: `uniform vec3 uWarm,uCool; varying float vA; varying float vS;
       void main(){ float d=length(gl_PointCoord-.5); float a=smoothstep(.5,0.,d); a*=a; vec3 c=mix(vec3(.9),vS>.8?uWarm:uCool,.22); gl_FragColor=vec4(c*a*vA*.9,1.); }` });
@@ -1203,21 +1093,23 @@ function stars(n, r0, r1, size) {
 scene.add(stars(isSmall ? 1400 : 2600, 70, 140, 2.2), stars(isSmall ? 300 : 600, 22, 40, 2.6));
 
 /* Spacetime: a plane dipped by the summed potential of the three suns. */
-const gridU = { uB: bodyU, uTime: timeU, uDepth: { value: 0.95 }, uChaos: { value: 1 }, uBase: { value: -0.35 }, uSoft: { value: 0.8 }, uCell: { value: 0.5 },
+const gridU = { uB: bodyU, uLens: lensU, uAsp: aspU, uC: { value: new THREE.Vector3() }, uLock: { value: 99 }, uTime: timeU, uDepth: { value: 0.95 }, uChaos: { value: 1 }, uBase: { value: -0.35 }, uSoft: { value: 0.8 }, uCell: { value: 0.5 },
   uLine: { value: C.text.clone().multiplyScalar(0.34) }, uWarm: { value: C.sun2.clone() }, uAlpha: { value: 1 } };
 const grid = new THREE.Mesh(new THREE.PlaneGeometry(48, 48, isSmall ? 150 : 240, isSmall ? 150 : 240).rotateX(-Math.PI / 2), new THREE.ShaderMaterial({ ...additive, uniforms: gridU,
-  vertexShader: `uniform vec3 uB[3]; uniform float uTime,uDepth,uChaos,uBase,uSoft; varying vec3 vW; varying float vPot;
+  vertexShader: LENS + `uniform vec3 uB[3]; uniform vec3 uC; uniform float uTime,uDepth,uChaos,uBase,uSoft,uLock; varying vec3 vW; varying float vPot; varying float vRing;
     void main(){ vec3 p=position; float s=0., rip=0.;
       for(int i=0;i<3;i++){ vec2 d=p.xz-uB[i].xz; float r2=dot(d,d); s+=1./sqrt(r2+uSoft); float r=sqrt(r2); rip+=sin(r*2.3-uTime*2.6+float(i)*2.1)*exp(-r*.32); }
-      p.y=uBase-uDepth*s+rip*.07*uChaos; vPot=s; vW=p; gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.); }`,
-  fragmentShader: `uniform vec3 uB[3]; uniform vec3 uLine,uWarm; uniform float uCell,uAlpha,uChaos; varying vec3 vW; varying float vPot;
+      vec2 dc=p.xz-uC.xy; s+=uC.z*.35/sqrt(dot(dc,dc)+.6);
+      float rr=length(p.xz), ring=exp(-pow(rr-uLock*6.5,2.)*.9)*exp(-uLock*.55); vRing=ring;
+      p.y=uBase-uDepth*s+rip*.07*uChaos-ring*.45; vPot=s; vW=p; gl_Position=lens(projectionMatrix*modelViewMatrix*vec4(p,1.)); }`,
+  fragmentShader: `uniform vec3 uB[3]; uniform vec3 uLine,uWarm; uniform float uCell,uAlpha,uChaos; varying vec3 vW; varying float vPot; varying float vRing;
     float gl(vec2 c,float w){ vec2 f=fwidth(c); vec2 g=abs(fract(c-.5)-.5)/f; return (1.-min(min(g.x,g.y)/w,1.))*(1.-smoothstep(.22,.55,max(f.x,f.y))); }
     void main(){ vec2 c=vW.xz/uCell; float minor=gl(c,1.), major=gl(c/4.,1.3);
       float well=smoothstep(.75,2.4,vPot); float fade=1.-smoothstep(8.,21.,length(vW.xz));
       float glow=0.; for(int i=0;i<3;i++){ vec2 d=vW.xz-uB[i].xz; glow+=exp(-dot(d,d)*.45); }
       vec3 col=mix(uLine,uWarm*1.25,well);
       float a=(minor*.32+major*.6)*(.4+1.9*well)*fade;
-      gl_FragColor=vec4((col*a+uWarm*glow*.045*fade)*uAlpha,1.); }` }));
+      gl_FragColor=vec4((col*a*(1.+vRing*2.5)+uWarm*glow*.035*fade+uWarm*vRing*.12*fade)*uAlpha,1.); }` }));
 grid.frustumCulled = false; grid.renderOrder = 1; scene.add(grid);
 function gridY(x, z) { let s = 0; for (const b of bodyU.value) { const dx = x - b.x, dz = z - b.z; s += 1 / Math.sqrt(dx * dx + dz * dz + 0.8); } return gridU.uBase.value - gridU.uDepth.value * s; }
 
@@ -1244,6 +1136,7 @@ function stepDust(h) {
   for (let i = 0; i < DN; i++) {
     let ax = 0, ay = 0, dead = false; const x = D.x[i], y = D.y[i];
     for (let k = 0; k < 3; k++) { const dx = disp[k * 2] - x, dy = disp[k * 2 + 1] - y, r2 = dx * dx + dy * dy; if (r2 < 0.006) dead = true; const q = r2 + 0.004, inv = 1 / (q * Math.sqrt(q)); ax += dx * inv; ay += dy * inv; }
+    if (cur.m > 0.001) { const dx = cur.x - x, dy = cur.y - y, q = dx * dx + dy * dy + 0.02, inv = cur.m * 0.35 / (q * Math.sqrt(q)); ax += dx * inv; ay += dy * inv; }
     D.vx[i] += ax * h; D.vy[i] += ay * h; D.x[i] += D.vx[i] * h; D.y[i] += D.vy[i] * h;
     if (dead || D.x[i] * D.x[i] + D.y[i] * D.y[i] > 28) spawn(i);
   }
@@ -1258,7 +1151,7 @@ const dust = new THREE.Points(dustGeo, new THREE.ShaderMaterial({ ...additive, u
     void main(){ vec4 mv=modelViewMatrix*vec4(position,1.); gl_Position=projectionMatrix*mv;
       float n=0.; for(int i=0;i<3;i++){ vec3 d=position-uB[i]; n+=1./(1.+dot(d.xz,d.xz)*3.); }
       vN=clamp(n,0.,1.); float tw=.7+.3*sin(uTime*2.+aSeed*60.);
-      vA=(.12+vN*.5*(1.-uOrder*.7)+uOrder*.1)*tw; gl_PointSize=uPx*(.8+aSeed*aSeed*2.2)*(14./-mv.z); }`,
+      vA=(.12+vN*.32*(1.-uOrder*.6)+uOrder*.1)*tw; gl_PointSize=uPx*(.8+aSeed*aSeed*2.2)*(14./-mv.z); }`,
   fragmentShader: `uniform vec3 uWarm,uCool; varying float vA; varying float vN;
     void main(){ float d=length(gl_PointCoord-.5); float a=smoothstep(.5,.05,d); gl_FragColor=vec4(mix(uCool*.6,uWarm*1.1,vN)*a*vA,1.); }` }));
 dust.frustumCulled = false; dust.renderOrder = 2; scene.add(dust);
@@ -1334,7 +1227,7 @@ function sunMat(col, seed, size, r) {
         float cor=exp(-out1*(3.4-rays*1.8));
         float halo=.5/(1.+out1*out1*7.+out1*5.);
         float e=smoothstep(1.,.55,abs(p.y))*smoothstep(uQ,uQ*.4,abs(p.x));
-        vec3 corona=mix(uEdge,uHot,exp(-out1*2.))*(cor*.85+halo*.14)*step(1.,d+.035)*e;
+        vec3 corona=mix(uEdge,uHot,exp(-out1*2.))*(cor*.55+halo*.06)*step(1.,d+.035)*e;
         float streak=exp(-abs(p.y)*80.)*exp(-abs(p.x)*1.5)*.85*uFlare + exp(-abs(p.y)*20.)*exp(-abs(p.x)*3.5)*.1*uFlare;
         float shimmer=.94+.06*sin(uTime*6.3+uSeed*11.)+.04*snoise(vec3(uTime*.8,uSeed,0.));
         col+=corona*shimmer+uHot*streak*e;
@@ -1348,7 +1241,7 @@ const hub = new THREE.Mesh(quad, sunMat(C.ring.clone().lerp(WHITE, 0.3), 4.2, 0.
 /* ── Post ── */
 const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
-const bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.62, 0.45, 0.88);
+const bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.4, 0.42, 0.9);
 composer.addPass(bloom);
 composer.addPass(new OutputPass());
 const finalPass = new ShaderPass({ uniforms: { tDiffuse: { value: null }, uTime: { value: 0 }, uRes: { value: new THREE.Vector2(1, 1) }, uCA: { value: 0.008 }, uGrain: { value: 0.045 } },
@@ -1371,61 +1264,56 @@ function resize() {
   bloom.resolution.set(W / 2, H / 2);
   finalPass.uniforms.uRes.value.set(W * dpr, H * dpr);
   dustU.uPx.value = dpr * (portrait ? 1.2 : 1.35);
-  camera.aspect = W / H; camera.fov = portrait ? 50 : (W / H > 2 ? 30 : 34); camera.updateProjectionMatrix();
+  camera.aspect = W / H; camera.fov = portrait ? 50 : (W / H > 2 ? 30 : 34); camera.updateProjectionMatrix(); aspU.value = W / H;
 }
 
 /* ── Frame ── */
-const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
-addEventListener('pointermove', e => { mouse.tx = e.clientX / innerWidth * 2 - 1; mouse.ty = e.clientY / innerHeight * 2 - 1; }, { passive: true });
+const mouse = { x: 0, y: 0, tx: 0, ty: 0, px: -1, py: -1, lastMove: -99 };
+addEventListener('pointermove', e => { mouse.tx = e.clientX / innerWidth * 2 - 1; mouse.ty = e.clientY / innerHeight * 2 - 1; mouse.px = e.clientX; mouse.py = e.clientY; mouse.lastMove = clockT; }, { passive: true });
+addEventListener('pointerdown', e => { mouse.px = e.clientX; mouse.py = e.clientY; mouse.lastMove = clockT; }, { passive: true });
 const tmp2 = [0, 0], tgt = new THREE.Vector3(), proj = new THREE.Vector3();
-let clockT = 0, hudNext = 0, pShown = 0, lastP = 0, scrollVel = 0;
-const smooth = S.smooth, lerp = (a, b, t) => a + (b - a) * t;
-const STILL_P = [0, 0.28, 0.55, 1];
+const ray = new THREE.Raycaster(), plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -SUN_Y), hit = new THREE.Vector3(), ndc = new THREE.Vector2();
+let clockT = 0, hudNext = 0, lastY = scrollY, scrollVel = 0, lockT = -99, armed = true, locked = false;
+const smooth = S.smooth, lerp = (a, b, t) => a + (b - a) * t, D2R = THREE.MathUtils.degToRad;
 const leaderEls = S.leaders ? [...S.leaders.querySelectorAll('path')] : [], leaderDots = S.leaders ? [...S.leaders.querySelectorAll('circle')] : [];
 const scr = [[0, 0], [0, 0], [0, 0]];
-
-/* Everything on screen is a function of one number: how far you have scrolled. */
-function story(p) {
-  return {
-    k: smooth(0.40, 0.60, p) * (1 - smooth(0.80, 0.90, p)),   // steering strength
-    free: smooth(0.44, 0.64, p),                                // softening and the tether fall away
-    conn: smooth(0.41, 0.46, p) * (1 - smooth(0.62, 0.68, p)), // wires
-    order: smooth(0.62, 0.84, p),                               // dust joins the loop
-    ink: smooth(0.60, 0.86, p),                                 // the orbit line is drawn in
-    third: smooth(0.62, 0.84, p),                               // each trail shrinks to a third of the loop
-    rise: smooth(0.06, 0.92, p),                                // camera climbs from the grid to overhead
-    calm: smooth(0.42, 0.85, p),                                 // light settles; no blow-out
-    agent: smooth(0.86, 0.93, p)
-  };
-}
+/* The five stops of "After you book" sit on the real orbit, in the order the ink reaches them. */
+const INK0 = 0.1, INK_SPAN = 0.9, STOP_U = [0, 1, 2, 3, 4].map(k => INK0 + (k + 0.5) / 5 * INK_SPAN);
+const jrEl = document.getElementById('after');
+const shown = { el: 22, az: 0, dist: 18.5, ox: 0.2, oy: 0.12 };
 
 function frame(dtReal, still) {
-  const pTarget = still ? STILL_P[S.beat] : S.p;
-  pShown = still ? pTarget : lerp(pShown, pTarget, 1 - Math.exp(-dtReal * 7));
-  const p = pShown, st = story(p);
-  if (!still) { ctl.k = st.k; ctl.soft = lerp(0.35, 0, st.free); ctl.conf = 1 - st.free; }
-  /* Held orbit check: if it ever drifts after release, steering comes back and the readout shows it. */
-  /* Steering lets go only once every sun is really on the orbit; the readout shows it either way. */
-  if (!still && p > 0.66) { const d = offOrbit(); if (d > 0.006) ctl.k = Math.max(ctl.k, Math.min(1, 0.35 + d * 8)); }
+  const sc = S.scene, a = still ? 1 : 1 - Math.exp(-dtReal * 5);
+  /* Physics comes straight from the scroll: how hard we steer, how free the suns are. */
+  ctl.k = sc.k; ctl.soft = lerp(0.35, 0, sc.free); ctl.conf = 1 - sc.free;
+  const dNow = offOrbit();
+  /* Once the orbit has formed, steering lets go; if anything knocks it off, it comes back and the readout says so. */
+  if (!still && sc.order > 0.9 && dNow > 0.006) ctl.k = Math.max(ctl.k, Math.min(1, 0.35 + dNow * 8));
   updateDisplay();
+  gridU.uChaos.value = 1 - sc.free; gridU.uDepth.value = lerp(0.95, 0.6, sc.calm);
 
-  gridU.uChaos.value = 1 - st.free; gridU.uDepth.value = lerp(0.95, 0.6, st.calm);
-
-  /* Camera: low across the grid in chaos, climbing to a steep overhead view where the eight reads flat. */
+  /* One continuous camera move, eased so a fast flick still glides. */
+  const dist0 = portrait ? Math.max(sc.dist * 1.3, 3.1 / (Math.tan(D2R(camera.fov / 2)) * camera.aspect)) : sc.dist;
+  shown.el = lerp(shown.el, sc.el, a); shown.az = lerp(shown.az, sc.az, a); shown.dist = lerp(shown.dist, dist0, a);
+  shown.ox = lerp(shown.ox, portrait ? 0 : sc.ox, a); shown.oy = lerp(shown.oy, portrait ? sc.poy : sc.oy, a);
   mouse.x += (mouse.tx - mouse.x) * 0.04; mouse.y += (mouse.ty - mouse.y) * 0.04;
-  const el = THREE.MathUtils.degToRad(lerp(portrait ? 30 : 22, portrait ? 74 : 66, st.rise) + mouse.y * 3 * (1 - st.rise * 0.6));
-  const az = Math.sin(clockT * 0.045) * 0.16 * (1 - st.rise) + mouse.x * 0.06 * (1 - st.rise * 0.5);
-  const fitD = portrait ? 3.25 / (Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.aspect) : 10.8;
-  const dist = lerp(portrait ? 21 : 18.5, fitD, st.rise);
-  tgt.set(0, lerp(-0.6, SUN_Y, st.rise), 0);
-  camera.position.set(tgt.x + dist * Math.cos(el) * Math.sin(az), tgt.y + dist * Math.sin(el), tgt.z + dist * Math.cos(el) * Math.cos(az));
+  const el = D2R(shown.el + mouse.y * 3 * (1 - sc.calm * 0.5));
+  const az = D2R(shown.az) + Math.sin(clockT * 0.045) * 0.1 * (1 - sc.calm) + mouse.x * 0.05;
+  tgt.set(0, lerp(-0.6, SUN_Y, smooth(22, 62, shown.el)), 0);
+  camera.position.set(tgt.x + shown.dist * Math.cos(el) * Math.sin(az), tgt.y + shown.dist * Math.sin(el), tgt.z + shown.dist * Math.cos(el) * Math.cos(az));
   camera.lookAt(tgt);
-  const ox = portrait ? 0 : lerp(0.2, 0.19, st.rise), oy = portrait ? lerp(0.15, 0.2, st.rise) : lerp(0.12, 0.06, st.rise);
-  camera.setViewOffset(W, H, -W * ox, H * oy, W, H);
+  camera.setViewOffset(W, H, -W * shown.ox, H * shown.oy, W, H);
+  camera.updateMatrixWorld();
 
-  /* Trails: the real history. Long and tangled in chaos; one third of the loop each once settled,
-     so the three together draw the eight exactly once instead of stacking three bright copies. */
-  const L = lerp(1, 1 / 3, st.third) * (HN - 1), tw = lerp(1, 0.55, st.calm);
+  /* The fourth mass: wherever the pointer meets the plane. It fades in on move and out when idle. */
+  const idle = clockT - mouse.lastMove, want = S.motion && mouse.px >= 0 && idle < 2.5 ? 1 : 0;
+  cur.m = lerp(cur.m, want, still ? 0 : 1 - Math.exp(-dtReal * (want ? 3 : 1.2)));
+  if (mouse.px >= 0) { ndc.set(mouse.px / W * 2 - 1, -(mouse.py / H * 2 - 1)); ray.setFromCamera(ndc, camera); if (ray.ray.intersectPlane(plane, hit)) { cur.x = hit.x / SC; cur.y = hit.z / SC; } }
+  gridU.uC.value.set(cur.x * SC, cur.y * SC, cur.m);
+
+  /* Trails: the real history. Long and tangled in chaos; a third of the loop each once settled,
+     so together they draw the eight once instead of stacking three bright copies. */
+  const L = lerp(1, 1 / 3, sc.third) * (HN - 1), tw = lerp(0.85, 0.5, sc.calm);
   for (let b = 0; b < 3; b++) {
     const pts = trails[b].pts;
     for (let k = 0; k < HN; k++) {
@@ -1435,31 +1323,36 @@ function frame(dtReal, still) {
     }
     const v = bodyU.value[b]; pts[HN * 3] = v.x; pts[HN * 3 + 1] = v.y; pts[HN * 3 + 2] = v.z;
     layRibbon(trails[b], tw);
-    trails[b].mesh.material.uniforms.uAlpha.value = lerp(0.95, 0.85, st.calm);
+    trails[b].mesh.material.uniforms.uAlpha.value = lerp(0.9, 0.85, sc.calm);
     suns[b].position.copy(v);
+    /* Warm and dramatic, but never so bright it swallows the body, its trail or a label. */
     const u = suns[b].material.uniforms;
-    u.uSize.value = 2.2 * lerp(1, portrait ? 0.7 : 0.62, st.calm); u.uGain.value = lerp(1, 0.78, st.calm); u.uFlare.value = lerp(1, 0.25, st.calm);
+    u.uSize.value = lerp(1.75, portrait ? 1.35 : 1.25, sc.calm); u.uGain.value = lerp(0.72, 0.62, sc.calm); u.uFlare.value = lerp(0.45, 0.18, sc.calm);
+    /* Lens strength for this sun, in screen units, shrinking with distance. */
+    proj.copy(v).project(camera); lensU.value[b].set(proj.x, proj.y, proj.z < 1 ? 0.05 * 11 / shown.dist : 0);
   }
-  bloom.strength = lerp(0.62, 0.34, st.calm);
+  const sinceLock = clockT - lockT;
+  bloom.strength = lerp(0.36, 0.24, sc.calm) + 0.32 * Math.exp(-sinceLock * 1.4);
+  gridU.uLock.value = still ? 99 : sinceLock;
 
-  /* The orbit line, inked in behind the bodies as you scroll. */
-  const phase = eight.t / T8, start = phase + 0.02;
-  guide.mesh.visible = st.ink > 0.002;
+  /* The orbit, inked in by the scroll from a fixed start, so the stops are reached in order. */
+  guide.mesh.visible = sc.ink > 0.002;
   if (guide.mesh.visible) {
-    for (let k = 0; k < GUIDE_N; k++) { curve(start + k / (GUIDE_N - 1) * st.ink, tmp2); guide.pts[k * 3] = tmp2[0] * SC; guide.pts[k * 3 + 1] = SUN_Y - 0.01; guide.pts[k * 3 + 2] = tmp2[1] * SC; }
-    layRibbon(guide); guide.mesh.material.uniforms.uAlpha.value = Math.min(1, st.ink * 3);
+    for (let k = 0; k < GUIDE_N; k++) { curve(INK0 + k / (GUIDE_N - 1) * sc.ink * INK_SPAN, tmp2); guide.pts[k * 3] = tmp2[0] * SC; guide.pts[k * 3 + 1] = SUN_Y - 0.01; guide.pts[k * 3 + 2] = tmp2[1] * SC; }
+    layRibbon(guide); guide.mesh.material.uniforms.uAlpha.value = Math.min(1, sc.ink * 3) * (1 + 1.2 * Math.exp(-sinceLock * 1.2));
   }
 
-  /* Dust: gravity, then pulled into a fine filament on the loop as order arrives. */
+  /* Dust: gravity (the cursor included), then pulled into a fine filament on the loop. */
   if (!still) { const h = Math.min(dtReal, 1 / 30) * 0.55 / 2; stepDust(h); stepDust(h); }
-  dustU.uOrder.value = st.order;
+  dustU.uOrder.value = sc.order;
+  const phase = eight.t / T8;
   for (let i = 0; i < DN; i++) {
     let x = D.x[i] * SC, z = D.y[i] * SC, y = gridY(x, z) * 0.7 + SUN_Y * 0.3 + D.j[i] * 0.06;
-    if (st.order > 0) {
+    if (sc.order > 0) {
       curve(D.ph[i] + phase, tmp2); const ax = tmp2[0], ay = tmp2[1];
       curve(D.ph[i] + phase + 0.002, tmp2); let nx = -(tmp2[1] - ay), ny = tmp2[0] - ax; const nl = Math.hypot(nx, ny) || 1;
       const off = D.off[i] * 0.7, tx = (ax + nx / nl * off) * SC, tz = (ay + ny / nl * off) * SC, ty = SUN_Y + D.j[i] * 0.02;
-      const o = st.order * st.order * (3 - 2 * st.order);
+      const o = sc.order * sc.order * (3 - 2 * sc.order);
       x += (tx - x) * o; y += (ty - y) * o; z += (tz - z) * o;
     }
     dPos[i * 3] = x; dPos[i * 3 + 1] = y; dPos[i * 3 + 2] = z;
@@ -1468,14 +1361,14 @@ function frame(dtReal, still) {
 
   /* Wires and the AI hub: the connections that do the steering. */
   const B = bodyU.value, pairs = [[B[0], B[1]], [B[1], B[2]], [B[2], B[0]], [B[0], HUB], [B[1], HUB], [B[2], HUB]];
-  pairs.forEach(([a, b], i) => { arcs[i].mesh.visible = st.conn > 0.002; if (st.conn > 0.002) { layArc(arcs[i], a, b, i < 3 ? 0.25 + a.distanceTo(b) * 0.18 : 0.6); arcs[i].mesh.material.uniforms.uAlpha.value = st.conn; } });
-  hub.position.copy(HUB); hub.material.uniforms.uGain.value = st.conn * 1.2;
+  pairs.forEach(([p0, p1], i) => { arcs[i].mesh.visible = sc.conn > 0.002; if (sc.conn > 0.002) { layArc(arcs[i], p0, p1, i < 3 ? 0.25 + p0.distanceTo(p1) * 0.18 : 0.6); arcs[i].mesh.material.uniforms.uAlpha.value = sc.conn * 0.85; } });
+  hub.position.copy(HUB); hub.material.uniforms.uGain.value = sc.conn * 0.9;
 
   /* The agent dot rides the loop once it holds. */
   const ap = phase * 2 + 0.17;
-  curve(ap, tmp2); agent.position.set(tmp2[0] * SC, SUN_Y, tmp2[1] * SC); agent.material.uniforms.uGain.value = st.agent * 1.4; agent.material.uniforms.uSize.value = 0.9 * lerp(1, 0.7, st.calm);
+  curve(ap, tmp2); agent.position.set(tmp2[0] * SC, SUN_Y, tmp2[1] * SC); agent.material.uniforms.uGain.value = sc.agent * 1.2; agent.material.uniforms.uSize.value = 0.62;
   for (let k = 0; k < agentTrail.n; k++) { curve(ap - (agentTrail.n - 1 - k) * 0.0018, tmp2); agentTrail.pts[k * 3] = tmp2[0] * SC; agentTrail.pts[k * 3 + 1] = SUN_Y; agentTrail.pts[k * 3 + 2] = tmp2[1] * SC; }
-  layRibbon(agentTrail, 0.7); agentTrail.mesh.material.uniforms.uAlpha.value = st.agent;
+  layRibbon(agentTrail, 0.7); agentTrail.mesh.material.uniforms.uAlpha.value = sc.agent;
 
   timeU.value = clockT; finalPass.uniforms.uTime.value = clockT;
   composer.render();
@@ -1483,81 +1376,94 @@ function frame(dtReal, still) {
   /* Look: brackets on the suns, names in a fixed column (a row on phones) with leader lines. */
   const ra = S.retAlpha || 0;
   for (let i = 0; i < 3; i++) { proj.copy(B[i]).project(camera); scr[i][0] = (proj.x + 1) / 2 * W; scr[i][1] = (1 - proj.y) / 2 * H; }
-  if (ra <= 0.001) { S.rets.forEach(el => el.style.opacity = 0); S.tools.forEach(el => el.style.opacity = 0); if (S.leaders) S.leaders.style.opacity = 0; }
+  if (ra <= 0.001) { S.rets.forEach(e => e.style.opacity = 0); S.tools.forEach(e => e.style.opacity = 0); S.leaders.style.opacity = 0; }
   else {
     S.leaders.style.opacity = ra;
-    const order = [0, 1, 2], ys = [], xs = [];
+    const order = [0, 1, 2];
     if (portrait) {
-      order.sort((a, b) => scr[a][0] - scr[b][0]);
-      const top = (hud.root.getBoundingClientRect().bottom - stage.getBoundingClientRect().top) + 18;
+      order.sort((p0, p1) => scr[p0][0] - scr[p1][0]);
+      const top = hud.root.getBoundingClientRect().bottom + 12;
       order.forEach((bi, slot) => {
-        const el = S.tools[bi], w = el.offsetWidth, h = el.offsetHeight, cx = W * (slot * 2 + 1) / 6, lx = Math.min(Math.max(cx - w / 2, 12), W - 12 - w);
-        el.style.transform = `translate3d(${lx.toFixed(1)}px, ${top.toFixed(1)}px, 0)`; el.style.opacity = ra;
+        const e = S.tools[bi], w = e.offsetWidth, h = e.offsetHeight, cx = W * (slot * 2 + 1) / 6, lx = Math.min(Math.max(cx - w / 2, 12), W - 12 - w);
+        e.style.transform = `translate3d(${lx.toFixed(1)}px, ${top.toFixed(1)}px, 0)`; e.style.opacity = ra;
         const [bx, by] = scr[bi], sx = lx + w / 2, sy = top + h, mid = Math.max(sy + 14, Math.min(by - 34, sy + 60));
         leaderEls[bi].setAttribute('d', `M${sx.toFixed(1)} ${sy.toFixed(1)}V${mid.toFixed(1)}L${bx.toFixed(1)} ${(by - 22).toFixed(1)}`);
         leaderDots[bi].setAttribute('cx', sx.toFixed(1)); leaderDots[bi].setAttribute('cy', sy.toFixed(1));
       });
     } else {
-      order.sort((a, b) => scr[a][1] - scr[b][1]);
+      order.sort((p0, p1) => scr[p0][1] - scr[p1][1]);
       const maxX = Math.max(scr[0][0], scr[1][0], scr[2][0]), gap = 62, colX = Math.min(maxX + 90, W - 250);
       let y = Math.max(96, Math.min(scr[order[0]][1] - 24, H * 0.58 - gap * 2));
       order.forEach(bi => {
         y = Math.max(y, scr[bi][1] - 24);
-        const el = S.tools[bi], h = el.offsetHeight, ly = Math.min(y, H * 0.6 - h);
-        el.style.transform = `translate3d(${colX.toFixed(1)}px, ${ly.toFixed(1)}px, 0)`; el.style.opacity = ra;
+        const e = S.tools[bi], h = e.offsetHeight, ly = Math.min(y, H * 0.6 - h);
+        e.style.transform = `translate3d(${colX.toFixed(1)}px, ${ly.toFixed(1)}px, 0)`; e.style.opacity = ra;
         const [bx, by] = scr[bi], ey = ly + h / 2, elbow = colX - 28;
         leaderEls[bi].setAttribute('d', `M${(bx + 22).toFixed(1)} ${by.toFixed(1)}L${elbow.toFixed(1)} ${ey.toFixed(1)}H${(colX - 4).toFixed(1)}`);
         leaderDots[bi].setAttribute('cx', (colX - 4).toFixed(1)); leaderDots[bi].setAttribute('cy', ey.toFixed(1));
         y = ly + gap;
       });
     }
-    S.rets.forEach((el, i) => { el.style.opacity = ra; el.style.transform = `translate3d(${scr[i][0].toFixed(1)}px, ${scr[i][1].toFixed(1)}px, 0)`; });
+    S.rets.forEach((e, i) => { e.style.opacity = ra; e.style.transform = `translate3d(${scr[i][0].toFixed(1)}px, ${scr[i][1].toFixed(1)}px, 0)`; });
   }
+  { const e = S.retAi, al = 0; e.style.opacity = al;
+    if (al > 0.001) { proj.copy(HUB).project(camera); const sx = (proj.x + 1) / 2 * W, sy = (1 - proj.y) / 2 * H; e.classList.toggle('flip', sx > W - 230); e.style.transform = `translate3d(${sx.toFixed(1)}px, ${sy.toFixed(1)}px, 0)`; } }
 
-  { const el = S.retAi, a = S.aiAlpha || 0; el.style.opacity = a;
-    if (a > 0.001) { proj.copy(HUB).project(camera); const sx = (proj.x + 1) / 2 * W, sy = (1 - proj.y) / 2 * H; el.classList.toggle('flip', sx > W - 230); el.style.transform = `translate3d(${sx.toFixed(1)}px, ${sy.toFixed(1)}px, 0)`; } }
+  /* The five stops, pinned to their places on the orbit. */
+  S.stops.forEach((e, k) => {
+    if (sc.stops < 0.01) { e.style.opacity = 0; return; }
+    curve(STOP_U[k], tmp2); proj.set(tmp2[0] * SC, SUN_Y, tmp2[1] * SC).project(camera);
+    const sx = (proj.x + 1) / 2 * W, sy = (1 - proj.y) / 2 * H, lit = sc.ink >= (k + 0.5) / 5 - 0.02;
+    e.style.opacity = (sc.stops * (lit ? 1 : 0.7)).toFixed(3); e.style.transform = `translate3d(${sx.toFixed(1)}px, ${sy.toFixed(1)}px, 0)`;
+    e.classList.toggle('lit', lit); e.classList.toggle('cur', k === S.jCur); e.classList.toggle('flip', sx > W - 240);
+  });
+
+  /* The payoff: the first moment it holds with no steering, the grid rings out and the readout locks. */
+  const d = offOrbit(), holding = ctl.k < 0.01 && d < 0.02 && sc.order > 0.9;
+  if (holding && armed && !still) { armed = false; lockT = clockT; hud.root.classList.remove('flash'); void hud.root.offsetWidth; hud.root.classList.add('flash'); }
+  if (d > 0.3 || sc.order < 0.5) armed = true;
+  if (holding !== locked) { locked = holding; jrEl.classList.toggle('locked', holding); }
 
   /* HUD: the real numbers. Distance is the rms gap between each sun and its place on the exact orbit. */
   if (still || clockT > hudNext) {
     hudNext = clockT + 0.08;
-    const d = offOrbit(), holding = ctl.k < 0.01 && d < 0.02 && p > 0.8;
     hud.d.textContent = d < 0.005 ? '0.00' : d.toFixed(2);
     hud.bar.style.width = Math.min(100, d / 1.2 * 100).toFixed(1) + '%';
     hud.k.textContent = Math.round(ctl.k * 100) + '%';
     hud.t.textContent = sys.t.toFixed(2);
-    hud.s.textContent = holding ? 'Holds on its own' : ctl.k > 0.02 ? (d < 0.03 ? 'On the orbit' : 'Steering') : 'Chaotic';
-    hud.root.dataset.state = holding || (ctl.k > 0.02 && d < 0.03) ? 'stable' : 'chaos';
+    hud.s.textContent = (holding || (still && sc.order > 0.9 && sc.k < 0.01)) ? 'Holds on its own' : ctl.k > 0.02 ? (d < 0.03 ? 'On the orbit' : 'Steering') : 'Chaotic';
+    hud.root.dataset.state = holding || (still && sc.order > 0.9) || (ctl.k > 0.02 && d < 0.03) ? 'stable' : 'chaos';
   }
 }
 
-/* ── Loop: runs only when visible, the tab is shown and motion is on. ── */
-let running = false, visible = true, last = 0, raf = 0, slow = 0, fast = 0;
+/* ── Loop: runs whenever the tab is shown and motion is allowed. The world never switches off. ── */
+let running = false, last = 0, raf = 0, slow = 0, fast = 0;
 function tick(now) {
   raf = requestAnimationFrame(tick);
   const dt = Math.min((now - last) / 1000 || 0.016, 0.1); last = now;
   clockT += dt;
-  scrollVel = lerp(scrollVel, Math.abs(S.p - lastP) / Math.max(dt, 1e-3), 1 - Math.exp(-dt * 8)); lastP = S.p;
-  advance(Math.min(dt, 1 / 20) * (0.55 + Math.min(1.6, scrollVel * 6)));
+  scrollVel = lerp(scrollVel, Math.abs(scrollY - lastY) / innerHeight / Math.max(dt, 1e-3), 1 - Math.exp(-dt * 8)); lastY = scrollY;
+  advance(Math.min(dt, 1 / 20) * (0.55 + Math.min(1.4, scrollVel * 1.2)));
   frame(dt, false);
   /* Adaptive quality: drop resolution if frames run long, restore if they recover. */
   if (dt > 0.024) { slow++; fast = 0; } else { fast++; slow = Math.max(0, slow - 1); }
   if (slow > 45 && dpr > 1) { dpr = Math.max(1, dpr - 0.35); resize(); slow = 0; }
   if (fast > 600 && dpr < dprMax) { dpr = Math.min(dprMax, dpr + 0.25); resize(); fast = 0; }
 }
+/* Reduced motion: a still per moment of the story, computed by really running the steered system. */
+function still() { const sc = S.scene; setStill(sc.order > 0.5 ? 3 : sc.k > 0.2 ? 2 : 0); frame(0, true); }
 function sync() {
-  const want = visible && !document.hidden && S.motion;
+  const want = !document.hidden && S.motion;
   if (want && !running) { running = true; last = performance.now(); raf = requestAnimationFrame(tick); }
   else if (!want && running) { running = false; cancelAnimationFrame(raf); }
-  if (!S.motion && visible) { setStill(S.beat); frame(0, true); }
+  if (!S.motion) still();
 }
-new IntersectionObserver(es => { visible = es[0].isIntersecting; sync(); }, { rootMargin: '100px' }).observe(sky);
 document.addEventListener('visibilitychange', sync);
 addEventListener('solenix:motion', sync);
-addEventListener('solenix:beat', () => { if (!S.motion) setTimeout(() => { setStill(S.beat); frame(0, true); }, 0); });
+addEventListener('solenix:scene', () => { if (!S.motion) setTimeout(still, 0); });
 addEventListener('resize', () => { resize(); if (!S.motion) frame(0, true); });
 resize();
-if (!S.motion) setStill(S.beat);
-frame(0.016, !S.motion);
+if (!S.motion) still(); else frame(0.016, false);
 stage.classList.add('gl-on');
 sync();
 </script>
