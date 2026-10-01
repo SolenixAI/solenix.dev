@@ -20,7 +20,7 @@ colors:
 
 *One tech expert for small businesses in Newfoundland & Labrador. Your business is a three-body problem — we find the stable orbit.*
 
-The system behind solenix.dev. Solenix is one tech expert for small businesses in St. John's, Newfoundland and Labrador: we rebuild the website, host and look after it monthly, and set up AI (for example Claude for a law firm). The visual world is a night sky — deep blue-black grounds, one warm light source, orbit lines, glass panels — and the story is chaos settling into the figure-eight orbit. Dark throughout, on both surfaces: the marketing site (the three.js night-sky hero where three suns settle into a figure-eight is the signature) and the client portal (Overview, Initiatives, Billing). Calm, confident, a little expensive-looking. Plain Canadian English.
+The system behind solenix.dev. Solenix is one tech expert for small businesses in St. John's, Newfoundland and Labrador: we put one AI at the centre of the tools the business already uses, cut the tools it does not need, teach the team, and build the website. The visual world is a night sky — deep blue-black grounds, one warm light source, orbit lines — and the story is chaos settling into the figure-eight orbit. The marketing site is dark, and its signature is one three.js night-sky scene that runs behind the whole homepage, where three suns settle into a figure-eight. The client portal (Overview, Initiatives, Billing) follows the device, light or dark. Calm, confident, a little expensive-looking. Plain Canadian English.
 
 
 ## Decisions (Jager's, binding on every page; his latest word wins)
@@ -68,7 +68,7 @@ The system behind solenix.dev. Solenix is one tech expert for small businesses i
 - The offer: one AI at the center of your business. We set up Claude or ChatGPT for your team and connect it to the tools you already use (shop, books, ads, email, files), so you just ask and it gets done in those systems — then we teach you to use it. The tools are the bodies pulling on each other; the AI at the center is what makes the orbit stable. For owners who have barely used AI: plain words only. Along the way we cut the tools they pay for but barely use, move them off outdated, expensive software, and bring scattered information into one place they can just ask.
 - Every claim lands on one of three things an owner cares about: **time saved, money saved, or money made** (cost × latency). Say which one, in their numbers where we have them.
 - Your business is a three-body problem: a dozen tools pulling on each other. We find the stable orbit and keep it there.
-- One tech expert for small businesses in Newfoundland & Labrador — we rebuild your website, host it and look after it every month.
+- One tech expert for small businesses in Newfoundland & Labrador — one AI at the centre of the tools you already use, the unused tools cut, your team taught, your website built.
 - AI your team actually uses: we set it up inside the tools you already have and teach you and your staff to get real value from it every day.
 - True trust only: fixed price in writing, you own everything, based in St. John's. No invented numbers, no testimonials we don't have, no scarcity.
 - One place to see it all: the client portal — Overview, Initiatives, Billing. Nothing to chase.
@@ -80,8 +80,8 @@ The system behind solenix.dev. Solenix is one tech expert for small businesses i
 ## Imagery
 
 - **Style:** Made of light, not photographs: a night sky with one warm light source, orbit rings, a 32px hairline grid and a sparse starfield, glass panels catching light on their top edge. The signature is the real-physics three.js scene — three plasma suns over a spacetime grid, settling from chaos into the Chenciner–Montgomery figure-eight.
-- **Subjects:** the mark — sun, one orbit ring, one agent dot, the figure-eight orbit drawn from real simulation path data, the three-body night-sky scene (hero only, one per page), real UI of the client portal in settling glass panels, status boards, sparklines and timelines with real or Example-labelled data
-- **Treatment:** Ambient light is positioned absolute inside a clipped, isolated section — never fixed. Light core never passes under text; only the dim halo may. Texture fades out under a veil before it reaches prose. Scene sections are dark and carry text only on the --scene-veil. Every page may open in chaos but ends settled.
+- **Subjects:** the mark — sun, one orbit ring, one agent dot, the figure-eight orbit drawn from real simulation path data, the three-body night-sky scene (one scene, running behind the whole homepage), real UI of the client portal in settling glass panels, status boards, sparklines and timelines with real or Example-labelled data
+- **Treatment:** On the homepage the scene is fixed behind every section and text sits directly in it. Keep text readable by shading the scene behind it and keeping bodies and trails out from behind small text, never by laying a panel over the world. Every page may open in chaos but ends settled.
 - **Avoid:** stock photography or stock faces, illustrations of people, gradient blobs and purple AI washes, glassmorphism card grids as decoration, AI sparkle icons, an ∞ glyph or a hand-drawn lemniscate in place of the figure-eight, fake client logos or testimonials, light sections
 
 ## Layout
@@ -94,7 +94,7 @@ The system behind solenix.dev. Solenix is one tech expert for small businesses i
 - Radius pairing is the silhouette: buttons, badges and nav links are pills (999px); cards are 20px; full-bleed panels and bento cells 28px; inputs, icon chips and code wells 12px. Never square either off, never round further.
 - Containers: 64rem default, 78rem for bento/split/full-bleed/demo, prose capped at 34rem. Gutter 16px, 32px from 640px. 375px is a designed floor; nothing scrolls sideways.
 - One action per page — Book a call — as the only solid ember fill in view; everything else is a ghost pill (transparent, --line-strong border, --text label) or a link. Sticky on phones only when no inline primary is on screen.
-- No two adjacent sections share an archetype: night-sky hero, full-bleed feature, split with visual, bento, big statement, live demo panel, card grid. The night sky and big statement are one per page.
+- No two adjacent sections share an archetype: night-sky hero, full-bleed feature, split with visual, bento, big statement, live demo panel, card grid. The big statement is one per page.
 - Three depth layers in fixed order: light and orbit (z 0), texture (z 1), content and glass (z 2). A glass panel at rest carries shadow-md plus the lit inset edge.
 - Every state is a colour and a word: Live (#34d399), Building (#fbbf24), Down (#fb7185). Charts: five series max, baseline at zero, every series labelled in words.
 - 44px minimum tap target on every control; focus is 2px solid ember at a 3px offset on :focus-visible. Hover never greys text — glow grows, lift -1px (buttons) or -3px (cards).
