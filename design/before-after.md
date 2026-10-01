@@ -134,7 +134,7 @@ Every name and amount below is made up for the demonstration and is tagged "Exam
 | Shopify | Sea salt caramels · 14 left on the shelf · Running out | 120 on the shelf · Restocked |
 | HubSpot | 3 quiet deals · no word in 30 days | Followed up · a note written for each |
 | Meta Ads | Local awareness ad · On, no buyers · $0 kept this week | Off · $210 kept this week |
-| Excel | Sales total $11,930 · Wrong · one row was missed | $12,480 · Right · every row counted |
+| Excel | Sales total $11,930 · Wrong · one row was missed | $12,480 · Fixed · was $11,930, one row was missed |
 | Gmail and Calendar | 3 emails waiting on you · Unanswered since this morning | 0 · Answered · Harbour Dental booked, Tuesday 10:30 |
 
 The first screen shows the Stripe example (Unpaid to Paid) as the page opens.

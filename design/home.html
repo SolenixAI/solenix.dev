@@ -963,8 +963,8 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
     { sel: '#promises', f: 0.1, pin: 1, stops: 0, el: 40, az: 438, dist: 12, ox: 0.24, oy: 0.03, poy: -0.04 },
     { sel: '#promises', f: 1, pin: 1, el: 34, az: 510 },
     /* 5 · Stable orbit: steering lets go and it holds. */
-    { sel: '#close', f: 0.35, k: 0, agent: 1, el: 34, az: 532, dist: 11.5, ox: 0, oy: 0.2, poy: 0.24 },
-    { sel: '#close', f: 1, el: 35, az: 536, dist: 12 }
+    { sel: '#close', f: 0.35, k: 0, agent: 1, tools: 1, el: 34, az: 532, dist: 14, ox: 0, oy: 0.26, poy: 0.24 },
+    { sel: '#close', f: 1, el: 35, az: 536, dist: 14.5 }
   ];
   const PARAMS = Object.keys(KEYS[0]).filter(k => !['sel', 'f', 'pin', 'gap'].includes(k));
   for (let i = 1; i < KEYS.length; i++) PARAMS.forEach(k => { if (KEYS[i][k] === undefined) KEYS[i][k] = KEYS[i - 1][k]; });
@@ -1078,7 +1078,7 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
    it with the 3D scene, which plays the ask, the work and the result as bodies in the tool's world.
    Reduced motion does not stop them: the setting quiets the camera, and the demonstration still has to be seen. */
 (() => {
-  const RACES = {"stripe":{"name":"Stripe","prompt":"Who owes us? Send Harbour Dental their invoice.","out":["Invoice sent to Harbour Dental","Sent"],"hand":10,"ask":5,"hot":[0,1,1,0,0,0],"doc":{"t":"Harbour Dental invoice","big":"$450","a":["Unpaid","Website care · 30 days late"],"b":["Paid","Website care · reminder sent"]}},"shopify":{"name":"Shopify","prompt":"What will run out this month? Draft the reorder.","out":["Stock reordered in time","Sent"],"hand":15,"ask":5,"hot":[1,0,1,0,0,0],"doc":{"t":"Sea salt caramels","n":[14,120],"a":["Running out","left on the shelf"],"b":["Restocked","on the shelf"],"grow":1}},"hubspot":{"name":"HubSpot","prompt":"Which deals went quiet? Draft a note for each.","out":["3 quiet deals followed up","Logged"],"hand":20,"ask":18,"hot":[1,0,1,0,1,0],"doc":{"t":"Quiet deals","big":"3","a":["Gone quiet","No word in 30 days"],"b":["Followed up","A note written for each"]}},"meta":{"name":"Meta Ads","prompt":"Which ad brings no buyers? Pause it.","out":["The ad wasting your money","Paused"],"hand":15,"ask":5,"hot":[0,1,0,0,0,0],"doc":{"t":"Local awareness ad","n":[0,210],"pre":"$","a":["On · no buyers","kept this week"],"b":["Off","kept this week"],"dark":1}},"microsoftexcel":{"name":"Excel","prompt":"Check my totals. What if prices rise 5%?","out":["The wrong total in your sales sheet","Fixed"],"hand":15,"ask":5,"hot":[0,0,0,0,0,1],"doc":{"t":"Sales total","n":[11930,12480],"pre":"$","a":["Wrong","One row was missed"],"b":["Right","Every row counted"]}},"gmail":{"name":"Gmail and Calendar","prompt":"What needs a reply today? Book Harbour Dental.","out":["Today's inbox answered, meeting set","Booked"],"hand":20,"ask":5,"hot":[1,0,1,0,1,0],"doc":{"t":"Emails waiting on you","n":[3,0],"a":["Unanswered","Since this morning"],"b":["Answered","Harbour Dental booked, Tue 10:30"]}}};
+  const RACES = {"stripe":{"name":"Stripe","prompt":"Who owes us? Send Harbour Dental their invoice.","out":["Invoice sent to Harbour Dental","Sent"],"hand":10,"ask":5,"hot":[0,1,1,0,0,0],"doc":{"t":"Harbour Dental invoice","big":"$450","a":["Unpaid","Website care · 30 days late"],"b":["Paid","Website care · reminder sent"]}},"shopify":{"name":"Shopify","prompt":"What will run out this month? Draft the reorder.","out":["Stock reordered in time","Sent"],"hand":15,"ask":5,"hot":[1,0,1,0,0,0],"doc":{"t":"Sea salt caramels","n":[14,120],"a":["Running out","left on the shelf"],"b":["Restocked","on the shelf"],"grow":1}},"hubspot":{"name":"HubSpot","prompt":"Which deals went quiet? Draft a note for each.","out":["3 quiet deals followed up","Logged"],"hand":20,"ask":18,"hot":[1,0,1,0,1,0],"doc":{"t":"Quiet deals","big":"3","a":["Gone quiet","No word in 30 days"],"b":["Followed up","A note written for each"]}},"meta":{"name":"Meta Ads","prompt":"Which ad brings no buyers? Pause it.","out":["The ad wasting your money","Paused"],"hand":15,"ask":5,"hot":[0,1,0,0,0,0],"doc":{"t":"Local awareness ad","n":[0,210],"pre":"$","a":["On · no buyers","kept this week"],"b":["Off","kept this week"],"dark":1}},"microsoftexcel":{"name":"Excel","prompt":"Check my totals. What if prices rise 5%?","out":["The wrong total in your sales sheet","Fixed"],"hand":15,"ask":5,"hot":[0,0,0,0,0,1],"doc":{"t":"Sales total","n":[11930,12480],"pre":"$","a":["Wrong","One row was missed"],"b":["Fixed","Was $11,930 · one row was missed"]}},"gmail":{"name":"Gmail and Calendar","prompt":"What needs a reply today? Book Harbour Dental.","out":["Today's inbox answered, meeting set","Booked"],"hand":20,"ask":5,"hot":[1,0,1,0,1,0],"doc":{"t":"Emails waiting on you","n":[3,0],"a":["Unanswered","Since this morning"],"b":["Answered","Harbour Dental booked, Tue 10:30"]}}};
   const S = window.solenix, clamp01 = v => Math.max(0, Math.min(1, v));
   S.races = Object.keys(RACES).map(id => RACES[id]);
   S.rs = S.races.map(() => ({ h: 0, a: 0, p: 0, q: 0, ask: '', hDone: false, aDone: false, on: false, vis: 0 }));
@@ -1496,6 +1496,8 @@ function raceWorld(fl, wsel) {
   /* The payoff holds the middle of the screen, between the tool and the tape: its body, then the number. */
   vDock.copy(Wp).addScaledVector(vB, 2.0);
   vDock.addScaledVector(vR, -((payTag.offsetWidth || 320) / 2 + 30) * 2 * camera.position.distanceTo(vDock) * Math.tan(D2R(camera.fov / 2)) / H);
+  /* The result's body is always whole on screen: if it would cross the left edge, the pair steps right. */
+  { proj.copy(vDock).project(camera); const px = (proj.x + 1) / 2 * W; if (px < 72) vDock.addScaledVector(vR, (72 - px) * 2 * camera.position.distanceTo(vDock) * Math.tan(D2R(camera.fov / 2)) / H); }
   { const t = ease(c01((p - 0.8) / 0.1)), g = near * live * c01((p - 0.8) / 0.03);
     resB.position.copy(Wp).lerp(vDock, t); okB.position.copy(resB.position);
     { const sealed = rs.aDone; resB.material.uniforms.uGain.value = g * (sealed ? 0 : 0.95); okB.material.uniforms.uGain.value = g * (sealed ? 1 : 0); }
@@ -1528,6 +1530,8 @@ const setDoc = (e, big, t, line, pill) => { const c = e.lastChild.children; if (
 /* Screen 1: one such moment, already happening as the page opens. The unpaid invoice beside its tool turns paid. */
 const heroTag = mkTag('pay-tag hero-moment', '<b></b><span><small>Example</small><em></em><u></u><i></i></span>'); let heroT0 = 0;
 function heroMoment(al) {
+  /* It belongs to the first screen only: it leaves cleanly within the first tenth of a screen of scroll, never half-faded. */
+  al = al > 0.9 ? c01(1 - scrollY / (H * 0.1)) : 0;
   if (al < 0.02 || !RC[0]) { if (heroTag.style.opacity !== '0') heroTag.style.opacity = 0; return; }
   if (!heroT0) heroT0 = performance.now();
   const t = (performance.now() - heroT0) / 1000, paid = t > 1.2, d = RC[0].doc, st = paid ? d.b : d.a;
