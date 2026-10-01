@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark">
-<title>Solenix — Your business is a three-body problem</title>
+<title>Solenix — One AI at the centre of your business</title>
 <meta name="description" content="One AI at the centre of the tools you already use, set up and taught by a St. John's tech expert. Hours back, lower costs, more sales.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -585,7 +585,8 @@ html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%
 .trail-tag { display: flex; align-items: baseline; gap: var(--space-2); font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--muted); }
 .trail-tag b { font: var(--fw-bold) var(--fs-h1)/1 var(--font-display); letter-spacing: var(--track-heading); text-transform: none; font-variant-numeric: tabular-nums; color: var(--text); }
 .trail-tag.ask, .trail-tag.ask b { color: var(--accent-text); }
-.trail-tag.ask.stop, .trail-tag.ask.stop b { color: var(--ok); }
+.trail-tag.ask b { font-size: var(--fs-h3); }
+.trail-tag.back, .trail-tag.back b { color: var(--ok); }
 .tick-tag { font: var(--fw-medium) var(--fs-2xs)/1 var(--font-mono); color: var(--faint); }
 .ask-tag { max-width: min(19rem, 38vw); white-space: normal; text-align: right; font: var(--fw-semibold) var(--fs-h3)/1.3 var(--font-display); letter-spacing: var(--track-heading); color: var(--text); text-wrap: balance; }
 .res-tag { display: flex; align-items: center; gap: var(--space-3); font: var(--fw-bold) var(--fs-h3)/1.2 var(--font-display); letter-spacing: var(--track-heading); color: var(--text); }
@@ -603,6 +604,7 @@ html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%
 html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relative; height: auto; } html:not(.js) .sr-race { position: static; width: auto; height: auto; clip-path: none; white-space: normal; }
 .world-tag { width: 52px; height: 52px; background: color-mix(in oklch, var(--bg) 88%, transparent); border-color: color-mix(in oklch, var(--accent) 55%, transparent); box-shadow: 0 0 24px color-mix(in srgb, var(--ring) 40%, transparent); }
 .world-tag .lg { width: 26px; height: 26px; }
+.world-tag.sm { width: 40px; height: 40px; } .world-tag.sm .lg { width: 20px; height: 20px; }
 @media (max-width: 899px) { .close-sec { align-items: end; } .close-in { padding-block: var(--space-7); } }
 /* Reduced motion: the camera does not fly. It cuts between stations under a short dip to dark. */
 #gl { opacity: 0; transition: opacity 500ms linear; } .world.gl-on #gl { opacity: 1; } .world.gl-on #gl.dip { opacity: 0; transition-duration: 200ms; }
@@ -680,14 +682,14 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
 </div>
 
 <main id="main">
-<section class="sky" id="top" data-od-id="hero-story" data-scene="hero" aria-label="Your business is a three-body problem">
+<section class="sky" id="top" data-od-id="hero-story" data-scene="hero" aria-label="One AI at the centre of your business">
   <span class="anchor" id="settle" aria-hidden="true"></span>
   <div class="stage">
     <div class="hero-copy" data-od-id="hero-copy">
         <div class="wrap">
           <p class="eyebrow">Solenix · St. John's, NL</p>
-          <h1 class="h1" data-od-id="hero-headline"><span class="w" style="--i:0"><span>Your</span></span> <span class="w" style="--i:1"><span>business</span></span> <span class="w" style="--i:2"><span>is</span></span> <span class="w" style="--i:3"><span>a</span></span> <span class="w g" style="--i:4"><span>three&#8209;body</span></span> <span class="w g" style="--i:5"><span>problem.</span></span></h1>
-          <p class="hero-sub">One AI runs your tools. You just ask.</p>
+          <h1 class="h1" data-od-id="hero-headline"><span class="w" style="--i:0"><span>One</span></span> <span class="w" style="--i:1"><span>AI</span></span> <span class="w" style="--i:2"><span>at</span></span> <span class="w" style="--i:3"><span>the</span></span> <span class="w" style="--i:4"><span>centre</span></span> <span class="w" style="--i:5"><span>of</span></span> <span class="w g" style="--i:6"><span>your</span></span> <span class="w g" style="--i:7"><span>business.</span></span></h1>
+          <p class="hero-sub">Connected to the tools you already use. You don't need to be an expert anymore.</p>
           <div class="hero-ctas">
             <a class="btn btn-primary" href="/book" data-od-id="hero-cta">Book a call</a>
           </div>
@@ -705,8 +707,8 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
   <div class="race-pin">
     <div class="wrap race-in">
       <header class="race-head">
-        <h2 class="h2">You don't need to be an expert <em>anymore.</em></h2>
-        <p class="sr-race">Stripe. By hand: Open Invoices. Read who is overdue. Start a new invoice. Fill it in, field by field. Or just ask: “Who owes us? Send Harbour Dental their invoice.” The AI does the work in Stripe and you approve the result: Invoice to Harbour Dental, sent. Typical times, estimated: by hand 10 to 15 minutes, asked 2 to 5. It can't use QuickBooks in Canada yet, so this is Stripe.</p>
+        <h2 class="h2">Get paid what <em>you're owed.</em></h2>
+        <p class="sr-race">Stripe. By hand: Open Invoices. Read who is overdue. Start a new invoice. Fill it in, field by field. Or just ask: “Who owes us? Send Harbour Dental their invoice.” The AI does the work in Stripe and you approve the result: Invoice sent to Harbour Dental, sent. Typical times, estimated: by hand 10 to 15 minutes, asked 2 to 5. It can't use QuickBooks in Canada yet, so this is Stripe.</p>
       </header>
       <div class="race-foot">
         <a class="btn btn-primary race-cta" href="/book" data-od-id="race-stripe-cta">Book a call</a>
@@ -721,8 +723,8 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
   <div class="race-pin">
     <div class="wrap race-in">
       <header class="race-head">
-        <h2 class="h2">Keep best sellers <em>in stock.</em></h2>
-        <p class="sr-race">Shopify. By hand: Open Reports. Set the date to last month. Sort by units sold. Open Inventory, a separate screen. Check stock, one product at a time. Or just ask: “What will run out this month? Draft the reorder.” The AI does the work in Shopify and you approve the result: Reorder for 2 products, sent. Typical times, estimated: by hand 15 to 25 minutes, asked 3 to 5. It can't refund or cancel an order.</p>
+        <h2 class="h2">Never run out of <em>your best seller.</em></h2>
+        <p class="sr-race">Shopify. By hand: Open Reports. Set the date to last month. Sort by units sold. Open Inventory, a separate screen. Check stock, one product at a time. Or just ask: “What will run out this month? Draft the reorder.” The AI does the work in Shopify and you approve the result: Stock reordered in time, sent. Typical times, estimated: by hand 15 to 25 minutes, asked 3 to 5. It can't refund or cancel an order.</p>
       </header>
       <div class="race-foot">
         <a class="btn btn-primary race-cta" href="/book" data-od-id="race-shopify-cta">Book a call</a>
@@ -737,8 +739,8 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
   <div class="race-pin">
     <div class="wrap race-in">
       <header class="race-head">
-        <h2 class="h2">No deal dies <em>in silence.</em></h2>
-        <p class="sr-race">HubSpot. By hand: Open the deals list. Filter by last activity. Open the first quiet deal. Write a follow-up by hand. Then the next deal, the same again. Or just ask: “Which deals went quiet? Draft a note for each.” The AI does the work in HubSpot and you approve the result: 3 follow-ups drafted, logged. Typical times, estimated: by hand 20 to 30 minutes for ten deals, asked 12 to 18. It can't send the email. You press send.</p>
+        <h2 class="h2">Win back deals <em>that went quiet.</em></h2>
+        <p class="sr-race">HubSpot. By hand: Open the deals list. Filter by last activity. Open the first quiet deal. Write a follow-up by hand. Then the next deal, the same again. Or just ask: “Which deals went quiet? Draft a note for each.” The AI does the work in HubSpot and you approve the result: 3 quiet deals followed up, logged. Typical times, estimated: by hand 20 to 30 minutes for ten deals, asked 12 to 18. It can't send the email. You press send.</p>
       </header>
       <div class="race-foot">
         <a class="btn btn-primary race-cta" href="/book" data-od-id="race-hubspot-cta">Book a call</a>
@@ -753,8 +755,8 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
   <div class="race-pin">
     <div class="wrap race-in">
       <header class="race-head">
-        <h2 class="h2">Stop paying for <em>dead ads.</em></h2>
-        <p class="sr-race">Meta Ads. By hand: Log into Ads Manager. Set the last 7 days. Switch to the week before. Compare each campaign by eye. Or just ask: “Which ad brings no buyers? Pause it.” The AI does the work in Meta Ads and you approve the result: Local awareness ad, paused. Typical times, estimated: by hand 15 to 20 minutes, asked 3 to 5. It can't switch a new ad on. That stays with you.</p>
+        <h2 class="h2">Stop paying for ads <em>nobody buys from.</em></h2>
+        <p class="sr-race">Meta Ads. By hand: Log into Ads Manager. Set the last 7 days. Switch to the week before. Compare each campaign by eye. Or just ask: “Which ad brings no buyers? Pause it.” The AI does the work in Meta Ads and you approve the result: The ad wasting your money, paused. Typical times, estimated: by hand 15 to 20 minutes, asked 3 to 5. It can't switch a new ad on. That stays with you.</p>
       </header>
       <div class="race-foot">
         <a class="btn btn-primary race-cta" href="/book" data-od-id="race-meta-cta">Book a call</a>
@@ -769,8 +771,8 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
   <div class="race-pin">
     <div class="wrap race-in">
       <header class="race-head">
-        <h2 class="h2">Trust <em>your numbers.</em></h2>
-        <p class="sr-race">Excel. By hand: Open the workbook. Find the total that looks wrong. Trace the formula. Check it, cell by cell. Or just ask: “Check my totals. What if prices rise 5%?” The AI does the work in Excel and you approve the result: Total in cell B14, fixed. Typical times, estimated: by hand 15 to 30 minutes, asked about 5. It can't run macros.</p>
+        <h2 class="h2">Numbers you <em>can trust.</em></h2>
+        <p class="sr-race">Excel. By hand: Open the workbook. Find the total that looks wrong. Trace the formula. Check it, cell by cell. Or just ask: “Check my totals. What if prices rise 5%?” The AI does the work in Excel and you approve the result: The wrong total in your sales sheet, fixed. Typical times, estimated: by hand 15 to 30 minutes, asked about 5. It can't run macros.</p>
       </header>
       <div class="race-foot">
         <a class="btn btn-primary race-cta" href="/book" data-od-id="race-microsoftexcel-cta">Book a call</a>
@@ -785,8 +787,8 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
   <div class="race-pin">
     <div class="wrap race-in">
       <header class="race-head">
-        <h2 class="h2">Never miss <em>paying work.</em></h2>
-        <p class="sr-race">Gmail and Calendar. By hand: Open the inbox. Open the first email. Decide: now, later or junk. Go back. Then the next one. Or just ask: “What needs a reply today? Book Harbour Dental.” The AI does the work in Gmail and Calendar and you approve the result: Harbour Dental, Tuesday 10:30, booked. Typical times, estimated: by hand 20 to 40 minutes, asked 5. It can't read what is inside an attachment.</p>
+        <h2 class="h2">Get your <em>evening back.</em></h2>
+        <p class="sr-race">Gmail and Calendar. By hand: Open the inbox. Open the first email. Decide: now, later or junk. Go back. Then the next one. Or just ask: “What needs a reply today? Book Harbour Dental.” The AI does the work in Gmail and Calendar and you approve the result: Today's inbox answered, meeting set, booked. Typical times, estimated: by hand 20 to 40 minutes, asked 5. It can't read what is inside an attachment.</p>
       </header>
       <div class="race-foot">
         <a class="btn btn-primary race-cta" href="/book" data-od-id="race-gmail-cta">Book a call</a>
@@ -805,11 +807,11 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
         <h2 class="h2">From one call to a <em>stable orbit.</em></h2>
       </div>
       <ol class="jr-steps" data-steps>
-        <li><span class="no">01 / 05</span><h3>A clear picture</h3></li>
-        <li><span class="no">02 / 05</span><h3>Your own portal</h3></li>
-        <li><span class="no">03 / 05</span><h3>Your new website</h3></li>
-        <li><span class="no">04 / 05</span><h3>Your choice, in writing</h3></li>
-        <li><span class="no">05 / 05</span><h3>Looked after</h3></li>
+        <li><span class="no">01 / 05</span><h3>We find your lost hours</h3></li>
+        <li><span class="no">02 / 05</span><h3>One place to see everything</h3></li>
+        <li><span class="no">03 / 05</span><h3>A website that brings in calls</h3></li>
+        <li><span class="no">04 / 05</span><h3>A fixed price, in writing</h3></li>
+        <li><span class="no">05 / 05</span><h3>Looked after, every month</h3></li>
       </ol>
       <a class="btn btn-primary jr-cta" href="/book">Book a call</a>
       <div class="jr-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
@@ -891,11 +893,11 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
      Values not given carry over from the keyframe before. ── */
   const KEYS = [
     /* 1 · Chaos */
-    { sel: '.sky', f: 0, pin: 1, k: 0, free: 0, order: 0, ink: 0, third: 0, el: 22, az: 0, dist: 18.5, ox: 0.2, oy: 0.12, poy: 0.22, calm: 0, dim: 0, labels: 0, conn: 0, agent: 0, stops: 0, tx: 0, tz: 0, fly: 0, wsel: 0 },
+    { sel: '.sky', f: 0, pin: 1, k: 0, free: 0, order: 0, ink: 0, third: 0, el: 22, az: 0, dist: 18.5, ox: 0.2, oy: 0.12, poy: 0.22, calm: 0, dim: 0, labels: 0, conn: 1, agent: 0, stops: 0, tx: 0, tz: 0, fly: 0, wsel: 0, tools: 1 },
     { sel: '.sky', f: 0.55, pin: 1, labels: 1, el: 27, az: -10, dist: 16.5, ox: 0.22, oy: 0.1 },
     { sel: '.sky', f: 1, pin: 1, labels: 0, el: 33, az: -22, dist: 17 },
     /* 2 and 3 · The guide and the flybys: the AI is lit at the centre and the first race is already running. Out past six tool worlds, all the way round. */
-    { sel: '#fly-stripe', f: 0.15, pin: 1, wsel: 0, tx: 7.71, tz: 9.19, az: 70, conn: 1, k: 0.3, free: 0.4, fly: 1, dim: 1, el: 24, dist: 8.6, ox: 0, oy: 0, poy: 0.12 },
+    { sel: '#fly-stripe', f: 0.15, pin: 1, wsel: 0, tx: 7.71, tz: 9.19, az: 70, conn: 1, tools: 0, k: 0.3, free: 0.4, fly: 1, dim: 1, el: 24, dist: 8.6, ox: 0, oy: 0, poy: 0.12 },
     { sel: '#fly-stripe', f: 0.8, pin: 1, az: 80 },
     { sel: '#fly-shopify', f: 0.15, pin: 1, wsel: 1, tx: 11.82, tz: -2.08, az: 130 },
     { sel: '#fly-shopify', f: 0.8, pin: 1, az: 140 },
@@ -1033,7 +1035,7 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
    it with the 3D scene, which plays the ask, the work and the result as bodies in the tool's world.
    Reduced motion does not stop them: the setting quiets the camera, and the demonstration still has to be seen. */
 (() => {
-  const RACES = {"stripe":{"name":"Stripe","prompt":"Who owes us? Send Harbour Dental their invoice.","out":["Invoice to Harbour Dental","Sent"],"hand":10,"ask":5,"hot":[0,1,1,0,0,0]},"shopify":{"name":"Shopify","prompt":"What will run out this month? Draft the reorder.","out":["Reorder for 2 products","Sent"],"hand":15,"ask":5,"hot":[1,0,1,0,0,0]},"hubspot":{"name":"HubSpot","prompt":"Which deals went quiet? Draft a note for each.","out":["3 follow-ups drafted","Logged"],"hand":20,"ask":18,"hot":[1,0,1,0,1,0]},"meta":{"name":"Meta Ads","prompt":"Which ad brings no buyers? Pause it.","out":["Local awareness ad","Paused"],"hand":15,"ask":5,"hot":[0,1,0,0,0,0]},"microsoftexcel":{"name":"Excel","prompt":"Check my totals. What if prices rise 5%?","out":["Total in cell B14","Fixed"],"hand":15,"ask":5,"hot":[0,0,0,0,0,1]},"gmail":{"name":"Gmail and Calendar","prompt":"What needs a reply today? Book Harbour Dental.","out":["Harbour Dental, Tuesday 10:30","Booked"],"hand":20,"ask":5,"hot":[1,0,1,0,1,0]}};
+  const RACES = {"stripe":{"name":"Stripe","prompt":"Who owes us? Send Harbour Dental their invoice.","out":["Invoice sent to Harbour Dental","Sent"],"hand":10,"ask":5,"hot":[0,1,1,0,0,0]},"shopify":{"name":"Shopify","prompt":"What will run out this month? Draft the reorder.","out":["Stock reordered in time","Sent"],"hand":15,"ask":5,"hot":[1,0,1,0,0,0]},"hubspot":{"name":"HubSpot","prompt":"Which deals went quiet? Draft a note for each.","out":["3 quiet deals followed up","Logged"],"hand":20,"ask":18,"hot":[1,0,1,0,1,0]},"meta":{"name":"Meta Ads","prompt":"Which ad brings no buyers? Pause it.","out":["The ad wasting your money","Paused"],"hand":15,"ask":5,"hot":[0,1,0,0,0,0]},"microsoftexcel":{"name":"Excel","prompt":"Check my totals. What if prices rise 5%?","out":["The wrong total in your sales sheet","Fixed"],"hand":15,"ask":5,"hot":[0,0,0,0,0,1]},"gmail":{"name":"Gmail and Calendar","prompt":"What needs a reply today? Book Harbour Dental.","out":["Today's inbox answered, meeting set","Booked"],"hand":20,"ask":5,"hot":[1,0,1,0,1,0]}};
   const S = window.solenix, MIN = 1000, clamp01 = v => Math.max(0, Math.min(1, v));
   S.races = Object.keys(RACES).map(id => RACES[id]);
   S.rs = S.races.map(() => ({ h: 0, a: 0, p: 0, q: 0, ask: '', hDone: false, aDone: false, on: false }));
@@ -1371,6 +1373,7 @@ const hub = new THREE.Mesh(quad, sunMat(C.ring.clone().lerp(WHITE, 0.3), 4.2, 0.
 /* ── The flybys: six tool worlds set in a wide circle round the business. The camera travels the whole
    way round, and each world is wired back to the AI at the centre as it passes. ── */
 const WN = 6, WR = 12, WAZ = i => 40 + 60 * i;
+const WBASE = Array.from({ length: WN }, (_, i) => { const th = D2Rq(90 - WAZ(i)); return new THREE.Vector3(Math.cos(th) * WR, SUN_Y, Math.sin(th) * WR); });
 const WPOS = Array.from({ length: WN }, (_, i) => { const th = D2Rq(90 - WAZ(i)); return new THREE.Vector3(Math.cos(th) * WR, SUN_Y, Math.sin(th) * WR); });
 function D2Rq(d) { return d * Math.PI / 180; }
 const worlds = WPOS.map((p, i) => { const m = new THREE.Mesh(quad, sunMat((i % 2 ? C.sun2 : C.sun1).clone().lerp(i % 3 ? C.ring : WHITE, 0.3), 31 + i * 1.9, 1.9, 0.24)); m.material.uniforms.uFlare.value = 0.3; m.position.copy(p); m.frustumCulled = false; m.renderOrder = 6; m.visible = false; scene.add(m); return m; });
@@ -1388,8 +1391,8 @@ const RS = S.rs || [], RC = S.races || [], ITEM_N = 6, AXIS_MIN = 20;
 const TRAIL_FRAG = `uniform vec3 uCol,uHot; uniform float uAlpha; varying float vT,vS;
   void main(){ float edge=1.-abs(vS); edge=edge*edge*(3.-2.*edge); float core=pow(edge,6.);
     float a=(.4+.6*pow(vT,1.6))*uAlpha; vec3 c=mix(uCol,uHot,core*.5)*(edge*.6+core*.85)*(1.+1.4*pow(vT,14.)); gl_FragColor=vec4(c*a,1.); }`;
-const trailH = ribbon(24, WHITE.clone().multiplyScalar(0.5), 0.085, TRAIL_FRAG, false), trailA = ribbon(24, C.sun1.clone(), 0.085, TRAIL_FRAG, false), axisR = ribbon(16, C.ring.clone(), 0.014, ARC_FRAG, false);
-[trailH, trailA, axisR].forEach(r => { r.mesh.visible = false; });
+const trailH = ribbon(24, WHITE.clone().multiplyScalar(0.5), 0.085, TRAIL_FRAG, false), trailA = ribbon(24, C.sun1.clone(), 0.085, TRAIL_FRAG, false), axisR = ribbon(16, C.ring.clone(), 0.014, ARC_FRAG, false), gapR = ribbon(16, tok('--ok'), 0.085, TRAIL_FRAG, false);
+[trailH, trailA, axisR, gapR].forEach(r => { r.mesh.visible = false; });
 const body = (col, seed, size) => { const m = new THREE.Mesh(quad, sunMat(col, seed, size, 0.2)); m.material.uniforms.uFlare.value = 0.1; m.frustumCulled = false; m.renderOrder = 6; m.visible = false; scene.add(m); return m; };
 const items = Array.from({ length: ITEM_N }, (_, j) => body((j % 2 ? C.sun2 : C.sun1).clone(), 71 + j * 3.1, 0.42));
 const handB = body(WHITE.clone().multiplyScalar(0.8), 91, 0.3), askB = body(C.sun1.clone().lerp(WHITE, 0.4), 93, 0.34);
@@ -1398,13 +1401,14 @@ const sceneUi = document.querySelector('.scene-ui');
 const mkTag = (cls, html) => { const e = document.createElement('div'); e.className = cls; e.innerHTML = html || ''; sceneUi.append(e); return e; };
 const tagH = mkTag('trail-tag hand', '<span>By hand</span><b></b>'), tagA = mkTag('trail-tag ask', '<span>Asked</span><b></b>');
 const tickTags = [5, 10, 15, 20].map(m => { const e = mkTag('tick-tag', m === 20 ? '20 min' : String(m)); e._m = m; return e; });
+const tagBack = mkTag('trail-tag back', '<b></b><span>back</span>');
 const askTag = mkTag('ask-tag'), resTag = mkTag('res-tag', '<b></b><i></i>');
 const vR = new THREE.Vector3(), vB = new THREE.Vector3(), vO = new THREE.Vector3(), vA = new THREE.Vector3(), vE = new THREE.Vector3(), vP = new THREE.Vector3(), vS0 = new THREE.Vector3(), vDock = new THREE.Vector3(), vAsk = new THREE.Vector3();
 const itemP = Array.from({ length: ITEM_N }, () => new THREE.Vector3());
 const ease = t => t * t * (3 - 2 * t), c01 = v => Math.max(0, Math.min(1, v));
 function raceWorld(fl, wsel) {
   const wi = Math.max(0, Math.min(WN - 1, Math.round(wsel))), near = fl * Math.max(0, 1 - Math.abs(wsel - wi) * 2.2), rs = RS[wi], rc = RC[wi], on = near > 0.02 && rs && rc;
-  [trailH, trailA, axisR].forEach(r => { r.mesh.visible = !!on; });
+  [trailH, trailA, axisR, gapR].forEach(r => { r.mesh.visible = !!on; });
   [...items, handB, askB, resB, okB].forEach(m => { m.visible = !!on; });
   if (!on) return null;
   const Wp = WPOS[wi], p = rs.p, q = rs.q, live = rs.on ? 1 : 0;
@@ -1417,7 +1421,9 @@ function raceWorld(fl, wsel) {
   vA.copy(vO).addScaledVector(vB, -0.14); layArc(trailH, vA, vE.copy(vA).addScaledVector(vR, Math.max(0.02, rs.h * unit)), 0); trailH.mesh.material.uniforms.uAlpha.value = near * live;
   const headH = vE.clone();
   vA.copy(vO).addScaledVector(vB, 0.14); layArc(trailA, vA, vE.copy(vA).addScaledVector(vR, Math.max(0.02, rs.a * unit)), 0); trailA.mesh.material.uniforms.uAlpha.value = near * live * 1.25;
-  const headA = vE.clone();
+  const headA = vE.clone(), back = rs.h - rs.a;
+  /* What you get back: the ask has stopped and by hand is still going. That stretch is yours, and it is green. */
+  layArc(gapR, headA, vE.copy(vA).addScaledVector(vR, Math.max(rs.a * unit + 0.02, rs.h * unit)), 0); gapR.mesh.material.uniforms.uAlpha.value = near * live * (back > 0.05 ? 0.9 : 0);
   /* The things the job is about: an arc round the right and far side of the world, clear of the headline and the tape. */
   const work = c01((p - 0.4) / 0.4), shown = c01((p - 0.8) / 0.08), seen = Math.floor(q * ITEM_N + 0.001);
   items.forEach((m, j) => { const a = -0.6 + j * 0.5; itemP[j].copy(Wp).addScaledVector(vR, Math.cos(a) * 1.4).addScaledVector(vB, -Math.sin(a) * 1.4); m.position.copy(itemP[j]);
@@ -1439,15 +1445,18 @@ function raceWorld(fl, wsel) {
     resB.position.copy(Wp).lerp(vDock, t); okB.position.copy(resB.position);
     resB.material.uniforms.uGain.value = g * (rs.aDone ? 0 : 0.95); okB.material.uniforms.uGain.value = g * (rs.aDone ? 1 : 0);
     resB.material.uniforms.uSize.value = okB.material.uniforms.uSize.value = 0.6; }
-  return { near, rs, rc, unit, headH, headA, o: vO.clone(), wp: Wp, resAt: t01(p) };
+  return { near, rs, rc, unit, headH, headA, back, o: vO.clone(), wp: Wp, resAt: t01(p) };
 }
 const t01 = p => c01((p - 0.86) / 0.06);
 function raceTags(rw) {
-  if (!rw) { [tagH, tagA, askTag, resTag, ...tickTags].forEach(e => { if (e.style.opacity !== '0') e.style.opacity = 0; }); return; }
+  if (!rw) { [tagH, tagA, tagBack, askTag, resTag, ...tickTags].forEach(e => { if (e.style.opacity !== '0') e.style.opacity = 0; }); return; }
   const { near, rs, rc } = rw, live = rs.on ? 1 : 0;
   tagH.lastChild.textContent = Math.floor(rs.h) + ' min'; tagA.lastChild.textContent = Math.floor(rs.a) + ' min';
   tagH.classList.toggle('stop', rs.hDone); tagA.classList.toggle('stop', rs.aDone);
-  placeL(tagH, rw.headH, near * live, -30); placeL(tagA, rw.headA, near * live, 30);
+  placeL(tagH, rw.headH, near * live, -30);
+  /* Under the tape: the ask's clock ends at its head, and the minutes you get back start there. */
+  const mins = Math.floor(rw.back + 0.001); if (tagBack.firstChild.textContent !== mins + ' min') tagBack.firstChild.textContent = mins + ' min';
+  placeUnder(tagA, rw.headA, near * live, -1); placeUnder(tagBack, rw.headA, near * live * (mins >= 1 ? 1 : 0), 1);
   tickTags.forEach(e => place(e, vP.copy(rw.o).addScaledVector(vR, e._m * rw.unit).addScaledVector(vB, 1.0), near * 0.9, 0));
   /* The ask is written beside the world while it travels, and clears once the work is done. */
   const quote = rs.ask ? '“' + rs.ask + (rs.p >= 0.33 ? '”' : '') : '';
@@ -1462,6 +1471,11 @@ function raceTags(rw) {
 const placeL = (e, v, al, dy) => { if (al < 0.01) { if (e.style.opacity !== '0') e.style.opacity = 0; return; } proj.copy(v).project(camera);
   let x = (proj.x + 1) / 2 * W + 16, y = (1 - proj.y) / 2 * H; const w = e.offsetWidth || 150;
   if (x + w > W - 12) { x = W - 12 - w; y += dy; }
+  e.style.opacity = al.toFixed(3); e.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) translate(0, -50%)`; };
+/* Under a point on the tape: side -1 ends just before it, side 1 starts just after it. */
+const placeUnder = (e, v, al, side) => { if (al < 0.01) { if (e.style.opacity !== '0') e.style.opacity = 0; return; } proj.copy(v).project(camera);
+  const w = e.offsetWidth || 140, px = (proj.x + 1) / 2 * W, y = (1 - proj.y) / 2 * H + 32;
+  const x = side > 0 ? Math.min(px + 12, W - 12 - w) : Math.max(12, px - 10 - w);
   e.style.opacity = al.toFixed(3); e.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) translate(0, -50%)`; };
 /* A label beside its body: side 1 to the right of it, side -1 ending to the left of it. Kept inside the screen. */
 const placeSide = (e, v, al, side) => { if (al < 0.01) { if (e.style.opacity !== '0') e.style.opacity = 0; return; } proj.copy(v).project(camera);
@@ -1540,8 +1554,8 @@ function frame(dtReal, still) {
   /* One continuous camera move, eased so a fast flick still glides. */
   /* Reduced motion: one fixed, calm viewpoint. No flying, zooming or spinning; the framing only drifts slowly sideways. */
   const calmDist = portrait ? Math.max(14 * 1.3, 3.1 / (Math.tan(D2R(fov0 / 2)) * camera.aspect)) : 14;
-  const dist0 = R ? (stn > 0 ? Math.min(calmDist, portrait ? 12.5 : 8.6) : calmDist * lerp(1, 0.8, sc.agent)) : portrait ? Math.max(sc.dist * 1.3, 3.1 * (1 - 0.45 * sc.fly) / (Math.tan(D2R(fov0 / 2)) * camera.aspect)) : sc.dist;
-  shown.el = R ? (stn > 0 ? 24 : lerp(58, 32, sc.agent)) : lerp(shown.el, sc.el, a); shown.az = R ? (stn > 0 ? WAZ(stn - 1) + 30 : 0) : lerp(shown.az, sc.az, a); shown.dist = R ? dist0 : lerp(shown.dist, dist0, a);
+  const dist0 = R ? (stn > 0 ? Math.min(calmDist, portrait ? 12.5 : 8.6) : lerp(calmDist * lerp(1, 0.8, sc.agent), portrait ? calmDist : 18.5, sc.tools)) : portrait ? Math.max(sc.dist * 1.3, 3.1 * (1 - 0.45 * sc.fly) / (Math.tan(D2R(fov0 / 2)) * camera.aspect)) : sc.dist;
+  shown.el = R ? (stn > 0 ? 24 : lerp(lerp(58, 32, sc.agent), 22, sc.tools)) : lerp(shown.el, sc.el, a); shown.az = R ? (stn > 0 ? WAZ(stn - 1) + 30 : 0) : lerp(shown.az, sc.az, a); shown.dist = R ? dist0 : lerp(shown.dist, dist0, a);
   /* Reduced motion: no flight between worlds. The camera holds one station per scene and cuts to the next under a dip. */
   if (R) { const want = sc.fly > 0.5 ? 1 + Math.max(0, Math.min(WN - 1, Math.round(sc.wsel))) : 0;
     if (want !== stn && !stnBusy) { stnBusy = true; canvas.classList.add('dip'); setTimeout(() => { stn = want; canvas.classList.remove('dip'); stnBusy = false; }, 210); }
@@ -1627,10 +1641,14 @@ function frame(dtReal, still) {
 
   /* The tool worlds. The one you are passing is lit and wired to the AI at the centre. */
   const fl = R ? (stn > 0 ? 1 : 0) : sc.fly, wsel = R ? stn - 1 : sc.wsel; gridU.uP.value.set(shown.tx, shown.tz, fl * 0.9);
-  worlds.forEach((m, i) => { const on = fl > 0.01; m.visible = warcs[i].mesh.visible = on; if (!on) return;
+  /* On the first screen the tools sit close round the AI, wired in: what we do, before a word is read.
+     As the flybys begin they move out to their own places and the camera goes to meet them. */
+  const tl = sc.tools * (1 - fl), ws = R && stn > 0 ? 1 : lerp(0.3, 1, smooth(0, 1, sc.fly));
+  worlds.forEach((m, i) => { WPOS[i].set(WBASE[i].x * ws, SUN_Y, WBASE[i].z * ws); m.position.copy(WPOS[i]);
+    const on = fl > 0.01 || tl > 0.01; m.visible = warcs[i].mesh.visible = on; if (!on) return;
     const near = Math.max(0, 1 - Math.abs(wsel - i));
-    m.material.uniforms.uGain.value = fl * (0.3 + 0.28 * near); m.material.uniforms.uSize.value = 1.5 + 0.5 * near;
-    layArc(warcs[i], HUB, m.position, 2.2); warcs[i].mesh.material.uniforms.uAlpha.value = fl * (0.1 + 0.85 * near); });
+    m.material.uniforms.uGain.value = fl * (0.3 + 0.28 * near) + tl * 0.38; m.material.uniforms.uSize.value = lerp(0.85, 1.5 + 0.5 * near, fl);
+    layArc(warcs[i], HUB, m.position, lerp(0.9, 2.2, fl)); warcs[i].mesh.material.uniforms.uAlpha.value = fl * (0.1 + 0.85 * near) + tl * 0.7; });
 
   const rw = raceWorld(fl, wsel);
   timeU.value = clockT; finalPass.uniforms.uTime.value = clockT;
@@ -1638,7 +1656,7 @@ function frame(dtReal, still) {
   raceTags(rw);
 
   /* Each world wears its own mark, shown only while you are beside it. */
-  worldTags.forEach((e, i) => place(e, WPOS[i], (portrait ? 0 : 1) * fl * Math.max(0, 1 - Math.abs(wsel - i) * 1.6), 0));
+  worldTags.forEach((e, i) => { place(e, WPOS[i], Math.max(tl, (portrait ? 0 : 1) * fl * Math.max(0, 1 - Math.abs(wsel - i) * 1.6)), 0); e.classList.toggle('sm', tl > 0.5); });
 
   /* Revenue, Costs, Time: a small tag under each sun, all the way through. They fade only where
      the scene is dimmed behind reading text, and step apart if two suns pass close together. */
