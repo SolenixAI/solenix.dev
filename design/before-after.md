@@ -126,15 +126,15 @@ After: "Show every deal with no activity in 14 days and draft a follow-up for ea
 
 ## Example data shown in the homepage races
 
-Every name and amount below is made up for the demonstration and is tagged "Example" on the page. None is a client, a result or a price. Each "after" claims only what that tool's connector documents.
+Every name and amount below is made up for the demonstration and is tagged "Example" on the page. None is a client, a result or a price. On the page each thing carries one label, its name; the big figure and one state word carry the rest.
 
-| Race | The owner's things, before | After the ask lands | What the connector documents |
-|---|---|---|---|
-| Stripe | Still to chase $920: Harbour Dental $450 (30 days late), Cove Road Cafe $280 (45 days late), East End Yoga $190 (60 days late) | $0 still to chase: each sent again with a pay link | Creates and finalises invoices and payment links. It does not make anyone pay. |
-| Shopify | Sea salt caramels, 14 left; Wool mitts, 9 left | After one Approve: reorder sent, 120 caramels and 60 mitts on order | Reads orders and stock; the reorder email is drafted in Gmail and sent with approval. |
-| HubSpot | 3 quiet deals: Harbour Dental (34 days), Cove Road Cafe (41 days), East End Yoga (30 days) | A note and a task added on each | Writes tasks, notes and activities. It never sends the email. |
-| Meta Ads | Local awareness ad: on, no buyers in 7 days, $0 kept this week | Paused, $210 kept this week | Reads spend and results; changes are asked for before they happen. |
-| Excel | Sales total $11,930, wrong: row 14 ($550) was left out | $12,480, fixed: row 14 now counted | Explains cells and edits formulas. No macros. |
-| Gmail and Calendar | 3 emails waiting: Harbour Dental asking to meet, Cove Road Cafe asking for a quote, East End Yoga asking about a bill | 0 waiting: replies drafted, Harbour Dental booked Tuesday 10:30 | Drafts replies, sends with approval, creates events. |
+| Race | The owner's things | Before | After the ask lands | What the connector documents |
+|---|---|---|---|---|
+| Stripe | Harbour Dental $450, Cove Road Cafe $280, East End Yoga $190 | $0 paid, 3 overdue | $920 paid, all 3 paid | Creates and finalises invoices and payment links. Paying is the customer's act, not the AI's. |
+| Shopify | Sea salt caramels, Wool mitts | 14 caramels, running out | After one Approve: 120, reordered | Reads orders and stock; the reorder email is drafted in Gmail and sent with approval. |
+| HubSpot | Harbour Dental, Cove Road Cafe, East End Yoga | 3 quiet deals, gone quiet | Picked back up | Writes tasks, notes and activities. It never sends the email. |
+| Meta Ads | Local awareness ad | On, no buyers, $0 kept this week | Off, $210 kept this week | Reads spend and results; changes are asked for before they happen. |
+| Excel | Row 14 · $550 | Sales total $11,930, wrong | $12,480, fixed | Explains cells and edits formulas. No macros. |
+| Gmail and Calendar | Harbour Dental, Cove Road Cafe, East End Yoga | 3 emails waiting, unanswered | 0 waiting, replies drafted | Drafts replies, sends with approval, creates events. |
 
 The first screen shows one Stripe example on its own: the Harbour Dental invoice, $450, Unpaid to Paid.

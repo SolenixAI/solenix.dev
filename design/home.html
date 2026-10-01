@@ -605,7 +605,11 @@ html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%
 .pay-tag.wait i { color: var(--accent-text); border-color: var(--accent); box-shadow: 0 0 0 5px var(--accent-quiet), 0 0 24px color-mix(in srgb, var(--ring) 45%, transparent); }
 /* The owner's own things, named, each beside its body in the world. */
 .thing-tag { position: absolute; left: 0; top: 0; opacity: 0; will-change: transform, opacity; display: grid; gap: 4px; justify-items: start; white-space: nowrap; text-shadow: 0 0 12px var(--bg), 0 0 5px var(--bg), 0 1px 2px var(--bg); }
-.thing-tag b { font: var(--fw-semibold) var(--fs-sm)/1.15 var(--font-display); letter-spacing: var(--track-heading); color: var(--text); }
+/* One label per thing: its name. A dot beside it carries the state, amber before and green after. */
+.thing-tag b { display: flex; align-items: center; gap: var(--space-2); font: var(--fw-semibold) var(--fs-body)/1.15 var(--font-display); letter-spacing: var(--track-heading); color: var(--text); }
+.thing-tag b::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--warn); transition: background-color var(--dur-base); }
+.thing-tag.ok b::before { background: var(--ok); }
+.thing-tag span:empty, .pay-tag u:empty { display: none; }
 .thing-tag span { font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--warn); transition: color var(--dur-base); }
 .thing-tag.ok span { color: var(--ok); }
 .thing-tag > i { display: none; width: 96px; height: 6px; border-radius: var(--radius-pill); background: color-mix(in oklch, var(--text) 14%, transparent); overflow: hidden; }
@@ -1098,7 +1102,7 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
    it with the 3D scene, which plays the ask, the work and the result as bodies in the tool's world.
    Reduced motion does not stop them: the setting quiets the camera, and the demonstration still has to be seen. */
 (() => {
-  const RACES = {"stripe":{"name":"Stripe","prompt":"Who owes us? Send Harbour Dental their invoice.","out":["Invoice sent to Harbour Dental","Sent"],"hand":10,"ask":5,"hot":[1,1,1,0,0,0],"doc":{"t":"Still to chase","n":[920,0],"steps":[920,470,190,0],"pre":"$","a":["Overdue","3 unpaid invoices"],"b":["All chased","Each sent again with a pay link"]},"things":[["Harbour Dental","$450 · 30 days late","$450 · pay link sent"],["Cove Road Cafe","$280 · 45 days late","$280 · pay link sent"],["East End Yoga","$190 · 60 days late","$190 · pay link sent"]]},"shopify":{"name":"Shopify","prompt":"What will run out this month? Draft the reorder.","out":["Stock reordered in time","Sent"],"hand":15,"ask":5,"hot":[1,1,0,0,0,0],"doc":{"t":"Sea salt caramels","n":[14,120],"a":["Running out","left on the shelf"],"b":["Reorder sent","on order, after your one Approve"],"grow":1,"approve":1},"things":[["Sea salt caramels","14 left","120 on order",12,100],["Wool mitts","9 left","60 on order",15,100]]},"hubspot":{"name":"HubSpot","prompt":"Which deals went quiet? Draft a note for each.","out":["3 quiet deals followed up","Logged"],"hand":20,"ask":18,"hot":[1,1,1,0,0,0],"doc":{"t":"Quiet deals","big":"3","a":["Gone quiet","No word in 30 days"],"b":["Picked back up","A note and a task on each"]},"things":[["Harbour Dental","Quiet 34 days","Note and task added"],["Cove Road Cafe","Quiet 41 days","Note and task added"],["East End Yoga","Quiet 30 days","Note and task added"]]},"meta":{"name":"Meta Ads","prompt":"Which ad brings no buyers? Pause it.","out":["The ad wasting your money","Paused"],"hand":15,"ask":5,"hot":[0,1,0,0,0,0],"doc":{"t":"Local awareness ad","n":[0,210],"pre":"$","a":["On · no buyers","kept this week"],"b":["Off","kept this week"],"dark":1},"things":[["Local awareness ad","On · no buyers in 7 days","Paused"]]},"microsoftexcel":{"name":"Excel","prompt":"Check my totals. What if prices rise 5%?","out":["The wrong total in your sales sheet","Fixed"],"hand":15,"ask":5,"hot":[0,1,0,0,0,0],"doc":{"t":"Sales total","n":[11930,12480],"pre":"$","a":["Wrong","One row was missed"],"b":["Fixed","Was $11,930 · one row was missed"]},"things":[["Row 14 · $550","Left out of the total","Now counted"]]},"gmail":{"name":"Gmail and Calendar","prompt":"What needs a reply today? Book Harbour Dental.","out":["Today's inbox answered, meeting set","Booked"],"hand":20,"ask":5,"hot":[1,1,1,0,0,0],"doc":{"t":"Emails waiting on you","n":[3,0],"steps":[3,2,1,0],"a":["Unanswered","Since this morning"],"b":["Replies drafted","Harbour Dental booked, Tue 10:30"],"dark":1},"things":[["Harbour Dental","Asking to meet","Booked Tue 10:30"],["Cove Road Cafe","Asking for a quote","Reply drafted"],["East End Yoga","Asking about a bill","Reply drafted"]]}};
+  const RACES = {"stripe":{"name":"Stripe","prompt":"Who owes us? Send Harbour Dental their invoice.","out":["Invoice sent to Harbour Dental","Sent"],"hand":10,"ask":5,"hot":[1,1,1,0,0,0],"doc":{"t":"Paid","n":[0,920],"steps":[0,450,730,920],"pre":"$","a":["3 overdue"],"b":["All 3 paid"]},"things":[["Harbour Dental $450"],["Cove Road Cafe $280"],["East End Yoga $190"]]},"shopify":{"name":"Shopify","prompt":"What will run out this month? Draft the reorder.","out":["Stock reordered in time","Sent"],"hand":15,"ask":5,"hot":[1,1,0,0,0,0],"doc":{"t":"Sea salt caramels","n":[14,120],"a":["Running out"],"b":["Reordered"],"grow":1,"approve":1},"things":[["Sea salt caramels",12,100],["Wool mitts",15,100]]},"hubspot":{"name":"HubSpot","prompt":"Which deals went quiet? Draft a note for each.","out":["3 quiet deals followed up","Logged"],"hand":20,"ask":18,"hot":[1,1,1,0,0,0],"doc":{"t":"Quiet deals","big":"3","a":["Gone quiet"],"b":["Picked back up"]},"things":[["Harbour Dental"],["Cove Road Cafe"],["East End Yoga"]]},"meta":{"name":"Meta Ads","prompt":"Which ad brings no buyers? Pause it.","out":["The ad wasting your money","Paused"],"hand":15,"ask":5,"hot":[0,1,0,0,0,0],"doc":{"t":"Local awareness ad","n":[0,210],"pre":"$","a":["On · no buyers","kept this week"],"b":["Off","kept this week"],"dark":1},"things":[]},"microsoftexcel":{"name":"Excel","prompt":"Check my totals. What if prices rise 5%?","out":["The wrong total in your sales sheet","Fixed"],"hand":15,"ask":5,"hot":[0,1,0,0,0,0],"doc":{"t":"Sales total","n":[11930,12480],"pre":"$","a":["Wrong"],"b":["Fixed"]},"things":[["Row 14 · $550"]]},"gmail":{"name":"Gmail and Calendar","prompt":"What needs a reply today? Book Harbour Dental.","out":["Today's inbox answered, meeting set","Booked"],"hand":20,"ask":5,"hot":[1,1,1,0,0,0],"doc":{"t":"Emails waiting on you","n":[3,0],"steps":[3,2,1,0],"a":["Unanswered"],"b":["Replies drafted"],"dark":1},"things":[["Harbour Dental"],["Cove Road Cafe"],["East End Yoga"]]}};
   const S = window.solenix, clamp01 = v => Math.max(0, Math.min(1, v));
   S.races = Object.keys(RACES).map(id => RACES[id]);
   S.rs = S.races.map(() => ({ h: 0, a: 0, p: 0, q: 0, ask: '', hDone: false, aDone: false, on: false, vis: 0 }));
@@ -1498,9 +1502,9 @@ function raceWorld(fl, wsel) {
   vA.copy(vO).addScaledVector(vB, 0.14); layArc(trailA, vA, vE.copy(vA).addScaledVector(vR, Math.max(0.02, rs.a * unit)), 0); trailA.mesh.material.uniforms.uAlpha.value = near * live * 1.1;
   const headA = vE.clone(), back = rc.hand - rc.ask;
   /* What you get back: the ask has stopped and by hand is still going. That stretch is yours, and it is green. */
-  /* It is there from the start, faint: where the ask will stop, and how much further by hand has to go. */
+  /* The time back appears only once by hand has got there: the stretch between where the ask stopped and where by hand ended. */
   const endA = vA.clone().addScaledVector(vR, rc.ask * unit);
-  layArc(gapR, endA, vE.copy(vA).addScaledVector(vR, rc.hand * unit), 0); gapR.mesh.material.uniforms.uAlpha.value = near * live * (rs.aDone ? 0.95 : 0.3);
+  layArc(gapR, endA, vE.copy(vA).addScaledVector(vR, rc.hand * unit), 0); gapR.mesh.material.uniforms.uAlpha.value = near * live * (rs.hDone ? 0.95 : 0);
   /* The things the job is about: an arc round the right and far side of the world, clear of the headline and the tape. */
   const work = c01((p - 0.4) / 0.4), shown = c01((p - 0.8) / 0.08), flip = ease(c01((p - 0.9) / 0.1)), seen = Math.floor(q * ITEM_N + 0.001);
   items.forEach((m, j) => { const a = -0.6 + j * 0.5; itemP[j].copy(Wp).addScaledVector(vR, Math.cos(a) * 1.4).addScaledVector(vB, -Math.sin(a) * 1.4); m.position.copy(itemP[j]);
@@ -1541,7 +1545,7 @@ function raceTags(rw) {
   placeL(tagH, rw.headH, near * live, -20);
   /* Under the tape: the ask's clock ends at its head, and the minutes you get back start there. */
   const mins = Math.floor(rw.back + 0.001); if (tagBack.firstChild.textContent !== mins + ' min') tagBack.firstChild.textContent = mins + ' min';
-  placeUnder(tagA, rw.headA, near * live, -1); placeUnder(tagBack, rw.endA, near * live * (mins >= 1 ? (rs.aDone ? 1 : 0.55) : 0), 1);
+  placeUnder(tagA, rw.headA, near * live, -1); placeUnder(tagBack, rw.endA, near * live * (mins >= 1 && rs.hDone ? 1 : 0), 1);
   tickTags.forEach(e => place(e, vP.copy(rw.o).addScaledVector(vR, e._m * rw.unit).addScaledVector(vB, 1.0), near * 0.4 * vis, 0));
   /* The ask is written beside the world while it travels, and clears once the work is done. */
   const quote = rs.ask ? '“' + rs.ask + (rs.p >= 0.33 ? '”' : '') : '';
@@ -1551,18 +1555,18 @@ function raceTags(rw) {
   const d = rc.doc, st = rs.aDone ? d.b : d.a, col = payTag.lastChild;
   const things = rc.things || [], doneN = things.filter((_, n) => rs.p >= thingAt(rc, n)).length, asking = !!d.approve && rs.p >= 0.8 && !rs.aDone;
   const num = !d.n ? d.big : (d.pre || '') + Math.round(d.steps ? d.steps[doneN] : d.approve ? d.n[rs.aDone ? 1 : 0] : lerp(d.n[0], d.n[1], rs.aDone ? 1 : ease(c01((rs.p - 0.82) / 0.18)))).toLocaleString('en-CA');
-  setDoc(payTag, num, d.t, st[1], asking ? 'Approve' : st[0]);
+  setDoc(payTag, num, d.t, st[1] || '', asking ? 'Approve' : st[0]);
   payTag.classList.toggle('ok', rs.aDone); payTag.classList.toggle('wait', asking);
   /* Each thing, by name, beside its own body: what it was, then what was done to it. */
   const hotIdx = rc.hot.map((h, j) => h ? j : -1).filter(j => j >= 0);
   const pts = [];
   thingTags.forEach((e, n) => { const th = things[n]; if (!th || hotIdx[n] === undefined) { if (e.style.opacity !== '0') e.style.opacity = 0; return; }
-    const done = n < doneN, c = e.children, state = th[done ? 2 : 1];
-    if (c[0].textContent !== th[0]) c[0].textContent = th[0]; if (c[1].textContent !== state) c[1].textContent = state;
-    e.classList.toggle('ok', done); e.classList.toggle('bar', th.length > 3); if (th.length > 3) c[2].firstChild.style.width = th[done ? 4 : 3] + '%';
+    const done = n < doneN, c = e.children;
+    if (c[0].textContent !== th[0]) c[0].textContent = th[0];
+    e.classList.toggle('ok', done); e.classList.toggle('bar', th.length > 1); if (th.length > 1) c[2].firstChild.style.width = th[done ? 2 : 1] + '%';
     proj.copy(itemP[hotIdx[n]]).project(camera); pts.push({ e, x: (proj.x + 1) / 2 * W, y: (1 - proj.y) / 2 * H }); });
   /* The names stand in one tidy column beside their bodies, in the same order top to bottom, never on top of each other. */
-  if (pts.length) { const al = near * live, gap = things[0].length > 3 ? 60 : 50; pts.sort((p0, p1) => p0.y - p1.y);
+  if (pts.length) { const al = near * live, gap = things[0].length > 1 ? 46 : 38; pts.sort((p0, p1) => p0.y - p1.y);
     const mid = pts.reduce((t, q) => t + q.y, 0) / pts.length, wmax = Math.max(...pts.map(q => q.e.offsetWidth || 170)), x = Math.min(Math.max(...pts.map(q => q.x)) + 38, W - 12 - wmax);
     pts.forEach((q, i) => { if (al < 0.01) { if (q.e.style.opacity !== '0') q.e.style.opacity = 0; return; }
       q.e.style.opacity = al.toFixed(3); q.e.style.transform = `translate3d(${x.toFixed(1)}px, ${(mid + (i - (pts.length - 1) / 2) * gap).toFixed(1)}px, 0) translate(0, -50%)`; }); }
