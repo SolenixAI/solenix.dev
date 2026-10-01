@@ -1019,13 +1019,15 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
   /* ── The story, as keyframes on the page. Each one pins the scene at a point in the scroll:
      where the camera is, how hard the suns are steered, how far the orbit is drawn in.
      Values not given carry over from the keyframe before. ── */
+  /* The opening is seen from inside the space: low over the ground, close to the bodies, on a wider lens. */
+  const HERO = S.hero = { el: 13, dist: 7.6, lens: 12 };
   const KEYS = [
     /* 1 · Chaos */
-    { sel: '.sky', f: 0, pin: 1, k: 0, free: 0, order: 0, ink: 0, third: 0, el: 22, az: 0, dist: 18.5, ox: 0.2, oy: 0.12, poy: 0.22, calm: 0, dim: 0, labels: 0, conn: 0, agent: 0, stops: 0, tx: 0, tz: 0, fly: 0, wsel: 0 },
-    { sel: '.sky', f: 0.55, pin: 1, labels: 1, el: 27, az: -10, dist: 16.5, ox: 0.22, oy: 0.1 },
-    { sel: '.sky', f: 1, pin: 1, labels: 0, el: 33, az: -22, dist: 17 },
+    { sel: '.sky', f: 0, pin: 1, k: 0, free: 0, order: 0, ink: 0, third: 0, el: HERO.el, az: 0, dist: HERO.dist, ox: 0.1, oy: 0.05, poy: 0.2, calm: 0, dim: 0, labels: 0, conn: 0, agent: 0, stops: 0, tx: 0, tz: 0, fly: 0, wsel: 0, hero: 1, lens: HERO.lens },
+    { sel: '.sky', f: 0.55, pin: 1, labels: 1, el: 15, az: -12, dist: 7.2, ox: 0.12, oy: 0.05 },
+    { sel: '.sky', f: 1, pin: 1, labels: 0, el: 18, az: -24, dist: 7.8 },
     /* 2 · The guide: the AI ignites at the centre and the first wires go out. */
-    { sel: '#guide', f: 0.25, pin: 1, conn: 1, k: 0.15, free: 0.3, el: 38, az: 6, dist: 9.2, ox: 0.16, oy: 0.02, poy: 0.02 },
+    { sel: '#guide', f: 0.25, pin: 1, hero: 0, lens: 0, conn: 1, k: 0.15, free: 0.3, el: 38, az: 6, dist: 9.2, ox: 0.16, oy: 0.02, poy: 0.02 },
     { sel: '#guide', f: 0.9, pin: 1, k: 0.3, free: 0.4, el: 32, az: 26, dist: 10 },
     /* 3 · The flybys: out past six tool worlds, all the way round. */
     { sel: '#fly-shopify', f: 0.15, pin: 1, wsel: 0, tx: 7.71, tz: 9.19, az: 70, conn: 0, k: 0.3, free: 0.4, fly: 1, dim: 1, el: 24, dist: 8.6, ox: 0, oy: -0.1, poy: 0.4 },
@@ -1532,13 +1534,14 @@ composer.addPass(new RenderPass(scene, camera));
 const bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.4, 0.42, 0.9);
 composer.addPass(bloom);
 composer.addPass(new OutputPass());
-const finalPass = new ShaderPass({ uniforms: { tDiffuse: { value: null }, uTime: { value: 0 }, uRes: { value: new THREE.Vector2(1, 1) }, uCA: { value: 0.008 }, uGrain: { value: 0.045 } },
+const finalPass = new ShaderPass({ uniforms: { tDiffuse: { value: null }, uTime: { value: 0 }, uRes: { value: new THREE.Vector2(1, 1) }, uCA: { value: 0.008 }, uGrain: { value: 0.045 }, uShade: { value: 0 }, uPort: { value: 0 } },
   vertexShader: `varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.); }`,
-  fragmentShader: `uniform sampler2D tDiffuse; uniform float uTime,uCA,uGrain; uniform vec2 uRes; varying vec2 vUv;
+  fragmentShader: `uniform sampler2D tDiffuse; uniform float uTime,uCA,uGrain,uShade,uPort; uniform vec2 uRes; varying vec2 vUv;
     float h(vec2 p){ return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453); }
     void main(){ vec2 c=vUv-.5; float d=dot(c,c); vec2 o=c*d*uCA*4.;
       vec3 col=vec3(texture2D(tDiffuse,vUv+o).r,texture2D(tDiffuse,vUv).g,texture2D(tDiffuse,vUv-o).b);
       col*=1.-smoothstep(.12,.62,d*1.15)*.6;
+      col*=1.-uShade*.62*mix(smoothstep(.8,.14,vUv.x)*smoothstep(.9,.3,vUv.y),smoothstep(.66,.22,vUv.y),uPort);
       col+=(h(floor(vUv*uRes)+fract(uTime*7.)*97.)-.5)*uGrain;
       gl_FragColor=vec4(col,1.); }` });
 composer.addPass(finalPass);
@@ -1568,9 +1571,11 @@ const scr = [[0, 0], [0, 0], [0, 0]];
 /* The five stops of "After you book" sit on the real orbit, in the order the ink reaches them. */
 const INK0 = 0.1, INK_SPAN = 0.9, STOP_U = [0, 1, 2, 3, 4].map(k => INK0 + (k + 0.5) / 5 * INK_SPAN);
 const jrEl = document.getElementById('after');
-const shown = { el: 22, az: 0, dist: 18.5, ox: 0.2, oy: 0.12, tx: 0, tz: 0 };
+const shown = { el: S.hero.el, az: 0, dist: S.hero.dist, ox: 0.1, oy: 0.05, tx: 0, tz: 0 };
 const ui = tags[0].parentElement;
-let fov0 = 34, warp = 0, tagShow = 1, tagW = [90, 90, 90];
+const heroH1 = document.querySelector('.h1'), heroCta = document.querySelector('.hero-ctas'), heroBeat = document.querySelector('.sky .beat'), heroBeatH = heroBeat && heroBeat.querySelector('.beat-h'); let heroBox = [0, 0, 0, 0], heroBoxDirty = true;
+addEventListener('scroll', () => { heroBoxDirty = true; }, { passive: true }); addEventListener('resize', () => { heroBoxDirty = true; });
+let heroR = 1, fov0 = 34, warp = 0, tagShow = 1, tagW = [90, 90, 90];
 
 function frame(dtReal, still) {
   const R = !S.motion, sc = S.scene, a = still ? 1 : 1 - Math.exp(-dtReal * (R ? 1.4 : 5));
@@ -1588,19 +1593,22 @@ function frame(dtReal, still) {
   const easeIn = live ? smooth(0, 1.5, sinceLock) * Math.exp(-Math.max(0, sinceLock - 1.5) * 0.3) : 0;
   /* Scrolling between sections is a move through the world: the lens widens a touch and the camera banks into the turn. */
   warp = R || still ? 0 : lerp(warp, Math.min(1, scrollVel / 3.5), 1 - Math.exp(-dtReal * 6));
-  const fov = fov0 + 5 * warp - 1.5 * easeIn;
+  const heroAmt = R ? heroR : sc.hero;
+  const fov = fov0 + 5 * warp - 1.5 * easeIn + (R ? S.hero.lens * heroR : sc.lens) * (portrait ? 0.35 : 1);
   if (Math.abs(fov - camera.fov) > 0.01) { camera.fov = fov; camera.updateProjectionMatrix(); }
   finalPass.uniforms.uCA.value = 0.008 + 0.02 * warp + 0.012 * swell;
+  finalPass.uniforms.uShade.value = heroAmt; finalPass.uniforms.uPort.value = portrait ? 1 : 0;
   gridU.uChaos.value = 1 - sc.free; gridU.uDepth.value = lerp(0.95, 0.6, sc.calm);
 
   /* One continuous camera move, eased so a fast flick still glides. */
   /* Reduced motion: one fixed, calm viewpoint. No flying, zooming or spinning; the framing only drifts slowly sideways. */
   const calmDist = portrait ? Math.max(14 * 1.3, 3.1 / (Math.tan(D2R(fov0 / 2)) * camera.aspect)) : 14;
-  const dist0 = R ? (stn > 0 ? Math.min(calmDist, portrait ? 12.5 : 9.5) : calmDist) : portrait ? Math.max(sc.dist * 1.3, 3.1 * (1 - 0.45 * sc.fly) / (Math.tan(D2R(fov0 / 2)) * camera.aspect)) : sc.dist;
-  shown.el = R ? (stn > 0 ? 24 : 58) : lerp(shown.el, sc.el, a); shown.az = R ? (stn > 0 ? WAZ(stn - 1) + 30 : 0) : lerp(shown.az, sc.az, a); shown.dist = R ? dist0 : lerp(shown.dist, dist0, a);
+  const dist0 = R ? (stn > 0 ? Math.min(calmDist, portrait ? 12.5 : 9.5) : heroR ? S.hero.dist * (portrait ? 1.3 : 1) : calmDist) : portrait ? Math.max(sc.dist * 1.3, 3.1 * (1 - 0.45 * sc.fly) * lerp(1, 0.5, sc.hero) / (Math.tan(D2R(fov0 / 2)) * camera.aspect)) : sc.dist;
+  shown.el = R ? (stn > 0 ? 24 : heroR ? S.hero.el + 2 : 58) : lerp(shown.el, sc.el, a); shown.az = R ? (stn > 0 ? WAZ(stn - 1) + 30 : 0) : lerp(shown.az, sc.az, a); shown.dist = R ? dist0 : lerp(shown.dist, dist0, a);
   /* Reduced motion: no flight between worlds. The camera holds one station per scene and cuts to the next under a dip. */
   if (R) { const want = sc.fly > 0.5 ? 1 + Math.max(0, Math.min(WN - 1, Math.round(sc.wsel))) : 0;
-    if (want !== stn && !stnBusy) { stnBusy = true; canvas.classList.add('dip'); setTimeout(() => { stn = want; canvas.classList.remove('dip'); stnBusy = false; }, 210); }
+    const wantH = sc.hero > 0.5 ? 1 : 0;
+    if ((want !== stn || wantH !== heroR) && !stnBusy) { stnBusy = true; canvas.classList.add('dip'); setTimeout(() => { stn = want; heroR = wantH; canvas.classList.remove('dip'); stnBusy = false; }, 210); }
     shown.tx = stn > 0 ? WPOS[stn - 1].x : 0; shown.tz = stn > 0 ? WPOS[stn - 1].z : 0;
   } else { stn = -1; shown.tx = lerp(shown.tx, sc.tx, a); shown.tz = lerp(shown.tz, sc.tz, a); }
   shown.ox = lerp(shown.ox, portrait ? 0.3 * sc.fly : sc.ox, a); shown.oy = lerp(shown.oy, portrait ? sc.poy : sc.oy, a);
@@ -1698,12 +1706,15 @@ function frame(dtReal, still) {
      the scene is dimmed behind reading text, and step apart if two suns pass close together. */
   /* On the journey the step is the subject, so the tags step back until the orbit holds. */
   tagShow = lerp(tagShow, locked || sc.agent > 0.98 ? 1 : 0, still ? 1 : 1 - Math.exp(-dtReal * 4));
-  const la = Math.max(0, Math.min(1, 1 - sc.dim / 0.4)) * lerp(1, tagShow, sc.stops), off = portrait ? 24 : 34;
+  if (heroBoxDirty) { heroBoxDirty = false; const onBeat = heroBeat && heroBeat.style.visibility === 'visible', r0 = (onBeat ? heroBeatH : heroH1).getBoundingClientRect(), r1 = (onBeat ? heroBeat : heroCta).getBoundingClientRect(); heroBox = [r0.left - 14, r0.top - 10, Math.max(r0.right, onBeat ? r0.right : r1.right) + 14, r1.bottom + 10]; }
+  const la = Math.max(0, Math.min(1, 1 - sc.dim / 0.4)) * lerp(1, tagShow, sc.stops), off = portrait ? 24 : 34, pxU = H / (2 * Math.tan(D2R(camera.fov / 2)));
   const bd = [0, 1, 2].map(i => Math.hypot(disp[i * 2] - eight.p[i * 2], disp[i * 2 + 1] - eight.p[i * 2 + 1]));
-  const pos = [0, 1, 2].map(i => { proj.copy(B[i]).project(camera); return { i, x: (proj.x + 1) / 2 * W, y: (1 - proj.y) / 2 * H + off }; }).sort((p0, p1) => p0.y - p1.y);
+  const pos = [0, 1, 2].map(i => { proj.copy(B[i]).project(camera); const u = suns[i].material.uniforms, rad = u.uR.value * u.uSize.value * pxU / Math.max(1, camera.position.distanceTo(B[i]));
+    return { i, vis: 1 - heroAmt * smooth(1.02, 1.16, Math.abs(proj.x)), x: (proj.x + 1) / 2 * W, y: (1 - proj.y) / 2 * H + lerp(off, Math.max(off, Math.min(rad, H * 0.22) + 18), heroAmt) }; }).sort((p0, p1) => p0.y - p1.y);
   for (let n = 1; n < 3; n++) for (let m = 0; m < n; m++) if (Math.abs(pos[n].x - pos[m].x) < 92 && pos[n].y - pos[m].y < 24) pos[n].y = pos[m].y + 24;
   pos.forEach(pp => { const e = tags[pp.i], hw = tagW[pp.i] / 2 + 10, x = Math.min(Math.max(pp.x, hw), W - hw);
-    e.style.opacity = la.toFixed(3); e.style.transform = `translate3d(${x.toFixed(1)}px, ${pp.y.toFixed(1)}px, 0) translateX(-50%)`; e.classList.toggle('in', bd[pp.i] < 0.05); });
+    const gap = Math.max(heroBox[0] - (x + hw), (x - hw) - heroBox[2], heroBox[1] - (pp.y + 12), (pp.y - 12) - heroBox[3]);
+    e.style.opacity = (la * pp.vis * lerp(1, smooth(0, 28, gap), heroAmt)).toFixed(3); e.style.transform = `translate3d(${x.toFixed(1)}px, ${pp.y.toFixed(1)}px, 0) translateX(-50%)`; e.classList.toggle('in', bd[pp.i] < 0.05); });
   { const al = la * Math.max(sc.conn, sc.free * 0.75) * (1 - fl); tagAi.style.opacity = al.toFixed(3);
     if (al > 0.001) { proj.copy(HUB).project(camera); tagAi.style.transform = `translate3d(${((proj.x + 1) / 2 * W).toFixed(1)}px, ${((1 - proj.y) / 2 * H - 30).toFixed(1)}px, 0) translateX(-50%)`; } }
 
