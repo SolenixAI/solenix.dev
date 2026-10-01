@@ -9,7 +9,7 @@
 //          Reduce Motion on, because reduced motion stops camera movement, not
 //          the demonstration.
 import os from "node:os"
-import { chromium } from "playwright"
+import { launch } from "./browser.mjs"
 
 const URL = process.argv[2] ?? "http://localhost:3000/"
 const MIN_WORLD = Number(process.env.MIN_WORLD ?? 60)
@@ -60,7 +60,7 @@ for (let waited = 0; os.loadavg()[0] > cores && waited < 600; waited += 15) {
   if (waited === 0) console.log(`waiting for a calm machine (load ${os.loadavg()[0].toFixed(1)} > ${cores} cores)`)
   await new Promise((r) => setTimeout(r, 15000))
 }
-const browser = await chromium.launch()
+const browser = await launch()
 // Never leave a headless browser behind: an orphan keeps rendering the 3D scene and chokes the Mac
 // (three orphans at ~250% CPU each made every timing on 2026-10-01 look slow).
 for (const sig of ["SIGINT", "SIGTERM", "SIGHUP"]) process.on(sig, () => browser.close().finally(() => process.exit(130)))

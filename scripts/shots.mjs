@@ -4,7 +4,7 @@
 // step through the scene, after the scene has had time to play) and index.json.
 import { mkdir, writeFile } from "node:fs/promises"
 import path from "node:path"
-import { chromium } from "playwright"
+import { launch } from "./browser.mjs"
 
 const URL = process.argv[2] ?? "http://localhost:3000/"
 const OUT = process.argv[3] ?? "shots"
@@ -14,7 +14,7 @@ const PLAY_MS = Number(process.env.PLAY_MS ?? 2500)
 const ONLY = process.env.ONLY?.split(",") // e.g. ONLY=pane
 
 await mkdir(OUT, { recursive: true })
-const browser = await chromium.launch()
+const browser = await launch()
 // Never leave a headless browser behind: an orphan keeps rendering the 3D scene and chokes the Mac
 // (three orphans at ~250% CPU each made every timing on 2026-10-01 look slow).
 for (const sig of ["SIGINT", "SIGTERM", "SIGHUP"]) process.on(sig, () => browser.close().finally(() => process.exit(130)))
