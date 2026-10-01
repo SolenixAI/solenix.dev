@@ -96,3 +96,20 @@ Cause: the races are still flat interface over the world; scenes don't read in o
 | **This review** | **66** | **38** | **49** | **36** | **57** | **78** |
 
 Form improves with each pass. Clarity and pull don't move: a stranger still can't tell in one glance what Solenix does, and nothing makes them want it. That's the message, not the drawing.
+
+### Calibrating the review (2026-10-01)
+
+The same plain rubric (clarity, wow, pull, readability, brevity) was applied to world-class pages and to ours, with 3 independent judges per page at 872×837. Scores are means, ± spread.
+
+| Page | Clarity | Wow | Pull | Read | Brevity |
+| --- | --- | --- | --- | --- | --- |
+| Apple AirPods Pro | 90 ±0 | 96 ±0 | 83 ±1 | 94 ±0 | 96 ±1 |
+| Stripe | 62 ±6 | 82 ±4 | 69 ±7 | 63 ±6 | 64 ±4 |
+| Linear | 47 ±4 | 87 ±2 | 55 ±2 | 79 ±4 | 82 ±7 |
+| Solenix hero | 65 ±4 | 78 ±1 | 67 ±3 | 55 ±4 | 85 ±2 |
+| Solenix Stripe race | 53 ±1 | 71 ±1 | 46 ±1 | 61 ±2 | 82 ±0 |
+
+- The judges are repeatable (spread of 7 points or less), so moves of 1–3 points between reviews are noise.
+- 85 is reachable: Apple's page clears it, so the bar is Apple-level, not impossible.
+- The scene review, with Jager's bar, scores 15–20 points harder than this plain rubric.
+- Next: the hero's readability (55), and the races' pull (46) and clarity (53).
