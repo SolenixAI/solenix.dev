@@ -1021,35 +1021,39 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
      Values not given carry over from the keyframe before. ── */
   /* The opening is seen from inside the space: low over the ground, close to the bodies, on a wider lens. */
   const HERO = S.hero = { el: 13, dist: 7.6, lens: 12 };
+  /* Six tool worlds. Each has its own camera height and distance, and its own place for the three bodies:
+     a → b is where they roam (ahead of / beside the tool, in world units) as you scroll through the section. */
+  const FLY = S.fly = [
+    { id: 'shopify',        tx: 7.71,   tz: 9.19,   el: 24, dist: 8.6,  a: [-0.8, -2.6], b: [-0.4, 2.6],  sp: 1.0, rw: 1.1 },
+    { id: 'meta',           tx: 11.82,  tz: -2.08,  el: 12, dist: 8.2,  a: [5.5, -2.5],  b: [4.5, 2.5],   sp: 1.5, rw: 2.0 },
+    { id: 'quickbooks',     tx: 4.10,   tz: -11.28, el: 56, dist: 11.5, a: [0.5, 0],     b: [-0.8, 0.6],  sp: 2.0, rw: 1.6 },
+    { id: 'gmail',          tx: -7.71,  tz: -9.19,  el: 30, dist: 7.4,  a: [1.2, 3.0],   b: [0.6, -2.8],  sp: 1.0, rw: 1.0 },
+    { id: 'microsoftexcel', tx: -11.82, tz: 2.08,   el: 16, dist: 10.5, a: [3.5, -3.6],  b: [1.5, 3.2],   sp: 1.3, rw: 2.0 },
+    { id: 'hubspot',        tx: -4.10,  tz: 11.28,  el: 42, dist: 9.6,  a: [-1.6, -2.2], b: [-1.2, 2.4],  sp: 1.15, rw: 1.2 }
+  ];
   const KEYS = [
     /* 1 · Chaos */
-    { sel: '.sky', f: 0, pin: 1, k: 0, free: 0, order: 0, ink: 0, third: 0, el: HERO.el, az: 0, dist: HERO.dist, ox: 0.1, oy: 0.05, poy: 0.2, calm: 0, dim: 0, labels: 0, conn: 0, agent: 0, stops: 0, tx: 0, tz: 0, fly: 0, wsel: 0, hero: 1, lens: HERO.lens },
+    { sel: '.sky', f: 0, pin: 1, k: 0, free: 0, order: 0, ink: 0, third: 0, el: HERO.el, az: 0, dist: HERO.dist, ox: 0.1, oy: 0.05, poy: 0.2, calm: 0, dim: 0, labels: 0, conn: 0, agent: 0, stops: 0, tx: 0, tz: 0, fly: 0, wsel: 0, hero: 1, lens: HERO.lens, rf: 0, rs: 0, sp: 1, rw: 0, shl: 0 },
     { sel: '.sky', f: 0.55, pin: 1, labels: 1, el: 15, az: -12, dist: 7.2, ox: 0.12, oy: 0.05 },
     { sel: '.sky', f: 1, pin: 1, labels: 0, el: 18, az: -24, dist: 7.8 },
-    /* 2 · The guide: the AI ignites at the centre and the first wires go out. */
-    { sel: '#guide', f: 0.25, pin: 1, hero: 0, lens: 0, conn: 1, k: 0.15, free: 0.3, el: 38, az: 6, dist: 9.2, ox: 0.16, oy: 0.02, poy: 0.02 },
-    { sel: '#guide', f: 0.9, pin: 1, k: 0.3, free: 0.4, el: 32, az: 26, dist: 10 },
-    /* 3 · The flybys: out past six tool worlds, all the way round. */
-    { sel: '#fly-shopify', f: 0.15, pin: 1, wsel: 0, tx: 7.71, tz: 9.19, az: 70, conn: 0, k: 0.3, free: 0.4, fly: 1, dim: 1, el: 24, dist: 8.6, ox: 0, oy: -0.1, poy: 0.4 },
-    { sel: '#fly-shopify', f: 0.8, pin: 1, az: 80 },
-    { sel: '#fly-meta', f: 0.15, pin: 1, wsel: 1, tx: 11.82, tz: -2.08, az: 130 },
-    { sel: '#fly-meta', f: 0.8, pin: 1, az: 140 },
-    { sel: '#fly-quickbooks', f: 0.15, pin: 1, wsel: 2, tx: 4.10, tz: -11.28, az: 190 },
-    { sel: '#fly-quickbooks', f: 0.8, pin: 1, az: 200 },
-    { sel: '#fly-gmail', f: 0.15, pin: 1, wsel: 3, tx: -7.71, tz: -9.19, az: 250 },
-    { sel: '#fly-gmail', f: 0.8, pin: 1, az: 260 },
-    { sel: '#fly-microsoftexcel', f: 0.15, pin: 1, wsel: 4, tx: -11.82, tz: 2.08, az: 310 },
-    { sel: '#fly-microsoftexcel', f: 0.8, pin: 1, az: 320 },
-    { sel: '#fly-hubspot', f: 0.15, pin: 1, wsel: 5, tx: -4.10, tz: 11.28, az: 370 },
-    { sel: '#fly-hubspot', f: 0.8, pin: 1, az: 380 },
-    /* 4 · The plan: back to the centre, and the orbit is drawn in. */
-    { sel: '#after', f: 0, pin: 1, fly: 0, tx: 0, tz: 0, k: 0.9, free: 0.6, dim: 0, stops: 1, el: 60, az: 394, dist: 9.6, ox: 0.21, oy: 0.02, poy: 0.02, calm: 0.35 },
-    { sel: '#after', f: 0.35, pin: 1, k: 1, free: 1, third: 0.6, poy: -0.02 },
+    /* From here to the plan nothing is steered. The three bodies stay wild and range across the world:
+       rf / rs place them ahead of or beside where the camera looks, sp spreads them, rw lets each one wander. */
+    /* 2 · The guide: the AI is lit at the centre; the bodies swing wide around it, unheld. */
+    { sel: '#guide', f: 0.25, pin: 1, hero: 0, lens: 0, conn: 1, k: 0, free: 0, el: 44, az: 10, dist: 12.5, ox: 0.22, oy: 0.02, poy: 0.02, rf: 0.8, rs: 1.6, sp: 1.35, rw: 1.5, shl: 1 },
+    { sel: '#guide', f: 0.9, pin: 1, el: 36, az: 34, dist: 11.5, rf: -0.4, rs: 2.2, sp: 1.5 },
+    /* 3 · The flybys: six tool worlds, each its own place and its own view. The bodies come too, still wild. */
+    ...FLY.flatMap((w, i) => [
+      { sel: '#fly-' + w.id, f: 0.15, pin: 1, wsel: i, tx: w.tx, tz: w.tz, az: 70 + i * 60, conn: 0, k: 0, free: 0, fly: 1, dim: 1, shl: 0, el: w.el, dist: w.dist, ox: 0, oy: -0.1, poy: 0.4, rf: w.a[0], rs: w.a[1], sp: w.sp, rw: w.rw },
+      { sel: '#fly-' + w.id, f: 0.8, pin: 1, az: 80 + i * 60, rf: w.b[0], rs: w.b[1] } ]),
+    /* 4 · The plan: back to the centre. Only here are they steered, and only here does the orbit form. */
+    { sel: '#after', f: 0, pin: 1, fly: 0, tx: 0, tz: 0, k: 0.45, free: 0.4, dim: 0, stops: 1, el: 60, az: 394, dist: 9.6, ox: 0.21, oy: 0.02, poy: 0.02, calm: 0.35, rf: 0, rs: 0, sp: 1, rw: 0, shl: 0.85 },
+    { sel: '#after', f: 0.35, pin: 1, k: 1, free: 1, third: 0.6, poy: -0.02, shl: 0.3 },
     { sel: '#after', f: 1, pin: 1, k: 1, order: 1, ink: 1, third: 1, calm: 1, el: 64, az: 402 },
-    { sel: '#promises', f: 0.1, pin: 1, stops: 0, el: 40, az: 438, dist: 12, ox: 0.24, oy: 0.03, poy: -0.04 },
-    { sel: '#promises', f: 1, pin: 1, el: 34, az: 510 },
-    /* 5 · Stable orbit: steering lets go and it holds. */
-    { sel: '#close', f: 0.35, k: 0, agent: 1, el: 56, az: 532, dist: 12.5, ox: 0.24, oy: 0.08, poy: 0.3 },
+    /* The promises: down inside the orbit, close, as the bodies glide past in order. */
+    { sel: '#promises', f: 0.1, pin: 1, stops: 0, shl: 0, el: 17, az: 438, dist: 8.8, lens: 8, ox: 0.24, oy: 0.03, poy: -0.04 },
+    { sel: '#promises', f: 1, pin: 1, el: 14, az: 510 },
+    /* 5 · Stable orbit: steering lets go and it holds. Seen whole, from high above. */
+    { sel: '#close', f: 0.35, k: 0, agent: 1, lens: 0, el: 56, az: 532, dist: 12.5, ox: 0.24, oy: 0.08, poy: 0.3 },
     { sel: '#close', f: 1, el: 60, az: 540, dist: 13.5 }
   ];
   const PARAMS = Object.keys(KEYS[0]).filter(k => !['sel', 'f', 'pin', 'gap'].includes(k));
@@ -1072,6 +1076,7 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
     const y = scrollY, [i, t] = sceneAt(y), A = KEYS[i], B = KEYS[Math.min(i + 1, KEYS.length - 1)], sc = S.scene;
     /* Always continuous. Reduced motion changes how the scene moves, never whether it follows the scroll. */
     PARAMS.forEach(k => sc[k] = A[k] + (B[k] - A[k]) * t);
+    S.sec = t < 0.5 ? A.sel : B.sel;
   }
 
   const sky = $('.sky'), nav = $('.nav'), hero = $('.hero-copy'), beat = $('.beat'), cue = $('.scroll-cue'), world = $('.world');
@@ -1294,8 +1299,12 @@ function curve(u, out) { u = ((u % 1) + 1) % 1; const f = u * LUT_N, i = Math.fl
 
 /* Trail history of what you see, pushed by simulation time so one full loop is exactly HN samples. */
 const HN = 300, PUSH = T8 / HN;
-const hist = { p: new Float32Array(HN * 6), head: 0, next: 0 };
-function push() { const i = hist.head = (hist.head + 1) % HN; for (let k = 0; k < 6; k++) hist.p[i * 6 + k] = sys.p[k]; }
+/* Roaming. The physics runs in its own small frame; `roam` says where in the world each body's frame sits
+   (o: an x,z offset per body) and how far the three are spread. Until the plan these keep moving, so the
+   bodies really cross the plane. At the plan they come home: offsets go to zero and the spread to one. */
+const roam = { o: new Float64Array(6), sp: 1, mx: 0, mz: 0, r: 0 };
+const hist = { p: new Float32Array(HN * 6), w: new Float32Array(HN * 6), head: 0, next: 0 };
+function push() { const i = hist.head = (hist.head + 1) % HN; for (let k = 0; k < 6; k++) { hist.p[i * 6 + k] = sys.p[k]; hist.w[i * 6 + k] = sys.p[k] * SC * roam.sp + roam.o[k]; } }
 function advance(simDt) {
   const n = Math.round(simDt / DT);
   for (let i = 0; i < n; i++) { step(); if (sys.t >= hist.next) { push(); hist.next += PUSH; } }
@@ -1304,7 +1313,7 @@ advance(24); // warm up: fills the trails and lands somewhere lively
 const snap = { p: Float64Array.from(sys.p), v: Float64Array.from(sys.v), e: Float64Array.from(eight.p), ev: Float64Array.from(eight.v), h: Float32Array.from(hist.p), head: hist.head, t: sys.t };
 /* Reduced motion: a still frame per beat, computed by actually running the steered system. */
 function setStill(beat) {
-  sys.p.set(snap.p); sys.v.set(snap.v); eight.p.set(snap.e); eight.v.set(snap.ev); hist.p.set(snap.h); hist.head = snap.head; sys.t = eight.t = snap.t; hist.next = sys.t + PUSH;
+  sys.p.set(snap.p); sys.v.set(snap.v); eight.p.set(snap.e); eight.v.set(snap.ev); hist.p.set(snap.h); for (let k = 0; k < HN * 6; k++) hist.w[k] = snap.h[k] * SC; hist.head = snap.head; sys.t = eight.t = snap.t; hist.next = sys.t + PUSH;
   if (beat === 2) { ctl.k = 0.35; ctl.soft = 0.2; ctl.conf = 0.5; advance(0.9); }
   if (beat >= 3) { ctl.k = 1; ctl.soft = 0; ctl.conf = 0; advance(9); ctl.k = 0; advance(T8); }
   if (beat < 2) { ctl.k = 0; ctl.soft = 0.35; ctl.conf = 1; }
@@ -1406,7 +1415,7 @@ let shownBlend = 0;
 function updateDisplay() {
   const b = shownBlend, a = 1 - b;
   for (let k = 0; k < 6; k++) { disp[k] = sys.p[k] * a + eight.p[k] * b; dispV[k] = sys.v[k] * a + eight.v[k] * b; }
-  for (let i = 0; i < 3; i++) bodyU.value[i].set(disp[i * 2] * SC, SUN_Y, disp[i * 2 + 1] * SC);
+  for (let i = 0; i < 3; i++) bodyU.value[i].set(disp[i * 2] * SC * roam.sp + roam.o[i * 2], SUN_Y, disp[i * 2 + 1] * SC * roam.sp + roam.o[i * 2 + 1]);
 }
 updateDisplay();
 for (let i = 0; i < DN; i++) { spawn(i); D.ph[i] = Math.random(); D.off[i] = gauss() * (Math.random() < 0.85 ? 0.035 : 0.12); D.j[i] = gauss(); dSeed[i] = Math.random(); }
@@ -1534,14 +1543,15 @@ composer.addPass(new RenderPass(scene, camera));
 const bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.4, 0.42, 0.9);
 composer.addPass(bloom);
 composer.addPass(new OutputPass());
-const finalPass = new ShaderPass({ uniforms: { tDiffuse: { value: null }, uTime: { value: 0 }, uRes: { value: new THREE.Vector2(1, 1) }, uCA: { value: 0.008 }, uGrain: { value: 0.045 }, uShade: { value: 0 }, uPort: { value: 0 } },
+const finalPass = new ShaderPass({ uniforms: { tDiffuse: { value: null }, uTime: { value: 0 }, uRes: { value: new THREE.Vector2(1, 1) }, uCA: { value: 0.008 }, uGrain: { value: 0.045 }, uShade: { value: 0 }, uShadeL: { value: 0 }, uShadeB: { value: 0 }, uPort: { value: 0 } },
   vertexShader: `varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.); }`,
-  fragmentShader: `uniform sampler2D tDiffuse; uniform float uTime,uCA,uGrain,uShade,uPort; uniform vec2 uRes; varying vec2 vUv;
+  fragmentShader: `uniform sampler2D tDiffuse; uniform float uTime,uCA,uGrain,uShade,uShadeL,uShadeB,uPort; uniform vec2 uRes; varying vec2 vUv;
     float h(vec2 p){ return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453); }
     void main(){ vec2 c=vUv-.5; float d=dot(c,c); vec2 o=c*d*uCA*4.;
       vec3 col=vec3(texture2D(tDiffuse,vUv+o).r,texture2D(tDiffuse,vUv).g,texture2D(tDiffuse,vUv-o).b);
       col*=1.-smoothstep(.12,.62,d*1.15)*.6;
       col*=1.-uShade*.62*mix(smoothstep(.8,.14,vUv.x)*smoothstep(.9,.3,vUv.y),smoothstep(.66,.22,vUv.y),uPort);
+      col*=1.-uShadeL*mix(.66*smoothstep(.74,.26,vUv.x),.42,uPort); col*=1.-uShadeB*.36;
       col+=(h(floor(vUv*uRes)+fract(uTime*7.)*97.)-.5)*uGrain;
       gl_FragColor=vec4(col,1.); }` });
 composer.addPass(finalPass);
@@ -1573,9 +1583,12 @@ const INK0 = 0.1, INK_SPAN = 0.9, STOP_U = [0, 1, 2, 3, 4].map(k => INK0 + (k + 
 const jrEl = document.getElementById('after');
 const shown = { el: S.hero.el, az: 0, dist: S.hero.dist, ox: 0.1, oy: 0.05, tx: 0, tz: 0 };
 const ui = tags[0].parentElement;
-const heroH1 = document.querySelector('.h1'), heroCta = document.querySelector('.hero-ctas'), heroBeat = document.querySelector('.sky .beat'), heroBeatH = heroBeat && heroBeat.querySelector('.beat-h'); let heroBox = [0, 0, 0, 0], heroBoxDirty = true;
+const heroH1 = document.querySelector('.h1'), heroCta = document.querySelector('.hero-ctas'), heroBeat = document.querySelector('.sky .beat'), heroBeatH = heroBeat && heroBeat.querySelector('.beat-h'), guideBlocks = [...document.querySelectorAll('#guide .jr-head, #guide .guide-say')]; let heroBox = [0, 0, 0, 0], guideBox = [], heroBoxDirty = true;
 addEventListener('scroll', () => { heroBoxDirty = true; }, { passive: true }); addEventListener('resize', () => { heroBoxDirty = true; });
-let heroR = 1, fov0 = 34, warp = 0, tagShow = 1, tagW = [90, 90, 90];
+const ROAM_RATE = [2.1, 1.2, 0.75];
+/* Reduced motion: these sections hold their own still view, reached by a cut, never a flight. [elevation, distance] */
+const RVIEW = { '#guide': [44, 12.5], '#promises': [17, 8.8] };
+let secR = '', heroR = 1, fov0 = 34, warp = 0, tagShow = 1, tagW = [90, 90, 90];
 
 function frame(dtReal, still) {
   const R = !S.motion, sc = S.scene, a = still ? 1 : 1 - Math.exp(-dtReal * (R ? 1.4 : 5));
@@ -1586,6 +1599,15 @@ function frame(dtReal, still) {
   /* Once the orbit has formed, steering lets go; if anything knocks it off, it comes back and the readout says so. */
   if (!still && sc.order > 0.9 && dNow > 0.006) ctl.k = Math.max(ctl.k, Math.min(1, 0.35 + dNow * 8));
   if ((S.pingN | 0) !== pingSeen) { pingSeen = S.pingN | 0; pingT = clockT; }
+  /* Where the bodies roam: a place set by the section, ahead of or beside where the camera looks. Each body
+     heads there at its own pace and wanders round it, so between sections they string out across the plane. */
+  { const azr = D2R(shown.az), bx = shown.tx - Math.sin(azr) * sc.rf + Math.cos(azr) * sc.rs, bz = shown.tz - Math.cos(azr) * sc.rf - Math.sin(azr) * sc.rs;
+    let r = 0;
+    for (let i = 0; i < 3; i++) { const g = still ? 1 : 1 - Math.exp(-dtReal * ROAM_RATE[i] * (R ? 0.5 : 1));
+      const wx = bx + sc.rw * Math.sin(clockT * (0.23 + i * 0.05) + i * 2.1), wz = bz + sc.rw * Math.cos(clockT * (0.19 + i * 0.04) + i * 1.3);
+      roam.o[i * 2] += (wx - roam.o[i * 2]) * g; roam.o[i * 2 + 1] += (wz - roam.o[i * 2 + 1]) * g; r = Math.max(r, Math.abs(roam.o[i * 2]), Math.abs(roam.o[i * 2 + 1])); }
+    roam.sp += (sc.sp - roam.sp) * (still ? 1 : 1 - Math.exp(-dtReal * 1.4)); roam.r = r + Math.abs(roam.sp - 1);
+    roam.mx = (roam.o[0] + roam.o[2] + roam.o[4]) / 3; roam.mz = (roam.o[1] + roam.o[3] + roam.o[5]) / 3; }
   updateDisplay();
   /* The moment it locks: the camera eases in, the light swells once, then both let go. Full motion only. */
   const sinceLock = clockT - lockT, live = !R && !still && sinceLock >= 0;
@@ -1597,18 +1619,18 @@ function frame(dtReal, still) {
   const fov = fov0 + 5 * warp - 1.5 * easeIn + (R ? S.hero.lens * heroR : sc.lens) * (portrait ? 0.35 : 1);
   if (Math.abs(fov - camera.fov) > 0.01) { camera.fov = fov; camera.updateProjectionMatrix(); }
   finalPass.uniforms.uCA.value = 0.008 + 0.02 * warp + 0.012 * swell;
-  finalPass.uniforms.uShade.value = heroAmt; finalPass.uniforms.uPort.value = portrait ? 1 : 0;
+  finalPass.uniforms.uShade.value = heroAmt; finalPass.uniforms.uShadeL.value = sc.shl; finalPass.uniforms.uShadeB.value = R ? (stn > 0 ? 1 : 0) : sc.fly; finalPass.uniforms.uPort.value = portrait ? 1 : 0;
   gridU.uChaos.value = 1 - sc.free; gridU.uDepth.value = lerp(0.95, 0.6, sc.calm);
 
   /* One continuous camera move, eased so a fast flick still glides. */
   /* Reduced motion: one fixed, calm viewpoint. No flying, zooming or spinning; the framing only drifts slowly sideways. */
   const calmDist = portrait ? Math.max(14 * 1.3, 3.1 / (Math.tan(D2R(fov0 / 2)) * camera.aspect)) : 14;
-  const dist0 = R ? (stn > 0 ? Math.min(calmDist, portrait ? 12.5 : 9.5) : heroR ? S.hero.dist * (portrait ? 1.3 : 1) : calmDist) : portrait ? Math.max(sc.dist * 1.3, 3.1 * (1 - 0.45 * sc.fly) * lerp(1, 0.5, sc.hero) / (Math.tan(D2R(fov0 / 2)) * camera.aspect)) : sc.dist;
-  shown.el = R ? (stn > 0 ? 24 : heroR ? S.hero.el + 2 : 58) : lerp(shown.el, sc.el, a); shown.az = R ? (stn > 0 ? WAZ(stn - 1) + 30 : 0) : lerp(shown.az, sc.az, a); shown.dist = R ? dist0 : lerp(shown.dist, dist0, a);
+  const rv = RVIEW[secR], dist0 = R ? (stn > 0 ? Math.min(calmDist, S.fly[stn - 1].dist * (portrait ? 1.3 : 1.05)) : heroR ? S.hero.dist * (portrait ? 1.3 : 1) : rv ? rv[1] * (portrait ? 1.3 : 1) : calmDist) : portrait ? Math.max(sc.dist * 1.3, 3.1 * (1 - 0.45 * sc.fly) * lerp(1, 0.5, sc.hero) / (Math.tan(D2R(fov0 / 2)) * camera.aspect)) : sc.dist;
+  shown.el = R ? (stn > 0 ? S.fly[stn - 1].el : heroR ? S.hero.el + 2 : rv ? rv[0] : 58) : lerp(shown.el, sc.el, a); shown.az = R ? (stn > 0 ? WAZ(stn - 1) + 30 : 0) : lerp(shown.az, sc.az, a); shown.dist = R ? dist0 : lerp(shown.dist, dist0, a);
   /* Reduced motion: no flight between worlds. The camera holds one station per scene and cuts to the next under a dip. */
   if (R) { const want = sc.fly > 0.5 ? 1 + Math.max(0, Math.min(WN - 1, Math.round(sc.wsel))) : 0;
-    const wantH = sc.hero > 0.5 ? 1 : 0;
-    if ((want !== stn || wantH !== heroR) && !stnBusy) { stnBusy = true; canvas.classList.add('dip'); setTimeout(() => { stn = want; heroR = wantH; canvas.classList.remove('dip'); stnBusy = false; }, 210); }
+    const wantH = sc.hero > 0.5 ? 1 : 0, wantS = RVIEW[S.sec] ? S.sec : '';
+    if ((want !== stn || wantH !== heroR || wantS !== secR) && !stnBusy) { stnBusy = true; canvas.classList.add('dip'); setTimeout(() => { stn = want; heroR = wantH; secR = wantS; canvas.classList.remove('dip'); stnBusy = false; }, 210); }
     shown.tx = stn > 0 ? WPOS[stn - 1].x : 0; shown.tz = stn > 0 ? WPOS[stn - 1].z : 0;
   } else { stn = -1; shown.tx = lerp(shown.tx, sc.tx, a); shown.tz = lerp(shown.tz, sc.tz, a); }
   shown.ox = lerp(shown.ox, portrait ? 0.3 * sc.fly : sc.ox, a); shown.oy = lerp(shown.oy, portrait ? sc.poy : sc.oy, a);
@@ -1626,8 +1648,8 @@ function frame(dtReal, still) {
   /* The fourth mass: wherever the pointer meets the plane. It fades in on move and out when idle. */
   const idle = clockT - mouse.lastMove, want = S.motion && mouse.px >= 0 && idle < 2.5 ? 1 : 0;
   cur.m = lerp(cur.m, want, still ? 0 : 1 - Math.exp(-dtReal * (want ? 3 : 1.2)));
-  if (mouse.px >= 0) { ndc.set(mouse.px / W * 2 - 1, -(mouse.py / H * 2 - 1)); ray.setFromCamera(ndc, camera); if (ray.ray.intersectPlane(plane, hit)) { cur.x = hit.x / SC; cur.y = hit.z / SC; } }
-  gridU.uC.value.set(cur.x * SC, cur.y * SC, cur.m);
+  if (mouse.px >= 0) { ndc.set(mouse.px / W * 2 - 1, -(mouse.py / H * 2 - 1)); ray.setFromCamera(ndc, camera); if (ray.ray.intersectPlane(plane, hit)) { cur.x = (hit.x - roam.mx) / (SC * roam.sp); cur.y = (hit.z - roam.mz) / (SC * roam.sp); } }
+  gridU.uC.value.set(cur.x * SC * roam.sp + roam.mx, cur.y * SC * roam.sp + roam.mz, cur.m);
 
   /* Trails: the real history. Long and tangled in chaos; a third of the loop each once settled,
      so together they draw the eight once instead of stacking three bright copies. */
@@ -1637,15 +1659,15 @@ function frame(dtReal, still) {
     for (let k = 0; k < HN; k++) {
       const back = (1 - k / (HN - 1)) * L, f = (HN - 1) - back, j0 = Math.floor(f), j1 = Math.min(HN - 1, j0 + 1), fr = f - j0;
       const i0 = ((hist.head + 1 + j0) % HN) * 6 + b * 2, i1 = ((hist.head + 1 + j1) % HN) * 6 + b * 2;
-      pts[k * 3] = (hist.p[i0] + (hist.p[i1] - hist.p[i0]) * fr) * SC; pts[k * 3 + 1] = SUN_Y; pts[k * 3 + 2] = (hist.p[i0 + 1] + (hist.p[i1 + 1] - hist.p[i0 + 1]) * fr) * SC;
+      pts[k * 3] = hist.w[i0] + (hist.w[i1] - hist.w[i0]) * fr; pts[k * 3 + 1] = SUN_Y; pts[k * 3 + 2] = hist.w[i0 + 1] + (hist.w[i1 + 1] - hist.w[i0 + 1]) * fr;
     }
     const v = bodyU.value[b]; pts[HN * 3] = v.x; pts[HN * 3 + 1] = v.y; pts[HN * 3 + 2] = v.z;
     layRibbon(trails[b], tw);
-    trails[b].mesh.material.uniforms.uAlpha.value = lerp(0.9, 0.85, sc.calm) * (R ? 1 - shownBlend * 0.8 : 1);
+    trails[b].mesh.material.uniforms.uAlpha.value = lerp(0.9, 0.85, sc.calm) * (R ? 1 - shownBlend * 0.8 : 1) * (1 - 0.5 * sc.fly);
     suns[b].position.copy(v);
     /* Warm and dramatic, but never so bright it swallows the body, its trail or a label. */
     const u = suns[b].material.uniforms;
-    u.uSize.value = lerp(1.75, portrait ? 1.35 : 1.25, sc.calm); u.uGain.value = lerp(0.72, 0.62, sc.calm) + 0.3 * swell; u.uFlare.value = lerp(0.45, 0.18, sc.calm);
+    u.uSize.value = lerp(1.75, portrait ? 1.35 : 1.25, sc.calm); u.uGain.value = (lerp(0.72, 0.62, sc.calm) + 0.3 * swell) * (1 - 0.45 * sc.fly); u.uFlare.value = lerp(0.45, 0.18, sc.calm);
     /* Lens strength for this sun, in screen units, shrinking with distance. */
     proj.copy(v).project(camera); lensU.value[b].set(proj.x, proj.y, proj.z < 1 ? 0.05 * 11 / shown.dist : 0);
   }
@@ -1664,7 +1686,7 @@ function frame(dtReal, still) {
   dustU.uOrder.value = sc.order;
   const phase = eight.t / T8;
   for (let i = 0; i < DN; i++) {
-    let x = D.x[i] * SC, z = D.y[i] * SC, y = gridY(x, z) * 0.7 + SUN_Y * 0.3 + D.j[i] * 0.06;
+    const ro = (i % 3) * 2; let x = D.x[i] * SC * roam.sp + roam.o[ro], z = D.y[i] * SC * roam.sp + roam.o[ro + 1], y = gridY(x, z) * 0.7 + SUN_Y * 0.3 + D.j[i] * 0.06;
     if (sc.order > 0) {
       curve(D.ph[i] + phase, tmp2); const ax = tmp2[0], ay = tmp2[1];
       curve(D.ph[i] + phase + 0.002, tmp2); let nx = -(tmp2[1] - ay), ny = tmp2[0] - ax; const nl = Math.hypot(nx, ny) || 1;
@@ -1706,15 +1728,17 @@ function frame(dtReal, still) {
      the scene is dimmed behind reading text, and step apart if two suns pass close together. */
   /* On the journey the step is the subject, so the tags step back until the orbit holds. */
   tagShow = lerp(tagShow, locked || sc.agent > 0.98 ? 1 : 0, still ? 1 : 1 - Math.exp(-dtReal * 4));
-  if (heroBoxDirty) { heroBoxDirty = false; const onBeat = heroBeat && heroBeat.style.visibility === 'visible', r0 = (onBeat ? heroBeatH : heroH1).getBoundingClientRect(), r1 = (onBeat ? heroBeat : heroCta).getBoundingClientRect(); heroBox = [r0.left - 14, r0.top - 10, Math.max(r0.right, onBeat ? r0.right : r1.right) + 14, r1.bottom + 10]; }
+  if (heroBoxDirty) { heroBoxDirty = false; const onBeat = heroBeat && heroBeat.style.visibility === 'visible', r0 = (onBeat ? heroBeatH : heroH1).getBoundingClientRect(), r1 = (onBeat ? heroBeat : heroCta).getBoundingClientRect(); heroBox = [r0.left - 14, r0.top - 10, Math.max(r0.right, onBeat ? r0.right : r1.right) + 14, r1.bottom + 10];
+    guideBox = guideBlocks.map(e => { const r = e.getBoundingClientRect(); return [r.left - 14, r.top - 10, r.right + 14, r.bottom + 10]; }); }
   const la = Math.max(0, Math.min(1, 1 - sc.dim / 0.4)) * lerp(1, tagShow, sc.stops), off = portrait ? 24 : 34, pxU = H / (2 * Math.tan(D2R(camera.fov / 2)));
   const bd = [0, 1, 2].map(i => Math.hypot(disp[i * 2] - eight.p[i * 2], disp[i * 2 + 1] - eight.p[i * 2 + 1]));
   const pos = [0, 1, 2].map(i => { proj.copy(B[i]).project(camera); const u = suns[i].material.uniforms, rad = u.uR.value * u.uSize.value * pxU / Math.max(1, camera.position.distanceTo(B[i]));
-    return { i, vis: 1 - heroAmt * smooth(1.02, 1.16, Math.abs(proj.x)), x: (proj.x + 1) / 2 * W, y: (1 - proj.y) / 2 * H + lerp(off, Math.max(off, Math.min(rad, H * 0.22) + 18), heroAmt) }; }).sort((p0, p1) => p0.y - p1.y);
+    return { i, vis: 1 - Math.max(heroAmt, Math.min(1, sc.rw)) * smooth(1.02, 1.16, Math.abs(proj.x)), x: (proj.x + 1) / 2 * W, y: (1 - proj.y) / 2 * H + lerp(off, Math.max(off, Math.min(rad, H * 0.22) + 18), heroAmt) }; }).sort((p0, p1) => p0.y - p1.y);
   for (let n = 1; n < 3; n++) for (let m = 0; m < n; m++) if (Math.abs(pos[n].x - pos[m].x) < 92 && pos[n].y - pos[m].y < 24) pos[n].y = pos[m].y + 24;
   pos.forEach(pp => { const e = tags[pp.i], hw = tagW[pp.i] / 2 + 10, x = Math.min(Math.max(pp.x, hw), W - hw);
-    const gap = Math.max(heroBox[0] - (x + hw), (x - hw) - heroBox[2], heroBox[1] - (pp.y + 12), (pp.y - 12) - heroBox[3]);
-    e.style.opacity = (la * pp.vis * lerp(1, smooth(0, 28, gap), heroAmt)).toFixed(3); e.style.transform = `translate3d(${x.toFixed(1)}px, ${pp.y.toFixed(1)}px, 0) translateX(-50%)`; e.classList.toggle('in', bd[pp.i] < 0.05); });
+    const clear = bx => Math.max(bx[0] - (x + hw), (x - hw) - bx[2], bx[1] - (pp.y + 12), (pp.y - 12) - bx[3]);
+    const gap = S.sec === '#guide' ? Math.min(...guideBox.map(clear)) : clear(heroBox);
+    e.style.opacity = (la * pp.vis * lerp(1, smooth(0, 28, gap), S.sec === '#guide' ? 1 : heroAmt)).toFixed(3); e.style.transform = `translate3d(${x.toFixed(1)}px, ${pp.y.toFixed(1)}px, 0) translateX(-50%)`; e.classList.toggle('in', bd[pp.i] < 0.05); });
   { const al = la * Math.max(sc.conn, sc.free * 0.75) * (1 - fl); tagAi.style.opacity = al.toFixed(3);
     if (al > 0.001) { proj.copy(HUB).project(camera); tagAi.style.transform = `translate3d(${((proj.x + 1) / 2 * W).toFixed(1)}px, ${((1 - proj.y) / 2 * H - 30).toFixed(1)}px, 0) translateX(-50%)`; } }
 
@@ -1728,7 +1752,7 @@ function frame(dtReal, still) {
   });
 
   /* The payoff: the first moment it holds with no steering, the grid rings out and the labels settle. */
-  const d = offOrbit(), holding = ctl.k < 0.01 && d < 0.02 && sc.order > 0.9;
+  const d = offOrbit(), holding = ctl.k < 0.01 && d < 0.02 && sc.order > 0.9 && roam.r < 0.06;
   if (holding && armed && !still) { armed = false; lockT = clockT; if (!R) { ui.classList.remove('lock-pop'); void ui.offsetWidth; ui.classList.add('lock-pop'); } }
   if (d > 0.3 || sc.order < 0.5) armed = true;
   if (holding !== locked) { locked = holding; jrEl.classList.toggle('locked', holding); ui.classList.toggle('locked', holding); }
