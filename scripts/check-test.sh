@@ -50,6 +50,10 @@ expect fail "orphaned Open Design sidecar"
 fresh; rm "$tmp/r/design/roi-model.md"
 expect fail "a source of truth goes missing"
 
+fresh; python3 -m http.server 8799 --bind 127.0.0.1 --directory "$tmp" >/dev/null 2>&1 & srv=$!; sleep 1
+SITE_URL=http://127.0.0.1:8799/missing expect fail "local site answers 404"
+kill "$srv" 2>/dev/null
+
 fresh; mkdir -p "$tmp/r/app/(site)/law"
 expect fail "an industry page (app/(site)/law)"
 

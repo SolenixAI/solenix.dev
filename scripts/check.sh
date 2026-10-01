@@ -83,4 +83,11 @@ done
 # The homepage is served from design/home.html, not a second React page.
 [ -f "app/(site)/page.tsx" ] && bad "second homepage: app/(site)/page.tsx (/ is design/home.html)"
 
+# The page Jager looks at must load. When a local server is up, / answers 200.
+# (A dev server that restarts onto a stale build cache serves 404 for every page.)
+site=${SITE_URL:-http://localhost:3000/}
+code=$(curl -s -o /dev/null -m 5 -w '%{http_code}' "$site" 2>/dev/null)
+[ "$code" = "000" ] || [ "$code" = "200" ] \
+  || bad "local site is broken: $site answers $code (restart the dev server; if it stays broken, move .next/dev aside)"
+
 exit $fail
