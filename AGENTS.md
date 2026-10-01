@@ -4,10 +4,9 @@ Solenix's website and client portal. Next.js on Vercel · Supabase · Stripe · 
 
 ## Sources of truth (one each; everything else derives from them)
 
-- Brand rules: the Open Design design system "Solenix", exported to `design/DESIGN.md`
+- Brand rules and Jager's decisions: `design/DESIGN.md`
 - Token values: `design/tokens.css` (the app imports it in `app/globals.css`)
 - Homepage: `design/home.html` (served as-is at `/`)
-- Before/after examples (real tasks, real connectors, sourced times): `design/before-after.md`
 - ROI model and every constant behind it, with sources: `design/roi-model.md`
 - What Jager has approved (must stay, word for word): `design/approved.md`
 - Review scores: `design/scorecard.md`. They're a guide; Jager's verdict is final.

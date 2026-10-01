@@ -23,22 +23,23 @@ colors:
 The system behind solenix.dev. Solenix is one tech expert for small businesses in St. John's, Newfoundland and Labrador: we rebuild the website, host and look after it monthly, and set up AI (for example Claude for a law firm). The visual world is a night sky — deep blue-black grounds, one warm light source, orbit lines, glass panels — and the story is chaos settling into the figure-eight orbit. Dark throughout, on both surfaces: the marketing site (the three.js night-sky hero where three suns settle into a figure-eight is the signature) and the client portal (Overview, Initiatives, Billing). Calm, confident, a little expensive-looking. Plain Canadian English.
 
 
-## Decisions (Jager's, binding on every page — read before every change)
+## Decisions (Jager's, binding on every page; his latest word wins)
 
-- **Audience:** small business owners who have barely used AI. Plain words. Every claim lands on time saved, money saved or money made.
-- **The offer:** one AI (Claude or ChatGPT) at the centre of the business, connected to the tools they already use, plus teaching; we also cut unused tools, move them off outdated software, bring scattered information together, and build and look after their website. You don't need to be an expert anymore.
-- **Show, never tell:** every example anywhere on the site is a real-time demonstration the visitor watches happen — the ask being typed, the AI working inside the real tool, the result appearing, with the by-hand path racing beside it — never a description, a stat card or a static screenshot. The audience cannot picture what AI does; they have to see and experience it.
-- **The journey (a movie, 2–3 minutes, five scenes, one continuous camera voyage through the universe — the owner is the hero, Solenix the guide):** 1) Chaos — Revenue, Costs and Time tumble through deep space, their tools pulling them apart. 2) The guide — one AI ignites at the centre; "you don't need to be an expert anymore". 3) The flybys — the camera passes real tool worlds (Shopify, Meta Ads, QuickBooks, Gmail, Excel, HubSpot) and each SHOWS (never just states) the same real task as a side-by-side race in real time: on one side the by-hand path clicking through that tool's actual screens with a running stopwatch, on the other the owner typing the plain-English ask and the connected AI's answer arriving, the stopwatch stopping. Steps, prompts and times come only from design/before-after.md; data in the replays is labelled as an example. 4) The plan — "From one call to a stable orbit": the five stops travelling around the real figure-eight, one at a time, as in the committed version Jager liked (keep its five-section rhythm), with the four promises in writing. 5) Stable orbit — the bodies lock into the figure-eight; Book a call.
-- **The story:** Revenue, Costs and Time are three bodies tumbling erratically through an endless universe; the AI at the centre is what settles them into the stable figure-eight. The 3D world runs through the whole site, top to bottom — every section happens inside it, never on flat panels, cards or diagrams laid over it.
-- **Dark site.** The website is dark (the night-sky scene is the experience). The portal follows the visitor's device, light or dark, with a manual choice, because owners read it every week and many read better in light. No Motion switch (the OS reduced-motion setting is the control, and reduced motion still follows the scroll smoothly). No dashboards or readout widgets nobody asked for.
-- **Navigation:** nav links go to real pages, never jump-scrolling around one page. No industry pages (no "Law firms" or similar) — Solenix is for small business owners in general; pages are about what we do and how, not who.
-- **Tools are shown as their real logos** (official marks, unaltered, "the tools you already use", no implied partnership, small trademark note), not generic words.
-- **Pricing:** no prices anywhere public. "Two numbers. Both in writing." Value-based per initiative: what it's worth to the client + three options, highest first; monthly care plan per client.
-- **ROI:** no on-page calculator or "Your numbers, not ours" section on the website. Numbers only from design/roi-model.md, shown per initiative in the portal (Before → Now → $ → payback) and worked out with the owner on the call.
-- **Book a call** is a real booking page (Google Calendar appointment schedule), never a mailto link.
-- **Portal words:** *Initiatives* are Solenix's consulting projects with the client (Linear projects), never "your initiatives". *Billing* is Solenix billing the client — never imply we manage their bills. Tabs: Overview · Initiatives · Billing. Solenix is the first client (dogfood).
-- **Agents page (/agents):** linked everywhere as "Agents Marketplace" (never "Tools we use"). for any AI agent, not one vendor. Every tool has one "Copy for any AI" button — a short plain-language prompt with its link and install command that any agent can follow (e.g. `npx skills add <repo>` for skills); client-specific commands sit behind it. Open-source tools show live usefulness signals from GitHub and package registries — stars, last updated, official/first-party, weekly downloads where they exist — never hand-typed numbers. Same dark 3D world as the homepage.
-- **Sign-in:** passkey, Google, email link (opens a Continue page). Invite-only. No Apple.
+- Homepage base: Open Design version 20, his pick. Everything after it made it worse. Pages are edited directly; Open Design runs are no longer used.
+- The hero opens with "Your business is a three-body problem", and a small-business owner must understand in seconds what Solenix does and want to call.
+- No examples, races, live runs or disclaimers ("one second here is one minute", "can't" lines).
+- Keep "From one call to a stable orbit": five stops, slow enough to read, visuals over text, steps never overlapping.
+- The 3D world runs through the page and must get better: never flattened, never panels laid over it.
+- Price line: "A fixed price, in writing. Agreed on the call. No surprise invoice." No public prices; value-based per initiative.
+- No on-page ROI calculator and no "your numbers, not ours".
+- The site is dark. The portal follows the device and has a manual choice.
+- No Motion switch.
+- Offer: one AI at the centre of the tools they already use; cut unused tools; teach; build the website. Claims land on time or money.
+- "Agents Marketplace" (never "Tools we use"): works with any AI, one copy-paste prompt per tool, GitHub stars for open source.
+- Book a call opens a real booking page, never mailto.
+- Portal words: Initiatives are Solenix's projects with the client; Billing is Solenix billing them, never "your bills". Solenix is client one.
+- Sign-in: passkey, Google, email link. Invite-only. Apple undecided.
+- What Jager approved stays word for word: design/approved.md.
 
 ## Color Palette
 

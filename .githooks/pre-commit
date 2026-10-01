@@ -3,11 +3,6 @@
 bash scripts/check.sh || exit 1
 # No secrets in commits (keys live in .env.local and Vercel, never in git).
 gitleaks git --pre-commit --staged --no-banner --redact --exit-code 1 >/dev/null 2>&1 || { echo "check: a secret is staged for commit (run: gitleaks git --pre-commit --staged --redact)"; exit 1; }
-# design/DESIGN.md is the export of the Open Design system "Solenix"; they must match.
-OD="$HOME/Library/Application Support/Open Design/namespaces/release-stable/data/design-systems/solenix-design-system-v3/DESIGN.md"
-if [ -f "$OD" ] && ! cmp -s "$OD" design/DESIGN.md; then
-  echo "check: design/DESIGN.md differs from the Open Design system \"Solenix\" — sync them before committing."; exit 1
-fi
 # When the rules themselves change, prove them all again (a check that can't fail protects nothing).
 if git diff --cached --name-only | grep -qE '^(scripts/(check|check-test|voice-check)\.(sh|py)|\.githooks/|\.claude/hooks/)'; then
   bash scripts/check-test.sh >/dev/null 2>&1 || { echo "check: scripts/check-test.sh failed; run it to see which rule no longer works"; exit 1; }
