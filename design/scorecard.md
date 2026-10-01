@@ -113,3 +113,16 @@ The same plain rubric (clarity, wow, pull, readability, brevity) was applied to 
 - 85 is reachable: Apple's page clears it, so the bar is Apple-level, not impossible.
 - The scene review, with Jager's bar, scores 15–20 points harder than this plain rubric.
 - Next: the hero's readability (55), and the races' pull (46) and clarity (53).
+
+### Independent review trend (Jager's bar, 872×837)
+
+| Review | What changed | 3D world | Clarity | Wow | Pull | Read | Brevity |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| #1 | sight over text | 53 | 37 | 49 | 36 | 50 | 53 |
+| #2 | races as bodies | 66 | 38 | 49 | 36 | 57 | 78 |
+| #3 | hero says what we do | 63 | 39 | 48 | 38 | 58 | 76 |
+| #4 | payoff in the world | 65 | 42 | 55 | 40 | 64 | 78 |
+| #5 | same page, judges see finished races | 68 | 45 | 57 | 46 | 64 | 77 |
+| #6 | races end on the owner's real output | 67 | 50 | 57 | 50 | 67 | 74 |
+
+Next lever (verified): prove each race with the owner's own thing changing in the world (the invoice becomes paid, the shelf refills), with one such moment on screen 1 within 2 s.
