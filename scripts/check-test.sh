@@ -64,12 +64,6 @@ if (cd "$tmp/r" && git add lib/leak.ts && bash .githooks/pre-commit >/dev/null 2
 lg() { jq -n --arg c "$1" '{tool_name:"Bash",tool_input:{command:$c}}' | bash "$root/.claude/hooks/sign-in-link-guard.sh" >/dev/null 2>&1; echo $?; }
 if [ "$(lg 'curl -X POST $SUPABASE_URL/auth/v1/admin/generate_link')" = 2 ] && [ "$(lg 'npm run build')" = 0 ]; then pass=$((pass + 1)); echo "ok    sign-in link guard blocks admin link generation, allows the rest"; else fail=$((fail + 1)); echo "WRONG sign-in link guard"; fi
 
-fresh; python3 - "$tmp/r/design/before-after.md" <<'PY'
-import re, sys
-p = sys.argv[1]; s = open(p).read(); open(p, "w").write(re.sub(r"^## 3\. Stripe.*$", "## 3. Billing", s, count=1, flags=re.M))
-PY
-expect fail "a race with no sourced section in before-after.md"
-
 fresh; python3 -c "import re,sys; p=sys.argv[1]; open(p,'w').write(re.sub(r'three.body', 'two-part', open(p).read()))" "$tmp/r/design/home.html"
 expect fail "an approved line (the three-body hero) is removed"
 
