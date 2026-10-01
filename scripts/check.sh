@@ -61,6 +61,19 @@ for h in hits: print(f"check: public price on the homepage: …{h.strip()}…")
 sys.exit(1 if hits else 0)
 PY
 
+# Sight over text: each stop of the plan says ten words or fewer (design/research/site-playbook.md, decision 1).
+python3 - design/home.html <<'PY' || fail=1
+import re, sys
+html = open(sys.argv[1]).read()
+m = re.search(r'<ol class="jr-steps" data-steps>(.*?)</ol>', html, re.S)
+bad = 0
+for li in re.findall(r"<li[^>]*>(.*?)</li>", m.group(1) if m else "", re.S):
+    words = re.sub(r"<span class=\"no\">.*?</span>|<[^>]+>", " ", li).split()
+    if len(words) > 10: print(f"check: plan stop over ten words ({len(words)}): {' '.join(words)[:60]}"); bad = 1
+if not m: print("check: the plan's stops were not found in design/home.html (ol.jr-steps[data-steps])"); bad = 1
+sys.exit(bad)
+PY
+
 # Every source of truth named in AGENTS.md exists.
 for f in design/DESIGN.md design/tokens.css design/home.html design/app.html design/roi-model.md design/before-after.md supabase/config.toml; do
   [ -f "$f" ] || bad "missing source of truth: $f"

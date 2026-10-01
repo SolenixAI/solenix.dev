@@ -54,6 +54,10 @@ fresh; sed -i '' 's|^\.lane {|.lane { background: black; |' "$tmp/r/design/home.
 if grep -q '^\.lane { background' "$tmp/r/design/home.html"; then expect fail "race lane becomes a panel over the world"
 else fail=$((fail + 1)); echo "WRONG race lane rule could not be exercised (no '.lane {' rule in home.html): a skipped proof is not a proof"; fi
 
+fresh; sed -i '' 's|<p>Everything in one place.</p>|<p>Everything in one place, and a good many more words than any owner will read here.</p>|' "$tmp/r/design/home.html"
+if grep -q 'a good many more words' "$tmp/r/design/home.html"; then expect fail "plan stop over ten words"
+else fail=$((fail + 1)); echo "WRONG plan stop rule could not be exercised (stop copy not found in home.html): a skipped proof is not a proof"; fi
+
 fresh; awk '{print} /The flyby races\./ && !d {print "if (matchMedia(\"(prefers-reduced-motion: reduce)\").matches) {}"; d=1}' "$tmp/r/design/home.html" > "$tmp/h" && mv "$tmp/h" "$tmp/r/design/home.html"
 expect fail "races stop under Reduce Motion"
 

@@ -57,3 +57,18 @@ Measured at 1440 wide, reduced motion off and on: the world shows through 91% of
 | 2026-09-30 | **Page** | 89 | 85 | 81 | 78 | 81 | 80 | **83** |
 
 Readability drops a little in the flybys: bare type over the grid is harder to read than type on a panel.
+
+### After: sight over text (2026-10-01)
+
+Follows `research/site-playbook.md`. Checked at 872 by 837 with reduced motion off and on. Scores are judgement from renders, not visitor data.
+
+| Date | Section | 3D world | Clarity | Wow | Pull | Read | Brevity | Score |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 2026-10-01 | 1 · Chaos (hero, one screen) | 92 | 86 | 85 | 90 | 84 | 90 | 88 |
+| 2026-10-01 | 2 and 3 · The guide and six races | 90 | 86 | 88 | 86 | 80 | 80 | 87 |
+| 2026-10-01 | 4 · The plan (five full-screen stops) | 90 | 88 | 84 | 72 | 86 | 92 | 85 |
+| 2026-10-01 | 4 · Four promises, on paper | 88 | 88 | 72 | 68 | 84 | 82 | 80 |
+| 2026-10-01 | 5 · Stable orbit (close) | 90 | 88 | 84 | 90 | 84 | 90 | 88 |
+| 2026-10-01 | **Page** | 90 | 87 | 83 | 81 | 84 | 87 | **86** |
+
+Not yet done from the playbook: measured ask times (decision 6), a full text budget in `check.sh` (7), a real founder photo (9), a poster frame and vitals budget (10), PostHog events (11).

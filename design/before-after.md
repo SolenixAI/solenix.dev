@@ -31,15 +31,18 @@ Official connector: **Meta's own hosted MCP server at mcp.facebook.com/ads**, la
 
 ---
 
-## 3. QuickBooks
+## 3. Stripe (getting paid)
 
-Official connector: Intuit and Anthropic partnered (announced **Feb 24, 2026**); the connector is in Claude's Connectors Directory and a parallel QuickBooks app exists in ChatGPT. Initially read-only (P&L, cash flow, benchmarking, transaction import from CSV/PDF/image). On **July 28–29, 2026**, Intuit expanded both Claude's and ChatGPT's connectors from read-only into write actions: create, update, send, duplicate and schedule invoices, and send payment links (US). Sources: https://www.intuit.com/blog/news-social/intuit-apps-now-available-in-claude/ , https://investors.intuit.com/news-events/press-releases/detail/1305/intuit-and-anthropic-partner-to-bring-trusted-financial-intelligence-and-custom-ai-agents-to-consumers-and-businesses , https://quickbooks.intuit.com/r/news/quickbooks-expands-into-claude-and-chatgpt-with-new-features/
+Why Stripe, not QuickBooks: Intuit says "The QuickBooks connector for Claude is currently available to US customers only" (checked 2026-10-01: https://quickbooks.intuit.com/learn-support/en-us/help-article/accounting-bookkeeping/use-quickbooks-connector-claude/L3YBlo6Ht_US_en_US). Solenix is in St. John's, so the race uses a connector a Canadian owner can use today. Revisit when Intuit opens QuickBooks Online Canada.
+
+Official connector: the Stripe MCP server / Claude connector (https://docs.stripe.com/mcp, checked 2026-10-01). Its supported methods include listing, retrieving, creating, updating and finalising invoices, creating invoice items, and creating payment links. A finalised invoice with `collection_method: send_invoice` is emailed to the customer by Stripe. Stripe asks a human to confirm risky writes (refunds, outbound payments) through a link.
 
 | Task | Manual steps & time | Exact prompt | AI time | Capability source | Time source | Confidence |
 |---|---|---|---|---|---|---|
-| "Who owes us money?" | QuickBooks → Reports → "Who owes you" / A/R Aging Summary — the report itself renders in under a minute, but reviewing it, cross-checking which overdue customers to chase, and deciding wording for each one realistically takes 10–15 min. | "Show me everyone who owes us money, sorted by how overdue they are, and flag anyone over 60 days." | ~2–3 min | Read: official QuickBooks connector reporting tools (P&L/cash-flow/benchmarking confirmed since Feb 2026) | Manual time: conservative estimate — report generation itself is fast; review/triage time is the real cost, estimated from documented report structure | Medium |
-| Categorize a batch of transactions | QuickBooks' own daily-task guidance budgets 15–30 min/day for bank-feed categorization, receipts and invoices on top of a broader 5–10 hr/week (manual/spreadsheet) down to 2–5 hr/week (software-assisted) bookkeeping load. Source: https://mrandassociates.com/how-much-time-do-small-business-owners-spend-on-bookkeeping/ | "Here are this week's uncategorized bank transactions. Categorize each one using our usual chart of accounts, flag anything unusual or duplicate, and tell me what you're unsure about." | ~5–10 min to review and approve a batch, vs. doing each line manually | Write: transaction categorization — part of the connector's expanded (July 2026) action set; owner reviews/approves | Manual time: industry survey range above (not an exact per-batch figure — treat as directional) | Low-Medium (ranges, not a controlled study) |
-| Draft and send an invoice | QuickBooks' own help content: with existing customer/item records already in the system, creating and sending an invoice takes "under five minutes." Source: https://quickbooks.intuit.com/payments/invoicing/generator/ | "Draft an invoice to [client] for the website maintenance retainer, $450, due in 15 days, and send it with a short note thanking them for the referral this month." | ~1–2 min (one sentence replaces the multi-field form) | Write: invoice creation/sending — explicitly added July 28, 2026 per Intuit's own announcement | QuickBooks' own published "under 5 minutes" figure | High |
+| "Who owes us money?" | Stripe Dashboard → Billing → Invoices, filter to Past due, then read each customer and decide who to chase: realistically 10–15 min. | "Who owes us? Sort by how late, and flag anyone over 60 days." | ~2–5 min including review | Read: List all invoices (Stripe MCP supported methods) | Manual time: estimate from the dashboard steps; no published study | Medium |
+| Draft and send an invoice | Invoices → Create, pick the customer, add the item, set the due date, review, send: a few minutes with existing customer and product records. | "Send Harbour Dental their invoice for website care, due in 15 days." | ~1–2 min (one sentence replaces the form), then the owner approves | Write: Create an invoice, Create an invoice item, Finalize an invoice (Stripe MCP supported methods) | Manual time: estimate (comparable to QuickBooks' own "under five minutes" figure for the same job) | Medium |
+
+Not possible today: automatic payment reminders through the connector aren't documented (Stripe's own reminder emails are a Dashboard setting).
 
 ---
 
@@ -103,9 +106,9 @@ After: ask "Pull last month's top 10 sellers by units sold, show current stock f
 Before: log into Ads Manager, set a 7-day window, scan spend/CPA/ROAS per campaign by eye — 15–20 minutes.
 After: ask Meta's own official Ads MCP (live since April 2026, works in Claude) the same question directly — 3–5 minutes to a ranked answer; the owner still makes the pause call.
 
-**3. QuickBooks — "Who owes us money" + send the invoice**
-Before: run the A/R aging report, decide who to chase, then separately build and send an invoice (QuickBooks' own docs say ~5 min once records exist) — 15–20 minutes combined.
-After: "Show me who owes us, flag anyone over 60 days, and send [client] an invoice for the retainer" — Intuit's official connector has done both read and write (since July 2026) in one conversation, 3–5 minutes.
+**3. Stripe — "Who owes us money" + send the invoice** (QuickBooks' connector is US only; see section 3)
+Before: open Invoices, filter to past due, decide who to chase, then separately create, fill in and send an invoice: 10–15 minutes combined (estimate).
+After: "Who owes us? Send Harbour Dental their invoice." Stripe's official connector lists invoices and creates and finalises the new one in one conversation, then the owner approves: 2–5 minutes.
 
 **4. Gmail + Calendar — triage and book a meeting without the back-and-forth**
 Before: 20–40 minutes sorting a backlog inbox by hand, plus Calendly's own measured average of 7.3 emails to land one meeting time.
