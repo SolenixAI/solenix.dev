@@ -14,6 +14,10 @@ const URL = process.argv[2] ?? "http://localhost:3000/"
 const MIN_WORLD = Number(process.env.MIN_WORLD ?? 60)
 const DEMO_SCENES = (process.env.DEMO_SCENES ?? "flyby").split(",")
 const ONLY = process.env.ONLY // e.g. ONLY=pane to check one viewport
+// A race must reach its payoff (its section gets the class "is-won" when the ask lands) within this
+// many seconds of coming into view. Not data-state="done": that waits for the by-hand side too.
+// most visitors leave a screen within 10 to 20 s (design/research/site-playbook.md).
+const MAX_PAYOFF_S = Number(process.env.MAX_PAYOFF_S ?? 15)
 // "pane" is the size Jager reviews in (the Claude app browser pane).
 const VIEWPORTS = { pane: { width: 872, height: 837 }, desktop: { width: 1440, height: 900 }, phone: { width: 390, height: 844 } }
 
@@ -86,6 +90,18 @@ for (const [vpName, viewport] of Object.entries(VIEWPORTS)) {
       }
       if (status === "FAIL") failed++
       rows.push(`${status} ${vpName.padEnd(7)} ${motion === "reduce" ? "reduced" : "motion "} ${id.padEnd(20)} world ${String(m.world).padStart(3)}%  ${m.alive ? "alive " : "frozen"}  ${problems.join("; ")}`)
+    }
+    // Time to payoff, per race, from a fresh scroll into view.
+    for (const { id } of scenes) {
+      if (!(await page.evaluate((id) => !!document.querySelector(`#${id} [data-state]`), id))) continue
+      await page.evaluate(() => scrollTo(0, 0)); await page.waitForTimeout(300)
+      await page.evaluate((id) => document.getElementById(id).scrollIntoView(), id)
+      const t0 = Date.now()
+      const ok = await page.waitForFunction((id) => document.getElementById(id).classList.contains("is-won"), id, { timeout: (MAX_PAYOFF_S + 5) * 1000 }).then(() => true, () => false)
+      const secs = (Date.now() - t0) / 1000
+      const slow = !ok || secs > MAX_PAYOFF_S
+      if (slow) failed++
+      rows.push(`${slow ? "FAIL" : "ok  "} ${vpName.padEnd(7)} ${motion === "reduce" ? "reduced" : "motion "} ${id.padEnd(20)} payoff ${ok ? secs.toFixed(1) + " s" : "not reached"}${slow ? ` (must be within ${MAX_PAYOFF_S} s)` : ""}`)
     }
     await page.close()
   }
