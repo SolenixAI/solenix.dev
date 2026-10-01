@@ -126,3 +126,7 @@ The same plain rubric (clarity, wow, pull, readability, brevity) was applied to 
 | #6 | races end on the owner's real output | 67 | 50 | 57 | 50 | 67 | 74 |
 
 Next lever (verified): prove each race with the owner's own thing changing in the world (the invoice becomes paid, the shelf refills), with one such moment on screen 1 within 2 s.
+
+| #7 | owner's thing changes in the world (GPU screenshots from here on) | 62 | 44 | 52 | 47 | 59 | 68 |
+
+Review #7 changed two things at once: the design, and the screenshots, which are now GPU-rendered at real speed. Its absolute scores are not comparable with #1–#6. A blind paired A/B of #6 against #7, both on GPU screenshots with 2 judges per scene in opposite orders, settled it: **#7 wins 16–4 overall** (clarity 15–5, pull 15–3, wow 15–4). It regressed in two places: Excel lost its before→after ("was $11,930"), and the close lost the real tool logos wired into the orbit. From now on, re-baseline with `design-ab` whenever the measurement changes.
