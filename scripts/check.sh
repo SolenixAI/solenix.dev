@@ -70,7 +70,7 @@ if command -v od >/dev/null && curl -s -m 2 http://127.0.0.1:55666 >/dev/null; t
 fi
 
 # Every source of truth named in AGENTS.md exists.
-for f in design/DESIGN.md design/tokens.css design/home.html design/app.html design/roi-model.md design/before-after.md supabase/config.toml; do
+for f in design/DESIGN.md design/tokens.css design/home.html design/app.html design/approved.md supabase/config.toml; do
   [ -f "$f" ] || bad "missing source of truth: $f"
 done
 

@@ -8,7 +8,7 @@ export const POSTHOG_HOST = process.env.NEXT_PUBLIC_POSTHOG_HOST ?? "https://us.
 export const LIVE_HOST = "solenix.dev"
 
 // Clicks, scroll depth (page-leave), heatmaps and session replay measure each
-// section against design/scorecard.md. Replay masks every input and anything
+// section. Replay masks every input and anything
 // marked data-ph-mask, so nothing a visitor types is recorded.
 export const POSTHOG_OPTIONS = {
   api_host: POSTHOG_HOST,

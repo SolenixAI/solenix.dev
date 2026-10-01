@@ -47,7 +47,7 @@ expect fail "the old 'dark only' rule comes back"
 fresh; echo '{}' > "$tmp/r/design/ghost.html.artifact.json"
 expect fail "orphaned Open Design sidecar"
 
-fresh; rm "$tmp/r/design/roi-model.md"
+fresh; rm "$tmp/r/design/approved.md"
 expect fail "a source of truth goes missing"
 
 fresh; python3 -m http.server 8799 --bind 127.0.0.1 --directory "$tmp" >/dev/null 2>&1 & srv=$!; sleep 1
