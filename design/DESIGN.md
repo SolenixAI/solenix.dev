@@ -27,7 +27,7 @@ The system behind solenix.dev. Solenix is one tech expert for small businesses i
 
 - Homepage base: Open Design version 19, which he restored on 2026-10-01 as the best so far (git tag `approved-baseline`). Never fall below it. Changes go through Open Design, one named change per run, and he judges each before the next.
 - The hero opens with "Your business is a three-body problem", and a small-business owner must understand in seconds what Solenix does and want to call.
-- No examples, races, live runs or disclaimers ("one second here is one minute", "can't" lines).
+- The six tool examples stay as they are for now; he will iterate on them after the site is deployed. No live runs.
 - Keep "From one call to a stable orbit": five stops, slow enough to read, visuals over text, steps never overlapping.
 - The 3D world runs through the page and must get better: never flattened, never panels laid over it.
 - Price line: "A fixed price, in writing. Agreed on the call. No surprise invoice." No public prices; value-based per initiative.
