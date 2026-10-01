@@ -603,6 +603,16 @@ html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%
 .pay-tag.ok i { color: var(--ok); border-color: var(--ok); box-shadow: 0 0 22px color-mix(in srgb, var(--ok) 30%, transparent); }
 /* Waiting on you: the one click is yours, and it is lit. */
 .pay-tag.wait i { color: var(--accent-text); border-color: var(--accent); box-shadow: 0 0 0 5px var(--accent-quiet), 0 0 24px color-mix(in srgb, var(--ring) 45%, transparent); }
+/* The owner's own things, named, each beside its body in the world. */
+.thing-tag { position: absolute; left: 0; top: 0; opacity: 0; will-change: transform, opacity; display: grid; gap: 4px; justify-items: start; white-space: nowrap; text-shadow: 0 0 12px var(--bg), 0 0 5px var(--bg), 0 1px 2px var(--bg); }
+.thing-tag b { font: var(--fw-semibold) var(--fs-sm)/1.15 var(--font-display); letter-spacing: var(--track-heading); color: var(--text); }
+.thing-tag span { font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--warn); transition: color var(--dur-base); }
+.thing-tag.ok span { color: var(--ok); }
+.thing-tag > i { display: none; width: 96px; height: 6px; border-radius: var(--radius-pill); background: color-mix(in oklch, var(--text) 14%, transparent); overflow: hidden; }
+.thing-tag.bar > i { display: block; }
+.thing-tag > i > i { display: block; height: 100%; border-radius: inherit; background: var(--warn); transition: width var(--dur-slow) var(--ease-out), background-color var(--dur-base); }
+.thing-tag.ok > i > i { background: var(--ok); }
+@media (max-width: 699px) { .thing-tag { display: none; } }
 /* The time tape is a small supporting line under the work. */
 .trail-tag b, .trail-tag.ask b { font-size: var(--fs-body); }
 .trail-tag.hand b { color: var(--muted); }
@@ -636,7 +646,17 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
 .stop-mk svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; transition: width var(--dur-slow) var(--ease-out), height var(--dur-slow) var(--ease-out); }
 /* One large event per stop: the stop you are at arrives big, fully in frame, and keeps ringing out. */
 .stop-mk.cur { width: 104px; height: 104px; margin: -52px 0 0 -52px; z-index: 1; box-shadow: 0 0 0 10px var(--accent-quiet), 0 0 0 11px color-mix(in oklch, var(--accent) 55%, transparent), 0 0 36px color-mix(in srgb, var(--ring) 50%, transparent); }
-.stop-mk.cur svg { width: 48px; height: 48px; }
+.stop-mk.cur svg { width: 60px; height: 60px; }
+/* Each stop is a short wordless event, drawn by the icon itself. --e runs 0 to 1 while the stop is current and rests at 1,
+   set from the scene's own clock, so it plays the same with reduced motion and never depends on a CSS animation. */
+.stop-mk { --e: 1; --a: clamp(0, calc(var(--e) * 2), 1); --b: clamp(0, calc(var(--e) * 2 - 1), 1); }
+.stop-mk svg { overflow: visible; }
+.stop-mk .d { stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--a)); }
+.stop-mk .d2 { stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--b)); }
+.stop-mk .f2 { opacity: var(--b); }
+.stop-mk .m1 { translate: calc((1 - var(--a)) * var(--dx, 0px)) calc((1 - var(--a)) * var(--dy, 0px)); }
+.stop-mk .spin { transform-box: view-box; transform-origin: 12px 12px; rotate: calc(var(--e) * 360deg); }
+.stop-mk .hv { stroke-width: 3.4; }
 .stop-mk.prom.cur { box-shadow: 0 0 0 10px color-mix(in oklch, var(--ok) 18%, transparent), 0 0 0 11px color-mix(in oklch, var(--ok) 55%, transparent), 0 0 36px color-mix(in srgb, var(--ok) 40%, transparent); }
 /* The pop and the ring going out are extra; with reduced motion the stop simply stands there, large and ringed. */
 @media (prefers-reduced-motion: no-preference) {
@@ -713,15 +733,15 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
   <div class="moon-tag world-tag"><svg class="lg"><use href="#lg-meta"/></svg></div>
   <div class="moon-tag world-tag"><svg class="lg"><use href="#lg-microsoftexcel"/></svg></div>
   <div class="moon-tag world-tag"><svg class="lg"><use href="#lg-gmail"/></svg></div>
-  <div class="stop-mk" data-k="0"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg><span>A clear picture</span></div>
-  <div class="stop-mk" data-k="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18v14H3zM3 9h18M8 9v10"/></svg><span>Your own portal</span></div>
-  <div class="stop-mk" data-k="2"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg><span>Your new website</span></div>
-  <div class="stop-mk" data-k="3"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16M6 16l9-9 3 3-9 9H6z"/></svg><span>Your choice</span></div>
-  <div class="stop-mk" data-k="4"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6zM8.5 12l2.5 2.5 4.5-5"/></svg><span>Looked after</span></div>
-  <div class="stop-mk prom" data-p="0"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 11h12v9H6zM9 11V8a3 3 0 0 1 6 0v3"/></svg></div>
-  <div class="stop-mk prom" data-p="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 9a3.5 3.5 0 1 1-3.2 4.9L4 21M7 18l2 2M15 9h.01"/></svg></div>
-  <div class="stop-mk prom" data-p="2"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg></div>
-  <div class="stop-mk prom" data-p="3"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4h9v16h-9M4 12h10M11 9l3 3-3 3"/></svg></div>
+  <div class="stop-mk" data-k="0"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path class="spin" d="M12 12V6.5"/><path class="d2 hv" pathLength="1" d="M12 3a9 9 0 0 1 9 9"/></svg><span>A clear picture</span></div>
+  <div class="stop-mk" data-k="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="d" pathLength="1" d="M3 5h18v14H3z"/><path class="m1" style="--dx:-9px;--dy:-8px" d="M6 8.5h4v3H6z"/><path class="m1" style="--dx:10px;--dy:-9px" d="M12.5 8.5H18v3h-5.5z"/><path class="m1" style="--dy:11px" d="M6 14h12v2H6z"/></svg><span>Your own portal</span></div>
+  <div class="stop-mk" data-k="2"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="d" pathLength="1" d="M2 4h14v11H2z"/><path class="d" pathLength="1" d="M2 7.5h14"/><g class="f2" transform="translate(12 11) scale(.5)" stroke-width="3.4"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></g><path class="d2" pathLength="1" d="M19.5 9.5a4 4 0 0 1 3 3"/></svg><span>Your new website</span></div>
+  <div class="stop-mk" data-k="3"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="d" pathLength="1" d="M6 3h9l4 4v14H6z"/><path class="d" pathLength="1" d="M9 10h7"/><path class="d" pathLength="1" d="M9 13h7"/><path class="d2 hv" pathLength="1" d="M9 17.5c1-2 2 1 3-1s2 1 4-1"/></svg><span>Your choice</span></div>
+  <div class="stop-mk" data-k="4"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="d" pathLength="1" d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path class="d2 hv" pathLength="1" d="M8.5 12l2.5 2.5 4.5-5"/></svg><span>Looked after</span></div>
+  <div class="stop-mk prom" data-p="0"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 11h12v9H6z"/><path class="m1" style="--dy:-4px" d="M9 11V8a3 3 0 0 1 6 0v3"/><path class="d2 hv" pathLength="1" d="M12 14v3"/></svg></div>
+  <div class="stop-mk prom" data-p="1"><svg viewBox="0 0 24 24" aria-hidden="true"><g class="m1" style="--dx:-7px;--dy:7px"><path d="M15 9a3.5 3.5 0 1 1-3.2 4.9L4 21M7 18l2 2M15 9h.01"/></g><path class="d2" pathLength="1" d="M19.5 3.5l1.5 1.5M22 9h-2M15 2v2"/></svg></div>
+  <div class="stop-mk prom" data-p="2"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="d" pathLength="1" d="M4 5h16v11H9l-5 4z"/><path class="d2 hv" pathLength="1" d="M8 9h8"/><path class="d2 hv" pathLength="1" d="M8 12.5h5"/></svg></div>
+  <div class="stop-mk prom" data-p="3"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4h9v16h-9"/><path class="m1" style="--dx:9px" d="M14 12H3M6 9l-3 3 3 3"/></svg></div>
 </div>
 
 <main id="main">
@@ -953,17 +973,17 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
     { sel: '#fly-gmail', f: 0, pin: 1, wsel: 5, tx: -4.10, tz: 11.28, az: 370 },
     { sel: '#fly-gmail', f: 0.94, pin: 1, az: 380 },
     /* 4 · The plan: back to the centre, and the orbit is drawn in. */
-    { sel: '#after', f: 0, pin: 1, fly: 0, tx: 0, tz: 0, k: 0.9, free: 0.6, dim: 0, stops: 1, el: 60, az: 394, dist: 11.2, ox: 0.25, oy: 0.03, poy: 0.02, calm: 0.35, conn: 1 },
-    { sel: '#after', f: 0.1852, pin: 1, k: 1, free: 1, ink: 0.2, third: 0.44, az: 396, poy: -0.02 },
-    { sel: '#after', f: 0.3704, pin: 1, k: 1, free: 1, ink: 0.4, third: 0.58, az: 398 },
-    { sel: '#after', f: 0.5556, pin: 1, k: 1, free: 1, ink: 0.6, third: 0.72, az: 400 },
-    { sel: '#after', f: 0.7407, pin: 1, k: 1, free: 1, ink: 0.8, third: 0.86, az: 402 },
-    { sel: '#after', f: 0.9259, pin: 1, k: 1, free: 1, ink: 1.0, third: 1.00, az: 404 },
-    { sel: '#after', f: 1, pin: 1, k: 1, order: 1, ink: 1, third: 1, calm: 1, el: 64, az: 406 },
-    { sel: '#promises', f: 0.1, pin: 1, stops: 0, el: 40, az: 438, dist: 12, ox: 0.24, oy: 0.03, poy: -0.04 },
-    { sel: '#promises', f: 1, pin: 1, el: 34, az: 510 },
+    { sel: '#after', f: 0, pin: 1, fly: 0, tx: 0, tz: 0, k: 0.9, free: 0.6, dim: 0, stops: 1, el: 44, az: 352, dist: 15, ox: 0.18, oy: 0.04, poy: 0.02, calm: 0.35, conn: 1 },
+    { sel: '#after', f: 0.1852, pin: 1, k: 1, free: 1, ink: 0.2, third: 0.44, az: 354, poy: -0.02 },
+    { sel: '#after', f: 0.3704, pin: 1, k: 1, free: 1, ink: 0.4, third: 0.58, az: 356 },
+    { sel: '#after', f: 0.5556, pin: 1, k: 1, free: 1, ink: 0.6, third: 0.72, az: 358 },
+    { sel: '#after', f: 0.7407, pin: 1, k: 1, free: 1, ink: 0.8, third: 0.86, az: 360 },
+    { sel: '#after', f: 0.9259, pin: 1, k: 1, free: 1, ink: 1.0, third: 1.00, az: 362 },
+    { sel: '#after', f: 1, pin: 1, k: 1, order: 1, ink: 1, third: 1, calm: 1, el: 44, az: 364 },
+    { sel: '#promises', f: 0.1, pin: 1, stops: 0, el: 40, az: 520, dist: 15, ox: 0.18, oy: 0.04, poy: -0.04 },
+    { sel: '#promises', f: 1, pin: 1, el: 38, az: 532 },
     /* 5 · Stable orbit: steering lets go and it holds. */
-    { sel: '#close', f: 0.35, k: 0, agent: 1, tools: 1, el: 34, az: 532, dist: 14, ox: 0, oy: 0.26, poy: 0.24 },
+    { sel: '#close', f: 0.35, k: 0, agent: 1, tools: 1, el: 34, az: 532, dist: 14, ox: 0, oy: 0.15, poy: 0.24 },
     { sel: '#close', f: 1, el: 35, az: 536, dist: 14.5 }
   ];
   const PARAMS = Object.keys(KEYS[0]).filter(k => !['sel', 'f', 'pin', 'gap'].includes(k));
@@ -1078,7 +1098,7 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
    it with the 3D scene, which plays the ask, the work and the result as bodies in the tool's world.
    Reduced motion does not stop them: the setting quiets the camera, and the demonstration still has to be seen. */
 (() => {
-  const RACES = {"stripe":{"name":"Stripe","prompt":"Who owes us? Send Harbour Dental their invoice.","out":["Invoice sent to Harbour Dental","Sent"],"hand":10,"ask":5,"hot":[0,1,1,0,0,0],"doc":{"t":"Harbour Dental invoice","big":"$450","a":["Unpaid","Website care · 30 days late"],"b":["Paid","Website care · reminder sent"]}},"shopify":{"name":"Shopify","prompt":"What will run out this month? Draft the reorder.","out":["Stock reordered in time","Sent"],"hand":15,"ask":5,"hot":[1,0,1,0,0,0],"doc":{"t":"Sea salt caramels","n":[14,120],"a":["Running out","left on the shelf"],"b":["Restocked","on the shelf"],"grow":1}},"hubspot":{"name":"HubSpot","prompt":"Which deals went quiet? Draft a note for each.","out":["3 quiet deals followed up","Logged"],"hand":20,"ask":18,"hot":[1,0,1,0,1,0],"doc":{"t":"Quiet deals","big":"3","a":["Gone quiet","No word in 30 days"],"b":["Followed up","A note written for each"]}},"meta":{"name":"Meta Ads","prompt":"Which ad brings no buyers? Pause it.","out":["The ad wasting your money","Paused"],"hand":15,"ask":5,"hot":[0,1,0,0,0,0],"doc":{"t":"Local awareness ad","n":[0,210],"pre":"$","a":["On · no buyers","kept this week"],"b":["Off","kept this week"],"dark":1}},"microsoftexcel":{"name":"Excel","prompt":"Check my totals. What if prices rise 5%?","out":["The wrong total in your sales sheet","Fixed"],"hand":15,"ask":5,"hot":[0,0,0,0,0,1],"doc":{"t":"Sales total","n":[11930,12480],"pre":"$","a":["Wrong","One row was missed"],"b":["Fixed","Was $11,930 · one row was missed"]}},"gmail":{"name":"Gmail and Calendar","prompt":"What needs a reply today? Book Harbour Dental.","out":["Today's inbox answered, meeting set","Booked"],"hand":20,"ask":5,"hot":[1,0,1,0,1,0],"doc":{"t":"Emails waiting on you","n":[3,0],"a":["Unanswered","Since this morning"],"b":["Answered","Harbour Dental booked, Tue 10:30"]}}};
+  const RACES = {"stripe":{"name":"Stripe","prompt":"Who owes us? Send Harbour Dental their invoice.","out":["Invoice sent to Harbour Dental","Sent"],"hand":10,"ask":5,"hot":[1,1,1,0,0,0],"doc":{"t":"Still to chase","n":[920,0],"steps":[920,470,190,0],"pre":"$","a":["Overdue","3 unpaid invoices"],"b":["All chased","Each sent again with a pay link"]},"things":[["Harbour Dental","$450 · 30 days late","$450 · pay link sent"],["Cove Road Cafe","$280 · 45 days late","$280 · pay link sent"],["East End Yoga","$190 · 60 days late","$190 · pay link sent"]]},"shopify":{"name":"Shopify","prompt":"What will run out this month? Draft the reorder.","out":["Stock reordered in time","Sent"],"hand":15,"ask":5,"hot":[1,1,0,0,0,0],"doc":{"t":"Sea salt caramels","n":[14,120],"a":["Running out","left on the shelf"],"b":["Reorder sent","on order, after your one Approve"],"grow":1,"approve":1},"things":[["Sea salt caramels","14 left","120 on order",12,100],["Wool mitts","9 left","60 on order",15,100]]},"hubspot":{"name":"HubSpot","prompt":"Which deals went quiet? Draft a note for each.","out":["3 quiet deals followed up","Logged"],"hand":20,"ask":18,"hot":[1,1,1,0,0,0],"doc":{"t":"Quiet deals","big":"3","a":["Gone quiet","No word in 30 days"],"b":["Picked back up","A note and a task on each"]},"things":[["Harbour Dental","Quiet 34 days","Note and task added"],["Cove Road Cafe","Quiet 41 days","Note and task added"],["East End Yoga","Quiet 30 days","Note and task added"]]},"meta":{"name":"Meta Ads","prompt":"Which ad brings no buyers? Pause it.","out":["The ad wasting your money","Paused"],"hand":15,"ask":5,"hot":[0,1,0,0,0,0],"doc":{"t":"Local awareness ad","n":[0,210],"pre":"$","a":["On · no buyers","kept this week"],"b":["Off","kept this week"],"dark":1},"things":[["Local awareness ad","On · no buyers in 7 days","Paused"]]},"microsoftexcel":{"name":"Excel","prompt":"Check my totals. What if prices rise 5%?","out":["The wrong total in your sales sheet","Fixed"],"hand":15,"ask":5,"hot":[0,1,0,0,0,0],"doc":{"t":"Sales total","n":[11930,12480],"pre":"$","a":["Wrong","One row was missed"],"b":["Fixed","Was $11,930 · one row was missed"]},"things":[["Row 14 · $550","Left out of the total","Now counted"]]},"gmail":{"name":"Gmail and Calendar","prompt":"What needs a reply today? Book Harbour Dental.","out":["Today's inbox answered, meeting set","Booked"],"hand":20,"ask":5,"hot":[1,1,1,0,0,0],"doc":{"t":"Emails waiting on you","n":[3,0],"steps":[3,2,1,0],"a":["Unanswered","Since this morning"],"b":["Replies drafted","Harbour Dental booked, Tue 10:30"],"dark":1},"things":[["Harbour Dental","Asking to meet","Booked Tue 10:30"],["Cove Road Cafe","Asking for a quote","Reply drafted"],["East End Yoga","Asking about a bill","Reply drafted"]]}};
   const S = window.solenix, clamp01 = v => Math.max(0, Math.min(1, v));
   S.races = Object.keys(RACES).map(id => RACES[id]);
   S.rs = S.races.map(() => ({ h: 0, a: 0, p: 0, q: 0, ask: '', hDone: false, aDone: false, on: false, vis: 0 }));
@@ -1450,10 +1470,16 @@ const mkTag = (cls, html) => { const e = document.createElement('div'); e.classN
 const tagH = mkTag('trail-tag hand', '<span>By hand</span><b></b>'), tagA = mkTag('trail-tag ask', '<span>Asked</span><b></b>');
 const tickTags = [5, 10, 15, 20].map(m => { const e = mkTag('tick-tag', m === 20 ? '20 min' : String(m)); e._m = m; return e; });
 const tagBack = mkTag('trail-tag back', '<b></b><span>back</span>');
+/* The owner's own things carry their names: up to three, each beside its body. */
+const thingTags = [0, 1, 2].map(() => mkTag('thing-tag', '<b></b><span></span><i><i></i></i>'));
+/* When each thing changes: one after another over the last stretch of the ask, the last one as it lands. With an Approve, all at the click. */
+const thingAt = (rc, n) => rc.doc.approve ? 1 : 0.82 + (n + 1) * 0.18 / Math.max(1, (rc.things || [0]).length);
 const askTag = mkTag('ask-tag'), payTag = mkTag('pay-tag', '<b></b><span><small>Example</small><em></em><u></u><i></i></span>');
 const vR = new THREE.Vector3(), vB = new THREE.Vector3(), vO = new THREE.Vector3(), vA = new THREE.Vector3(), vE = new THREE.Vector3(), vP = new THREE.Vector3(), vS0 = new THREE.Vector3(), vDock = new THREE.Vector3(), vAsk = new THREE.Vector3();
 const itemP = Array.from({ length: ITEM_N }, () => new THREE.Vector3());
 const ease = t => t * t * (3 - 2 * t), c01 = v => Math.max(0, Math.min(1, v));
+/* A stop's event plays once from the moment it becomes the current one, then rests finished. */
+const evt = (e, on) => { if (!on) { if (e._t0) { e._t0 = 0; e.style.removeProperty('--e'); } return; } if (!e._t0) e._t0 = performance.now(); const v = Math.min(1, (performance.now() - e._t0) / 2600); if (v !== e._v) { e._v = v; e.style.setProperty('--e', v.toFixed(3)); } };
 const inFrame = (x, y, big) => { if (!big) return [x, y]; x = Math.min(Math.max(x, 76), W - 76); y = Math.min(Math.max(y, 160), H - 76); if (x < 470 && y > H - 330) x = Math.min(470, W - 76); return [x, y]; };
 function raceWorld(fl, wsel) {
   const wi = Math.max(0, Math.min(WN - 1, Math.round(wsel))), near = fl * Math.max(0, 1 - Math.abs(wsel - wi) * 2.2), rs = RS[wi], rc = RC[wi], on = near > 0.02 && rs && rc;
@@ -1467,12 +1493,14 @@ function raceWorld(fl, wsel) {
   const L = Math.min(2 * camera.position.distanceTo(vO) * Math.tan(D2R(camera.fov / 2)) * camera.aspect * 0.74, 5.6), unit = L / AXIS_MIN;
   vO.addScaledVector(vR, -L / 2);
   layArc(axisR, vO, vE.copy(vO).addScaledVector(vR, L), 0); axisR.mesh.material.uniforms.uAlpha.value = near * 0.3;
-  vA.copy(vO).addScaledVector(vB, -0.14); layArc(trailH, vA, vE.copy(vA).addScaledVector(vR, Math.max(0.02, rs.h * unit)), 0); trailH.mesh.material.uniforms.uAlpha.value = near * live * 0.6;
+  vA.copy(vO).addScaledVector(vB, -0.14); layArc(trailH, vA, vE.copy(vA).addScaledVector(vR, Math.max(0.02, rs.h * unit)), 0); trailH.mesh.material.uniforms.uAlpha.value = near * live * 0.85;
   const headH = vE.clone();
-  vA.copy(vO).addScaledVector(vB, 0.14); layArc(trailA, vA, vE.copy(vA).addScaledVector(vR, Math.max(0.02, rs.a * unit)), 0); trailA.mesh.material.uniforms.uAlpha.value = near * live * 0.8;
-  const headA = vE.clone(), back = rs.h - rs.a;
+  vA.copy(vO).addScaledVector(vB, 0.14); layArc(trailA, vA, vE.copy(vA).addScaledVector(vR, Math.max(0.02, rs.a * unit)), 0); trailA.mesh.material.uniforms.uAlpha.value = near * live * 1.1;
+  const headA = vE.clone(), back = rc.hand - rc.ask;
   /* What you get back: the ask has stopped and by hand is still going. That stretch is yours, and it is green. */
-  layArc(gapR, headA, vE.copy(vA).addScaledVector(vR, Math.max(rs.a * unit + 0.02, rs.h * unit)), 0); gapR.mesh.material.uniforms.uAlpha.value = near * live * (back > 0.05 ? 0.6 : 0);
+  /* It is there from the start, faint: where the ask will stop, and how much further by hand has to go. */
+  const endA = vA.clone().addScaledVector(vR, rc.ask * unit);
+  layArc(gapR, endA, vE.copy(vA).addScaledVector(vR, rc.hand * unit), 0); gapR.mesh.material.uniforms.uAlpha.value = near * live * (rs.aDone ? 0.95 : 0.3);
   /* The things the job is about: an arc round the right and far side of the world, clear of the headline and the tape. */
   const work = c01((p - 0.4) / 0.4), shown = c01((p - 0.8) / 0.08), flip = ease(c01((p - 0.9) / 0.1)), seen = Math.floor(q * ITEM_N + 0.001);
   items.forEach((m, j) => { const a = -0.6 + j * 0.5; itemP[j].copy(Wp).addScaledVector(vR, Math.cos(a) * 1.4).addScaledVector(vB, -Math.sin(a) * 1.4); m.position.copy(itemP[j]);
@@ -1480,7 +1508,7 @@ function raceWorld(fl, wsel) {
     /* The ones the answer picked out stay lit; a paused ad is the one that goes dark. */
     const dk = rc.doc.dark, gr = rc.doc.grow;
     /* The owner's things start as they are (quiet, unpaid, nearly empty, or a dead ad still burning) and change when the ask lands. */
-    if (hot) { u.uGain.value = near * lerp(dk ? 0.95 : 0.16, dk ? 0.02 : 1, flip); u.uSize.value = lerp(gr ? 0.2 : 0.42, dk ? 0.3 : gr ? 0.78 : 0.64, flip); }
+    if (hot) { const n = rc.hot.slice(0, j).filter(Boolean).length, flip = ease(c01((p - thingAt(rc, n) + 0.03) / 0.03)); u.uGain.value = near * lerp(dk ? 0.95 : 0.16, dk ? 0.03 : 1, flip); u.uSize.value = lerp(gr ? 0.2 : 0.42, dk ? 0.24 : gr ? 0.78 : 0.64, flip); }
     else { u.uGain.value = near * lerp(lit, dk ? 0.55 : 0.07, shown); u.uSize.value = lerp(0.42, 0.34, shown); } });
   /* By hand: one pale body goes round them one at a time, for as long as the job takes. */
   vS0.copy(Wp).addScaledVector(vR, -1.25).addScaledVector(vB, 0.7);
@@ -1502,18 +1530,18 @@ function raceWorld(fl, wsel) {
     resB.position.copy(Wp).lerp(vDock, t); okB.position.copy(resB.position);
     { const sealed = rs.aDone; resB.material.uniforms.uGain.value = g * (sealed ? 0 : 0.95); okB.material.uniforms.uGain.value = g * (sealed ? 1 : 0); }
     resB.material.uniforms.uSize.value = okB.material.uniforms.uSize.value = 0.6; }
-  return { near, rs, rc, unit, headH, headA, back, o: vO.clone(), wp: Wp, resAt: t01(p) };
+  return { near, rs, rc, unit, headH, headA, endA, back, o: vO.clone(), wp: Wp, resAt: t01(p) };
 }
 const t01 = p => c01((p - 0.8) / 0.05);
 function raceTags(rw) {
-  if (!rw) { [tagH, tagA, tagBack, askTag, payTag, ...tickTags].forEach(e => { if (e.style.opacity !== '0') e.style.opacity = 0; }); return; }
+  if (!rw) { [tagH, tagA, tagBack, askTag, payTag, ...tickTags, ...thingTags].forEach(e => { if (e.style.opacity !== '0') e.style.opacity = 0; }); return; }
   const { near, rs, rc } = rw, vis = rs.vis === undefined ? 1 : rs.vis, live = (rs.on ? 1 : 0) * vis;
   tagH.lastChild.textContent = Math.floor(rs.h) + ' min'; tagA.lastChild.textContent = Math.floor(rs.a) + ' min';
   tagH.classList.toggle('stop', rs.hDone); tagA.classList.toggle('stop', rs.aDone);
   placeL(tagH, rw.headH, near * live, -20);
   /* Under the tape: the ask's clock ends at its head, and the minutes you get back start there. */
   const mins = Math.floor(rw.back + 0.001); if (tagBack.firstChild.textContent !== mins + ' min') tagBack.firstChild.textContent = mins + ' min';
-  placeUnder(tagA, rw.headA, near * live, -1); placeUnder(tagBack, rw.headA, near * live * (mins >= 1 ? 1 : 0), 1);
+  placeUnder(tagA, rw.headA, near * live, -1); placeUnder(tagBack, rw.endA, near * live * (mins >= 1 ? (rs.aDone ? 1 : 0.55) : 0), 1);
   tickTags.forEach(e => place(e, vP.copy(rw.o).addScaledVector(vR, e._m * rw.unit).addScaledVector(vB, 1.0), near * 0.4 * vis, 0));
   /* The ask is written beside the world while it travels, and clears once the work is done. */
   const quote = rs.ask ? '“' + rs.ask + (rs.p >= 0.33 ? '”' : '') : '';
@@ -1521,20 +1549,36 @@ function raceTags(rw) {
   placeSide(askTag, vP.copy(rw.wp).addScaledVector(vR, -1.3), near * live * (1 - c01((rs.p - 0.72) / 0.08)), -1);
   /* The owner's own thing, in its bad state from the start; the moment the ask lands it changes in front of them. */
   const d = rc.doc, st = rs.aDone ? d.b : d.a, col = payTag.lastChild;
-  setDoc(payTag, d.n ? (d.pre || '') + Math.round(lerp(d.n[0], d.n[1], rs.aDone ? 1 : ease(c01((rs.p - 0.9) / 0.1)))).toLocaleString('en-CA') : d.big, d.t, st[1], st[0]);
-  payTag.classList.toggle('ok', rs.aDone);
+  const things = rc.things || [], doneN = things.filter((_, n) => rs.p >= thingAt(rc, n)).length, asking = !!d.approve && rs.p >= 0.8 && !rs.aDone;
+  const num = !d.n ? d.big : (d.pre || '') + Math.round(d.steps ? d.steps[doneN] : d.approve ? d.n[rs.aDone ? 1 : 0] : lerp(d.n[0], d.n[1], rs.aDone ? 1 : ease(c01((rs.p - 0.82) / 0.18)))).toLocaleString('en-CA');
+  setDoc(payTag, num, d.t, st[1], asking ? 'Approve' : st[0]);
+  payTag.classList.toggle('ok', rs.aDone); payTag.classList.toggle('wait', asking);
+  /* Each thing, by name, beside its own body: what it was, then what was done to it. */
+  const hotIdx = rc.hot.map((h, j) => h ? j : -1).filter(j => j >= 0);
+  const pts = [];
+  thingTags.forEach((e, n) => { const th = things[n]; if (!th || hotIdx[n] === undefined) { if (e.style.opacity !== '0') e.style.opacity = 0; return; }
+    const done = n < doneN, c = e.children, state = th[done ? 2 : 1];
+    if (c[0].textContent !== th[0]) c[0].textContent = th[0]; if (c[1].textContent !== state) c[1].textContent = state;
+    e.classList.toggle('ok', done); e.classList.toggle('bar', th.length > 3); if (th.length > 3) c[2].firstChild.style.width = th[done ? 4 : 3] + '%';
+    proj.copy(itemP[hotIdx[n]]).project(camera); pts.push({ e, x: (proj.x + 1) / 2 * W, y: (1 - proj.y) / 2 * H }); });
+  /* The names stand in one tidy column beside their bodies, in the same order top to bottom, never on top of each other. */
+  if (pts.length) { const al = near * live, gap = things[0].length > 3 ? 60 : 50; pts.sort((p0, p1) => p0.y - p1.y);
+    const mid = pts.reduce((t, q) => t + q.y, 0) / pts.length, wmax = Math.max(...pts.map(q => q.e.offsetWidth || 170)), x = Math.min(Math.max(...pts.map(q => q.x)) + 38, W - 12 - wmax);
+    pts.forEach((q, i) => { if (al < 0.01) { if (q.e.style.opacity !== '0') q.e.style.opacity = 0; return; }
+      q.e.style.opacity = al.toFixed(3); q.e.style.transform = `translate3d(${x.toFixed(1)}px, ${(mid + (i - (pts.length - 1) / 2) * gap).toFixed(1)}px, 0) translate(0, -50%)`; }); }
   placeSide(payTag, vDock, near * live, 1);
 }
 const setDoc = (e, big, t, line, pill) => { const c = e.lastChild.children; if (e.firstChild.textContent !== big) e.firstChild.textContent = big;
   if (c[1].textContent !== t) c[1].textContent = t; if (c[2].textContent !== line) c[2].textContent = line; if (c[3].textContent !== pill) c[3].textContent = pill; };
 /* Screen 1: one such moment, already happening as the page opens. The unpaid invoice beside its tool turns paid. */
 const heroTag = mkTag('pay-tag hero-moment', '<b></b><span><small>Example</small><em></em><u></u><i></i></span>'); let heroT0 = 0;
+const HERO = { big: '$450', t: 'Harbour Dental invoice', a: ['Unpaid', 'Website care · 30 days late'], b: ['Paid', 'Website care · reminder sent'] };
 function heroMoment(al) {
   /* It belongs to the first screen only: it leaves cleanly within the first tenth of a screen of scroll, never half-faded. */
   al = al > 0.9 ? c01(1 - scrollY / (H * 0.1)) : 0;
   if (al < 0.02 || !RC[0]) { if (heroTag.style.opacity !== '0') heroTag.style.opacity = 0; return; }
   if (!heroT0) heroT0 = performance.now();
-  const t = (performance.now() - heroT0) / 1000, paid = t > 1.2, d = RC[0].doc, st = paid ? d.b : d.a;
+  const t = (performance.now() - heroT0) / 1000, paid = t > 1.2, d = HERO, st = paid ? d.b : d.a;
   setDoc(heroTag, d.big, d.t, st[1], st[0]); heroTag.classList.toggle('ok', paid);
   /* It stands on the calm sky just left of the ring of tools, clear of every body and badge. */
   let mx = W, my = 0; WPOS.forEach(v => { proj.copy(v).project(camera); const px = (proj.x + 1) / 2 * W; if (px < mx) { mx = px; my = (1 - proj.y) / 2 * H; } });
@@ -1606,7 +1650,7 @@ let fov0 = 34, warp = 0, tagShow = 1, tagW = [90, 90, 90];
 
 function frame(dtReal, still) {
   const R = !S.motion, sc = S.scene, a = still ? 1 : 1 - Math.exp(-dtReal * (R ? 1.4 : 5));
-  shownBlend = R ? smooth(0, 1, sc.order * 0.7 + sc.ink * 0.3) : 0;
+  shownBlend = R ? smooth(0, 1, sc.order * 0.7 + sc.ink * 0.3 + sc.stops) : 0;
   /* Physics comes straight from the scroll: how hard we steer, how free the suns are. */
   ctl.k = sc.k; ctl.soft = lerp(0.35, 0, sc.free); ctl.conf = 1 - sc.free;
   const dNow = offOrbit();
@@ -1665,7 +1709,7 @@ function frame(dtReal, still) {
     }
     const v = bodyU.value[b]; pts[HN * 3] = v.x; pts[HN * 3 + 1] = v.y; pts[HN * 3 + 2] = v.z;
     layRibbon(trails[b], tw);
-    trails[b].mesh.material.uniforms.uAlpha.value = lerp(0.9, 0.85, sc.calm) * (R ? 1 - shownBlend * 0.8 : 1);
+    trails[b].mesh.material.uniforms.uAlpha.value = lerp(0.9, 0.85, sc.calm) * (R ? 1 - shownBlend * 0.96 : 1);
     suns[b].position.copy(v);
     /* Warm and dramatic, but never so bright it swallows the body, its trail or a label. */
     const u = suns[b].material.uniforms;
@@ -1751,7 +1795,7 @@ function frame(dtReal, still) {
     curve(STOP_U[k], tmp2); proj.set(tmp2[0] * SC, SUN_Y, tmp2[1] * SC).project(camera);
     const sx = (proj.x + 1) / 2 * W, sy = (1 - proj.y) / 2 * H, lit = S.jCur >= k || locked || sc.agent > 0.98;
     e.style.opacity = ((lit ? 1 : 0.5) * sc.stops).toFixed(3); { const [cx, cy] = inFrame(sx, sy, k === S.jCur && !(locked || sc.agent > 0.98)); e.style.transform = `translate3d(${cx.toFixed(1)}px, ${cy.toFixed(1)}px, 0)`; }
-    e.classList.toggle('lit', lit); e.classList.toggle('cur', k === S.jCur && !(locked || sc.agent > 0.98)); e.classList.toggle('flip', sx > W - 240);
+    e.classList.toggle('lit', lit); e.classList.toggle('cur', k === S.jCur && !(locked || sc.agent > 0.98)); e.classList.toggle('flip', sx > W - 240); evt(e, k === S.jCur && !(locked || sc.agent > 0.98));
   });
 
   /* The four promises, on the settled orbit: given ones sealed, the current one large. */
@@ -1759,7 +1803,7 @@ function frame(dtReal, still) {
   S.proms.forEach((e, k) => { const on = S.prOn || 0; if (on < 0.01) { e.style.opacity = 0; return; }
     curve(0.125 + k * 0.25, tmp2); proj.set(tmp2[0] * SC, SUN_Y, tmp2[1] * SC).project(camera);
     const lit = (S.prCur | 0) >= k, isCur = k === (S.prCur | 0), [cx, cy] = inFrame((proj.x + 1) / 2 * W, (1 - proj.y) / 2 * H, isCur); e.style.opacity = lit ? 1 : 0.75; e.style.transform = `translate3d(${cx.toFixed(1)}px, ${cy.toFixed(1)}px, 0)`;
-    e.classList.toggle('lit', lit); e.classList.toggle('cur', k === (S.prCur | 0)); });
+    e.classList.toggle('lit', lit); e.classList.toggle('cur', k === (S.prCur | 0)); evt(e, isCur); });
 
   /* The payoff: the first moment it holds with no steering, the grid rings out and the labels settle. */
   const d = offOrbit(), holding = ctl.k < 0.01 && d < 0.02 && sc.order > 0.9;

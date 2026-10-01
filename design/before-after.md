@@ -126,15 +126,15 @@ After: "Show every deal with no activity in 14 days and draft a follow-up for ea
 
 ## Example data shown in the homepage races
 
-Every name and amount below is made up for the demonstration and is tagged "Example" on the page. None is a client, a result or a price.
+Every name and amount below is made up for the demonstration and is tagged "Example" on the page. None is a client, a result or a price. Each "after" claims only what that tool's connector documents.
 
-| Race | The owner's thing, before | After the ask lands |
-|---|---|---|
-| Stripe | Harbour Dental invoice · $450 · website care · 30 days late · Unpaid | Paid · reminder sent |
-| Shopify | Sea salt caramels · 14 left on the shelf · Running out | 120 on the shelf · Restocked |
-| HubSpot | 3 quiet deals · no word in 30 days | Followed up · a note written for each |
-| Meta Ads | Local awareness ad · On, no buyers · $0 kept this week | Off · $210 kept this week |
-| Excel | Sales total $11,930 · Wrong · one row was missed | $12,480 · Fixed · was $11,930, one row was missed |
-| Gmail and Calendar | 3 emails waiting on you · Unanswered since this morning | 0 · Answered · Harbour Dental booked, Tuesday 10:30 |
+| Race | The owner's things, before | After the ask lands | What the connector documents |
+|---|---|---|---|
+| Stripe | Still to chase $920: Harbour Dental $450 (30 days late), Cove Road Cafe $280 (45 days late), East End Yoga $190 (60 days late) | $0 still to chase: each sent again with a pay link | Creates and finalises invoices and payment links. It does not make anyone pay. |
+| Shopify | Sea salt caramels, 14 left; Wool mitts, 9 left | After one Approve: reorder sent, 120 caramels and 60 mitts on order | Reads orders and stock; the reorder email is drafted in Gmail and sent with approval. |
+| HubSpot | 3 quiet deals: Harbour Dental (34 days), Cove Road Cafe (41 days), East End Yoga (30 days) | A note and a task added on each | Writes tasks, notes and activities. It never sends the email. |
+| Meta Ads | Local awareness ad: on, no buyers in 7 days, $0 kept this week | Paused, $210 kept this week | Reads spend and results; changes are asked for before they happen. |
+| Excel | Sales total $11,930, wrong: row 14 ($550) was left out | $12,480, fixed: row 14 now counted | Explains cells and edits formulas. No macros. |
+| Gmail and Calendar | 3 emails waiting: Harbour Dental asking to meet, Cove Road Cafe asking for a quote, East End Yoga asking about a bill | 0 waiting: replies drafted, Harbour Dental booked Tuesday 10:30 | Drafts replies, sends with approval, creates events. |
 
-The first screen shows the Stripe example (Unpaid to Paid) as the page opens.
+The first screen shows one Stripe example on its own: the Harbour Dental invoice, $450, Unpaid to Paid.
