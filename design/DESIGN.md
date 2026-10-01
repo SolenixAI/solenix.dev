@@ -22,6 +22,21 @@ colors:
 
 The system behind solenix.dev. Solenix is one tech expert for small businesses in St. John's, Newfoundland and Labrador: we rebuild the website, host and look after it monthly, and set up AI (for example Claude for a law firm). The visual world is a night sky — deep blue-black grounds, one warm light source, orbit lines, glass panels — and the story is chaos settling into the figure-eight orbit. Dark throughout, on both surfaces: the marketing site (the three.js night-sky hero where three suns settle into a figure-eight is the signature) and the client portal (Overview, Initiatives, Billing). Calm, confident, a little expensive-looking. Plain Canadian English.
 
+
+## Decisions (Jager's, binding on every page — read before every change)
+
+- **Audience:** small business owners who have barely used AI. Plain words. Every claim lands on time saved, money saved or money made.
+- **The offer:** one AI (Claude or ChatGPT) at the centre of the business, connected to the tools they already use, plus teaching; we also cut unused tools, move them off outdated software, bring scattered information together, and build and look after their website. You don't need to be an expert anymore.
+- **The story:** Revenue, Costs and Time are three bodies tumbling erratically through an endless universe; the AI at the centre is what settles them into the stable figure-eight. The 3D world runs through the whole site, top to bottom — every section happens inside it, never on flat panels, cards or diagrams laid over it.
+- **Dark only.** No light theme, no Motion switch (the OS reduced-motion setting is the control, and reduced motion still follows the scroll smoothly). No dashboards or readout widgets nobody asked for.
+- **Navigation:** nav links go to real pages, never jump-scrolling around one page.
+- **Tools are shown as their real logos** (official marks, unaltered, "the tools you already use", no implied partnership, small trademark note), not generic words.
+- **Pricing:** no prices anywhere public. "Two numbers. Both in writing." Value-based per initiative: what it's worth to the client + three options, highest first; monthly care plan per client.
+- **ROI:** only sourced numbers from design/roi-model.md; per initiative Before → Now → $ → payback.
+- **Book a call** is a real booking page (Google Calendar appointment schedule), never a mailto link.
+- **Portal words:** *Initiatives* are Solenix's consulting projects with the client (Linear projects), never "your initiatives". *Billing* is Solenix billing the client — never imply we manage their bills. Tabs: Overview · Initiatives · Billing. Solenix is the first client (dogfood).
+- **Sign-in:** passkey, Google, email link (opens a Continue page). Invite-only. No Apple.
+
 ## Color Palette
 
 | Role | Name | Hex | Usage |
