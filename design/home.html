@@ -162,6 +162,31 @@ footer { position: relative; z-index: 2; }
 .ret.flip span { left: auto; right: calc(100% + 10px); text-align: right; }
 .anchor { position: absolute; left: 0; top: 78svh; width: 1px; height: 1px; }
 
+/* The three bodies, named. Each tag rides with its sun through the whole story. */
+.body-tag { position: absolute; left: 0; top: 0; opacity: 0; will-change: transform, opacity; display: inline-flex; align-items: center; gap: 6px; padding: 4px 9px; border-radius: var(--radius-pill); background: color-mix(in oklch, var(--bg) 74%, transparent); border: 1px solid var(--line-strong); font: var(--fw-semibold) var(--fs-2xs)/1.2 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--text); white-space: nowrap; }
+.body-tag i { width: 6px; height: 6px; border-radius: 50%; background: var(--warn); box-shadow: 0 0 8px var(--warn); transition: background-color var(--dur-slow), box-shadow var(--dur-slow); }
+.body-tag.in i { background: var(--ok); box-shadow: 0 0 8px var(--ok); }
+.body-tag.ai { color: var(--accent-text); border-color: color-mix(in oklch, var(--accent) 60%, transparent); box-shadow: 0 0 14px color-mix(in srgb, var(--ring) 35%, transparent); }
+/* The readout, in the same three words. */
+.hud { min-width: 14rem; }
+div.hud dl.hud-3 { display: grid; grid-template-columns: 1fr; gap: 6px; margin: 0; }
+.hud-3 > div { display: grid; grid-template-columns: 1fr auto; gap: var(--space-4); align-items: baseline; }
+.hud-3 dt { color: var(--text); text-transform: uppercase; letter-spacing: var(--track-label); font-weight: var(--fw-semibold); }
+.hud-3 dd { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); }
+.hud-3 dd::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--warn); box-shadow: 0 0 8px var(--warn); }
+.hud-3 dd.in { color: var(--ok); }
+.hud-3 dd.in::before { background: var(--ok); box-shadow: 0 0 8px var(--ok); }
+.hud-ai { display: flex; justify-content: space-between; gap: var(--space-4); padding-top: var(--space-3); border-top: 1px solid var(--line-strong); color: var(--faint); text-transform: uppercase; letter-spacing: var(--track-label); }
+.hud-ai b { color: var(--accent-text); font-weight: var(--fw-semibold); text-transform: none; letter-spacing: .04em; }
+.hud[data-state="stable"] .hud-ai b { color: var(--ok); }
+@media (max-width: 720px) {
+  div.hud { display: grid; grid-template-columns: 1fr; gap: 6px; align-items: start; }
+  div.hud > .hud-k { display: none; }
+  div.hud dl.hud-3 { grid-template-columns: repeat(3, 1fr); gap: var(--space-2); justify-self: stretch; }
+  div.hud .hud-3 > div { grid-template-columns: 1fr; gap: 2px; }
+  div.hud .hud-3 dt, div.hud .hud-3 dd { display: inline-flex; text-align: left; white-space: nowrap; }
+  div.hud .hud-ai { padding-top: 6px; justify-content: flex-start; gap: var(--space-3); }
+}
 @media (min-width: 900px) { .scroll-cue { display: block; } }
 @media (max-width: 720px) {
   .hud { background: linear-gradient(180deg, color-mix(in oklch, var(--bg) 80%, transparent), transparent); padding-bottom: var(--space-3); top: calc(var(--nav-height) + var(--space-2)); bottom: auto; right: var(--gutter); left: var(--gutter); min-width: 0; border-left: 0; padding: 0; grid-template-columns: auto 1fr; align-items: end; gap: var(--space-2) var(--space-4); }
@@ -509,12 +534,10 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
   <div class="veil"></div>
 </div>
 <div class="scene-ui" aria-hidden="true">
-  <svg class="leaders"><path/><path/><path/><circle r="2.5"/><circle r="2.5"/><circle r="2.5"/></svg>
-  <div class="ret"></div><div class="ret"></div><div class="ret"></div>
-  <div class="tool"><b data-n="A">The shop</b><span>till, orders, website</span></div>
-  <div class="tool"><b data-n="B">The books</b><span>invoices, bank, spreadsheets</span></div>
-  <div class="tool"><b data-n="C">The marketing</b><span>ads, email, social</span></div>
-  <div class="ret ret-ai"><span>AI<b>Claude or ChatGPT</b></span></div>
+  <div class="body-tag" data-od-id="tag-revenue"><i></i>Revenue</div>
+  <div class="body-tag" data-od-id="tag-costs"><i></i>Costs</div>
+  <div class="body-tag" data-od-id="tag-time"><i></i>Time</div>
+  <div class="body-tag ai" data-od-id="tag-ai">AI</div>
   <div class="stop-mk" data-k="0">01<span>A clear picture</span></div>
   <div class="stop-mk" data-k="1">02<span>Your own portal</span></div>
   <div class="stop-mk" data-k="2">03<span>Your new website</span></div>
@@ -760,13 +783,14 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
 </section>
 </main>
 
-<div class="hud" data-od-id="sim-hud" role="group" aria-label="How settled the three tools are right now">
-  <p class="hud-big"><span class="hud-k">How settled</span><span class="hud-v" data-hud="d">—</span></p>
-  <div class="hud-bar" aria-hidden="true"><b data-hud="bar"></b></div>
-  <dl>
-    <dt>Right now</dt><dd><span class="state" data-hud="s">Pulling apart</span></dd>
-    <dt>Our help</dt><dd data-hud="k">None yet</dd>
+<div class="hud" data-od-id="sim-hud" role="group" aria-label="Your revenue, costs and time right now">
+  <p class="hud-k">Your business, right now</p>
+  <dl class="hud-3">
+    <div><dt>Revenue</dt><dd data-hud="b0">Pulling away</dd></div>
+    <div><dt>Costs</dt><dd data-hud="b1">Pulling away</dd></div>
+    <div><dt>Time</dt><dd data-hud="b2">Pulling away</dd></div>
   </dl>
+  <p class="hud-ai"><span>AI at the centre</span><b data-hud="ai">Not yet</b></p>
 </div>
 
 <footer data-od-id="footer">
@@ -804,7 +828,7 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
      where the camera is, how hard the suns are steered, how far the orbit is drawn in.
      Values not given carry over from the keyframe before. ── */
   const KEYS = [
-    { sel: '.sky', f: 0, pin: 1, k: 0, free: 0, order: 0, ink: 0, third: 0, el: 22, az: 0, dist: 18.5, ox: 0.2, oy: 0.12, poy: 0.14, calm: 0, dim: 0, labels: 0, conn: 0, agent: 0, hud: 1, stops: 0 },
+    { sel: '.sky', f: 0, pin: 1, k: 0, free: 0, order: 0, ink: 0, third: 0, el: 22, az: 0, dist: 18.5, ox: 0.2, oy: 0.12, poy: 0.22, calm: 0, dim: 0, labels: 0, conn: 0, agent: 0, hud: 1, stops: 0 },
     { sel: '.sky', f: 0.55, pin: 1, labels: 1, el: 27, az: -10, dist: 16.5, ox: 0.22, oy: 0.1 },
     { sel: '.sky', f: 1, pin: 1, labels: 0, el: 33, az: -22, dist: 17 },
     { sel: '#portal', f: 0.5, dim: 0.62, hud: 0, el: 40, az: -42, dist: 19, ox: -0.12, oy: 0.02, poy: 0.1 },
@@ -844,7 +868,7 @@ html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="
 
   const sky = $('.sky'), nav = $('.nav'), hero = $('.hero-copy'), beat = $('.beat'), cue = $('.scroll-cue'), world = $('.world'), hudEl = $('.hud');
   const rets = $$('.scene-ui .ret:not(.ret-ai)'), retAi = $('.ret-ai'), tools = $$('.tool');
-  S.rets = rets; S.retAi = retAi; S.tools = tools; S.leaders = $('.leaders'); S.stops = $$('.stop-mk'); S.hud = hudEl;
+  S.stops = $$('.stop-mk'); S.hud = hudEl;
   /* The Look headline builds word by word with the scroll, and unbuilds when you scroll back. */
   { const h = $('.beat-h', beat); h.setAttribute('aria-label', h.textContent); h.querySelectorAll(':scope, em').forEach(el => [...el.childNodes].forEach(n => { if (n.nodeType === 3 && n.textContent.trim()) { const f = document.createDocumentFragment(); n.textContent.split(/(\s+)/).forEach(w => { if (!w) return; if (/^\s+$/.test(w)) f.append(w); else { const sp = document.createElement('span'); sp.className = 'bw'; sp.setAttribute('aria-hidden', 'true'); sp.textContent = w; f.append(sp); } }); n.replaceWith(f); } })); }
   const bwords = $$('.bw', beat), bblocks = $$('.bl', beat);
@@ -1034,7 +1058,8 @@ import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 const S = window.solenix;
 const stage = document.querySelector('.world'), canvas = document.getElementById('gl');
 const q = s => document.querySelector(s);
-const hud = { d: q('[data-hud="d"]'), k: q('[data-hud="k"]'), s: q('[data-hud="s"]'), bar: q('[data-hud="bar"]'), root: q('.hud') };
+const hud = { b: [0, 1, 2].map(i => q('[data-hud="b' + i + '"]')), ai: q('[data-hud="ai"]'), root: q('.hud') };
+const tags = [...document.querySelectorAll('.body-tag:not(.ai)')], tagAi = q('.body-tag.ai');
 
 /* Colours come from tokens.css — resolved inside the dark sky. */
 const css = getComputedStyle(document.documentElement);
@@ -1351,7 +1376,6 @@ const tmp2 = [0, 0], tgt = new THREE.Vector3(), proj = new THREE.Vector3();
 const ray = new THREE.Raycaster(), plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -SUN_Y), hit = new THREE.Vector3(), ndc = new THREE.Vector2();
 let clockT = 0, hudNext = 0, lastY = scrollY, scrollVel = 0, lockT = -99, armed = true, locked = false;
 const smooth = S.smooth, lerp = (a, b, t) => a + (b - a) * t, D2R = THREE.MathUtils.degToRad;
-const leaderEls = S.leaders ? [...S.leaders.querySelectorAll('path')] : [], leaderDots = S.leaders ? [...S.leaders.querySelectorAll('circle')] : [];
 const scr = [[0, 0], [0, 0], [0, 0]];
 /* The five stops of "After you book" sit on the real orbit, in the order the ink reaches them. */
 const INK0 = 0.1, INK_SPAN = 0.9, STOP_U = [0, 1, 2, 3, 4].map(k => INK0 + (k + 0.5) / 5 * INK_SPAN);
@@ -1454,41 +1478,16 @@ function frame(dtReal, still) {
   timeU.value = clockT; finalPass.uniforms.uTime.value = clockT;
   composer.render();
 
-  /* Look: brackets on the suns, names in a fixed column (a row on phones) with leader lines. */
-  const ra = S.retAlpha || 0;
-  for (let i = 0; i < 3; i++) { proj.copy(B[i]).project(camera); scr[i][0] = (proj.x + 1) / 2 * W; scr[i][1] = (1 - proj.y) / 2 * H; }
-  if (ra <= 0.001) { S.rets.forEach(e => e.style.opacity = 0); S.tools.forEach(e => e.style.opacity = 0); S.leaders.style.opacity = 0; }
-  else {
-    S.leaders.style.opacity = ra;
-    const order = [0, 1, 2];
-    if (portrait) {
-      order.sort((p0, p1) => scr[p0][0] - scr[p1][0]);
-      const top = hud.root.getBoundingClientRect().bottom + 12;
-      order.forEach((bi, slot) => {
-        const e = S.tools[bi], w = e.offsetWidth, h = e.offsetHeight, cx = W * (slot * 2 + 1) / 6, lx = Math.min(Math.max(cx - w / 2, 12), W - 12 - w);
-        e.style.transform = `translate3d(${lx.toFixed(1)}px, ${top.toFixed(1)}px, 0)`; e.style.opacity = ra;
-        const [bx, by] = scr[bi], sx = lx + w / 2, sy = top + h, mid = Math.max(sy + 14, Math.min(by - 34, sy + 60));
-        leaderEls[bi].setAttribute('d', `M${sx.toFixed(1)} ${sy.toFixed(1)}V${mid.toFixed(1)}L${bx.toFixed(1)} ${(by - 22).toFixed(1)}`);
-        leaderDots[bi].setAttribute('cx', sx.toFixed(1)); leaderDots[bi].setAttribute('cy', sy.toFixed(1));
-      });
-    } else {
-      order.sort((p0, p1) => scr[p0][1] - scr[p1][1]);
-      const maxX = Math.max(scr[0][0], scr[1][0], scr[2][0]), gap = 62, colX = Math.min(maxX + 90, W - 250);
-      let y = Math.max(96, Math.min(scr[order[0]][1] - 24, H * 0.58 - gap * 2));
-      order.forEach(bi => {
-        y = Math.max(y, scr[bi][1] - 24);
-        const e = S.tools[bi], h = e.offsetHeight, ly = Math.min(y, H * 0.6 - h);
-        e.style.transform = `translate3d(${colX.toFixed(1)}px, ${ly.toFixed(1)}px, 0)`; e.style.opacity = ra;
-        const [bx, by] = scr[bi], ey = ly + h / 2, elbow = colX - 28;
-        leaderEls[bi].setAttribute('d', `M${(bx + 22).toFixed(1)} ${by.toFixed(1)}L${elbow.toFixed(1)} ${ey.toFixed(1)}H${(colX - 4).toFixed(1)}`);
-        leaderDots[bi].setAttribute('cx', (colX - 4).toFixed(1)); leaderDots[bi].setAttribute('cy', ey.toFixed(1));
-        y = ly + gap;
-      });
-    }
-    S.rets.forEach((e, i) => { e.style.opacity = ra; e.style.transform = `translate3d(${scr[i][0].toFixed(1)}px, ${scr[i][1].toFixed(1)}px, 0)`; });
-  }
-  { const e = S.retAi, al = 0; e.style.opacity = al;
-    if (al > 0.001) { proj.copy(HUB).project(camera); const sx = (proj.x + 1) / 2 * W, sy = (1 - proj.y) / 2 * H; e.classList.toggle('flip', sx > W - 230); e.style.transform = `translate3d(${sx.toFixed(1)}px, ${sy.toFixed(1)}px, 0)`; } }
+  /* Revenue, Costs, Time: a small tag under each sun, all the way through. They fade only where
+     the scene is dimmed behind reading text, and step apart if two suns pass close together. */
+  const la = Math.max(0, Math.min(1, 1 - sc.dim / 0.4)), off = portrait ? 24 : 34;
+  const bd = [0, 1, 2].map(i => Math.hypot(disp[i * 2] - eight.p[i * 2], disp[i * 2 + 1] - eight.p[i * 2 + 1]));
+  const pos = [0, 1, 2].map(i => { proj.copy(B[i]).project(camera); return { i, x: (proj.x + 1) / 2 * W, y: (1 - proj.y) / 2 * H + off }; }).sort((p0, p1) => p0.y - p1.y);
+  for (let n = 1; n < 3; n++) for (let m = 0; m < n; m++) if (Math.abs(pos[n].x - pos[m].x) < 92 && pos[n].y - pos[m].y < 24) pos[n].y = pos[m].y + 24;
+  pos.forEach(pp => { const e = tags[pp.i], x = Math.min(Math.max(pp.x, 48), W - 48);
+    e.style.opacity = la.toFixed(3); e.style.transform = `translate3d(${x.toFixed(1)}px, ${pp.y.toFixed(1)}px, 0) translateX(-50%)`; e.classList.toggle('in', bd[pp.i] < 0.05); });
+  { const al = la * Math.max(sc.conn, sc.free * 0.75); tagAi.style.opacity = al.toFixed(3);
+    if (al > 0.001) { proj.copy(HUB).project(camera); tagAi.style.transform = `translate3d(${((proj.x + 1) / 2 * W).toFixed(1)}px, ${((1 - proj.y) / 2 * H - 30).toFixed(1)}px, 0) translateX(-50%)`; } }
 
   /* The five stops, pinned to their places on the orbit. */
   S.stops.forEach((e, k) => {
@@ -1505,17 +1504,13 @@ function frame(dtReal, still) {
   if (d > 0.3 || sc.order < 0.5) armed = true;
   if (holding !== locked) { locked = holding; jrEl.classList.toggle('locked', holding); }
 
-  /* HUD: the real numbers. Distance is the rms gap between each sun and its place on the exact orbit. */
+  /* Readout: the same three words. Each state comes from that sun's real distance to its place on the orbit. */
   if (still || clockT > hudNext) {
     hudNext = clockT + 0.08;
-    /* Plain words: how settled the three tools are (from the real distance to the orbit), and how much we're helping. */
-    const settled = Math.round(Math.max(0, 1 - d / 1.8) * 100);
-    hud.d.textContent = (d < 0.005 ? 100 : Math.min(99, settled)) + '%';
-    hud.bar.style.width = (d < 0.005 ? 100 : settled) + '%';
-    const help = ctl.k < 0.02 ? (sc.order > 0.9 ? 'Not needed' : 'None yet') : ctl.k > 0.6 ? 'Hands on' : 'Guiding';
-    hud.k.textContent = help;
-    hud.s.textContent = (holding || (still && sc.order > 0.9 && sc.k < 0.01)) ? 'Runs on its own' : ctl.k > 0.02 ? (d < 0.03 ? 'Working together' : 'Coming together') : 'Pulling apart';
-    hud.root.dataset.state = holding || (still && sc.order > 0.9) || (ctl.k > 0.02 && d < 0.03) ? 'stable' : 'chaos';
+    const allIn = bd.every(x => x < 0.05);
+    bd.forEach((x, i) => { hud.b[i].textContent = x < 0.05 ? 'In orbit' : x < 0.45 ? 'Coming in' : 'Pulling away'; hud.b[i].classList.toggle('in', x < 0.05); });
+    hud.ai.textContent = holding || (allIn && sc.order > 0.9) ? 'Holding all three' : ctl.k > 0.02 || sc.conn > 0.3 ? 'Bringing them in' : 'Not yet';
+    hud.root.dataset.state = allIn ? 'stable' : 'chaos';
   }
 }
 
