@@ -40,6 +40,13 @@ grep -rn ">Tools we use<" app components design/*.html 2>/dev/null | while read 
 # Copy follows the Voice rules: no banned words (the list lives in design/DESIGN.md).
 python3 scripts/voice-check.py design/home.html design/app.html || fail=1
 
+# The homepage happens inside the 3D world: the race lanes are bare type, never a filled or blurred panel.
+grep -n -E '^\.lane \{[^}]*(background|backdrop-filter)' design/home.html \
+  | while read -r l; do echo "check: race lane is a panel over the world (no background or blur on .lane): ${l:0:60}"; done | grep . && fail=1
+# Reduced motion quiets the camera only: the races must still play.
+awk '/The flyby races\./,/<\/script>/' design/home.html | grep -n -E 'prefers-reduced-motion|reduce\.matches' \
+  | while read -r l; do echo "check: the races must play under reduced motion (no reduced-motion branch in the race script): ${l:0:60}"; done | grep . && fail=1
+
 # Every source of truth named in AGENTS.md exists.
 for f in design/DESIGN.md design/tokens.css design/home.html design/app.html design/roi-model.md design/before-after.md supabase/config.toml; do
   [ -f "$f" ] || bad "missing source of truth: $f"

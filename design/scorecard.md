@@ -45,3 +45,15 @@ Five scenes, one camera voyage. The portal preview, the demo chat, the calculato
 | 2026-09-30 | **Page** | 86 | 85 | 79 | 78 | 82 | 80 | **82** |
 
 Still under the 85 target: the flybys lose points on "in the 3D world" because the two race screens are glass panels beside each tool's world, and the middle scenes carry no Book a call.
+
+### After: no panels, and the races play under reduced motion (2026-09-30)
+
+Measured at 1440 wide, reduced motion off and on: the world shows through 91% of the screen in the guide and in every race (the rest is the nav bar), and both clocks run in both modes.
+
+| Date | Section | 3D world | Clarity | Wow | Pull | Read | Brevity | Score |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 2026-09-30 | 2 · The guide | 92 | 88 | 78 | 70 | 84 | 88 | 83 |
+| 2026-09-30 | 3 · The flybys (six races) | 86 | 86 | 86 | 78 | 76 | 70 | 83 |
+| 2026-09-30 | **Page** | 89 | 85 | 81 | 78 | 81 | 80 | **83** |
+
+Readability drops a little in the flybys: bare type over the grid is harder to read than type on a panel.

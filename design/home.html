@@ -556,7 +556,7 @@ html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%
 .qa p { padding-bottom: var(--space-4); font-size: var(--fs-lede); max-width: 28rem; }
 .world .veil { display: none; }
 .tm-note { font-size: var(--fs-xs); color: var(--faint); flex-basis: 100%; }
-/* ── The flybys: the same job run twice, side by side, in real time. Two screens hang beside each tool's world:
+/* ── The flybys: the same job run twice, side by side, in real time. Bare type hangs either side of each tool's world:
    one clicks through the tool by hand, one types the ask. No times are stated; the two clocks show it. ── */
 .eyebrow.toolname::before { display: none; }
 .eyebrow.toolname .lg { width: 20px; height: 20px; color: var(--text); }
@@ -566,64 +566,66 @@ html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%
 .race-head { display: grid; gap: var(--space-3); justify-items: start; max-width: 46rem; text-shadow: 0 0 26px var(--bg), 0 0 10px var(--bg), 0 1px 2px var(--bg); }
 .race-head .h2 { font-size: clamp(1.55rem, 1rem + 2.4vw, 3rem); }
 .sr-race { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-.lanes { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); min-height: 0; height: 100%; max-height: max(27rem, 42vh); align-self: end; }
-.lane { min-height: 0; min-width: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: var(--space-3); padding: var(--space-4); border-radius: var(--radius-xl); background: var(--glass-bg); border: 1px solid var(--line); box-shadow: var(--shadow-md), var(--glass-inset); -webkit-backdrop-filter: blur(var(--glass-blur)); backdrop-filter: blur(var(--glass-blur)); transition: border-color var(--dur-slow), box-shadow var(--dur-slow); }
-.lane.done { border-color: color-mix(in oklch, var(--ok) 55%, transparent); box-shadow: var(--shadow-md), var(--glass-inset), 0 0 40px color-mix(in srgb, var(--ok) 16%, transparent); }
-.lane > header { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-3); }
+.lanes { display: grid; grid-template-columns: minmax(0, 1fr) clamp(13rem, 25vw, 24rem) minmax(0, 1fr); min-height: 0; height: 100%; max-height: max(27rem, 42vh); align-self: end; }
+/* No panels. Each lane is bare type and hairlines on the sky, one either side of the tool's world, so the
+   universe stays in view behind and between them. A soft shadow of the night keeps every word readable. */
+.lane { min-height: 0; min-width: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: var(--space-3); text-shadow: 0 0 16px var(--bg), 0 0 7px var(--bg), 0 1px 2px var(--bg); }
+.lane.ask { grid-column: 3; }
+.lane > header { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-3); padding-bottom: var(--space-3); border-bottom: 1px solid var(--line-strong); transition: border-color var(--dur-slow); }
+.lane.done > header { border-color: var(--ok); }
 .lane-t { font: var(--fw-semibold) var(--fs-xs)/1 var(--font-mono); letter-spacing: var(--track-eyebrow); text-transform: uppercase; color: var(--muted); }
 .lane.ask .lane-t { color: var(--accent-text); }
 .sw { font: var(--fw-bold) var(--fs-h1)/1 var(--font-display); letter-spacing: var(--track-heading); font-variant-numeric: tabular-nums; color: var(--text); }
 .lane.done .sw { color: var(--ok); }
-.race.still .sw { display: none; }
-.scr { position: relative; min-height: 0; overflow: hidden; display: grid; grid-template-rows: auto minmax(0, 1fr); border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface-sunken); }
-.scr-bar { display: flex; align-items: center; gap: var(--space-2); min-width: 0; padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--line); font: var(--fw-medium) var(--fs-2xs)/1.2 var(--font-mono); color: var(--muted); }
+.scr { position: relative; min-height: 0; overflow: hidden; display: grid; grid-template-rows: auto minmax(0, 1fr); }
+.scr-bar { display: flex; align-items: center; gap: var(--space-2); min-width: 0; padding-bottom: var(--space-3); font: var(--fw-medium) var(--fs-2xs)/1.2 var(--font-mono); color: var(--muted); }
 .scr-bar .lg { width: 16px; height: 16px; color: var(--text); }
 .scr-bar .crumb { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .scr-bar .ex { margin-left: auto; flex: none; padding: 3px 8px; border-radius: var(--radius-pill); border: 1px dashed var(--line-strong); letter-spacing: var(--track-label); text-transform: uppercase; }
-.ai-dot { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--sun1); box-shadow: 0 0 10px var(--sun2); }
-.scr-main { display: grid; grid-template-columns: 8rem minmax(0, 1fr); min-height: 0; }
-.scr-nav { list-style: none; margin: 0; padding: var(--space-2); border-right: 1px solid var(--line); display: grid; align-content: start; gap: 2px; font-size: var(--fs-sm); color: var(--muted); }
-.scr-nav li { padding: 6px 10px; border-radius: var(--radius-xs); }
-.scr-nav li.on { background: color-mix(in oklch, var(--text) 10%, transparent); color: var(--text); }
-.scr-view { min-width: 0; padding: var(--space-3); display: grid; align-content: start; gap: 2px; font-size: var(--fs-sm); transition: opacity var(--dur-base); }
+.rdot { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--sun1); box-shadow: 0 0 10px var(--sun2); }
+.scr-main { display: grid; grid-template-rows: auto minmax(0, 1fr); min-height: 0; }
+.scr-nav { list-style: none; margin: 0; padding: 0 0 var(--space-2); display: flex; gap: var(--space-4); font-size: var(--fs-sm); color: var(--muted); }
+.scr-nav li { padding: 4px 0; border-bottom: 2px solid transparent; }
+.scr-nav li.on { color: var(--text); border-bottom-color: var(--accent); }
+.scr-view { min-width: 0; display: grid; align-content: start; font-size: var(--fs-sm); transition: opacity var(--dur-base); }
 .scr-view.load { opacity: .2; }
-.scr-chip { justify-self: start; margin: 0 0 var(--space-2); padding: 4px 10px; border-radius: var(--radius-pill); border: 1px solid var(--line-strong); font: var(--fw-medium) var(--fs-2xs)/1.2 var(--font-mono); color: var(--text); }
-.scr-row { display: flex; justify-content: space-between; gap: var(--space-3); padding: 5px 8px; border-radius: var(--radius-xs); color: var(--text); font-variant-numeric: tabular-nums; }
+.scr-chip { justify-self: start; margin: var(--space-1) 0 var(--space-2); padding: 4px 10px; border-radius: var(--radius-pill); border: 1px solid var(--line-strong); font: var(--fw-medium) var(--fs-2xs)/1.2 var(--font-mono); color: var(--text); }
+.scr-row { display: flex; justify-content: space-between; gap: var(--space-3); padding: 7px 0; border-top: 1px solid var(--line); color: var(--text); font-variant-numeric: tabular-nums; transition: color var(--dur-fast); }
 .scr-row span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .scr-row span:last-child { flex: none; color: var(--muted); }
-.scr-row.hd, .scr-row.hd span:last-child { font: var(--fw-semibold) var(--fs-2xs)/1.4 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--muted); }
-.scr-row.on { background: color-mix(in oklch, var(--accent) 18%, transparent); }
-.scr-row.on span:last-child { color: var(--text); }
-.scr-cur { position: absolute; left: 0; top: 0; width: 12px; height: 12px; margin: -6px; border-radius: 50%; background: var(--text); box-shadow: 0 0 0 5px color-mix(in oklch, var(--text) 22%, transparent); opacity: 0; pointer-events: none; transition: transform 700ms var(--ease-in-out), opacity var(--dur-base); }
+.scr-row.hd, .scr-row.hd span:last-child { border-top: 0; font: var(--fw-semibold) var(--fs-2xs)/1.4 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--muted); }
+.scr-row.on, .scr-row.on span:last-child { color: var(--accent-text); }
+.scr-cur { position: absolute; left: 0; top: 0; width: 12px; height: 12px; margin: -6px; border-radius: 50%; background: var(--text); box-shadow: 0 0 0 5px color-mix(in oklch, var(--text) 22%, transparent), 0 0 18px var(--ring); opacity: 0; pointer-events: none; transition: transform 700ms var(--ease-in-out), opacity 180ms; }
 .lane.go .scr-cur { opacity: 1; }
 .lane-s { margin: 0; min-height: 1.45em; display: flex; align-items: baseline; gap: var(--space-2); font-size: var(--fs-sm); line-height: 1.45; color: var(--muted); }
 .lane-s b { flex: none; font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--text); }
 .lane.done .lane-s b { color: var(--ok); }
-.chat-body { min-height: 0; overflow: hidden; padding: var(--space-3); display: flex; flex-direction: column; justify-content: flex-end; gap: var(--space-3); }
+.chat-body { min-height: 0; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-start; gap: var(--space-3); }
 .rmsg { margin: 0; font-size: var(--fs-sm); line-height: 1.45; }
-.rmsg.me { align-self: flex-end; max-width: 94%; padding: var(--space-3); border-radius: var(--radius-lg) var(--radius-lg) 4px var(--radius-lg); background: color-mix(in oklch, var(--text) 10%, transparent); color: var(--text); font-weight: var(--fw-medium); }
+.rmsg.me { font: var(--fw-semibold) var(--fs-h4)/1.4 var(--font-display); color: var(--text); text-wrap: pretty; }
 .rmsg.me:has(span:empty) { visibility: hidden; }
+.rmsg.me span::before { content: "\201C"; } .lane.sent .rmsg.me span::after { content: "\201D"; }
 .lane.go:not(.sent) .rmsg.me::after { content: ""; display: inline-block; width: 2px; height: 1em; margin-left: 2px; vertical-align: -2px; background: var(--accent-text); }
 .rmsg.st { font: var(--fw-medium) var(--fs-xs)/1.3 var(--font-mono); color: var(--accent-text); }
-.rmsg.ai { display: grid; gap: 2px; }
+.rmsg.ai { display: grid; }
 .rmsg.ai[hidden], .rmsg.st[hidden] { display: none; }
-.rmsg.ai .scr-row { padding: 3px 0; }
-.rmsg.ai p { margin: var(--space-2) 0 0; font-weight: var(--fw-semibold); color: var(--text); }
+.rmsg.ai p { margin: 0; padding-top: var(--space-3); border-top: 1px solid var(--line); font-weight: var(--fw-semibold); color: var(--text); }
 .race-note { margin: 0; font-size: var(--fs-xs); line-height: 1.5; color: var(--muted); text-shadow: 0 0 12px var(--bg), 0 1px 2px var(--bg); }
 @media (max-width: 899px) {
   .race-in { gap: var(--space-3); padding-top: calc(var(--nav-height) + var(--space-3)); padding-bottom: var(--space-3); }
   .race-head { gap: var(--space-2); }
-  .lanes { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-3); max-height: none; }
-  .lane { padding: var(--space-3); gap: var(--space-2); border-radius: var(--radius-lg); }
+  .lanes { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-4); max-height: none; }
+  .lane { gap: var(--space-2); }
+  .lane.ask { grid-column: 1; }
+  .lane > header { padding-bottom: var(--space-2); }
   .sw { font-size: 1.5rem; }
-  .scr-main { grid-template-columns: minmax(0, 1fr); }
-  .scr-nav, .scr-row.hd, .chat .scr-bar { display: none; }
-  .chat { grid-template-rows: minmax(0, 1fr); }
-  .scr-view, .chat-body { padding: var(--space-2); }
-  .scr-chip { margin-bottom: 2px; }
-  .scr-row { padding: 3px 6px; }
+  .scr-nav, .scr-row.hd, .rchat .scr-bar { display: none; }
+  .rchat { grid-template-rows: minmax(0, 1fr); }
+  .scr-bar { padding-bottom: var(--space-2); }
+  .scr-row { padding: 4px 0; }
+  .chat-body { justify-content: flex-end; }
+  .rmsg.me { font-size: var(--fs-body); }
   .lane.done .rmsg.me span { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
-  .rmsg.me { padding: var(--space-2) var(--space-3); }
   .lane-s { font-size: var(--fs-xs); }
   .race-note { font-size: var(--fs-2xs); }
 }
@@ -633,13 +635,18 @@ html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%
   .lane-s span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .race-in { padding-bottom: var(--space-2); }
   .race-head .h2 { font-size: 1.35rem; }
-  .lane { padding: var(--space-2) var(--space-3); }
-  .scr-row { padding: 2px 6px; }
+  .scr-row { padding: 2px 0; }
 }
 html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relative; height: auto; } html:not(.js) .sr-race { position: static; width: auto; height: auto; clip-path: none; white-space: normal; }
 .world-tag { width: 52px; height: 52px; background: color-mix(in oklch, var(--bg) 88%, transparent); border-color: color-mix(in oklch, var(--accent) 55%, transparent); box-shadow: 0 0 24px color-mix(in srgb, var(--ring) 40%, transparent); }
 .world-tag .lg { width: 26px; height: 26px; }
 @media (max-width: 899px) { .close-sec { align-items: end; } .close-in { padding-block: var(--space-7); } }
+/* The guide: one pinned scene. The words keep to the left edge, top and bottom; the world holds the rest. */
+#guide { height: 210vh; height: 210svh; }
+.guide-say { align-self: end; display: grid; gap: var(--space-4); max-width: 30rem; text-shadow: 0 0 26px var(--bg), 0 0 10px var(--bg), 0 1px 2px var(--bg); }
+#guide .jr-head { text-shadow: 0 0 26px var(--bg), 0 0 10px var(--bg), 0 1px 2px var(--bg); }
+/* Reduced motion: the camera does not fly. It cuts between stations under a short dip to dark. */
+#gl { transition: opacity 200ms linear; } #gl.dip { opacity: 0; }
 </style>
 </head>
 <body>
@@ -715,13 +722,17 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
   </div>
 </section>
 
-<section class="w-sec" id="guide" data-od-id="guide" data-scene="guide" style="--wh: 170svh">
-  <div class="wrap">
-    <div class="w-copy rv">
-      <p class="eyebrow">One AI at the centre</p>
-      <h2 class="h2">You don't need to be an expert <em>anymore.</em></h2>
-      <p class="w-big">Stop learning ten tools. Talk to one.</p>
-      <p class="lede">We set up Claude or ChatGPT for your team and connect it to the tools you already use. You say what you want in plain words, and it gets done in those tools.</p>
+<section class="jr" id="guide" data-od-id="guide" data-scene="guide">
+  <div class="jr-pin">
+    <div class="wrap jr-in">
+      <div class="jr-head">
+        <p class="eyebrow">One AI at the centre</p>
+        <h2 class="h2">You don't need to be an expert <em>anymore.</em></h2>
+      </div>
+      <div class="guide-say rv" data-od-id="guide-say">
+        <p class="w-big">Stop learning ten tools. Talk to one.</p>
+        <p class="lede">We set up Claude or ChatGPT for your team and connect it to the tools you already use. You say what you want in plain words, and it gets done in those tools.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -746,8 +757,8 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
         </article>
         <article class="lane ask" data-od-id="race-shopify-just-ask">
           <header><span class="lane-t">Just ask</span><span class="sw">0:00</span></header>
-          <div class="scr chat">
-            <div class="scr-bar"><i class="ai-dot"></i><span class="crumb">Your AI, connected to Shopify</span><span class="ex">Example</span></div>
+          <div class="scr rchat">
+            <div class="scr-bar"><i class="rdot"></i><span class="crumb">Your AI, connected to Shopify</span><span class="ex">Example</span></div>
             <div class="chat-body"><p class="rmsg me"><span></span></p><p class="rmsg st" hidden></p><div class="rmsg ai" hidden><div class="scr-row"><span>Sea salt caramels</span><span>212 sold · 14 left</span></div><div class="scr-row"><span>Wool mitts</span><span>150 sold · 9 left</span></div><div class="scr-row"><span>Partridgeberry jam</span><span>187 sold · 120 left</span></div><p>Caramels and mitts will run out within 30 days. Reorder those two.</p></div></div>
           </div>
           <p class="lane-s"></p>
@@ -778,8 +789,8 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
         </article>
         <article class="lane ask" data-od-id="race-meta-just-ask">
           <header><span class="lane-t">Just ask</span><span class="sw">0:00</span></header>
-          <div class="scr chat">
-            <div class="scr-bar"><i class="ai-dot"></i><span class="crumb">Your AI, connected to Meta Ads</span><span class="ex">Example</span></div>
+          <div class="scr rchat">
+            <div class="scr-bar"><i class="rdot"></i><span class="crumb">Your AI, connected to Meta Ads</span><span class="ex">Example</span></div>
             <div class="chat-body"><p class="rmsg me"><span></span></p><p class="rmsg st" hidden></p><div class="rmsg ai" hidden><div class="scr-row"><span>Local awareness</span><span>$5.90 → $9.40</span></div><div class="scr-row"><span>New arrivals</span><span>$6.10 → $6.80</span></div><div class="scr-row"><span>Fall sale</span><span>$4.60 → $4.10</span></div><p>Local awareness now costs far more per result. I would pause it.</p></div></div>
           </div>
           <p class="lane-s"></p>
@@ -810,8 +821,8 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
         </article>
         <article class="lane ask" data-od-id="race-quickbooks-just-ask">
           <header><span class="lane-t">Just ask</span><span class="sw">0:00</span></header>
-          <div class="scr chat">
-            <div class="scr-bar"><i class="ai-dot"></i><span class="crumb">Your AI, connected to QuickBooks</span><span class="ex">Example</span></div>
+          <div class="scr rchat">
+            <div class="scr-bar"><i class="rdot"></i><span class="crumb">Your AI, connected to QuickBooks</span><span class="ex">Example</span></div>
             <div class="chat-body"><p class="rmsg me"><span></span></p><p class="rmsg st" hidden></p><div class="rmsg ai" hidden><div class="scr-row"><span>Hillside Roofing</span><span>64 days · flagged</span></div><div class="scr-row"><span>East End Yoga</span><span>31 days</span></div><div class="scr-row"><span>Harbour Dental</span><span>12 days</span></div><p>The retainer invoice for Harbour Dental is ready to send.</p></div></div>
           </div>
           <p class="lane-s"></p>
@@ -842,8 +853,8 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
         </article>
         <article class="lane ask" data-od-id="race-gmail-just-ask">
           <header><span class="lane-t">Just ask</span><span class="sw">0:00</span></header>
-          <div class="scr chat">
-            <div class="scr-bar"><i class="ai-dot"></i><span class="crumb">Your AI, connected to Gmail and Calendar</span><span class="ex">Example</span></div>
+          <div class="scr rchat">
+            <div class="scr-bar"><i class="rdot"></i><span class="crumb">Your AI, connected to Gmail and Calendar</span><span class="ex">Example</span></div>
             <div class="chat-body"><p class="rmsg me"><span></span></p><p class="rmsg st" hidden></p><div class="rmsg ai" hidden><div class="scr-row"><span>Needs a reply today</span><span>4</span></div><div class="scr-row"><span>Can wait</span><span>9</span></div><div class="scr-row"><span>Junk and newsletters</span><span>16</span></div><p>Tuesday at 10:30 works for you both. The invite is ready to send.</p></div></div>
           </div>
           <p class="lane-s"></p>
@@ -874,8 +885,8 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
         </article>
         <article class="lane ask" data-od-id="race-microsoftexcel-just-ask">
           <header><span class="lane-t">Just ask</span><span class="sw">0:00</span></header>
-          <div class="scr chat">
-            <div class="scr-bar"><i class="ai-dot"></i><span class="crumb">Your AI, connected to Excel</span><span class="ex">Example</span></div>
+          <div class="scr rchat">
+            <div class="scr-bar"><i class="rdot"></i><span class="crumb">Your AI, connected to Excel</span><span class="ex">Example</span></div>
             <div class="chat-body"><p class="rmsg me"><span></span></p><p class="rmsg st" hidden></p><div class="rmsg ai" hidden><div class="scr-row"><span>Bread</span><span>$3,900 → $4,210</span></div><div class="scr-row"><span>Pastry</span><span>$3,320 → $3,180</span></div><div class="scr-row"><span>Coffee</span><span>$2,410 → $2,640</span></div><p>The pivot table and a bar chart are in the workbook. Your formulas are untouched.</p></div></div>
           </div>
           <p class="lane-s"></p>
@@ -906,8 +917,8 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
         </article>
         <article class="lane ask" data-od-id="race-hubspot-just-ask">
           <header><span class="lane-t">Just ask</span><span class="sw">0:00</span></header>
-          <div class="scr chat">
-            <div class="scr-bar"><i class="ai-dot"></i><span class="crumb">Your AI, connected to HubSpot</span><span class="ex">Example</span></div>
+          <div class="scr rchat">
+            <div class="scr-bar"><i class="rdot"></i><span class="crumb">Your AI, connected to HubSpot</span><span class="ex">Example</span></div>
             <div class="chat-body"><p class="rmsg me"><span></span></p><p class="rmsg st" hidden></p><div class="rmsg ai" hidden><div class="scr-row"><span>Harbour Dental</span><span>Draft ready</span></div><div class="scr-row"><span>Cove Road Cafe</span><span>Draft ready</span></div><div class="scr-row"><span>East End Yoga</span><span>Draft ready</span></div><p>Three deals went quiet. Each one has a follow-up that mentions your last talk.</p></div></div>
           </div>
           <p class="lane-s"></p>
@@ -1014,21 +1025,21 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
     { sel: '.sky', f: 0.55, pin: 1, labels: 1, el: 27, az: -10, dist: 16.5, ox: 0.22, oy: 0.1 },
     { sel: '.sky', f: 1, pin: 1, labels: 0, el: 33, az: -22, dist: 17 },
     /* 2 · The guide: the AI ignites at the centre and the first wires go out. */
-    { sel: '#guide', f: 0.3, gap: 1, conn: 1, k: 0.15, free: 0.3, el: 40, az: 6, dist: 11, ox: 0.22, oy: 0.04, poy: 0.2 },
-    { sel: '#guide', f: 0.85, k: 0.3, free: 0.4, el: 34, az: 26, dist: 13 },
+    { sel: '#guide', f: 0.25, pin: 1, conn: 1, k: 0.15, free: 0.3, el: 38, az: 6, dist: 9.2, ox: 0.16, oy: 0.02, poy: 0.02 },
+    { sel: '#guide', f: 0.9, pin: 1, k: 0.3, free: 0.4, el: 32, az: 26, dist: 10 },
     /* 3 · The flybys: out past six tool worlds, all the way round. */
-    { sel: '#fly-shopify', f: 0.15, pin: 1, wsel: 0, tx: 7.71, tz: 9.19, az: 40, conn: 0, k: 0.3, free: 0.4, fly: 1, dim: 1, el: 24, dist: 9.5, ox: 0.27, oy: 0.2, poy: 0.4 },
-    { sel: '#fly-shopify', f: 0.8, pin: 1, az: 50 },
-    { sel: '#fly-meta', f: 0.15, pin: 1, wsel: 1, tx: 11.82, tz: -2.08, az: 100 },
-    { sel: '#fly-meta', f: 0.8, pin: 1, az: 110 },
-    { sel: '#fly-quickbooks', f: 0.15, pin: 1, wsel: 2, tx: 4.10, tz: -11.28, az: 160 },
-    { sel: '#fly-quickbooks', f: 0.8, pin: 1, az: 170 },
-    { sel: '#fly-gmail', f: 0.15, pin: 1, wsel: 3, tx: -7.71, tz: -9.19, az: 220 },
-    { sel: '#fly-gmail', f: 0.8, pin: 1, az: 230 },
-    { sel: '#fly-microsoftexcel', f: 0.15, pin: 1, wsel: 4, tx: -11.82, tz: 2.08, az: 280 },
-    { sel: '#fly-microsoftexcel', f: 0.8, pin: 1, az: 290 },
-    { sel: '#fly-hubspot', f: 0.15, pin: 1, wsel: 5, tx: -4.10, tz: 11.28, az: 340 },
-    { sel: '#fly-hubspot', f: 0.8, pin: 1, az: 350 },
+    { sel: '#fly-shopify', f: 0.15, pin: 1, wsel: 0, tx: 7.71, tz: 9.19, az: 70, conn: 0, k: 0.3, free: 0.4, fly: 1, dim: 1, el: 24, dist: 8.6, ox: 0, oy: -0.1, poy: 0.4 },
+    { sel: '#fly-shopify', f: 0.8, pin: 1, az: 80 },
+    { sel: '#fly-meta', f: 0.15, pin: 1, wsel: 1, tx: 11.82, tz: -2.08, az: 130 },
+    { sel: '#fly-meta', f: 0.8, pin: 1, az: 140 },
+    { sel: '#fly-quickbooks', f: 0.15, pin: 1, wsel: 2, tx: 4.10, tz: -11.28, az: 190 },
+    { sel: '#fly-quickbooks', f: 0.8, pin: 1, az: 200 },
+    { sel: '#fly-gmail', f: 0.15, pin: 1, wsel: 3, tx: -7.71, tz: -9.19, az: 250 },
+    { sel: '#fly-gmail', f: 0.8, pin: 1, az: 260 },
+    { sel: '#fly-microsoftexcel', f: 0.15, pin: 1, wsel: 4, tx: -11.82, tz: 2.08, az: 310 },
+    { sel: '#fly-microsoftexcel', f: 0.8, pin: 1, az: 320 },
+    { sel: '#fly-hubspot', f: 0.15, pin: 1, wsel: 5, tx: -4.10, tz: 11.28, az: 370 },
+    { sel: '#fly-hubspot', f: 0.8, pin: 1, az: 380 },
     /* 4 · The plan: back to the centre, and the orbit is drawn in. */
     { sel: '#after', f: 0, pin: 1, fly: 0, tx: 0, tz: 0, k: 0.9, free: 0.6, dim: 0, stops: 1, el: 60, az: 394, dist: 9.6, ox: 0.21, oy: 0.02, poy: 0.02, calm: 0.35 },
     { sel: '#after', f: 0.35, pin: 1, k: 1, free: 1, third: 0.6, poy: -0.02 },
@@ -1146,24 +1157,24 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
 
 <script>
 /* The flyby races. Each one starts when its world is reached and resets when you leave. Both clocks count real
-   seconds. The ask finishes and its clock stops; the by-hand side is still clicking when you move on. */
+   seconds. The ask finishes and its clock stops; the by-hand side is still clicking when you move on.
+   Reduced motion does not stop them: the setting quiets the camera, and the demonstration still has to be seen. */
 (() => {
   const RACES = {"shopify":{"name":"Shopify","views":{"rep":{"head":["Reports",""],"rows":[["Sales over time",""],["Sales by product",""],["Sessions by location",""],["Returning customers",""]]},"s0":{"chip":"Date: today","head":["Product","Units sold"],"rows":[["Partridgeberry jam","3"],["Wool mitts","1"],["Sea salt caramels","2"],["Molasses cookies","0"]]},"s1":{"chip":"Date: last month","head":["Product","Units sold"],"rows":[["Partridgeberry jam","187"],["Wool mitts","150"],["Sea salt caramels","212"],["Molasses cookies","96"]]},"s2":{"chip":"Date: last month","head":["Product","Units sold ↓"],"rows":[["Sea salt caramels","212"],["Partridgeberry jam","187"],["Wool mitts","150"],["Molasses cookies","96"]]},"inv":{"head":["Product","In stock"],"rows":[["Molasses cookies","60"],["Partridgeberry jam","120"],["Sea salt caramels","14"],["Wool mitts","9"]]}},"steps":[[3,"Analytics","Open Analytics",null],[3,"Analytics › Reports","Open Reports","rep"],[3,"Reports › Sales by product","Find Sales by product","s0"],[3,"Reports › Sales by product","Set the date range to last month","s1"],[3,"Reports › Sales by product","Sort by units sold","s2"],[2,"Products › Inventory","Now open Inventory, a separate screen","inv"],[2,"Products › Inventory","Check the stock on each product, one at a time","inv","scan"]],"prompt":"Pull last month's top 10 sellers by units sold, show current stock for each, and tell me which will run out in 30 days","work":["Reading last month's sales in Shopify","Checking the stock on each one"],"done":"You decide what to reorder."},"meta":{"name":"Meta Ads","views":{"c0":{"chip":"Date: today","head":["Campaign","Cost per result"],"rows":[["Fall sale","$4.30"],["New arrivals","$7.00"],["Local awareness","$9.10"],["Email sign-ups","$3.10"]]},"c7":{"chip":"Date: last 7 days","head":["Campaign","Cost per result"],"rows":[["Fall sale","$4.10"],["New arrivals","$6.80"],["Local awareness","$9.40"],["Email sign-ups","$3.20"]]},"p7":{"chip":"Date: the 7 days before","head":["Campaign","Cost per result"],"rows":[["Fall sale","$4.60"],["New arrivals","$6.10"],["Local awareness","$5.90"],["Email sign-ups","$3.40"]]}},"steps":[[0,"Ads Manager","Log into Ads Manager","c0"],[0,"Ads Manager › Campaigns","Set the date range to the last 7 days","c7"],[0,"Ads Manager › Campaigns","Read the spend and the cost per result","c7"],[0,"Ads Manager › Campaigns","Switch to the 7 days before","p7"],[0,"Ads Manager › Campaigns","Compare every campaign by eye, back and forth","c7","scan"]],"prompt":"Pull spend, cost per result, and ROAS for all active campaigns over the last 7 days vs. the 7 days before. Tell me which ad sets are underperforming and recommend which to pause.","work":["Reading the last 14 days in Meta Ads","Comparing this week with the one before"],"done":"You make the call to pause."},"quickbooks":{"name":"QuickBooks","views":{"rep":{"head":["Reports",""],"rows":[["Profit and loss",""],["Who owes you",""],["Balance sheet",""],["Sales by customer",""]]},"ar":{"head":["Customer","Overdue by"],"rows":[["Harbour Dental","12 days"],["Hillside Roofing","64 days"],["East End Yoga","31 days"],["Cove Road Cafe","4 days"]]},"inv":{"head":["New invoice",""],"rows":[["Customer","Harbour Dental"],["Item","Website maintenance retainer"],["Amount","$450"],["Due","In 15 days"]]}},"steps":[[3,"Reports","Open Reports","rep"],[3,"Reports › Who owes you","Open the report of who owes you","ar"],[3,"Reports › Who owes you","Read down the list and decide who to chase","ar"],[1,"Sales › New invoice","Now open a new invoice, a separate screen","inv"],[1,"Sales › New invoice","Fill in the customer, the item, the amount and the date","inv","scan"]],"prompt":"Show me who owes us, flag anyone over 60 days, and send Harbour Dental an invoice for the retainer","work":["Reading who owes you in QuickBooks","Preparing the invoice"],"done":"You check it, then it goes."},"gmail":{"name":"Gmail and Calendar","views":{"inb":{"chip":"29 unread","head":["From","Subject"],"rows":[["Hillside Roofing","Quote for the deck?"],["Weekly deals","Fall offers inside"],["Harbour Dental","Can we move Thursday?"],["Your supplier","Invoice attached"]]},"one":{"head":["Hillside Roofing",""],"rows":[["Subject","Quote for the deck?"],["Asks for","A price by Friday"],["Reply today?","Yes"],["Next","28 more to read"]]}},"steps":[[0,"Inbox","Open the inbox","inb"],[0,"Inbox › Hillside Roofing","Open the first email and read it","one"],[0,"Inbox › Hillside Roofing","Decide: reply today, later, or junk","one"],[0,"Inbox","Back to the inbox. Then the next one, and the next.","inb","scan"]],"prompt":"Group today's inbox into needs a reply today, can wait, and junk. Then find 30 minutes next week with Harbour Dental and send the invite.","work":["Reading today's inbox in Gmail","Checking both calendars"],"done":"Nothing sends without your OK."},"microsoftexcel":{"name":"Excel","views":{"sh":{"chip":"Sales.xlsx","head":["Category","Revenue"],"rows":[["Bread","$4,210"],["Pastry","$3,180"],["Coffee","$2,640"],["Catering","$1,900"]]},"pv":{"chip":"PivotTable fields","head":["Field","Set to"],"rows":[["Rows","Category"],["Columns","Month"],["Values","Sum of revenue"],["Chart","Not added yet"]]}},"steps":[[0,"Sales.xlsx","Open the sales workbook","sh"],[0,"Sales.xlsx","Select all of the sales data","sh"],[1,"Insert › PivotTable","Insert a pivot table","pv"],[1,"Insert › PivotTable","Set up each field, then build the chart","pv","scan"]],"prompt":"Add a pivot table of revenue by category this month vs. last, with a bar chart","work":["Reading the open workbook in Excel","Adding the table and the chart"],"done":"The live workbook is updated."},"hubspot":{"name":"HubSpot","views":{"all":{"head":["Deal","Last activity"],"rows":[["Hillside Roofing","3 days ago"],["Cove Road Cafe","21 days ago"],["East End Yoga","17 days ago"],["Harbour Dental","30 days ago"]]},"st":{"chip":"Last activity: over 14 days ago","head":["Deal","Last activity ↓"],"rows":[["Harbour Dental","30 days ago"],["Cove Road Cafe","21 days ago"],["East End Yoga","17 days ago"]]},"em":{"head":["New email",""],"rows":[["To","Harbour Dental"],["Subject","Following up"],["Message","Still typing…"]]}},"steps":[[1,"Deals","Open the deals list","all"],[1,"Deals","Filter by last activity date, then sort","st"],[1,"Deals › Harbour Dental","Open the first stalled deal and reread it","st"],[1,"Deals › New email","Write a follow-up by hand","em"],[1,"Deals","Back to the list. Next deal, same again.","st","scan"]],"prompt":"Show every deal with no activity in 14 days and draft a follow-up for each","work":["Finding the quiet deals in HubSpot","Drafting a follow-up for each"],"done":"You read each one and press send."}};
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)');
   const fmt = ms => { const s = Math.floor(ms / 1000); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
   const row = (r, c) => `<div class="scr-row${c || ''}"><span>${r[0]}</span><span>${r[1]}</span></div>`;
   const all = [...document.querySelectorAll('[data-race]')].map(sec => {
     const R = RACES[sec.dataset.race], hand = sec.querySelector('.lane.hand'), ask = sec.querySelector('.lane.ask');
     const scr = hand.querySelector('.scr'), nav = [...hand.querySelectorAll('.scr-nav li')], crumb = hand.querySelector('.crumb'), view = hand.querySelector('.scr-view'), cur = hand.querySelector('.scr-cur'), hs = hand.querySelector('.lane-s');
     const me = ask.querySelector('.rmsg.me span'), st = ask.querySelector('.rmsg.st'), ai = ask.querySelector('.rmsg.ai'), as = ask.querySelector('.lane-s');
-    const swH = hand.querySelector('.sw'), swA = ask.querySelector('.sw'), last = R.steps[R.steps.length - 1];
+    const swH = hand.querySelector('.sw'), swA = ask.querySelector('.sw');
     let run = 0, on = false, t0 = 0, tStop = 0, timer = 0;
     const wait = (ms, id) => new Promise((ok, no) => setTimeout(() => id === run ? ok() : no(), ms));
     const draw = k => { const v = R.views[k]; view.innerHTML = (v.chip ? `<p class="scr-chip">${v.chip}</p>` : '') + row(v.head, ' hd') + v.rows.map(r => row(r)).join(''); };
     const menu = n => nav.forEach((li, k) => li.classList.toggle('on', k === n));
     const point = t => { if (!t) return; const a = scr.getBoundingClientRect(), b = t.getBoundingClientRect(); if (!b.width) return;
-      const x = t.matches('li') ? b.width - 16 : t.matches('.scr-chip') ? b.width + 12 : t.firstElementChild.getBoundingClientRect().width + 26;
-      cur.style.transform = `translate(${(b.left - a.left + x).toFixed(1)}px, ${(b.top - a.top + b.height / 2).toFixed(1)}px)`; };
+      const x = t.matches('li') ? b.width / 2 : t.matches('.scr-chip') ? b.width + 12 : t.firstElementChild.getBoundingClientRect().width + 26;
+      cur.style.transform = `translate(${(b.left - a.left + x).toFixed(1)}px, ${(b.top - a.top + b.height / 2 + (t.matches('li') ? 17 : 0)).toFixed(1)}px)`; };
     const clocks = () => { const now = performance.now(); swH.textContent = fmt(now - t0); swA.textContent = fmt((tStop || now) - t0); };
     function reset() {
       hand.classList.remove('go'); ask.classList.remove('go', 'sent', 'done'); menu(-1); crumb.textContent = R.name; view.innerHTML = ''; hs.textContent = ''; as.textContent = '';
@@ -1195,19 +1206,13 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
     function start() { const id = ++run; reset(); t0 = performance.now(); tStop = 0; hand.classList.add('go'); ask.classList.add('go');
       timer = setInterval(clocks, 250); byHand(id).catch(() => {}); justAsk(id).catch(() => {}); }
     function stop() { run++; clearInterval(timer); reset(); }
-    /* Reduced motion: nothing races. The finished ask and the list of by-hand steps are simply shown. */
-    function still() { run++; clearInterval(timer); reset(); sec.classList.add('still'); menu(last[0]); crumb.textContent = last[1]; draw(last[3]);
-      hs.innerHTML = `<b>${R.steps.length} steps</b><span>${R.steps.map(s => s[2]).join('. ')}.</span>`;
-      me.textContent = R.prompt; ask.classList.add('sent', 'done'); ai.hidden = false; as.innerHTML = `<b>One ask</b><span>${R.done}</span>`; }
     return { check(vh) { const r = sec.getBoundingClientRect(), now = r.top < vh * 0.3 && r.bottom > vh * 0.75;
-      if (now === on) return; on = now; if (reduce.matches) { if (now) still(); return; } sec.classList.remove('still'); now ? start() : stop(); },
-      redo() { on = false; } };
+      if (now === on) return; on = now; now ? start() : stop(); } };
   });
   let queued = false;
   const check = () => { queued = false; all.forEach(a => a.check(innerHeight)); };
   const ask = () => { if (!queued) { queued = true; requestAnimationFrame(check); } };
   addEventListener('scroll', ask, { passive: true }); addEventListener('resize', ask);
-  reduce.addEventListener('change', () => { all.forEach(a => a.redo()); ask(); });
   ask();
 })();
 </script>
@@ -1519,7 +1524,7 @@ const warcs = WPOS.map(() => { const r = ribbon(60, C.ring.clone(), 0.03, ARC_FR
 const worldTags = [...document.querySelectorAll('.world-tag')];
 const place = (e, v, al, dy) => { if (al < 0.01) { if (e.style.opacity !== '0') e.style.opacity = 0; return; } proj.copy(v).project(camera);
   e.style.opacity = al.toFixed(3); e.style.transform = `translate3d(${((proj.x + 1) / 2 * W).toFixed(1)}px, ${((1 - proj.y) / 2 * H + dy).toFixed(1)}px, 0) translate(-50%, -50%)`; };
-let pingT = -99, pingSeen = 0;
+let pingT = -99, pingSeen = 0, stn = -1, stnBusy = false;
 
 /* ── Post ── */
 const composer = new EffectComposer(renderer);
@@ -1591,9 +1596,13 @@ function frame(dtReal, still) {
   /* One continuous camera move, eased so a fast flick still glides. */
   /* Reduced motion: one fixed, calm viewpoint. No flying, zooming or spinning; the framing only drifts slowly sideways. */
   const calmDist = portrait ? Math.max(14 * 1.3, 3.1 / (Math.tan(D2R(fov0 / 2)) * camera.aspect)) : 14;
-  const dist0 = R ? calmDist : portrait ? Math.max(sc.dist * 1.3, 3.1 * (1 - 0.45 * sc.fly) / (Math.tan(D2R(fov0 / 2)) * camera.aspect)) : sc.dist;
-  shown.el = R ? 58 : lerp(shown.el, sc.el, a); shown.az = R ? 0 : lerp(shown.az, sc.az, a); shown.dist = R ? dist0 : lerp(shown.dist, dist0, a);
-  shown.tx = lerp(shown.tx, sc.tx, a); shown.tz = lerp(shown.tz, sc.tz, a);
+  const dist0 = R ? (stn > 0 ? Math.min(calmDist, portrait ? 12.5 : 9.5) : calmDist) : portrait ? Math.max(sc.dist * 1.3, 3.1 * (1 - 0.45 * sc.fly) / (Math.tan(D2R(fov0 / 2)) * camera.aspect)) : sc.dist;
+  shown.el = R ? (stn > 0 ? 24 : 58) : lerp(shown.el, sc.el, a); shown.az = R ? (stn > 0 ? WAZ(stn - 1) + 30 : 0) : lerp(shown.az, sc.az, a); shown.dist = R ? dist0 : lerp(shown.dist, dist0, a);
+  /* Reduced motion: no flight between worlds. The camera holds one station per scene and cuts to the next under a dip. */
+  if (R) { const want = sc.fly > 0.5 ? 1 + Math.max(0, Math.min(WN - 1, Math.round(sc.wsel))) : 0;
+    if (want !== stn && !stnBusy) { stnBusy = true; canvas.classList.add('dip'); setTimeout(() => { stn = want; canvas.classList.remove('dip'); stnBusy = false; }, 210); }
+    shown.tx = stn > 0 ? WPOS[stn - 1].x : 0; shown.tz = stn > 0 ? WPOS[stn - 1].z : 0;
+  } else { stn = -1; shown.tx = lerp(shown.tx, sc.tx, a); shown.tz = lerp(shown.tz, sc.tz, a); }
   shown.ox = lerp(shown.ox, portrait ? 0.3 * sc.fly : sc.ox, a); shown.oy = lerp(shown.oy, portrait ? sc.poy : sc.oy, a);
   if (!R) { mouse.x += (mouse.tx - mouse.x) * 0.04; mouse.y += (mouse.ty - mouse.y) * 0.04; } else { mouse.x = mouse.y = 0; }
   const el = D2R(shown.el + mouse.y * 3 * (1 - sc.calm * 0.5));
@@ -1673,9 +1682,9 @@ function frame(dtReal, still) {
   layRibbon(agentTrail, 0.7); agentTrail.mesh.material.uniforms.uAlpha.value = sc.agent;
 
   /* The tool worlds. The one you are passing is lit and wired to the AI at the centre. */
-  const fl = sc.fly; gridU.uP.value.set(shown.tx, shown.tz, fl * 0.9);
+  const fl = R ? (stn > 0 ? 1 : 0) : sc.fly, wsel = R ? stn - 1 : sc.wsel; gridU.uP.value.set(shown.tx, shown.tz, fl * 0.9);
   worlds.forEach((m, i) => { const on = fl > 0.01; m.visible = warcs[i].mesh.visible = on; if (!on) return;
-    const near = Math.max(0, 1 - Math.abs(sc.wsel - i));
+    const near = Math.max(0, 1 - Math.abs(wsel - i));
     m.material.uniforms.uGain.value = fl * (0.3 + 0.28 * near); m.material.uniforms.uSize.value = 1.5 + 0.5 * near;
     layArc(warcs[i], HUB, m.position, 2.2); warcs[i].mesh.material.uniforms.uAlpha.value = fl * (0.1 + 0.85 * near); });
 
@@ -1683,7 +1692,7 @@ function frame(dtReal, still) {
   composer.render();
 
   /* Each world wears its own mark, shown only while you are beside it. */
-  worldTags.forEach((e, i) => place(e, WPOS[i], (portrait ? 0 : 1) * fl * Math.max(0, 1 - Math.abs(sc.wsel - i) * 1.6), 0));
+  worldTags.forEach((e, i) => place(e, WPOS[i], (portrait ? 0 : 1) * fl * Math.max(0, 1 - Math.abs(wsel - i) * 1.6), 0));
 
   /* Revenue, Costs, Time: a small tag under each sun, all the way through. They fade only where
      the scene is dimmed behind reading text, and step apart if two suns pass close together. */
