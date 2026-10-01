@@ -9,8 +9,18 @@
 @import "shadcn/tailwind.css";
 @import "../design/tokens.css";
 
-/* Solenix is dark only, so shadcn's dark: styles always apply. */
-@custom-variant dark (&:where(:root, :root *));
+/* shadcn's dark: styles follow the same rule as the tokens: the site is dark;
+   the portal is dark when the person chose dark, or follows a dark device. */
+@custom-variant dark {
+  &:where([data-theme="dark"], [data-theme="dark"] *, :not([data-portal], [data-portal] *)) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where([data-portal]:not([data-theme]), [data-portal]:not([data-theme]) *) {
+      @slot;
+    }
+  }
+}
 
 @theme inline {
   /* shadcn roles → tokens */

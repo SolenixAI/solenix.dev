@@ -1,25 +1,15 @@
 "use client";
 
 import { useEffect } from "react";
+import { LIVE_HOST, POSTHOG_KEY, POSTHOG_OPTIONS } from "@/lib/analytics";
 
-// Pageviews for the public site, so the portal can show solenix.dev's visitors.
-// One PostHog project holds every client site; the portal separates them by host.
-// The project token is public by design (it only allows sending events).
-const TOKEN = process.env.NEXT_PUBLIC_POSTHOG_KEY ?? "phc_pNXLaGwzrx5ghbpWQKT9SBmv4JNVZzDrdFjCBs2Zo9Ap";
-const HOST = process.env.NEXT_PUBLIC_POSTHOG_HOST ?? "https://us.i.posthog.com";
-
+// PostHog for the React pages of the public site, with the same setup as the
+// homepage (lib/analytics.ts).
 export function Analytics() {
   useEffect(() => {
-    // Only the live site counts. Previews and localhost would inflate the numbers.
-    if (location.hostname !== "solenix.dev") return;
+    if (location.hostname !== LIVE_HOST) return;
     import("posthog-js").then(({ default: posthog }) => {
-      posthog.init(TOKEN, {
-        api_host: HOST,
-        defaults: "2025-05-24",
-        person_profiles: "identified_only",
-        autocapture: false,
-        disable_session_recording: true,
-      });
+      posthog.init(POSTHOG_KEY, { ...POSTHOG_OPTIONS });
     });
   }, []);
   return null;

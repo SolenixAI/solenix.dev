@@ -5,10 +5,11 @@
    and data visualisation.
 
    Theming
-     Dark only. Solenix has no light theme.
+     The site is dark. The portal follows the device (light or dark) unless the
+     person picks one. Colours are light-dark(light, dark) pairs, written once.
 
    Structure
-     §1  theme-varying colour        — dark only
+     §1  theme-varying colour        — light-dark() pairs
      §2  derived colour and light    — written once, themes itself
      §3  type
      §4  space and layout
@@ -29,50 +30,53 @@
 
 /* ── 1. Theme-varying colour ──────────────────────────────────────────────── */
 
-:root,
-[data-theme="dark"] {
-  color-scheme: dark;
+:root { color-scheme: dark; }
 
-  --bg: #0b0d12;
-  --bg2: #11141b;
-  --surface: rgba(20, 24, 32, 0.84);
-  --surface-solid: #141820;
-  --surface-sunken: rgba(244, 242, 238, 0.05);
+/* Every colour is light-dark(light, dark); color-scheme picks one. The block is
+   declared on themed elements too, because a browser resolves light-dark() where
+   the variable is declared, not where it is used. */
+:root, [data-portal], [data-theme] {
 
-  --text: #f4f2ee;
-  --muted: #a39e97;
-  --faint: #8f8983;
+  --bg: light-dark(#fbfaf8, #0b0d12);
+  --bg2: light-dark(#f3f1ed, #11141b);
+  --surface: light-dark(rgba(255, 255, 255, 0.86), rgba(20, 24, 32, 0.84));
+  --surface-solid: light-dark(#ffffff, #141820);
+  --surface-sunken: light-dark(rgba(28, 25, 23, 0.05), rgba(244, 242, 238, 0.05));
 
-  --line: rgba(244, 242, 238, 0.09);
-  --line-solid: #1e222b;
-  --line-strong: rgba(244, 242, 238, 0.2);
+  --text: light-dark(#1c1917, #f4f2ee);
+  --muted: light-dark(#57534e, #a39e97);
+  --faint: light-dark(#736d67, #8f8983);
 
-  --accent: #f59e0b;
-  --accent-hover: #fbbf24;
-  --accent-ink: #1a1206;
-  --accent-text: #fbbf24;
+  --line: light-dark(rgba(28, 25, 23, 0.1), rgba(244, 242, 238, 0.09));
+  --line-solid: light-dark(#e4e0d9, #1e222b);
+  --line-strong: light-dark(rgba(28, 25, 23, 0.22), rgba(244, 242, 238, 0.2));
+
+  --accent: light-dark(#c2410c, #f59e0b);
+  --accent-hover: light-dark(#9a3412, #fbbf24);
+  --accent-ink: light-dark(#ffffff, #1a1206);
+  --accent-text: light-dark(#9a3412, #fbbf24);
 
   --sun1: #fbbf24;
-  --sun2: #f97316;
-  --ring: #f59e0b;
+  --sun2: light-dark(#ea580c, #f97316);
+  --ring: light-dark(#ea580c, #f59e0b);
 
-  --ok: #34d399;
-  --warn: #fbbf24;
-  --down: #fb7185;
+  --ok: light-dark(#065f46, #34d399);
+  --warn: light-dark(#9a3412, #fbbf24);
+  --down: light-dark(#b91c1c, #fb7185);
 
-  --chart-1: #f59e0b;
-  --chart-2: #2dd4bf;
-  --chart-3: #818cf8;
-  --chart-4: #e879f9;
-  --chart-5: #38bdf8;
+  --chart-1: light-dark(#c2410c, #f59e0b);
+  --chart-2: light-dark(#0f766e, #2dd4bf);
+  --chart-3: light-dark(#4338ca, #818cf8);
+  --chart-4: light-dark(#86198f, #e879f9);
+  --chart-5: light-dark(#0369a1, #38bdf8);
   --chart-tint-alpha: 14%;
 
-  --glass-bg: rgba(20, 24, 32, 0.84);
-  --glass-edge: rgba(244, 242, 238, 0.16);
+  --glass-bg: light-dark(rgba(255, 255, 255, 0.86), rgba(20, 24, 32, 0.84));
+  --glass-edge: light-dark(rgba(255, 255, 255, 0.9), rgba(244, 242, 238, 0.16));
 
-  --grid-line: rgba(244, 242, 238, 0.05);
-  --star: rgba(244, 242, 238, 0.32);
-  --sweep-light: rgba(255, 255, 255, 0.4);
+  --grid-line: light-dark(rgba(28, 25, 23, 0.055), rgba(244, 242, 238, 0.05));
+  --star: light-dark(rgba(28, 25, 23, 0.16), rgba(244, 242, 238, 0.32));
+  --sweep-light: light-dark(rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.4));
 
   --grad-headline: linear-gradient(96deg, var(--sun1), var(--sun2));
 
@@ -81,10 +85,35 @@
   --shadow-lg: 0 2px 4px rgba(0, 0, 0, 0.35), 0 24px 56px rgba(0, 0, 0, 0.45);
 }
 
+/* Which theme applies. The public site is dark. The portal follows the
+   device's light or dark setting unless the person picked one (data-theme). */
+[data-theme="dark"] { color-scheme: dark; }
+[data-theme="light"] { color-scheme: light; }
+[data-portal]:not([data-theme]) { color-scheme: light dark; }
+
+/* The few non-colour values that differ in light. */
+[data-theme="light"] {
+  --chart-tint-alpha: 8%;
+  --grad-headline: linear-gradient(96deg, var(--accent-hover), var(--sun2));
+  --shadow-sm: 0 1px 2px rgba(28, 25, 23, 0.05);
+  --shadow-md: 0 1px 2px rgba(28, 25, 23, 0.04), 0 8px 24px rgba(28, 25, 23, 0.06);
+  --shadow-lg: 0 2px 4px rgba(28, 25, 23, 0.05), 0 20px 48px rgba(28, 25, 23, 0.1);
+}
+@media (prefers-color-scheme: light) {
+  [data-portal]:not([data-theme]) {
+    --chart-tint-alpha: 8%;
+    --grad-headline: linear-gradient(96deg, var(--accent-hover), var(--sun2));
+    --shadow-sm: 0 1px 2px rgba(28, 25, 23, 0.05);
+    --shadow-md: 0 1px 2px rgba(28, 25, 23, 0.04), 0 8px 24px rgba(28, 25, 23, 0.06);
+    --shadow-lg: 0 2px 4px rgba(28, 25, 23, 0.05), 0 20px 48px rgba(28, 25, 23, 0.1);
+  }
+}
+
+
 /* ── 2. Derived colour and light ──────────────────────────────────────────── */
 /* Written once. Every value below derives from §1, so it themes itself. */
 
-:root {
+:root, [data-portal], [data-theme] {
   /* Soft accent and status fills */
   --accent-quiet: color-mix(in oklch, var(--accent) 12%, transparent);
   --ok-tint: color-mix(in oklch, var(--ok) 8%, transparent);
@@ -170,7 +199,7 @@
 
 /* ── 3. Type ──────────────────────────────────────────────────────────────── */
 
-:root {
+:root, [data-portal], [data-theme] {
   /* Three roles, three faces. Sora carries display — a geometric grotesque
      whose bowls are the same circles as the mark, holding at 96px. Text and
      mono still does real work on every eyebrow,
@@ -231,7 +260,7 @@
 
 /* ── 4. Space and layout ──────────────────────────────────────────────────── */
 
-:root {
+:root, [data-portal], [data-theme] {
   /* 4px base. Skip no steps; add none. */
   --space-1: 4px;
   --space-2: 8px;
@@ -264,7 +293,7 @@
 
 /* ── 5. Radius ────────────────────────────────────────────────────────────── */
 
-:root {
+:root, [data-portal], [data-theme] {
   --radius-xs: 8px;
   --radius-sm: 10px;
   --radius-md: 12px;                  /* icon chips, code wells, inputs */
@@ -276,7 +305,7 @@
 
 /* ── 6. Motion ────────────────────────────────────────────────────────────── */
 
-:root {
+:root, [data-portal], [data-theme] {
   --dur-fast: 120ms;                  /* colour, border */
   --dur-base: 180ms;                  /* lift, shadow, glow */
   --dur-slow: 320ms;                  /* panels, disclosure */
@@ -320,7 +349,7 @@
 
 /* ── 7. Focus ─────────────────────────────────────────────────────────────── */
 
-:root {
+:root, [data-portal], [data-theme] {
   --focus-width: 2px;
   --focus-offset: 3px;
   --focus-color: var(--accent);
@@ -338,7 +367,7 @@
    --page-bg is resolved here at :root, so inside a night section it still
    holds the reader's page colour — use it for the hand-off at the bottom. */
 
-:root {
+:root, [data-portal], [data-theme] {
   --page-bg: var(--bg);
 
   /* The three suns. CSS and SVG use these. WebGL reads --sun1, --sun2 and

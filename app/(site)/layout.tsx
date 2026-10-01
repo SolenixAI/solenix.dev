@@ -2,8 +2,7 @@ import { Reveals } from "@/components/brand/motion"
 import { SiteFooter, SiteHeader } from "@/components/site/chrome"
 import { Analytics } from "./analytics"
 
-// The public site is set in the design system's dark theme end to end: space is
-// the brand. The portal keeps each visitor's own light or dark choice.
+// Solenix is dark only, site and portal: space is the brand.
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
     <div data-theme="dark" className="flex min-h-dvh flex-col overflow-x-clip bg-background text-foreground">
