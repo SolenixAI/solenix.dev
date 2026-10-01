@@ -18,7 +18,7 @@ Solenix's website and client portal. Next.js on Vercel · Supabase · Stripe · 
 ## Rules
 
 - One version of everything. No copies, and no version names (`-v2`, `v3`) in files, headings or comments. History lives in git.
-- Edit `design/*.html` directly. Open Design runs are no longer used (Jager, 2026-10-01).
+- Design changes go through Open Design runs, one named change per run. Its own harness supplies the skills and checks. Each result is reviewed and shown to Jager before the next (Jager, 2026-10-01).
 - The site is dark. The portal follows the device (light or dark) and has a manual choice.
 - Latest stable versions. No secrets in code or output.
 - `npm run check` enforces these rules, and `npm run check:test` proves each one by breaking it on purpose. The git pre-commit hook and Claude Code's hooks (`.claude/settings.json`) run it. When you find a new failure mode, add a check for it.
