@@ -464,6 +464,10 @@ html[data-motion="on"] .scene-ui.lock-pop .body-tag.ai { animation-delay: 320ms;
 .hw > span { display: inline-block; transition: transform 0.95s var(--ease-out); transition-delay: calc(var(--i) * 65ms + 90ms); }
 .h2 em .hw > span, .say-h em .hw > span, #close-h em .hw > span { background: var(--grad-headline); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .04em; }
 html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%); }
+/* The guide headline names a tool, and the name changes in place. It shares its line only with "in", so a
+   longer or shorter name moves nothing else. The name leaving is lifted out of the flow while it fades. */
+.tool-swap { position: relative; white-space: nowrap; }
+.tool-swap > .ts-out { position: absolute; left: 0; top: 0.08em; }
 /* Alive under the pointer: a light that follows it across cards, a primary button that leans toward it. */
 .fx-host { position: relative; }
 .fx { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity var(--dur-slow) var(--ease-out); background: radial-gradient(22rem circle at var(--mx, 50%) var(--my, 50%), color-mix(in oklch, var(--accent) 13%, transparent), transparent 62%); }
@@ -727,7 +731,7 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
     <div class="wrap jr-in">
       <div class="jr-head">
         <p class="eyebrow">One AI at the centre</p>
-        <h2 class="h2">You don't need to be an expert <em>anymore.</em></h2>
+        <h2 class="h2" data-od-id="guide-headline">You don't need to be an expert <br>in <span class="hw tool-swap" aria-hidden="true" data-tools="Shopify|QuickBooks|Excel|Meta Ads|HubSpot"><span style="--i:8">Shopify</span></span> <br><em>anymore.</em></h2>
       </div>
       <div class="guide-say rv" data-od-id="guide-say">
         <p class="w-big">Stop learning ten tools. Talk to one.</p>
@@ -1132,6 +1136,20 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
           const o = document.createElement('span'), i = document.createElement('span'); o.className = 'hw'; o.setAttribute('aria-hidden', 'true'); i.style.setProperty('--i', n++); i.textContent = w; o.append(i); fr.append(o); });
         nd.replaceWith(fr); }));
       hio.observe(h); }); }
+
+  /* The guide headline names the six tools, one at a time. The old name lifts away as the new one rises into
+     its place; with reduced motion the two cross-fade and nothing moves. It only runs while the headline is on
+     screen. A screen reader gets one sentence that lists all six. */
+  { const sw = $('.tool-swap'), h = sw && sw.closest('h2');
+    if (sw) { const names = sw.dataset.tools.split('|'); let i = 0, seen = false, timer = 0;
+      h.setAttribute('aria-label', `You don't need to be an expert in ${names.slice(0, -1).join(', ')} or ${names[names.length - 1]} anymore.`);
+      const next = () => { i = (i + 1) % names.length; const cur = sw.firstElementChild, out = cur.cloneNode(true), m = S.motion;
+        out.classList.add('ts-out'); sw.append(out); cur.textContent = names[i];
+        out.animate(m ? [{ opacity: 1, transform: 'translateY(0)' }, { opacity: 0, transform: 'translateY(-60%)' }] : [{ opacity: 1 }, { opacity: 0 }], { duration: m ? 320 : 200, easing: 'cubic-bezier(.4,0,1,1)', fill: 'forwards' }).onfinish = () => out.remove();
+        cur.animate(m ? [{ opacity: 0, transform: 'translateY(70%)' }, { opacity: 1, transform: 'translateY(0)' }] : [{ opacity: 0 }, { opacity: 1 }], { duration: m ? 520 : 200, delay: m ? 90 : 0, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'backwards' }); };
+      const run = on => { clearInterval(timer); timer = on ? setInterval(next, 2600) : 0; };
+      new IntersectionObserver(es => { seen = es[0].isIntersecting; run(seen && !document.hidden); }, { threshold: 0.6 }).observe(h);
+      document.addEventListener('visibilitychange', () => run(seen && !document.hidden)); } }
 
   /* Under the pointer: cards catch a light, the primary buttons lean in, the portal tips toward you. Mouse only. */
   if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
