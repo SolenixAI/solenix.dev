@@ -34,6 +34,12 @@ grep -qx 'email: enable_signup = true' /tmp/solenix-signup.txt || bad "[auth.ema
 # The homepage is measured: analytics are injected where it is served.
 grep -q 'POSTHOG_SNIPPET' app/route.ts && grep -q 'capture_pageleave' lib/analytics.ts || bad "homepage has no analytics (app/route.ts + lib/analytics.ts)"
 
+# The agents page is called "Agents Marketplace" everywhere.
+grep -rn ">Tools we use<" app components design/*.html 2>/dev/null | while read -r l; do echo "check: say \"Agents Marketplace\", not \"Tools we use\": ${l:0:80}"; done | grep . && fail=1
+
+# Copy follows the Voice rules: no banned words (the list lives in design/DESIGN.md).
+python3 scripts/voice-check.py design/home.html design/app.html || fail=1
+
 # Every source of truth named in AGENTS.md exists.
 for f in design/DESIGN.md design/tokens.css design/home.html design/app.html design/roi-model.md design/before-after.md supabase/config.toml; do
   [ -f "$f" ] || bad "missing source of truth: $f"

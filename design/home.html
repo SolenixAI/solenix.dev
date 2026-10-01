@@ -343,80 +343,6 @@ html[data-motion="on"] .wire li.flow::after { animation: flow 1.1s var(--ease-in
 @media (max-width: 640px) { .wire li { padding-block: var(--space-3); } .wire small { font-size: var(--fs-xs); } }
 
 /* ── What it could be worth: the owner's own numbers, shown as a range ── */
-.roi-top { display: grid; gap: var(--space-6); align-items: end; margin-bottom: var(--space-7); }
-.roi-top .sec-head { margin-bottom: 0; }
-@media (min-width: 1000px) { .roi-top { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--space-7); } }
-.roi-stat { margin: 0; display: grid; gap: var(--space-3); padding: var(--space-5); background: color-mix(in oklch, var(--bg) 88%, transparent); border: 1px solid var(--line); border-radius: var(--radius-xl); box-shadow: var(--glass-inset); }
-.roi-stat b { font: var(--fw-bold) var(--fs-stat)/1 var(--font-display); letter-spacing: var(--track-stat); color: var(--accent-text); font-variant-numeric: tabular-nums; }
-.roi-stat figcaption { color: var(--muted); font-size: var(--fs-sm); }
-.roi-sec a:not(.btn) { color: var(--text); text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 3px; }
-.roi-sec a:not(.btn):hover { color: var(--accent-text); }
-.roi-grid { display: grid; gap: var(--space-5); align-items: start; }
-@media (min-width: 1000px) { .roi-grid { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--space-6); } .roi-res { position: sticky; top: calc(var(--nav-height) + var(--space-5)); } }
-.roi, .roi-res, .roi-how { background: color-mix(in oklch, var(--surface-solid) 94%, transparent); backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); border: 1px solid var(--line); border-radius: var(--radius-2xl); box-shadow: var(--shadow-lg), var(--glass-inset); }
-.roi { padding: clamp(var(--space-5), 3vw, var(--space-7)); display: grid; gap: var(--space-6); }
-.roi-q { display: grid; gap: var(--space-3); border: 0; padding: 0; margin: 0; min-width: 0; }
-.roi .q { display: grid; grid-template-columns: 1.4rem 1fr; column-gap: var(--space-3); align-items: baseline; padding: 0; font-size: var(--fs-body); font-weight: var(--fw-semibold); line-height: 1.35; }
-.roi .q i { flex: none; font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); font-style: normal; letter-spacing: .04em; color: var(--accent-text); width: 1.4rem; }
-.roi .q em { grid-column: 2; font-size: var(--fs-sm); font-style: normal; font-weight: var(--fw-regular, 400); color: var(--muted); }
-.roi-q > small, .roi-more > small { color: var(--muted); font-size: var(--fs-xs); line-height: 1.55; }
-.roi-q > select, .roi-q > .roi-row, .roi-q > .opts, .roi-q > small { margin-left: calc(1.4rem + var(--space-3)); }
-.roi select, .roi input[type=number] { min-height: var(--tap-min); width: 100%; padding: 0 var(--space-4); border-radius: var(--radius-md); border: 1px solid var(--line-strong); background: var(--bg); color: var(--text); font: inherit; font-size: var(--fs-body); }
-.roi select { appearance: none; -webkit-appearance: none; padding-right: 2.5rem; background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 20px) 50%, calc(100% - 14px) 50%; background-size: 6px 6px; background-repeat: no-repeat; max-width: 26rem; }
-.roi select:hover, .roi input[type=number]:hover { border-color: color-mix(in oklch, var(--text) 40%, transparent); }
-.roi select:focus-visible, .roi input[type=number]:focus-visible { outline: var(--focus-width) solid var(--focus-color); outline-offset: 2px; }
-.opts { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.opts.col { flex-direction: column; align-items: stretch; }
-.opt { position: relative; display: block; }
-.opt input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
-.opt span { display: flex; align-items: center; gap: var(--space-2); min-height: var(--tap-min); padding: var(--space-2) var(--space-4); border-radius: var(--radius-pill); border: 1px solid var(--line-strong); font-size: var(--fs-sm); line-height: 1.3; color: var(--text); transition: background-color var(--dur-fast), border-color var(--dur-fast), box-shadow var(--dur-base); }
-.opt span::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; border: 1px solid var(--muted); transition: background-color var(--dur-fast), border-color var(--dur-fast), box-shadow var(--dur-fast); }
-.opt:hover span { background: color-mix(in oklch, var(--text) 7%, transparent); }
-.opt input:checked + span { border-color: var(--accent); background: var(--accent-quiet); }
-.opt input:checked + span::before { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 8px var(--ring); }
-.opt input:focus-visible + span { outline: var(--focus-width) solid var(--focus-color); outline-offset: 3px; }
-.opts.col .opt span { border-radius: var(--radius-md); }
-.roi-row { display: grid; grid-template-columns: 1fr 4.5rem; gap: var(--space-4); align-items: center; }
-.roi-row output { font: var(--fw-bold) var(--fs-h3)/1 var(--font-display); text-align: right; font-variant-numeric: tabular-nums; }
-.roi input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: var(--tap-min); background: transparent; cursor: pointer; margin: 0; --fill: 30%; }
-.roi input[type=range]::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; background: linear-gradient(90deg, var(--sun1), var(--sun2)) 0 / var(--fill) 100% no-repeat, var(--chart-track); }
-.roi input[type=range]::-moz-range-track { height: 4px; border-radius: 2px; background: var(--chart-track); }
-.roi input[type=range]::-moz-range-progress { height: 4px; border-radius: 2px; background: linear-gradient(90deg, var(--sun1), var(--sun2)); }
-.roi input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; margin-top: -9px; border-radius: 50%; background: var(--text); border: 4px solid var(--accent); box-shadow: 0 0 14px color-mix(in srgb, var(--ring) 60%, transparent); }
-.roi input[type=range]::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: var(--text); border: 4px solid var(--accent); }
-.roi input[type=range]:focus-visible { outline: var(--focus-width) solid var(--focus-color); outline-offset: 2px; border-radius: var(--radius-pill); }
-.roi-more { border-top: 1px solid var(--line); padding-top: var(--space-4); display: grid; gap: var(--space-4); }
-.roi-more summary, .roi-how summary { cursor: pointer; min-height: var(--tap-min); display: flex; align-items: center; gap: var(--space-3); font-weight: var(--fw-semibold); list-style: none; }
-.roi-more summary::-webkit-details-marker, .roi-how summary::-webkit-details-marker { display: none; }
-.roi-more summary::before, .roi-how summary::before { content: "+"; font: var(--fw-medium) 1.25rem/1 var(--font-mono); color: var(--accent-text); width: 1.4rem; }
-.roi-more[open] summary::before, .roi-how[open] summary::before { content: "−"; }
-.roi-more summary span { margin-left: auto; font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--muted); }
-.roi-more summary:focus-visible, .roi-how summary:focus-visible { outline: var(--focus-width) solid var(--focus-color); outline-offset: 3px; border-radius: var(--radius-xs); }
-.roi-nums { display: grid; gap: var(--space-4); margin-top: var(--space-4); }
-@media (min-width: 720px) { .roi-nums { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: end; } }
-.roi-nums label { display: grid; gap: var(--space-2); font-size: var(--fs-sm); color: var(--muted); }
-.roi-res { padding: clamp(var(--space-5), 2.4vw, var(--space-6)); display: grid; gap: var(--space-5); }
-.roi-res-top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
-.roi-total { display: grid; gap: var(--space-2); }
-.roi-total b { font: var(--fw-bold) clamp(1.9rem, 1.3rem + 1.6vw, 2.75rem)/1.05 var(--font-display); letter-spacing: var(--track-stat); font-variant-numeric: tabular-nums; color: var(--accent-text); }
-.roi-total small, .roi-k small { color: var(--muted); font-size: var(--fs-xs); line-height: 1.5; }
-.roi-ks { margin: 0; display: grid; border-top: 1px solid var(--line); }
-.roi-k { display: grid; grid-template-columns: 6.5rem 1fr; gap: var(--space-3); padding-block: var(--space-4); border-bottom: 1px solid var(--line); align-items: baseline; }
-.roi-k dt { font: var(--fw-semibold) var(--fs-2xs)/1.3 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--muted); }
-.roi-k dd { margin: 0; display: grid; gap: 4px; }
-.roi-k b { font: var(--fw-bold) var(--fs-h3)/1.1 var(--font-display); letter-spacing: var(--track-stat); font-variant-numeric: tabular-nums; }
-.roi-fit, .roi-legacy { font-size: var(--fs-sm); color: var(--text); }
-.roi-legacy { color: var(--muted); padding: var(--space-3) var(--space-4); border: 1px dashed var(--line-strong); border-radius: var(--radius-md); }
-.roi-cta .btn { width: 100%; }
-.roi-note { color: var(--muted); font-size: var(--fs-xs); }
-.roi-how { margin-top: var(--space-5); padding: var(--space-3) clamp(var(--space-5), 3vw, var(--space-7)); }
-.roi-how-in { display: grid; gap: var(--space-6); padding-block: var(--space-4) var(--space-5); border-top: 1px solid var(--line); margin-top: var(--space-2); }
-@media (min-width: 800px) { .roi-how-in { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-.roi-how-in > div { display: grid; gap: var(--space-3); align-content: start; }
-.roi-how h3 { font: var(--fw-semibold) var(--fs-h4)/1.3 var(--font-display); }
-.roi-how p { font-size: var(--fs-sm); color: var(--muted); line-height: 1.6; }
-.roi-how p:first-of-type { color: var(--text); font-family: var(--font-mono); font-size: var(--fs-xs); }
-@media (max-width: 640px) { .roi-q > select, .roi-q > .roi-row, .roi-q > .opts, .roi-q > small { margin-left: 0; } .roi-k { grid-template-columns: 1fr; gap: var(--space-2); } }
 /* No expert needed: the roles you no longer have to be, and what you say instead. */
 .say { margin-top: var(--space-9, 6rem); display: grid; gap: var(--space-6); }
 .say-head { display: grid; gap: var(--space-4); }
@@ -570,6 +496,150 @@ html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%
 .tools-asks li + li { border-top: 1px solid var(--line); }
 .tools-asks q { font: var(--fw-semibold) var(--fs-h3)/1.3 var(--font-display); letter-spacing: var(--track-heading); quotes: "\201C" "\201D"; text-wrap: balance; }
 .tools-foot { font-size: var(--fs-sm); color: var(--muted); }
+/* ── One world. Below the hero nothing sits on a panel, card or diagram: the scene performs each section
+   and the page only annotates it. Copy stands on bare sky on one side; the bodies keep to the other. ── */
+.w-sec { position: relative; padding-block: 12svh; }
+.w-sec > .wrap { min-height: var(--wh, 140svh); }
+.w-copy { position: sticky; top: calc(var(--nav-height) + 9svh); max-width: 31rem; display: grid; gap: var(--space-5); justify-items: start; text-shadow: 0 0 26px var(--bg), 0 0 10px var(--bg), 0 1px 2px var(--bg); }
+.w-sec.r .w-copy { margin-left: auto; }
+.w-copy .h2 { max-width: 14ch; }
+/* The gold words are painted with a gradient, so they take no shadow: a shadow would show through and bury them. */
+.h2 em, .h2 em * { text-shadow: none; }
+.w-big { font: var(--fw-bold) var(--fs-h1)/1.12 var(--font-display); letter-spacing: var(--track-heading); text-wrap: balance; }
+.w-more { font-size: var(--fs-sm); color: var(--muted); max-width: 30rem; }
+.w-more summary { cursor: pointer; min-height: var(--tap-min); display: inline-flex; align-items: center; gap: var(--space-2); color: var(--text); font-weight: var(--fw-semibold); list-style: none; }
+.w-more summary::-webkit-details-marker { display: none; }
+.w-more summary::before { content: "+"; font: var(--fw-medium) 1.1rem/1 var(--font-mono); color: var(--accent-text); }
+.w-more[open] summary::before { content: "−"; }
+.w-more summary:focus-visible { outline: var(--focus-width) solid var(--focus-color); outline-offset: 3px; border-radius: var(--radius-xs); }
+.w-more p { margin-top: var(--space-3); line-height: 1.6; }
+.w-more a { color: var(--text); text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 3px; }
+/* Narrow screens: the scene holds the top of the screen and the words rise out of the dark below it,
+   so no label ever sits on the copy. */
+@media (max-width: 1099px) {
+  .w-sec { padding-block: 0; }
+  .w-sec > .wrap { min-height: 0; }
+  .w-copy, .w-sec.r .w-copy { position: relative; top: auto; margin: 56svh calc(var(--gutter) * -1) 34svh; padding: 6rem var(--gutter) 3rem; max-width: none; background: linear-gradient(transparent, var(--bg) 5rem); }
+  .w-copy > * { max-width: 34rem; }
+}
+/* Choosing a part of the business: the same choice rides the bodies in the scene. */
+.g-tabs { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.g-tab, .ring-tag { min-height: var(--tap-min); padding: 0 var(--space-4); border-radius: var(--radius-pill); border: 1px solid var(--line-strong); background: color-mix(in oklch, var(--bg) 72%, transparent); color: var(--text); font: var(--fw-semibold) var(--fs-sm)/1.2 var(--font-text); cursor: pointer; white-space: nowrap; text-shadow: none; transition: border-color var(--dur-fast), background-color var(--dur-fast), box-shadow var(--dur-base); }
+.g-tab:hover, .ring-tag:hover { background: color-mix(in oklch, var(--text) 12%, var(--bg)); }
+.g-tab[aria-selected="true"], .ring-tag[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in oklch, var(--accent) 16%, var(--bg)); box-shadow: 0 0 24px color-mix(in srgb, var(--ring) 35%, transparent); }
+.g-tab:focus-visible, .qa button:focus-visible, .tools-chip:focus-visible { outline: var(--focus-width) solid var(--focus-color); outline-offset: 3px; }
+.tools-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.tools-chip { min-height: var(--tap-min); padding: 0 var(--space-4) 0 var(--space-3); border-radius: var(--radius-pill); border: 1px solid var(--line-strong); background: color-mix(in oklch, var(--bg) 72%, transparent); color: var(--text); font: var(--fw-medium) var(--fs-sm)/1.2 var(--font-text); cursor: pointer; display: inline-flex; align-items: center; gap: var(--space-2); text-shadow: none; transition: border-color var(--dur-fast), background-color var(--dur-fast); }
+.tools-chip:hover { background: color-mix(in oklch, var(--text) 12%, var(--bg)); }
+.tools-chip[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in oklch, var(--accent) 16%, var(--bg)); }
+.lg { width: 18px; height: 18px; flex: none; fill: currentColor; }
+.asks { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); min-height: 5.5rem; align-content: start; }
+.asks q { font: var(--fw-semibold) var(--fs-h2)/1.25 var(--font-display); letter-spacing: var(--track-heading); quotes: "\201C" "\201D"; text-wrap: balance; }
+.scene-hit { position: fixed; inset: 0; z-index: 3; pointer-events: none; overflow: hidden; }
+@media (max-width: 1099px) { .scene-hit { z-index: 1; } }
+.ring-tag { position: absolute; left: 0; top: 0; opacity: 0; pointer-events: none; will-change: transform, opacity; }
+/* Each login is its real mark, riding its own body. */
+.moon-tag { position: absolute; left: 0; top: 0; opacity: 0; will-change: transform, opacity; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; color: var(--text); background: color-mix(in oklch, var(--bg) 80%, transparent); border: 1px solid var(--line-strong); }
+.moon-tag .lg { width: 15px; height: 15px; }
+.moon-tag.one, .lobe-tag { width: auto; height: auto; display: block; white-space: nowrap; font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent-text); padding: 7px 11px; border-radius: var(--radius-pill); border: 1px solid color-mix(in oklch, var(--accent) 60%, transparent); background: color-mix(in oklch, var(--bg) 78%, transparent); }
+.lobe-tag { position: absolute; left: 0; top: 0; opacity: 0; will-change: transform, opacity; }
+.lobe-tag b { color: var(--text); font-weight: var(--fw-semibold); margin-left: 6px; }
+/* Promises: one at a time, upright, with the settled orbit beside them. */
+.jr.pr { height: 260vh; height: 260svh; }
+/* Questions: bare, one open at a time, each one a body in the scene. */
+.qa { list-style: none; margin: 0; padding: 0; display: grid; width: 100%; }
+.qa li { border-top: 1px solid var(--line-strong); }
+.qa button { appearance: none; border: 0; background: transparent; color: var(--text); text-align: left; width: 100%; min-height: 56px; padding: var(--space-3) 0; font: var(--fw-semibold) var(--fs-h4)/1.3 var(--font-display); cursor: pointer; display: flex; justify-content: space-between; gap: var(--space-4); align-items: center; text-shadow: inherit; border-radius: var(--radius-xs); }
+.qa button::after { content: "+"; font: var(--fw-medium) 1.25rem/1 var(--font-mono); color: var(--accent-text); flex: none; }
+.qa button[aria-expanded="true"]::after { content: "−"; }
+.qa button[aria-expanded="true"] { color: var(--accent-text); }
+.qa p { padding-bottom: var(--space-4); font-size: var(--fs-lede); max-width: 28rem; }
+.world .veil { display: none; }
+.tm-note { font-size: var(--fs-xs); color: var(--faint); flex-basis: 100%; }
+/* ── The flybys: the same job run twice, side by side, in real time. Two screens hang beside each tool's world:
+   one clicks through the tool by hand, one types the ask. No times are stated; the two clocks show it. ── */
+.eyebrow.toolname::before { display: none; }
+.eyebrow.toolname .lg { width: 20px; height: 20px; color: var(--text); }
+.race { position: relative; height: 240vh; height: 240svh; }
+.race-pin { position: sticky; top: 0; height: 100vh; height: 100svh; }
+.race-in { height: 100%; max-width: 78rem; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: var(--space-5); padding-top: calc(var(--nav-height) + clamp(1rem, 4vh, 2.5rem)); padding-bottom: clamp(1rem, 3vh, 2rem); }
+.race-head { display: grid; gap: var(--space-3); justify-items: start; max-width: 46rem; text-shadow: 0 0 26px var(--bg), 0 0 10px var(--bg), 0 1px 2px var(--bg); }
+.race-head .h2 { font-size: clamp(1.55rem, 1rem + 2.4vw, 3rem); }
+.sr-race { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.lanes { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); min-height: 0; height: 100%; max-height: max(27rem, 42vh); align-self: end; }
+.lane { min-height: 0; min-width: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: var(--space-3); padding: var(--space-4); border-radius: var(--radius-xl); background: var(--glass-bg); border: 1px solid var(--line); box-shadow: var(--shadow-md), var(--glass-inset); -webkit-backdrop-filter: blur(var(--glass-blur)); backdrop-filter: blur(var(--glass-blur)); transition: border-color var(--dur-slow), box-shadow var(--dur-slow); }
+.lane.done { border-color: color-mix(in oklch, var(--ok) 55%, transparent); box-shadow: var(--shadow-md), var(--glass-inset), 0 0 40px color-mix(in srgb, var(--ok) 16%, transparent); }
+.lane > header { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-3); }
+.lane-t { font: var(--fw-semibold) var(--fs-xs)/1 var(--font-mono); letter-spacing: var(--track-eyebrow); text-transform: uppercase; color: var(--muted); }
+.lane.ask .lane-t { color: var(--accent-text); }
+.sw { font: var(--fw-bold) var(--fs-h1)/1 var(--font-display); letter-spacing: var(--track-heading); font-variant-numeric: tabular-nums; color: var(--text); }
+.lane.done .sw { color: var(--ok); }
+.race.still .sw { display: none; }
+.scr { position: relative; min-height: 0; overflow: hidden; display: grid; grid-template-rows: auto minmax(0, 1fr); border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface-sunken); }
+.scr-bar { display: flex; align-items: center; gap: var(--space-2); min-width: 0; padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--line); font: var(--fw-medium) var(--fs-2xs)/1.2 var(--font-mono); color: var(--muted); }
+.scr-bar .lg { width: 16px; height: 16px; color: var(--text); }
+.scr-bar .crumb { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.scr-bar .ex { margin-left: auto; flex: none; padding: 3px 8px; border-radius: var(--radius-pill); border: 1px dashed var(--line-strong); letter-spacing: var(--track-label); text-transform: uppercase; }
+.ai-dot { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--sun1); box-shadow: 0 0 10px var(--sun2); }
+.scr-main { display: grid; grid-template-columns: 8rem minmax(0, 1fr); min-height: 0; }
+.scr-nav { list-style: none; margin: 0; padding: var(--space-2); border-right: 1px solid var(--line); display: grid; align-content: start; gap: 2px; font-size: var(--fs-sm); color: var(--muted); }
+.scr-nav li { padding: 6px 10px; border-radius: var(--radius-xs); }
+.scr-nav li.on { background: color-mix(in oklch, var(--text) 10%, transparent); color: var(--text); }
+.scr-view { min-width: 0; padding: var(--space-3); display: grid; align-content: start; gap: 2px; font-size: var(--fs-sm); transition: opacity var(--dur-base); }
+.scr-view.load { opacity: .2; }
+.scr-chip { justify-self: start; margin: 0 0 var(--space-2); padding: 4px 10px; border-radius: var(--radius-pill); border: 1px solid var(--line-strong); font: var(--fw-medium) var(--fs-2xs)/1.2 var(--font-mono); color: var(--text); }
+.scr-row { display: flex; justify-content: space-between; gap: var(--space-3); padding: 5px 8px; border-radius: var(--radius-xs); color: var(--text); font-variant-numeric: tabular-nums; }
+.scr-row span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.scr-row span:last-child { flex: none; color: var(--muted); }
+.scr-row.hd, .scr-row.hd span:last-child { font: var(--fw-semibold) var(--fs-2xs)/1.4 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--muted); }
+.scr-row.on { background: color-mix(in oklch, var(--accent) 18%, transparent); }
+.scr-row.on span:last-child { color: var(--text); }
+.scr-cur { position: absolute; left: 0; top: 0; width: 12px; height: 12px; margin: -6px; border-radius: 50%; background: var(--text); box-shadow: 0 0 0 5px color-mix(in oklch, var(--text) 22%, transparent); opacity: 0; pointer-events: none; transition: transform 700ms var(--ease-in-out), opacity var(--dur-base); }
+.lane.go .scr-cur { opacity: 1; }
+.lane-s { margin: 0; min-height: 1.45em; display: flex; align-items: baseline; gap: var(--space-2); font-size: var(--fs-sm); line-height: 1.45; color: var(--muted); }
+.lane-s b { flex: none; font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--text); }
+.lane.done .lane-s b { color: var(--ok); }
+.chat-body { min-height: 0; overflow: hidden; padding: var(--space-3); display: flex; flex-direction: column; justify-content: flex-end; gap: var(--space-3); }
+.rmsg { margin: 0; font-size: var(--fs-sm); line-height: 1.45; }
+.rmsg.me { align-self: flex-end; max-width: 94%; padding: var(--space-3); border-radius: var(--radius-lg) var(--radius-lg) 4px var(--radius-lg); background: color-mix(in oklch, var(--text) 10%, transparent); color: var(--text); font-weight: var(--fw-medium); }
+.rmsg.me:has(span:empty) { visibility: hidden; }
+.lane.go:not(.sent) .rmsg.me::after { content: ""; display: inline-block; width: 2px; height: 1em; margin-left: 2px; vertical-align: -2px; background: var(--accent-text); }
+.rmsg.st { font: var(--fw-medium) var(--fs-xs)/1.3 var(--font-mono); color: var(--accent-text); }
+.rmsg.ai { display: grid; gap: 2px; }
+.rmsg.ai[hidden], .rmsg.st[hidden] { display: none; }
+.rmsg.ai .scr-row { padding: 3px 0; }
+.rmsg.ai p { margin: var(--space-2) 0 0; font-weight: var(--fw-semibold); color: var(--text); }
+.race-note { margin: 0; font-size: var(--fs-xs); line-height: 1.5; color: var(--muted); text-shadow: 0 0 12px var(--bg), 0 1px 2px var(--bg); }
+@media (max-width: 899px) {
+  .race-in { gap: var(--space-3); padding-top: calc(var(--nav-height) + var(--space-3)); padding-bottom: var(--space-3); }
+  .race-head { gap: var(--space-2); }
+  .lanes { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-3); max-height: none; }
+  .lane { padding: var(--space-3); gap: var(--space-2); border-radius: var(--radius-lg); }
+  .sw { font-size: 1.5rem; }
+  .scr-main { grid-template-columns: minmax(0, 1fr); }
+  .scr-nav, .scr-row.hd, .chat .scr-bar { display: none; }
+  .chat { grid-template-rows: minmax(0, 1fr); }
+  .scr-view, .chat-body { padding: var(--space-2); }
+  .scr-chip { margin-bottom: 2px; }
+  .scr-row { padding: 3px 6px; }
+  .lane.done .rmsg.me span { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+  .rmsg.me { padding: var(--space-2) var(--space-3); }
+  .lane-s { font-size: var(--fs-xs); }
+  .race-note { font-size: var(--fs-2xs); }
+}
+/* Short phones: the note and the date chip give their room to the two screens. */
+@media (max-width: 899px) and (max-height: 740px) {
+  .race-note, .scr-chip { display: none; }
+  .lane-s span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .race-in { padding-bottom: var(--space-2); }
+  .race-head .h2 { font-size: 1.35rem; }
+  .lane { padding: var(--space-2) var(--space-3); }
+  .scr-row { padding: 2px 6px; }
+}
+html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relative; height: auto; } html:not(.js) .sr-race { position: static; width: auto; height: auto; clip-path: none; white-space: normal; }
+.world-tag { width: 52px; height: 52px; background: color-mix(in oklch, var(--bg) 88%, transparent); border-color: color-mix(in oklch, var(--accent) 55%, transparent); box-shadow: 0 0 24px color-mix(in srgb, var(--ring) 40%, transparent); }
+.world-tag .lg { width: 26px; height: 26px; }
+@media (max-width: 899px) { .close-sec { align-items: end; } .close-in { padding-block: var(--space-7); } }
 </style>
 </head>
 <body>
@@ -577,15 +647,12 @@ html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%
 
 <header class="nav" data-theme="dark" data-od-id="nav">
   <div class="wrap">
-    <a class="brand" href="#top" aria-label="Solenix home">
+    <a class="brand" href="/" aria-label="Solenix home">
       <svg viewBox="0 0 32 32" aria-hidden="true"><defs><radialGradient id="mk" cx=".42" cy=".38" r=".62"><stop offset="0" stop-color="var(--sun1)"/><stop offset="1" stop-color="var(--sun2)"/></radialGradient></defs><circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/><circle cx="16" cy="16" r="8" fill="url(#mk)"/><circle cx="27" cy="9" r="2.2" fill="var(--ring)"/></svg>
       Solenix
     </a>
     <ul class="nav-links">
-      <li><a href="#settle">How it settles</a></li>
-      <li><a href="#portal">Portal</a></li>
-      <li><a href="#pricing">Pricing</a></li>
-      <li><a href="#faq">Questions</a></li>
+      <li><a href="/agents">Agents Marketplace</a></li>
     </ul>
     <div class="nav-actions">
       <a class="btn btn-ghost btn-sm nav-signin" href="/app" data-od-id="nav-signin"><span class="long">Client&nbsp;</span>sign in</a>
@@ -593,6 +660,14 @@ html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%
   </div>
 </header>
 
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<symbol id="lg-shopify" viewBox="0 0 24 24"><path d="M15.337 23.979l7.216-1.561s-2.604-17.613-2.625-17.73c-.018-.116-.114-.192-.211-.192s-1.929-.136-1.929-.136-1.275-1.274-1.439-1.411c-.045-.037-.075-.057-.121-.074l-.914 21.104h.023zM11.71 11.305s-.81-.424-1.774-.424c-1.447 0-1.504.906-1.504 1.141 0 1.232 3.24 1.715 3.24 4.629 0 2.295-1.44 3.76-3.406 3.76-2.354 0-3.54-1.465-3.54-1.465l.646-2.086s1.245 1.066 2.28 1.066c.675 0 .975-.545.975-.932 0-1.619-2.654-1.694-2.654-4.359-.034-2.237 1.571-4.416 4.827-4.416 1.257 0 1.875.361 1.875.361l-.945 2.715-.02.01zM11.17.83c.136 0 .271.038.405.135-.984.465-2.064 1.639-2.508 3.992-.656.213-1.293.405-1.889.578C7.697 3.75 8.951.84 11.17.84V.83zm1.235 2.949v.135c-.754.232-1.583.484-2.394.736.466-1.777 1.333-2.645 2.085-2.971.193.501.309 1.176.309 2.1zm.539-2.234c.694.074 1.141.867 1.429 1.755-.349.114-.735.231-1.158.366v-.252c0-.752-.096-1.371-.271-1.871v.002zm2.992 1.289c-.02 0-.06.021-.078.021s-.289.075-.714.21c-.423-1.233-1.176-2.37-2.508-2.37h-.115C12.135.209 11.669 0 11.265 0 8.159 0 6.675 3.877 6.21 5.846c-1.194.365-2.063.636-2.16.674-.675.213-.694.232-.772.87-.075.462-1.83 14.063-1.83 14.063L15.009 24l.927-21.166z"/></symbol>
+<symbol id="lg-meta" viewBox="0 0 24 24"><path d="M6.915 4.03c-1.968 0-3.683 1.28-4.871 3.113C.704 9.208 0 11.883 0 14.449c0 .706.07 1.369.21 1.973a6.624 6.624 0 0 0 .265.86 5.297 5.297 0 0 0 .371.761c.696 1.159 1.818 1.927 3.593 1.927 1.497 0 2.633-.671 3.965-2.444.76-1.012 1.144-1.626 2.663-4.32l.756-1.339.186-.325c.061.1.121.196.183.3l2.152 3.595c.724 1.21 1.665 2.556 2.47 3.314 1.046.987 1.992 1.22 3.06 1.22 1.075 0 1.876-.355 2.455-.843a3.743 3.743 0 0 0 .81-.973c.542-.939.861-2.127.861-3.745 0-2.72-.681-5.357-2.084-7.45-1.282-1.912-2.957-2.93-4.716-2.93-1.047 0-2.088.467-3.053 1.308-.652.57-1.257 1.29-1.82 2.05-.69-.875-1.335-1.547-1.958-2.056-1.182-.966-2.315-1.303-3.454-1.303zm10.16 2.053c1.147 0 2.188.758 2.992 1.999 1.132 1.748 1.647 4.195 1.647 6.4 0 1.548-.368 2.9-1.839 2.9-.58 0-1.027-.23-1.664-1.004-.496-.601-1.343-1.878-2.832-4.358l-.617-1.028a44.908 44.908 0 0 0-1.255-1.98c.07-.109.141-.224.211-.327 1.12-1.667 2.118-2.602 3.358-2.602zm-10.201.553c1.265 0 2.058.791 2.675 1.446.307.327.737.871 1.234 1.579l-1.02 1.566c-.757 1.163-1.882 3.017-2.837 4.338-1.191 1.649-1.81 1.817-2.486 1.817-.524 0-1.038-.237-1.383-.794-.263-.426-.464-1.13-.464-2.046 0-2.221.63-4.535 1.66-6.088.454-.687.964-1.226 1.533-1.533a2.264 2.264 0 0 1 1.088-.285z"/></symbol>
+<symbol id="lg-quickbooks" viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm.642 4.1335c.9554 0 1.7296.776 1.7296 1.7332v9.0667h1.6c1.614 0 2.9275-1.3156 2.9275-2.933 0-1.6173-1.3136-2.9333-2.9276-2.9333h-.6654V7.3334h.6654c2.5722 0 4.6577 2.0897 4.6577 4.667 0 2.5774-2.0855 4.6666-4.6577 4.6666H12.642zM7.9837 7.333h3.3291v12.533c-.9555 0-1.73-.7759-1.73-1.7332V9.0662H7.9837c-1.6146 0-2.9277 1.316-2.9277 2.9334 0 1.6175 1.3131 2.9333 2.9277 2.9333h.6654v1.7332h-.6654c-2.5725 0-4.6577-2.0892-4.6577-4.6665 0-2.5771 2.0852-4.6666 4.6577-4.6666Z"/></symbol>
+<symbol id="lg-gmail" viewBox="0 0 24 24"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></symbol>
+<symbol id="lg-microsoftexcel" viewBox="0 0 24 24"><path d="M23 1.5q.41 0 .7.3.3.29.3.7v19q0 .41-.3.7-.29.3-.7.3H7q-.41 0-.7-.3-.3-.29-.3-.7V18H1q-.41 0-.7-.3-.3-.29-.3-.7V7q0-.41.3-.7Q.58 6 1 6h5V2.5q0-.41.3-.7.29-.3.7-.3zM6 13.28l1.42 2.66h2.14l-2.38-3.87 2.34-3.8H7.46l-1.3 2.4-.05.08-.04.09-.64-1.28-.66-1.29H2.59l2.27 3.82-2.48 3.85h2.16zM14.25 21v-3H7.5v3zm0-4.5v-3.75H12v3.75zm0-5.25V7.5H12v3.75zm0-5.25V3H7.5v3zm8.25 15v-3h-6.75v3zm0-4.5v-3.75h-6.75v3.75zm0-5.25V7.5h-6.75v3.75zm0-5.25V3h-6.75v3Z"/></symbol>
+<symbol id="lg-hubspot" viewBox="0 0 24 24"><path d="M18.164 7.93V5.084a2.198 2.198 0 001.267-1.978v-.067A2.2 2.2 0 0017.238.845h-.067a2.2 2.2 0 00-2.193 2.193v.067a2.196 2.196 0 001.252 1.973l.013.006v2.852a6.22 6.22 0 00-2.969 1.31l.012-.01-7.828-6.095A2.497 2.497 0 104.3 4.656l-.012.006 7.697 5.991a6.176 6.176 0 00-1.038 3.446c0 1.343.425 2.588 1.147 3.607l-.013-.02-2.342 2.343a1.968 1.968 0 00-.58-.095h-.002a2.033 2.033 0 102.033 2.033 1.978 1.978 0 00-.1-.595l.005.014 2.317-2.317a6.247 6.247 0 104.782-11.134l-.036-.005zm-.964 9.378a3.206 3.206 0 113.215-3.207v.002a3.206 3.206 0 01-3.207 3.207z"/></symbol>
+</svg>
 <div class="world" aria-hidden="true">
   <div class="fallback" aria-hidden="true">
       <svg viewBox="0 0 600 220"><path d="M300 110L283.4 125.3L266.5 140.3L249.2 154.7L231.2 168L212.6 179.9L193.3 189.9L173.7 197.8L154.1 203.2L134.8 206.1L116.5 206.6L99.4 204.8L83.8 201.2L69.9 196.2L57.7 190.1L47.1 183.1L38.1 175.6L30.5 167.8L24.2 159.7L19.1 151.5L15 143.2L11.9 134.9L9.8 126.6L8.5 118.3L8.1 110L8.5 101.7L9.8 93.4L11.9 85.1L15 76.8L19.1 68.5L24.2 60.3L30.5 52.2L38.1 44.4L47.1 36.9L57.7 29.9L69.9 23.8L83.8 18.8L99.4 15.2L116.5 13.4L134.8 13.9L154.1 16.8L173.7 22.2L193.3 30.1L212.6 40.1L231.2 52L249.2 65.3L266.5 79.7L283.4 94.7L300 110L316.6 125.3L333.5 140.3L350.8 154.7L368.8 168L387.4 179.9L406.7 189.9L426.3 197.8L445.9 203.2L465.2 206.1L483.5 206.6L500.6 204.8L516.2 201.2L530.1 196.2L542.3 190.1L552.9 183.1L561.9 175.6L569.5 167.8L575.8 159.7L580.9 151.5L585 143.2L588.1 134.9L590.2 126.6L591.5 118.3L591.9 110L591.5 101.7L590.2 93.4L588.1 85.1L585 76.8L580.9 68.5L575.8 60.3L569.5 52.2L561.9 44.4L552.9 36.9L542.3 29.9L530.1 23.8L516.2 18.8L500.6 15.2L483.5 13.4L465.2 13.9L445.9 16.8L426.3 22.2L406.7 30.1L387.4 40.1L368.8 52L350.8 65.3L333.5 79.7L316.6 94.7Z" fill="none" stroke="var(--ring)" stroke-width="2" stroke-opacity=".7"/><circle cx="300" cy="110" r="14" fill="var(--sun1)"/><circle cx="99.4" cy="204.8" r="14" fill="var(--sun2)"/><circle cx="483.5" cy="13.4" r="14" fill="var(--sun2)"/></svg>
@@ -605,6 +680,12 @@ html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%
   <div class="body-tag" data-od-id="tag-costs"><i></i>Costs</div>
   <div class="body-tag" data-od-id="tag-time"><i></i>Time</div>
   <div class="body-tag ai" data-od-id="tag-ai">AI</div>
+  <div class="moon-tag world-tag"><svg class="lg"><use href="#lg-shopify"/></svg></div>
+  <div class="moon-tag world-tag"><svg class="lg"><use href="#lg-meta"/></svg></div>
+  <div class="moon-tag world-tag"><svg class="lg"><use href="#lg-quickbooks"/></svg></div>
+  <div class="moon-tag world-tag"><svg class="lg"><use href="#lg-gmail"/></svg></div>
+  <div class="moon-tag world-tag"><svg class="lg"><use href="#lg-microsoftexcel"/></svg></div>
+  <div class="moon-tag world-tag"><svg class="lg"><use href="#lg-hubspot"/></svg></div>
   <div class="stop-mk" data-k="0">01<span>A clear picture</span></div>
   <div class="stop-mk" data-k="1">02<span>Your own portal</span></div>
   <div class="stop-mk" data-k="2">03<span>Your new website</span></div>
@@ -620,150 +701,219 @@ html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%
         <div class="wrap">
           <p class="eyebrow">Solenix · St. John's, NL</p>
           <h1 class="h1" data-od-id="hero-headline"><span class="w" style="--i:0"><span>Your</span></span> <span class="w" style="--i:1"><span>business</span></span> <span class="w" style="--i:2"><span>is</span></span> <span class="w" style="--i:3"><span>a</span></span> <span class="w g" style="--i:4"><span>three&#8209;body</span></span> <span class="w g" style="--i:5"><span>problem.</span></span></h1>
-          <p class="hero-sub">The shop, the books, the ads, the email, all pulling on each other. We put one AI at the centre. You ask, it gets done. Hours back, every week.</p>
+          <p class="hero-sub">Revenue, costs and time, pulled apart by a dozen tools. Scroll, and watch one AI at the centre settle them. Hours back, every week.</p>
           <div class="hero-ctas">
-            <a class="btn btn-primary" href="mailto:hello@solenix.dev?subject=Book%20a%20call" data-od-id="hero-cta">Book a call</a>
-            <a class="btn btn-ghost" href="#settle" data-od-id="hero-see">See how it settles
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg></a>
+            <a class="btn btn-primary" href="/book" data-od-id="hero-cta">Book a call</a>
           </div>
         </div>
       </div>
 
       <div class="beats">
-        <article class="beat" data-od-id="beat-look"><p class="beat-no bl">01 · Look</p><h2 class="beat-h">Every tool pulling <em>its own way.</em></h2><p class="bl">Each one eats hours you don't get paid for. On the first call, we map every tool, login and bill.</p></article>
+        <article class="beat" data-od-id="beat-look"><p class="beat-no bl">01 · Look</p><h2 class="beat-h">Every tool pulling <em>its own way.</em></h2><p class="bl">Each one eats hours you don't get paid for. That is where this starts.</p></article>
       </div>
       <p class="scroll-cue" aria-hidden="true">Scroll · it settles as you go</p>
   </div>
 </section>
 
-<section class="sec pt" id="portal" data-od-id="portal" data-scene="portal">
-  <div class="wrap pt-grid">
-    <div class="pt-copy rv">
-      <p class="eyebrow">Your portal</p>
-      <h2 class="h2">Twelve logins become <em>one.</em></h2>
-      <p class="lede">Your website, your plans and your bills in one place. Less time chasing logins, and no paying for tools you forgot you had.</p>
-      <p class="tally" aria-hidden="true"><span class="from"><b>12</b> logins</span><span class="to"></span><span class="one"><b>1</b> sign-in</span></p>
-      <a class="ghostlink" href="/app" data-od-id="portal-link">See the client portal <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-    </div>
-    <div class="pt-stage" data-pt>
-      <svg class="pt-ring" aria-hidden="true"><ellipse class="glow"/><ellipse class="ln" stroke-opacity=".35"/></svg>
-      <ul class="chips" aria-label="The logins it replaces">
-        <li class="chip">web host</li><li class="chip">domain</li><li class="chip">email</li><li class="chip">bookings</li><li class="chip">till</li><li class="chip">Shopify</li><li class="chip">Google</li><li class="chip">sheets</li><li class="chip">invoices</li><li class="chip">payroll</li><li class="chip">social</li><li class="chip">backups</li>
-      </ul>
-      <div class="tilt">
-        <figure class="portal" aria-label="Example of the client portal: website live, visitors this month, project timeline and two invoices" data-od-id="portal-panel">
-          <div class="p-bar">
-            <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/><circle cx="16" cy="16" r="8" fill="url(#mk)"/><circle cx="27" cy="9" r="2.2" fill="var(--ring)"/></svg>
-            <strong>Maple &amp; Rye</strong>
-            <span class="tag">Example</span>
-          </div>
-          <div class="p-tabs" aria-hidden="true"><span class="on">Overview</span><span>Initiatives</span><span>Billing</span></div>
-          <div class="p-body">
-            <div class="p-hero">
-              <div class="p-row"><span class="p-site">mapleandrye.ca</span><span class="badge ok"><span class="dot pulse"></span>Live</span></div>
-              <div class="p-stat">
-                <div><p class="label">Visitors · last 30 days</p><p class="p-num" style="margin-top: var(--space-2);"><span class="count" data-to="1284">1,284</span></p></div>
-                <svg class="spark" viewBox="0 0 300 56" preserveAspectRatio="none" role="img" aria-label="Visitors over 30 days, rising gently from about 30 to 55 a day">
-                  <defs><linearGradient id="sf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--chart-1)" stop-opacity=".26"/><stop offset="1" stop-color="var(--chart-1)" stop-opacity="0"/></linearGradient></defs>
-                  <path d="M0 56L0 26.3L10.3 28.8L20.7 25.2L31 27.7L41.4 23.5L51.7 30.2L62.1 24.4L72.4 22.7L82.8 26.1L93.1 21.8L103.4 24.6L113.8 20.2L124.1 25.8L134.5 19.6L144.8 21.4L155.2 17.9L165.5 22.1L175.9 18.3L186.2 16.4L196.6 20.5L206.9 15.1L217.2 17.7L227.6 13.9L237.9 18.8L248.3 12.6L258.6 14.9L269 11.2L279.3 13.8L289.7 9.8L300 8.4L300 56Z" fill="url(#sf)"/>
-                  <path class="ln" d="M0 26.3L10.3 28.8L20.7 25.2L31 27.7L41.4 23.5L51.7 30.2L62.1 24.4L72.4 22.7L82.8 26.1L93.1 21.8L103.4 24.6L113.8 20.2L124.1 25.8L134.5 19.6L144.8 21.4L155.2 17.9L165.5 22.1L175.9 18.3L186.2 16.4L196.6 20.5L206.9 15.1L217.2 17.7L227.6 13.9L237.9 18.8L248.3 12.6L258.6 14.9L269 11.2L279.3 13.8L289.7 9.8L300 8.4"/>
-                  <path class="pt0" d="M300 8.4h0"/>
-                </svg>
-              </div>
-            </div>
-            <div class="p-grid">
-              <div class="p-card">
-                <p class="label">Initiative · new website</p>
-                <ol class="tl">
-                  <li class="done"><span class="n"></span><b>Look</b><small>Sep 8</small></li>
-                  <li class="done"><span class="n"></span><b>Plan</b><small>Sep 15</small></li>
-                  <li class="now" aria-current="step"><span class="n"></span><b>Build</b><small>Now</small></li>
-                  <li><span class="n"></span><b>Care</b><small>Next</small></li>
-                </ol>
-                <div class="p-next"><span class="label">Waiting on you</span><span>Approve the menu photos</span></div>
-              </div>
-              <div class="p-card">
-                <p class="label">Billing</p>
-                <div>
-                  <div class="inv"><span>Care · October<br><small>Due Oct 15</small></span><span class="r"><span class="p-pay">Pay · opens Stripe</span></span></div>
-                  <div class="inv"><span>Setup<br><small>Paid Sep 16</small></span><span class="r"><span class="badge quiet">Paid</span></span></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </figure>
-      </div>
+<section class="w-sec" id="guide" data-od-id="guide" data-scene="guide" style="--wh: 170svh">
+  <div class="wrap">
+    <div class="w-copy rv">
+      <p class="eyebrow">One AI at the centre</p>
+      <h2 class="h2">You don't need to be an expert <em>anymore.</em></h2>
+      <p class="w-big">Stop learning ten tools. Talk to one.</p>
+      <p class="lede">We set up Claude or ChatGPT for your team and connect it to the tools you already use. You say what you want in plain words, and it gets done in those tools.</p>
     </div>
   </div>
 </section>
 
+<section class="race" id="fly-shopify" data-od-id="flyby-shopify" data-scene="flyby" data-race="shopify">
+  <div class="race-pin">
+    <div class="wrap race-in">
+      <header class="race-head">
+        <p class="eyebrow toolname"><svg class="lg" aria-hidden="true"><use href="#lg-shopify"/></svg>Shopify</p>
+        <h2 class="h2">What sold, and <em>what to reorder.</em></h2>
+        <p class="sr-race">By hand: Open Analytics. Open Reports. Find Sales by product. Set the date range to last month. Sort by units sold. Now open Inventory, a separate screen. Check the stock on each product, one at a time. Or just ask: “Pull last month's top 10 sellers by units sold, show current stock for each, and tell me which will run out in 30 days”</p>
+      </header>
+      <div class="lanes" aria-hidden="true">
+        <article class="lane hand" data-od-id="race-shopify-by-hand">
+          <header><span class="lane-t">By hand</span><span class="sw">0:00</span></header>
+          <div class="scr">
+            <div class="scr-bar"><svg class="lg"><use href="#lg-shopify"/></svg><span class="crumb">Shopify</span><span class="ex">Example</span></div>
+            <div class="scr-main"><ul class="scr-nav"><li>Home</li><li>Orders</li><li>Products</li><li>Analytics</li></ul><div class="scr-view"></div></div>
+            <i class="scr-cur"></i>
+          </div>
+          <p class="lane-s"></p>
+        </article>
+        <article class="lane ask" data-od-id="race-shopify-just-ask">
+          <header><span class="lane-t">Just ask</span><span class="sw">0:00</span></header>
+          <div class="scr chat">
+            <div class="scr-bar"><i class="ai-dot"></i><span class="crumb">Your AI, connected to Shopify</span><span class="ex">Example</span></div>
+            <div class="chat-body"><p class="rmsg me"><span></span></p><p class="rmsg st" hidden></p><div class="rmsg ai" hidden><div class="scr-row"><span>Sea salt caramels</span><span>212 sold · 14 left</span></div><div class="scr-row"><span>Wool mitts</span><span>150 sold · 9 left</span></div><div class="scr-row"><span>Partridgeberry jam</span><span>187 sold · 120 left</span></div><p>Caramels and mitts will run out within 30 days. Reorder those two.</p></div></div>
+          </div>
+          <p class="lane-s"></p>
+        </article>
+      </div>
+      <p class="race-note">A replay with example data. Both clocks run in real time on your screen. It works through Shopify's official connector for Claude.</p>
+    </div>
+  </div>
+</section>
 
-<section class="sec demo-sec" id="example" data-od-id="demo" data-scene="demo">
-  <div class="wrap">
-    <div class="sec-head rv">
-      <p class="eyebrow">One AI at the centre</p>
-      <h2 class="h2">You ask. <em>It gets done.</em></h2>
-      <p class="lede">Just say what you want. Claude or ChatGPT, set up for your team and connected to the tools you already use, works out the how.</p>
-    </div>
-    <div class="demo-grid">
-      <div class="chat rv" style="--d:1" data-od-id="demo-chat">
-        <div class="chat-top">
-          <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/><circle cx="16" cy="16" r="8" fill="url(#mk)"/><circle cx="27" cy="9" r="2.2" fill="var(--ring)"/></svg>
-          <div><strong>Maple &amp; Rye assistant</strong><small>Connected to Shopify and Google Drive</small></div>
-          <span class="tag">Example</span>
-        </div>
-        <div class="chat-log" data-chat>
-          <div class="msg me" data-seq="me"><span class="label who">Anna · owner</span>What should I order from the mill this week?</div>
-          <div class="step" data-seq="step" data-w="1"><i></i>Reading Shopify orders · September</div>
-          <div class="msg ai" data-seq="ai" data-w="2"><span class="label who">Assistant</span><span class="sr-only">Sourdough and rye sold most in September. Croissants dipped in the last week. Here's what that means for flour.</span><span class="vis" aria-hidden="true" data-type>Sourdough and rye sold most in September. Croissants dipped in the last week. Here's what that means for flour.</span>
-            <div class="order" data-after><span>Bread flour</span><span class="mono">8 bags</span><span>Dark rye</span><span class="mono">3 bags</span><span>Pastry flour</span><span class="mono">2 bags</span></div>
+<section class="race" id="fly-meta" data-od-id="flyby-meta" data-scene="flyby" data-race="meta">
+  <div class="race-pin">
+    <div class="wrap race-in">
+      <header class="race-head">
+        <p class="eyebrow toolname"><svg class="lg" aria-hidden="true"><use href="#lg-meta"/></svg>Meta Ads</p>
+        <h2 class="h2">Which ads worked, and <em>which to pause.</em></h2>
+        <p class="sr-race">By hand: Log into Ads Manager. Set the date range to the last 7 days. Read the spend and the cost per result. Switch to the 7 days before. Compare every campaign by eye, back and forth. Or just ask: “Pull spend, cost per result, and ROAS for all active campaigns over the last 7 days vs. the 7 days before. Tell me which ad sets are underperforming and recommend which to pause.”</p>
+      </header>
+      <div class="lanes" aria-hidden="true">
+        <article class="lane hand" data-od-id="race-meta-by-hand">
+          <header><span class="lane-t">By hand</span><span class="sw">0:00</span></header>
+          <div class="scr">
+            <div class="scr-bar"><svg class="lg"><use href="#lg-meta"/></svg><span class="crumb">Meta Ads</span><span class="ex">Example</span></div>
+            <div class="scr-main"><ul class="scr-nav"><li>Campaigns</li><li>Ad sets</li><li>Ads</li><li>Reports</li></ul><div class="scr-view"></div></div>
+            <i class="scr-cur"></i>
           </div>
-          <div class="step" data-seq="step" data-w="3"><i></i>Writing the order in Google Drive · “Mill order, Oct 6”</div>
-          <div class="msg ai" data-seq="ai" data-w="4"><span class="label who">Assistant</span><span class="sr-only">Your order is ready in Drive. Have a look, change anything you like, and send it when you're happy.</span><span class="vis" aria-hidden="true" data-type>Your order is ready in Drive. Have a look, change anything you like, and send it when you're happy.</span></div>
-          <div class="typing gone" aria-hidden="true"><i></i><i></i><i></i></div>
-        </div>
-        <div class="chat-foot"><span>Example. One question, the order is written, and no flour is over-ordered.</span><button class="btn btn-ghost btn-sm" type="button" data-replay data-od-id="demo-replay">Play it again</button></div>
-      </div>
-      <div class="wire-wrap rv" style="--d:2">
-        <p class="label">What Anna got</p>
-        <ol class="wire" data-wire aria-label="How the assistant works for Anna: her orders, the assistant, her Drive, and Anna">
-          <li data-n="1"><span class="nd">SH</span><b>Her orders</b><small>Every sale in Shopify, finally put to work.</small></li>
-          <li data-n="2"><span class="nd"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/><circle cx="16" cy="16" r="8" fill="url(#mk)"/><circle cx="27" cy="9" r="2.2" fill="var(--ring)"/></svg></span><b>An assistant</b><small>Knows her bakery, and works out what's needed.</small></li>
-          <li data-n="3"><span class="nd">GD</span><b>Her Drive</b><small>The order, written and waiting.</small></li>
-          <li data-n="4"><span class="nd">AW</span><b>Her morning back</b><small>She checks it, sends it, and gets on with baking.</small></li>
-        </ol>
-        <ul class="gets" data-od-id="ai-gets">
-          <li><b>Set up</b>on the tools you already pay for, so no new bills</li>
-          <li><b>Taught</b>to you and your team, until asking beats doing it by hand</li>
-          <li><b>Looked after</b>and finding more hours to save every month</li>
-        </ul>
-      </div>
-    </div>
-    <div class="say rv" data-od-id="no-expert">
-      <div class="say-head">
-        <p class="eyebrow">No expert needed</p>
-        <h3 class="say-h">Stop learning ten tools. <em>Talk to one.</em></h3>
-        <p class="lede">You bring what you want and the final say. The AI, connected to your tools, brings the know-how. It drafts and prepares; you check and approve.</p>
-      </div>
-      <div class="tools" data-tools data-od-id="tool-map">
-        <div class="tools-orbit" role="tablist" aria-label="What a small business runs on" data-tg-orbit>
-          <svg class="tools-spokes" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" data-tg-spokes></svg>
-          <span class="tools-ring" aria-hidden="true"></span>
-          <span class="tools-ai" aria-hidden="true"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/><circle cx="16" cy="16" r="8" fill="url(#mk)"/><circle cx="27" cy="9" r="2.2" fill="var(--ring)"/></svg><b>AI</b></span>
-        </div>
-        <div class="tools-panel" role="tabpanel" data-od-id="tool-panel">
-          <p class="label" data-tg-no></p>
-          <p class="tools-t" data-tg-title></p>
-          <div class="tools-chips" data-tg-tools></div>
-          <div class="tools-asks" aria-live="polite">
-            <p class="label">In <span data-tt-name></span>, just ask</p>
-            <ul data-tt-asks></ul>
+          <p class="lane-s"></p>
+        </article>
+        <article class="lane ask" data-od-id="race-meta-just-ask">
+          <header><span class="lane-t">Just ask</span><span class="sw">0:00</span></header>
+          <div class="scr chat">
+            <div class="scr-bar"><i class="ai-dot"></i><span class="crumb">Your AI, connected to Meta Ads</span><span class="ex">Example</span></div>
+            <div class="chat-body"><p class="rmsg me"><span></span></p><p class="rmsg st" hidden></p><div class="rmsg ai" hidden><div class="scr-row"><span>Local awareness</span><span>$5.90 → $9.40</span></div><div class="scr-row"><span>New arrivals</span><span>$6.10 → $6.80</span></div><div class="scr-row"><span>Fall sale</span><span>$4.60 → $4.10</span></div><p>Local awareness now costs far more per result. I would pause it.</p></div></div>
           </div>
-          <p class="tools-foot">It drafts and prepares. You check and approve.</p>
-        </div>
+          <p class="lane-s"></p>
+        </article>
       </div>
-      <p class="say-src" data-od-id="tool-fact">87% of people use Google to find local businesses. Only about 35% of small businesses actively look after their Google Business Profile.</p>
-      <p class="say-src">Studies point the same way. In a <a href="https://www.science.org/doi/10.1126/science.adh2586" rel="noopener">study in Science</a> of 444 professionals, an AI assistant cut writing time by about 40%, and the people who started weakest gained most. In a <a href="https://www.nber.org/papers/w31161" rel="noopener">study of 5,172 support staff</a>, newer staff gained 34% against 15% on average. Both studied office work at larger organisations, not small shops.</p>
+      <p class="race-note">A replay with example data. Both clocks run in real time on your screen. It works through Meta's own connector.</p>
+    </div>
+  </div>
+</section>
+
+<section class="race" id="fly-quickbooks" data-od-id="flyby-quickbooks" data-scene="flyby" data-race="quickbooks">
+  <div class="race-pin">
+    <div class="wrap race-in">
+      <header class="race-head">
+        <p class="eyebrow toolname"><svg class="lg" aria-hidden="true"><use href="#lg-quickbooks"/></svg>QuickBooks</p>
+        <h2 class="h2">Who owes you, <em>and the invoice sent.</em></h2>
+        <p class="sr-race">By hand: Open Reports. Open the report of who owes you. Read down the list and decide who to chase. Now open a new invoice, a separate screen. Fill in the customer, the item, the amount and the date. Or just ask: “Show me who owes us, flag anyone over 60 days, and send Harbour Dental an invoice for the retainer”</p>
+      </header>
+      <div class="lanes" aria-hidden="true">
+        <article class="lane hand" data-od-id="race-quickbooks-by-hand">
+          <header><span class="lane-t">By hand</span><span class="sw">0:00</span></header>
+          <div class="scr">
+            <div class="scr-bar"><svg class="lg"><use href="#lg-quickbooks"/></svg><span class="crumb">QuickBooks</span><span class="ex">Example</span></div>
+            <div class="scr-main"><ul class="scr-nav"><li>Dashboard</li><li>Sales</li><li>Expenses</li><li>Reports</li></ul><div class="scr-view"></div></div>
+            <i class="scr-cur"></i>
+          </div>
+          <p class="lane-s"></p>
+        </article>
+        <article class="lane ask" data-od-id="race-quickbooks-just-ask">
+          <header><span class="lane-t">Just ask</span><span class="sw">0:00</span></header>
+          <div class="scr chat">
+            <div class="scr-bar"><i class="ai-dot"></i><span class="crumb">Your AI, connected to QuickBooks</span><span class="ex">Example</span></div>
+            <div class="chat-body"><p class="rmsg me"><span></span></p><p class="rmsg st" hidden></p><div class="rmsg ai" hidden><div class="scr-row"><span>Hillside Roofing</span><span>64 days · flagged</span></div><div class="scr-row"><span>East End Yoga</span><span>31 days</span></div><div class="scr-row"><span>Harbour Dental</span><span>12 days</span></div><p>The retainer invoice for Harbour Dental is ready to send.</p></div></div>
+          </div>
+          <p class="lane-s"></p>
+        </article>
+      </div>
+      <p class="race-note">A replay with example data. Both clocks run in real time on your screen. It works through Intuit's official connector.</p>
+    </div>
+  </div>
+</section>
+
+<section class="race" id="fly-gmail" data-od-id="flyby-gmail" data-scene="flyby" data-race="gmail">
+  <div class="race-pin">
+    <div class="wrap race-in">
+      <header class="race-head">
+        <p class="eyebrow toolname"><svg class="lg" aria-hidden="true"><use href="#lg-gmail"/></svg>Gmail and Calendar</p>
+        <h2 class="h2">The inbox sorted, <em>the meeting booked.</em></h2>
+        <p class="sr-race">By hand: Open the inbox. Open the first email and read it. Decide: reply today, later, or junk. Back to the inbox. Then the next one, and the next.. Or just ask: “Group today's inbox into needs a reply today, can wait, and junk. Then find 30 minutes next week with Harbour Dental and send the invite.”</p>
+      </header>
+      <div class="lanes" aria-hidden="true">
+        <article class="lane hand" data-od-id="race-gmail-by-hand">
+          <header><span class="lane-t">By hand</span><span class="sw">0:00</span></header>
+          <div class="scr">
+            <div class="scr-bar"><svg class="lg"><use href="#lg-gmail"/></svg><span class="crumb">Gmail and Calendar</span><span class="ex">Example</span></div>
+            <div class="scr-main"><ul class="scr-nav"><li>Inbox</li><li>Starred</li><li>Sent</li><li>Drafts</li></ul><div class="scr-view"></div></div>
+            <i class="scr-cur"></i>
+          </div>
+          <p class="lane-s"></p>
+        </article>
+        <article class="lane ask" data-od-id="race-gmail-just-ask">
+          <header><span class="lane-t">Just ask</span><span class="sw">0:00</span></header>
+          <div class="scr chat">
+            <div class="scr-bar"><i class="ai-dot"></i><span class="crumb">Your AI, connected to Gmail and Calendar</span><span class="ex">Example</span></div>
+            <div class="chat-body"><p class="rmsg me"><span></span></p><p class="rmsg st" hidden></p><div class="rmsg ai" hidden><div class="scr-row"><span>Needs a reply today</span><span>4</span></div><div class="scr-row"><span>Can wait</span><span>9</span></div><div class="scr-row"><span>Junk and newsletters</span><span>16</span></div><p>Tuesday at 10:30 works for you both. The invite is ready to send.</p></div></div>
+          </div>
+          <p class="lane-s"></p>
+        </article>
+      </div>
+      <p class="race-note">A replay with example data. Both clocks run in real time on your screen. It works through the official Gmail and Calendar connectors.</p>
+    </div>
+  </div>
+</section>
+
+<section class="race" id="fly-microsoftexcel" data-od-id="flyby-microsoftexcel" data-scene="flyby" data-race="microsoftexcel">
+  <div class="race-pin">
+    <div class="wrap race-in">
+      <header class="race-head">
+        <p class="eyebrow toolname"><svg class="lg" aria-hidden="true"><use href="#lg-microsoftexcel"/></svg>Excel</p>
+        <h2 class="h2">The sales workbook, <em>updated for you.</em></h2>
+        <p class="sr-race">By hand: Open the sales workbook. Select all of the sales data. Insert a pivot table. Set up each field, then build the chart. Or just ask: “Add a pivot table of revenue by category this month vs. last, with a bar chart”</p>
+      </header>
+      <div class="lanes" aria-hidden="true">
+        <article class="lane hand" data-od-id="race-microsoftexcel-by-hand">
+          <header><span class="lane-t">By hand</span><span class="sw">0:00</span></header>
+          <div class="scr">
+            <div class="scr-bar"><svg class="lg"><use href="#lg-microsoftexcel"/></svg><span class="crumb">Excel</span><span class="ex">Example</span></div>
+            <div class="scr-main"><ul class="scr-nav"><li>Home</li><li>Insert</li><li>Data</li><li>Review</li></ul><div class="scr-view"></div></div>
+            <i class="scr-cur"></i>
+          </div>
+          <p class="lane-s"></p>
+        </article>
+        <article class="lane ask" data-od-id="race-microsoftexcel-just-ask">
+          <header><span class="lane-t">Just ask</span><span class="sw">0:00</span></header>
+          <div class="scr chat">
+            <div class="scr-bar"><i class="ai-dot"></i><span class="crumb">Your AI, connected to Excel</span><span class="ex">Example</span></div>
+            <div class="chat-body"><p class="rmsg me"><span></span></p><p class="rmsg st" hidden></p><div class="rmsg ai" hidden><div class="scr-row"><span>Bread</span><span>$3,900 → $4,210</span></div><div class="scr-row"><span>Pastry</span><span>$3,320 → $3,180</span></div><div class="scr-row"><span>Coffee</span><span>$2,410 → $2,640</span></div><p>The pivot table and a bar chart are in the workbook. Your formulas are untouched.</p></div></div>
+          </div>
+          <p class="lane-s"></p>
+        </article>
+      </div>
+      <p class="race-note">A replay with example data. Both clocks run in real time on your screen. Claude edits the open Excel file. It cannot yet edit a Google Sheet in place.</p>
+    </div>
+  </div>
+</section>
+
+<section class="race" id="fly-hubspot" data-od-id="flyby-hubspot" data-scene="flyby" data-race="hubspot">
+  <div class="race-pin">
+    <div class="wrap race-in">
+      <header class="race-head">
+        <p class="eyebrow toolname"><svg class="lg" aria-hidden="true"><use href="#lg-hubspot"/></svg>HubSpot</p>
+        <h2 class="h2">The deals that went quiet, <em>followed up.</em></h2>
+        <p class="sr-race">By hand: Open the deals list. Filter by last activity date, then sort. Open the first stalled deal and reread it. Write a follow-up by hand. Back to the list. Next deal, same again.. Or just ask: “Show every deal with no activity in 14 days and draft a follow-up for each”</p>
+      </header>
+      <div class="lanes" aria-hidden="true">
+        <article class="lane hand" data-od-id="race-hubspot-by-hand">
+          <header><span class="lane-t">By hand</span><span class="sw">0:00</span></header>
+          <div class="scr">
+            <div class="scr-bar"><svg class="lg"><use href="#lg-hubspot"/></svg><span class="crumb">HubSpot</span><span class="ex">Example</span></div>
+            <div class="scr-main"><ul class="scr-nav"><li>Contacts</li><li>Deals</li><li>Tasks</li><li>Reports</li></ul><div class="scr-view"></div></div>
+            <i class="scr-cur"></i>
+          </div>
+          <p class="lane-s"></p>
+        </article>
+        <article class="lane ask" data-od-id="race-hubspot-just-ask">
+          <header><span class="lane-t">Just ask</span><span class="sw">0:00</span></header>
+          <div class="scr chat">
+            <div class="scr-bar"><i class="ai-dot"></i><span class="crumb">Your AI, connected to HubSpot</span><span class="ex">Example</span></div>
+            <div class="chat-body"><p class="rmsg me"><span></span></p><p class="rmsg st" hidden></p><div class="rmsg ai" hidden><div class="scr-row"><span>Harbour Dental</span><span>Draft ready</span></div><div class="scr-row"><span>Cove Road Cafe</span><span>Draft ready</span></div><div class="scr-row"><span>East End Yoga</span><span>Draft ready</span></div><p>Three deals went quiet. Each one has a follow-up that mentions your last talk.</p></div></div>
+          </div>
+          <p class="lane-s"></p>
+        </article>
+      </div>
+      <p class="race-note">A replay with example data. Both clocks run in real time on your screen. It works through HubSpot's own connector.</p>
     </div>
   </div>
 </section>
@@ -772,7 +922,7 @@ html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%
   <div class="jr-pin">
     <div class="wrap jr-in">
       <div class="jr-head">
-        <p class="eyebrow">After you book</p>
+        <p class="eyebrow">The plan</p>
         <h2 class="h2">From one call to a <em>stable orbit.</em></h2>
       </div>
       <ol class="jr-steps" data-steps>
@@ -787,183 +937,30 @@ html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%
   </div>
 </section>
 
-<section class="sec pr-sec" id="promises" data-od-id="promises" data-scene="promises">
-  <div class="wrap">
-    <div class="sec-head rv"><p class="eyebrow">What we put in writing</p><h2 class="h2">Four promises, <em>on paper.</em></h2></div>
-    <ol class="promises">
-      <li class="rv" data-od-id="promise-price"><span class="pno">01</span><h3>Fixed price</h3><p>One number, agreed before we start. No surprise invoices.</p></li>
-      <li class="rv" style="--d:1" data-od-id="promise-own"><span class="pno">02</span><h3>You own it all</h3><p>Accounts, code and data in your name. Nothing to buy back.</p></li>
-      <li class="rv" style="--d:2" data-od-id="promise-plain"><span class="pno">03</span><h3>Plain English</h3><p>Updates you read in a minute, on your phone.</p></li>
-      <li class="rv" style="--d:3" data-od-id="promise-lockin"><span class="pno">04</span><h3>No lock-in</h3><p>Leave any month. Keep everything you paid for.</p></li>
-    </ol>
-  </div>
-</section>
-
-<section class="sec roi-sec" id="worth" data-od-id="roi" data-scene="roi">
-  <div class="wrap">
-    <div class="roi-top">
-      <div class="sec-head rv">
-        <p class="eyebrow">What it could be worth</p>
-        <h2 class="h2">Your numbers, <em>not ours.</em></h2>
-        <p class="lede">Six quick questions about your business. Every rate behind the answer comes from published research, and we use the cautious end.</p>
+<section class="jr pr" id="promises" data-od-id="promises" data-scene="promises">
+  <div class="jr-pin">
+    <div class="wrap jr-in">
+      <div class="jr-head">
+        <p class="eyebrow">What we put in writing</p>
+        <h2 class="h2">Four promises, <em>on paper.</em></h2>
       </div>
-      <figure class="roi-stat rv" style="--d:1" data-od-id="roi-stat-cfib">
-        <b>735 hours</b>
-        <figcaption>What a Canadian small business spends on government paperwork in a year. 256 of those hours are red tape. <a href="https://www.cfib-fcei.ca/en/media/small-businesses-spend-over-250-hours-or-32-business-days-a-year-wrapped-up-in-red-tape" rel="noopener">CFIB, Canada's Red Tape Report, January 2025</a></figcaption>
-      </figure>
-    </div>
-    <div class="roi-grid">
-      <form class="roi rv" data-roi data-od-id="roi-calculator" onsubmit="return false">
-        <label class="roi-q" data-od-id="roi-q-industry"><span class="q"><i>1</i>What kind of business is it?</span>
-          <select data-in="ind">
-            <option value="retail">Retail or shop</option>
-            <option value="cafe">Restaurant or café</option>
-            <option value="trades">Trades or field service</option>
-            <option value="pro">Law, accounting or professional services</option>
-            <option value="clinic">Health or dental clinic</option>
-            <option value="salon">Salon, spa or personal care</option>
-            <option value="ecom">Online store</option>
-            <option value="other">Something else</option>
-          </select>
-        </label>
-        <fieldset class="roi-q" data-od-id="roi-q-team"><legend class="q"><i>2</i>How many people work there, including you?</legend>
-          <div class="opts">
-            <label class="opt"><input type="radio" name="team" value="1" checked><span>1–5</span></label>
-            <label class="opt"><input type="radio" name="team" value="1.4"><span>6–15</span></label>
-            <label class="opt"><input type="radio" name="team" value="1.8"><span>16–30</span></label>
-            <label class="opt"><input type="radio" name="team" value="2.2"><span>31–50</span></label>
-          </div>
-        </fieldset>
-        <fieldset class="roi-q" data-od-id="roi-q-tools"><legend class="q"><i>3</i>Which of these do you use today? <em>Pick any.</em></legend>
-          <div class="opts">
-            <label class="opt"><input type="checkbox" name="tool" value="your books"><span>QuickBooks, Sage or Xero</span></label>
-            <label class="opt"><input type="checkbox" name="tool" value="your shop"><span>Shopify or Square</span></label>
-            <label class="opt"><input type="checkbox" name="tool" value="your email and documents"><span>Google Workspace or Microsoft 365</span></label>
-            <label class="opt"><input type="checkbox" name="tool" value="your ads"><span>Meta or Google Ads</span></label>
-            <label class="opt"><input type="checkbox" name="tool" value="your customer list"><span>Mailchimp, HubSpot or a CRM</span></label>
-            <label class="opt"><input type="checkbox" name="tool" value="your bookings"><span>A booking tool</span></label>
-            <label class="opt"><input type="checkbox" name="tool" value="your spreadsheets"><span>Mostly spreadsheets</span></label>
-            <label class="opt"><input type="checkbox" name="tool" value="legacy"><span>Older or industry-specific software</span></label>
-          </div>
-        </fieldset>
-        <label class="roi-q" data-od-id="roi-q-spend"><span class="q"><i>4</i>Roughly, what do you spend on software a month?</span>
-          <select data-in="spend">
-            <option value="0">Not sure</option>
-            <option value="100">Under $200</option>
-            <option value="350">$200 to $500</option>
-            <option value="750">$500 to $1,000</option>
-            <option value="1750">$1,000 to $2,500</option>
-            <option value="2500">$2,500 or more</option>
-          </select>
-          <small data-out="spend-hint"></small>
-        </label>
-        <label class="roi-q" data-od-id="roi-q-hours"><span class="q"><i>5</i>Hours a week on admin: email, books, scheduling, data entry, chasing paperwork</span>
-          <span class="roi-row"><input type="range" min="0" max="40" step="1" value="12" data-in="hours" aria-describedby="roi-hours-v"><output id="roi-hours-v" data-out="hours">12 h</output></span>
-          <small>Filled in from your answers above. Drag it to match your week.</small>
-        </label>
-        <fieldset class="roi-q" data-od-id="roi-q-leads"><legend class="q"><i>6</i>When someone calls, messages or fills in a form, what usually happens?</legend>
-          <div class="opts col">
-            <label class="opt"><input type="radio" name="lead" value="fast"><span>We answer almost every time, fast</span></label>
-            <label class="opt"><input type="radio" name="lead" value="slow" checked><span>We get back to most people, sometimes slowly</span></label>
-            <label class="opt"><input type="radio" name="lead" value="miss"><span>We often miss them or take a long time</span></label>
-          </div>
-          <small>Why we ask: in a Harvard Business Review study of 2,241 companies, firms that replied within an hour were 7 times more likely to have a real conversation than firms that waited one more hour. <a href="https://hbr.org/2011/03/the-short-life-of-online-sales-leads" rel="noopener">HBR, 2011</a></small>
-        </fieldset>
-        <details class="roi-more" data-od-id="roi-optional">
-          <summary>Know your own numbers? Add them <span>Optional</span></summary>
-          <div class="roi-nums">
-            <label><span>New customer inquiries a month</span><input type="number" inputmode="numeric" min="0" step="1" data-in="leads"></label>
-            <label><span>What a typical sale is worth ($)</span><input type="number" inputmode="decimal" min="0" step="1" data-in="sale"></label>
-            <label><span>What an hour of your team's time is worth ($)</span><input type="number" inputmode="decimal" min="0" step="0.01" data-in="wage" placeholder="32.35"></label>
-          </div>
-          <small>Left blank, we use a typical figure for your kind of business, and the average hourly wage in Newfoundland and Labrador.</small>
-        </details>
-      </form>
-      <aside class="roi-res rv" style="--d:1" data-roi-res data-od-id="roi-results" aria-live="polite">
-        <p class="roi-res-top"><span class="label">What it could be worth</span><span class="tag">Estimate</span></p>
-        <div class="roi-total" data-od-id="roi-total"><b data-out="total">—</b><small>a year, from the cautious end to the hopeful end</small></div>
-        <dl class="roi-ks">
-          <div class="roi-k" data-od-id="roi-time"><dt>Time saved</dt><dd><b data-out="time">—</b><small data-out="time-s"></small></dd></div>
-          <div class="roi-k" data-od-id="roi-saved"><dt>Money saved</dt><dd><b data-out="saved">—</b><small>a year on software you stop paying for</small></dd></div>
-          <div class="roi-k" data-od-id="roi-made"><dt>Money made</dt><dd><b data-out="made">—</b><small data-out="made-s"></small></dd></div>
-        </dl>
-        <p class="roi-fit" data-out="fit"></p>
-        <p class="roi-legacy" data-out="legacy" hidden>Moving off older software is not in these numbers. There is no reliable small-business figure for it, so we look at it with you on the call.</p>
-        <div class="roi-cta"><a class="btn btn-primary" href="mailto:hello@solenix.dev?subject=Book%20a%20call%20%E2%80%94%20my%20numbers" data-od-id="roi-cta">Book a call to check these</a></div>
-        <p class="roi-note">An estimate, not a promise. We check it with you on the call, then measure the real result in your portal.</p>
-      </aside>
-    </div>
-    <details class="roi-how rv" data-od-id="roi-method">
-      <summary>How we calculate this</summary>
-      <div class="roi-how-in">
-        <div>
-          <h3>Time saved</h3>
-          <p>Your admin hours × 8% (low) to 25% (high). The middle is 15%.</p>
-          <p>The low end sits near a <a href="https://www.stlouisfed.org/on-the-economy/2025/feb/impact-generative-ai-work-productivity" rel="noopener">St. Louis Fed survey</a>: people who use AI at work save about 5% of their hours, and one in five daily users saves four hours a week or more. We go a little above 5% because we set it up and teach your team. Controlled studies of single tasks found far more (<a href="https://www.nber.org/papers/w31161" rel="noopener">15 to 34%</a>, <a href="https://www.science.org/doi/10.1126/science.adh2586" rel="noopener">about 40%</a>). We do not use those for a whole week.</p>
-          <p>We value each hour at $32.35, the average hourly wage in Newfoundland and Labrador (<a href="https://www150.statcan.gc.ca/n1/daily-quotidien/241216/mc-a001-eng.htm" rel="noopener">Statistics Canada, 2024</a>), unless you enter your own.</p>
-        </div>
-        <div>
-          <h3>Money saved</h3>
-          <p>Monthly software spend × 12 × 10% (low) to 28% (high). The middle is 18%.</p>
-          <p>These rates are our own cautious assumption, not a published figure. The research on unused software covers large companies, where waste runs higher, so we stay well under it. What we can cite: only 1 in 10 Canadian small businesses has its tools fully joined up, and the top barrier is not knowing which ones are worth paying for (<a href="https://www.cfib-fcei.ca/en/media/digital-adoption-including-ai-paying-off-for-smes-but-gaps-remain" rel="noopener">CFIB, 2025, 1,683 owners</a>).</p>
-          <p>A spend band counts at its midpoint. “Not sure” uses a typical figure for your kind of business.</p>
-        </div>
-        <div>
-          <h3>Money made</h3>
-          <p>Inquiries a month × 12 × the share we expect to win back × a typical sale.</p>
-          <p>Answer fast already: 0%. Sometimes slow: 3 to 10%. Often missed: 8 to 25%. These shares are our own cautious assumptions. The <a href="https://hbr.org/2011/03/the-short-life-of-online-sales-leads" rel="noopener">Harvard Business Review study</a> shows speed matters; it does not give a share, so we keep ours low.</p>
-          <p>This is extra sales, before your costs. It is not profit.</p>
-        </div>
-        <div>
-          <h3>What we leave out</h3>
-          <p>Numbers published by companies selling software, such as dollars lost to missed calls. Savings from moving off older software, because there is no reliable small-business figure. Fewer no-shows, until we know your bookings.</p>
-          <p>The typical figures for each kind of business are our starting assumptions. Your own numbers replace them.</p>
-        </div>
-      </div>
-    </details>
-  </div>
-</section>
-
-<section class="sec px" id="pricing" data-od-id="pricing" data-scene="pricing">
-  <div class="wrap">
-    <div class="sec-head rv"><p class="eyebrow">What it costs</p><h2 class="h2">Two numbers. <em>Both in writing.</em></h2></div>
-    <div class="bento">
-      <div class="cell c-lead rv" data-od-id="price-lead">
-        <h3>No hourly billing.<br>No surprise invoice.</h3>
-        <div style="display: grid; gap: var(--space-4);">
-          <p>Both numbers are agreed on the first call, weighed against what you'll save and make.</p>
-          <a class="ghostlink" href="mailto:hello@solenix.dev?subject=Book%20a%20call">Get your two numbers <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-        </div>
-      </div>
+      <ol class="jr-steps" data-promises>
+        <li data-od-id="promise-price"><span class="no">01 / 04</span><h3>Fixed price</h3><p>One number, agreed before we start. No surprise invoices.</p></li>
+        <li data-od-id="promise-own"><span class="no">02 / 04</span><h3>You own it all</h3><p>Accounts, code and data in your name. Nothing to buy back.</p></li>
+        <li data-od-id="promise-plain"><span class="no">03 / 04</span><h3>Plain English</h3><p>Updates you read in a minute, on your phone.</p></li>
+        <li data-od-id="promise-lockin"><span class="no">04 / 04</span><h3>No lock-in</h3><p>Leave any month. Keep everything you paid for.</p></li>
+      </ol>
+      <div class="jr-dots" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
     </div>
   </div>
 </section>
-
-
-<section class="sec faq-sec" id="faq" data-od-id="faq" data-scene="faq">
-  <div class="wrap faq-grid">
-    <div class="faq-side rv">
-      <svg class="mk" viewBox="0 0 120 120" aria-hidden="true"><circle class="r" cx="60" cy="60" r="52"/><circle class="s" cx="60" cy="60" r="26"/><g class="spin"><circle class="ag" cx="96.8" cy="23.2" r="5"/></g></svg>
-      <p class="eyebrow">Questions</p>
-      <h2 class="h2" style="font-size: var(--fs-h1);">Straight answers.</h2>
-    </div>
-    <div class="faq rv" style="--d:1">
-      <details><summary>I've barely used AI. Is that a problem?</summary><p>Not at all. We set it up and teach you in plain words, until asking it is quicker than doing the job yourself.</p></details>
-      <details><summary>Do I have to throw out what I have?</summary><p>Usually not. Most of it already connects, so you don't pay for new tools. We start there.</p></details>
-      <details><summary>Will AI replace my staff?</summary><p>No. It takes the busywork, so your people spend their hours on customers. They check and decide.</p></details>
-      <details><summary>Is it safe to connect AI to my accounts?</summary><p>We give it the least access that does the job, and you can switch it off in one place. No risk to the business you've built.</p></details>
-      <details><summary>What if something breaks?</summary><p>We fix it and tell you what happened, in plain words, so a broken page doesn't cost you a sale.</p></details>
-    </div>
-  </div>
-</section>
-
 
 <section class="close-sec" id="close" data-od-id="closing" data-scene="close" aria-labelledby="close-h">
   <div class="wrap close-in">
     <h2 id="close-h" class="rv">Let's find your <em>stable orbit.</em></h2>
     <p class="rv">A short call. We find where your hours and dollars are going, and what one AI at the centre would change.</p>
     <div class="close-ctas rv">
-      <a class="btn btn-primary" href="mailto:hello@solenix.dev?subject=Book%20a%20call" data-od-id="closing-cta">Book a call</a>
+      <a class="btn btn-primary" href="/book" data-od-id="closing-cta">Book a call</a>
       <a class="textlink" href="mailto:hello@solenix.dev">hello@solenix.dev</a>
     </div>
     <ul class="trust rv" data-od-id="trust-row">
@@ -978,10 +975,11 @@ html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%
 
 <footer data-od-id="footer">
   <div class="wrap">
-    <a class="brand" href="#top"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/><circle cx="16" cy="16" r="8" fill="url(#mk)"/><circle cx="27" cy="9" r="2.2" fill="var(--ring)"/></svg>Solenix</a>
+    <a class="brand" href="/"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/><circle cx="16" cy="16" r="8" fill="url(#mk)"/><circle cx="27" cy="9" r="2.2" fill="var(--ring)"/></svg>Solenix</a>
     <p>One AI at the centre of your business. St. John's, Newfoundland and Labrador.</p>
-    <ul><li><a href="/app">Client sign in</a></li><li><a href="/agents">Tools we use</a></li><li><a href="mailto:hello@solenix.dev">hello@solenix.dev</a></li></ul>
+    <ul><li><a href="/app">Client sign in</a></li><li><a href="/agents">Agents Marketplace</a></li><li><a href="mailto:hello@solenix.dev">hello@solenix.dev</a></li></ul>
     <p class="mono" style="font-size: var(--fs-xs);">© 2026 Solenix</p>
+    <p class="tm-note" data-od-id="trademark-note">The logos on this page belong to their owners. They are shown because they are tools you may already use; no partnership is implied.</p>
   </div>
 </footer>
 
@@ -1001,9 +999,9 @@ html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%
   function applyMotion() {
     S.motion = !reduce.matches;
     root.dataset.motion = S.motion ? 'on' : 'off';
-    if (!S.motion) { $$('.rv').forEach(el => el.classList.add('in')); finishChat(); countAll(true); }
+    if (!S.motion) $$('.rv').forEach(el => el.classList.add('in'));
     dispatchEvent(new Event('solenix:motion'));
-    onScroll(); loop();
+    onScroll();
   }
   reduce.addEventListener('change', applyMotion);
 
@@ -1011,28 +1009,43 @@ html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%
      where the camera is, how hard the suns are steered, how far the orbit is drawn in.
      Values not given carry over from the keyframe before. ── */
   const KEYS = [
-    { sel: '.sky', f: 0, pin: 1, k: 0, free: 0, order: 0, ink: 0, third: 0, el: 22, az: 0, dist: 18.5, ox: 0.2, oy: 0.12, poy: 0.22, calm: 0, dim: 0, labels: 0, conn: 0, agent: 0, stops: 0 },
+    /* 1 · Chaos */
+    { sel: '.sky', f: 0, pin: 1, k: 0, free: 0, order: 0, ink: 0, third: 0, el: 22, az: 0, dist: 18.5, ox: 0.2, oy: 0.12, poy: 0.22, calm: 0, dim: 0, labels: 0, conn: 0, agent: 0, stops: 0, tx: 0, tz: 0, fly: 0, wsel: 0 },
     { sel: '.sky', f: 0.55, pin: 1, labels: 1, el: 27, az: -10, dist: 16.5, ox: 0.22, oy: 0.1 },
     { sel: '.sky', f: 1, pin: 1, labels: 0, el: 33, az: -22, dist: 17 },
-    { sel: '#portal', f: 0.5, dim: 0.62, el: 40, az: -42, dist: 19, ox: -0.12, oy: 0.02, poy: 0.1 },
-    { sel: '#example', f: 0.15, conn: 1, k: 0.1, free: 0.3, dim: 0.66, el: 46, az: -22, dist: 15, ox: -0.2, oy: 0.04 },
-    { sel: '#example', f: 0.85, conn: 1, k: 0.45, free: 0.6, dim: 0.66, el: 54, az: -8, dist: 13.5 },
-    { sel: '#after', f: 0, pin: 1, conn: 0, k: 0.9, free: 0.6, dim: 0, stops: 1, el: 60, az: 34, dist: 9.6, ox: 0.21, oy: 0.02, poy: 0.02, calm: 0.35 },
-    { sel: '#after', f: 0.3, pin: 1, k: 1, free: 1, third: 0.6, poy: -0.02 },
-    { sel: '#after', f: 0.78, pin: 1, k: 1, order: 1, ink: 1, third: 1, calm: 1, el: 64, az: 42 },
-    { sel: '#after', f: 0.86, pin: 1, k: 0, agent: 1 },
-    { sel: '#after', f: 1, pin: 1, dist: 9.4 },
-    { sel: '#promises', f: 0.5, dim: 0.6, stops: 0, el: 50, az: 45, dist: 12.5, ox: 0, oy: 0.18, poy: 0.08 },
-    { sel: '#worth', f: 0.5, dim: 0.7, el: 70, az: 70, dist: 13, ox: 0.26, oy: 0.04 },
-    { sel: '#pricing', f: 0.5, dim: 0.45, el: 78, az: 95, dist: 13, ox: 0.24 },
-    { sel: '#faq', f: 0.5, dim: 0.62, el: 30, az: 150, dist: 11.5, ox: 0.16 },
-    { sel: '#close', f: 1, dim: 0, el: 60, az: 180, dist: 13.5, ox: 0.24, oy: 0.08, poy: 0.08 }
+    /* 2 · The guide: the AI ignites at the centre and the first wires go out. */
+    { sel: '#guide', f: 0.3, gap: 1, conn: 1, k: 0.15, free: 0.3, el: 40, az: 6, dist: 11, ox: 0.22, oy: 0.04, poy: 0.2 },
+    { sel: '#guide', f: 0.85, k: 0.3, free: 0.4, el: 34, az: 26, dist: 13 },
+    /* 3 · The flybys: out past six tool worlds, all the way round. */
+    { sel: '#fly-shopify', f: 0.15, pin: 1, wsel: 0, tx: 7.71, tz: 9.19, az: 40, conn: 0, k: 0.3, free: 0.4, fly: 1, dim: 1, el: 24, dist: 9.5, ox: 0.27, oy: 0.2, poy: 0.4 },
+    { sel: '#fly-shopify', f: 0.8, pin: 1, az: 50 },
+    { sel: '#fly-meta', f: 0.15, pin: 1, wsel: 1, tx: 11.82, tz: -2.08, az: 100 },
+    { sel: '#fly-meta', f: 0.8, pin: 1, az: 110 },
+    { sel: '#fly-quickbooks', f: 0.15, pin: 1, wsel: 2, tx: 4.10, tz: -11.28, az: 160 },
+    { sel: '#fly-quickbooks', f: 0.8, pin: 1, az: 170 },
+    { sel: '#fly-gmail', f: 0.15, pin: 1, wsel: 3, tx: -7.71, tz: -9.19, az: 220 },
+    { sel: '#fly-gmail', f: 0.8, pin: 1, az: 230 },
+    { sel: '#fly-microsoftexcel', f: 0.15, pin: 1, wsel: 4, tx: -11.82, tz: 2.08, az: 280 },
+    { sel: '#fly-microsoftexcel', f: 0.8, pin: 1, az: 290 },
+    { sel: '#fly-hubspot', f: 0.15, pin: 1, wsel: 5, tx: -4.10, tz: 11.28, az: 340 },
+    { sel: '#fly-hubspot', f: 0.8, pin: 1, az: 350 },
+    /* 4 · The plan: back to the centre, and the orbit is drawn in. */
+    { sel: '#after', f: 0, pin: 1, fly: 0, tx: 0, tz: 0, k: 0.9, free: 0.6, dim: 0, stops: 1, el: 60, az: 394, dist: 9.6, ox: 0.21, oy: 0.02, poy: 0.02, calm: 0.35 },
+    { sel: '#after', f: 0.35, pin: 1, k: 1, free: 1, third: 0.6, poy: -0.02 },
+    { sel: '#after', f: 1, pin: 1, k: 1, order: 1, ink: 1, third: 1, calm: 1, el: 64, az: 402 },
+    { sel: '#promises', f: 0.1, pin: 1, stops: 0, el: 40, az: 438, dist: 12, ox: 0.24, oy: 0.03, poy: -0.04 },
+    { sel: '#promises', f: 1, pin: 1, el: 34, az: 510 },
+    /* 5 · Stable orbit: steering lets go and it holds. */
+    { sel: '#close', f: 0.35, k: 0, agent: 1, el: 56, az: 532, dist: 12.5, ox: 0.24, oy: 0.08, poy: 0.3 },
+    { sel: '#close', f: 1, el: 60, az: 540, dist: 13.5 }
   ];
-  const PARAMS = Object.keys(KEYS[0]).filter(k => !['sel', 'f', 'pin'].includes(k));
+  const PARAMS = Object.keys(KEYS[0]).filter(k => !['sel', 'f', 'pin', 'gap'].includes(k));
   for (let i = 1; i < KEYS.length; i++) PARAMS.forEach(k => { if (KEYS[i][k] === undefined) KEYS[i][k] = KEYS[i - 1][k]; });
   let keyY = [];
   function layoutKeys() {
     keyY = KEYS.map(K => { const el = $(K.sel), top = el.getBoundingClientRect().top + scrollY, h = el.offsetHeight;
+      /* Narrow screens: the guide is met in the open gap above its copy, before the copy scrolls over it. */
+      if (K.gap && innerWidth < 1100) return top - innerHeight * 0.06;
       return K.pin ? top + K.f * (h - innerHeight) : top + K.f * h - innerHeight * 0.5; });
     const maxY = document.documentElement.scrollHeight - innerHeight; keyY[keyY.length - 1] = Math.min(keyY[keyY.length - 1], maxY);
     for (let i = 1; i < keyY.length; i++) keyY[i] = Math.max(keyY[i], keyY[i - 1] + 1);
@@ -1046,16 +1059,16 @@ html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%
     const y = scrollY, [i, t] = sceneAt(y), A = KEYS[i], B = KEYS[Math.min(i + 1, KEYS.length - 1)], sc = S.scene;
     /* Always continuous. Reduced motion changes how the scene moves, never whether it follows the scroll. */
     PARAMS.forEach(k => sc[k] = A[k] + (B[k] - A[k]) * t);
-    world.style.setProperty('--dim', Math.min(0.9, sc.dim * (innerWidth < 720 ? 1.4 : 1)).toFixed(3));
   }
 
   const sky = $('.sky'), nav = $('.nav'), hero = $('.hero-copy'), beat = $('.beat'), cue = $('.scroll-cue'), world = $('.world');
   const rets = $$('.scene-ui .ret:not(.ret-ai)'), retAi = $('.ret-ai'), tools = $$('.tool');
-  S.stops = $$('.stop-mk');
+  S.stops = $$('.stop-mk'); S.pingN = 0;
+  const prSec = $('#promises'), pSteps = $$('[data-promises] li'), pDots = $$('#promises .jr-dots i');
   /* The Look headline builds word by word with the scroll, and unbuilds when you scroll back. */
   { const h = $('.beat-h', beat); h.setAttribute('aria-label', h.textContent); h.querySelectorAll(':scope, em').forEach(el => [...el.childNodes].forEach(n => { if (n.nodeType === 3 && n.textContent.trim()) { const f = document.createDocumentFragment(); n.textContent.split(/(\s+)/).forEach(w => { if (!w) return; if (/^\s+$/.test(w)) f.append(w); else { const sp = document.createElement('span'); sp.className = 'bw'; sp.setAttribute('aria-hidden', 'true'); sp.textContent = w; f.append(sp); } }); n.replaceWith(f); } })); }
   const bwords = $$('.bw', beat), bblocks = $$('.bl', beat);
-  const jr = $('#after'), jSteps = $$('[data-steps] li'), jDots = $$('.jr-dots i'), demo = $('#example');
+  const jr = $('#after'), jSteps = $$('[data-steps] li'), jDots = $$('#after .jr-dots i');
   const portal = $('.portal');
   let ticking = false;
   function onScroll() {
@@ -1075,8 +1088,6 @@ html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%
     put(bblocks[0], 0); bwords.forEach((w, k) => put(w, k + 1)); put(bblocks[1], bwords.length + 1);
     beat.style.visibility = any > 0.01 ? 'visible' : 'hidden';
     S.retAlpha = S.scene.labels;
-    const dr = demo.getBoundingClientRect();
-    S.aiAlpha = smooth(vh * 0.85, vh * 0.45, dr.top) * (1 - smooth(vh * 0.55, vh * 0.1, dr.bottom));
     /* The journey: one card at a time, keyed to how far the orbit is inked in. */
     const jrR = jr.getBoundingClientRect(), inJ = jrR.top < vh * 0.4 && jrR.bottom > vh * 0.3, ink = S.scene.ink;
     const cur = inJ ? Math.max(0, Math.min(4, Math.floor(ink * 5 - 0.4))) : -1;
@@ -1084,100 +1095,18 @@ html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%
     jSteps.forEach((li, i) => li.classList.toggle('on', i === Math.max(0, cur) && (inJ || jrR.top < vh)));
     jDots.forEach((d, i) => d.classList.toggle('on', i <= cur));
     nav.classList.toggle('is-solid', scrollY > 40);
-    if (portal) {
-      const pr = portal.getBoundingClientRect();
-      const q = m ? smooth(0.05, 0.75, (vh - pr.top) / (vh + pr.height * 0.4)) : 0.8, k = innerWidth < 720 ? 0.45 : 1;
-      portal.style.setProperty('--rx', ((16 - 12 * q) * k).toFixed(2) + 'deg');
-      portal.style.setProperty('--ry', ((-18 + 12 * q) * k).toFixed(2) + 'deg');
-      portal.style.setProperty('--rz', ((4 - 3 * q) * k).toFixed(2) + 'deg');
-    }
-    pull = S.motion ? smooth(0, 0.62, through(stage, 0.95, 0.3)) : 1;
-    drawChips(performance.now());
+    /* The promises: one at a time. Each one that arrives rings out across the ground. */
+    { const pr = prSec.getBoundingClientRect(), inP = pr.top < vh * 0.4 && pr.bottom > vh * 0.3, pc = Math.min(3, Math.floor(clamp(-pr.top / (pr.height - vh)) * 4));
+      pSteps.forEach((li, i) => li.classList.toggle('on', i === pc && (inP || pr.top < vh))); pDots.forEach((d, i) => d.classList.toggle('on', i <= pc));
+      if (inP && pc !== S.prCur) { if (S.prCur !== undefined) S.pingN++; S.prCur = pc; } }
   }
   addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
-  addEventListener('resize', () => { S.vh = innerHeight; layoutKeys(); layoutRing(); onScroll(); });
+  addEventListener('resize', () => { S.vh = innerHeight; layoutKeys(); onScroll(); });
 
   /* "See how it settles" lands on the Look beat. */
-  $$('a[href="#settle"]').forEach(a => a.addEventListener('click', e => {
-    e.preventDefault();
-    const r = sky.getBoundingClientRect(), total = r.height - innerHeight;
-    scrollTo({ top: scrollY + r.top + total * 0.62, behavior: S.motion ? 'smooth' : 'auto' });
-  }));
-
-  /* ── What it could be worth. The model is design/roi-model.md: every rate is the cautious end of
-     published research, or a stated assumption. Output is always a low-to-high range, rounded down. ── */
-  { const f = $('[data-roi]'), res = $('[data-roi-res]'), out = {}, inp = {};
-    $$('[data-in]', f).forEach(i => inp[i.dataset.in] = i); $$('[data-out]', f).concat($$('[data-out]', res)).forEach(o => out[o.dataset.out] = o);
-    /* name, admin hours a week, software a month, inquiries a month, typical sale, what an inquiry is called */
-    const IND = { retail: ['retail shop', 12, 300, 80, 60, 'inquiries'], cafe: ['restaurant or café', 14, 250, 150, 40, 'bookings and orders'], trades: ['trades business', 12, 350, 40, 400, 'inquiries'],
-      pro: ['professional firm', 15, 500, 20, 1500, 'inquiries'], clinic: ['clinic', 14, 450, 60, 150, 'bookings'], salon: ['salon or spa', 10, 200, 100, 70, 'bookings'],
-      ecom: ['online store', 14, 600, 500, 75, 'inquiries and carts'], other: ['business', 10, 200, 20, 40, 'inquiries'] };
-    const TIME = [0.08, 0.25], TOOLS = [0.10, 0.28], LEAD = { fast: [0, 0], slow: [0.03, 0.10], miss: [0.08, 0.25] }, WAGE = 32.35;
-    const down = n => n < 1000 ? Math.floor(n / 50) * 50 : n < 10000 ? Math.floor(n / 100) * 100 : Math.floor(n / 1000) * 1000;
-    const money = n => '$' + down(n).toLocaleString('en-CA'), range = (a, b) => down(b) <= 0 ? '$0' : money(a) + '–' + money(b);
-    const fmtH = x => x < 10 ? (Math.floor(x * 2) / 2).toString() : Math.floor(x).toString();
-    const pick = n => $('input[name="' + n + '"]:checked', f);
-    const now = [0, 0, 0, 0, 0, 0, 0, 0], to = now.slice(); let rr = 0, seen = false, touched = false, wage = WAGE;
-    const paint = () => {
-      const [h0, h1, s0, s1, m0, m1] = now, t0 = h0 * 52 * wage + s0 + m0, t1 = h1 * 52 * wage + s1 + m1;
-      out.total.textContent = range(t0, t1);
-      out.time.textContent = fmtH(h0) + '–' + fmtH(h1) + ' h';
-      out['time-s'].textContent = 'a week. Worth ' + range(h0 * 52 * wage, h1 * 52 * wage) + ' a year at $' + wage.toFixed(2) + ' an hour';
-      out.saved.textContent = range(s0, s1); out.made.textContent = range(m0, m1);
-    };
-    const roll = () => { rr = 0; let far = false;
-      for (let i = 0; i < now.length; i++) { now[i] += (to[i] - now[i]) * 0.18; if (Math.abs(to[i] - now[i]) > Math.max(0.02, Math.abs(to[i]) * 0.002)) far = true; else now[i] = to[i]; }
-      paint(); if (far) rr = requestAnimationFrame(roll); else res.removeAttribute('aria-busy'); };
-    const calc = e => {
-      const I = IND[inp.ind.value], scale = +pick('team').value, team = pick('team').nextElementSibling.textContent;
-      if (e && e.target === inp.hours) touched = true;
-      if (!touched) inp.hours.value = Math.min(40, Math.round(I[1] * scale));
-      const h = +inp.hours.value, spend = +inp.spend.value || I[2], lead = LEAD[pick('lead').value];
-      const leads = inp.leads.value === '' ? I[3] : Math.max(0, +inp.leads.value), sale = inp.sale.value === '' ? I[4] : Math.max(0, +inp.sale.value);
-      wage = +inp.wage.value > 0 ? +inp.wage.value : WAGE;
-      inp.leads.placeholder = I[3]; inp.sale.placeholder = I[4];
-      inp.hours.style.setProperty('--fill', (h / 40 * 100).toFixed(1) + '%'); out.hours.textContent = h + ' h';
-      out['spend-hint'].textContent = +inp.spend.value ? '' : 'We will use $' + I[2] + ' a month, a typical figure for a ' + I[0] + '.';
-      out['made-s'].textContent = lead[1] ? 'a year in extra sales, before your costs. From ' + leads.toLocaleString('en-CA') + ' ' + I[5] + ' a month at $' + sale.toLocaleString('en-CA') + ' each' : 'You already answer fast, so we count nothing here.';
-      const tools = $$('input[name="tool"]:checked', f).map(t => t.value), legacy = tools.includes('legacy'), names = tools.filter(t => t !== 'legacy');
-      const list = names.length > 1 ? names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1] : names[0];
-      out.fit.textContent = 'A ' + I[0] + ' with ' + team + ' people, about ' + h + ' admin hours a week and $' + spend.toLocaleString('en-CA') + ' a month on software.' + (list ? ' We would start by connecting ' + list + '.' : '');
-      out.legacy.hidden = !legacy;
-      [h * TIME[0], h * TIME[1], spend * 12 * TOOLS[0], spend * 12 * TOOLS[1], leads * 12 * lead[0] * sale, leads * 12 * lead[1] * sale].forEach((v, i) => to[i] = v);
-      if (!S.motion || !seen) { to.forEach((v, i) => now[i] = v); paint(); return; }
-      res.setAttribute('aria-busy', 'true'); if (!rr) rr = requestAnimationFrame(roll);
-    };
-    f.addEventListener('input', calc); f.addEventListener('change', calc); calc();
-    new IntersectionObserver((es, o) => es.forEach(en => { if (en.isIntersecting) { o.disconnect(); seen = true; if (S.motion) { now.fill(0); res.setAttribute('aria-busy', 'true'); if (!rr) rr = requestAnimationFrame(roll); } } }), { threshold: 0.4 }).observe(res); }
-
-
-  /* ── What a business runs on. Six groups around the AI; each tool shows what you can just ask. ── */
-  { const T = $('[data-tools]');
-    const G = [
-      ['Get found', 'So people can find you', [['Website', 'Change our hours for the long weekend', 'Add the new service to the site'], ['Google Business Profile', "Reply to this week's reviews", 'Post our holiday hours'], ['Reviews', 'Which complaints keep coming up?', 'Draft a thank-you to everyone who left five stars']]],
-      ['Get customers', 'So they hear from you', [['Facebook', "Write a post about Saturday's sale"], ['Instagram', 'Draft three posts from our new menu'], ['TikTok', 'Give me five short video ideas for this week'], ['LinkedIn', 'Turn the job we just finished into a post'], ['Meta and Google ads', 'Which ad brought in the most calls last month?', 'Draft an ad for the spring special'], ['Email marketing', "Write this month's newsletter from what sold best"]]],
-      ['Serve them', 'So nobody is left waiting', [['CRM', "Who haven't we heard from in six months?"], ['Bookings', "Who's booked tomorrow, and who hasn't confirmed?"], ['Phone and messages', 'Draft replies to the messages I missed today']]],
-      ['Get paid', 'So the money comes in', [['Square, Stripe or Shopify', 'What sold best last week?'], ['QuickBooks or Xero', 'Who still owes us?', 'Draft reminders for the overdue invoices'], ['Payroll', "Get Friday's payroll ready for me to check"]]],
-      ['Run the place', 'So the day runs itself', [['Google Workspace or Microsoft 365', "Find the email with the landlord's new terms"], ['Files', "Find last year's insurance renewal"], ['Calendar', 'Find an hour for the whole team this week']]],
-      ["Know what's working", 'So you spend where it pays', [['Analytics', 'What brought people to the site this month?', 'What changed since last month?']]]
-    ];
-    const POS = [[50, 9], [80, 30], [80, 70], [50, 91], [20, 70], [20, 30]], orbit = $('[data-tg-orbit]', T), spokes = $('[data-tg-spokes]', T);
-    spokes.innerHTML = POS.map(p => `<line x1="50" y1="50" x2="${p[0]}" y2="${p[1]}"/>`).join('');
-    const gBtns = G.map((g, k) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'tools-g'; b.setAttribute('role', 'tab'); b.textContent = g[0]; b.style.left = POS[k][0] + '%'; b.style.top = POS[k][1] + '%'; b.dataset.odId = 'tool-group-' + (k + 1); b.addEventListener('click', () => pick(k, 0)); orbit.append(b); return b; });
-    const lines = $$('line', spokes), chips = $('[data-tg-tools]', T), asks = $('[data-tt-asks]', T);
-    function pick(g, t) {
-      gBtns.forEach((b, k) => { b.setAttribute('aria-selected', String(k === g)); lines[k].classList.toggle('on', k === g); });
-      $('[data-tg-no]', T).textContent = '0' + (g + 1) + ' of 06'; $('[data-tg-title]', T).textContent = G[g][0] + '. ' + G[g][1] + '.';
-      chips.innerHTML = '';
-      G[g][2].forEach((tool, k) => { const c = document.createElement('button'); c.type = 'button'; c.className = 'tools-chip'; c.textContent = tool[0]; c.setAttribute('aria-pressed', String(k === t)); c.addEventListener('click', () => pick(g, k)); chips.append(c); });
-      const tool = G[g][2][t]; $('[data-tt-name]', T).textContent = tool[0];
-      asks.innerHTML = ''; tool.slice(1).forEach(a => { const li = document.createElement('li'), q = document.createElement('q'); q.textContent = a; li.append(q); asks.append(li); });
-    }
-    pick(0, 1); }
-
   /* Section headlines build word by word, once, as their section arrives. */
   { const hio = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('play'); hio.unobserve(e.target); } }), { threshold: 0.6 });
-    $$('.sec .h2, .jr-head .h2, .say-h, #close-h').forEach(h => {
+    $$('.w-sec .h2, .jr-head .h2, #close-h').forEach(h => {
       h.setAttribute('aria-label', h.textContent.trim()); h.classList.add('hb'); let n = 0;
       [h, ...h.querySelectorAll('em')].forEach(el => [...el.childNodes].forEach(nd => { if (nd.nodeType !== 3 || !nd.textContent.trim()) return;
         const fr = document.createDocumentFragment();
@@ -1208,101 +1137,78 @@ html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%
   (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(() => requestAnimationFrame(() => h1.classList.add('play')));
   setTimeout(() => h1.classList.add('play'), 1200);
 
-  const through = (el, a = 0.9, b = 0.25) => { const r = el.getBoundingClientRect(); return clamp((innerHeight * a - r.top) / (innerHeight * (a - b) + r.height * 0.35)); };
-
-  /* ── 1 · Twelve logins, scattered, pulled onto one ring around the portal ── */
-  const stage = $('[data-pt]'), chips = $$('.chip', stage), ringEls = $$('.pt-ring ellipse', stage), ptSec = $('.pt');
-  let ring = { cx: 0, cy: 0, rx: 1, ry: 1, W: 1, H: 1 }, rot = 0, pull = 0;
-  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-  const scatter = chips.map(() => ({ x: rnd(), y: rnd(), r: (rnd() - 0.5) * 50, w: rnd() * 6.28 }));
-  function layoutRing() {
-    const W = stage.clientWidth, H = stage.clientHeight, pb = stage.querySelector('.portal').getBoundingClientRect(), sb = stage.getBoundingClientRect();
-    const bottom = pb.bottom - sb.top, narrow = W < 560;
-    ring = { W, H, narrow, bottom, cx: W / 2, cy: bottom - 24, rx: Math.min(W * 0.5, 420), ry: Math.min(120, H * 0.18) };
-    ringEls.forEach(el => { el.setAttribute('cx', ring.cx); el.setAttribute('cy', ring.cy); el.setAttribute('rx', ring.rx); el.setAttribute('ry', ring.ry); });
-  }
-  function drawChips(t) {
-    const e = pull, e3 = e * e * (3 - 2 * e);
-    chips.forEach((c, i) => {
-      const a = rot + i / chips.length * Math.PI * 2, front = Math.sin(a);
-      const tx = ring.narrow ? ring.W / 2 + (i % 3 - 1) * ring.W * 0.31 : ring.cx + ring.rx * Math.cos(a), ty = ring.narrow ? ring.bottom + 40 + Math.floor(i / 3) * 38 : ring.cy + ring.ry * front;
-      const wob = S.motion ? (1 - e3) * 10 : 0, sc = scatter[i];
-      const sx = sc.x * ring.W * 0.96 + ring.W * 0.02 + Math.sin(t * 0.0011 + sc.w) * wob, sy = sc.y * ring.H * 0.9 + Math.cos(t * 0.0013 + sc.w) * wob;
-      const x = sx + (tx - sx) * e3, y = sy + (ty - sy) * e3, depth = ring.narrow ? 1 : (front + 1) / 2;
-      const s = 1 - (1 - depth) * 0.18 * e3, o = 1 - (1 - (0.22 + 0.78 * depth)) * e3;
-      c.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) rotate(${(sc.r * (1 - e3)).toFixed(1)}deg) scale(${s.toFixed(3)})`;
-      c.style.opacity = o.toFixed(3);
-      c.style.zIndex = e3 > 0.5 && !ring.narrow ? (front > 0 ? 3 : 1) : 3;
-    });
-    ringEls[1].setAttribute('stroke-opacity', (0.08 + 0.32 * e3).toFixed(3));
-    stage.classList.toggle('settled', e > 0.96); ptSec.classList.toggle('settled', e > 0.96);
-  }
-
-  /* The login ring keeps turning once it has settled. */
-  let ptSeen = false, last = 0, raf = 0;
-  new IntersectionObserver(es => es.forEach(e => { ptSeen = e.isIntersecting; loop(); }), { rootMargin: '100px' }).observe(stage);
-  function frame(t) { raf = 0; const dt = Math.min(0.05, (t - (last || t)) / 1000); last = t; rot += dt * (Math.PI * 2 / 70) * smooth(0.9, 1, pull); drawChips(t); loop(); }
-  function loop() { const want = S.motion && !document.hidden && ptSeen; if (want && !raf) { last = 0; raf = requestAnimationFrame(frame); } else if (!want && raf) { cancelAnimationFrame(raf); raf = 0; } }
-  document.addEventListener('visibilitychange', loop);
-
-  /* Count-up. The final value is the real text before, during and after. */
-  function countAll(jump) {
-    $$('.count').forEach(el => {
-      const to = +el.dataset.to, fmt = n => n.toLocaleString('en-CA');
-      if (jump || !S.motion) { el.textContent = fmt(to); return; }
-      if (el.dataset.done) return; el.dataset.done = 1;
-      const t0 = performance.now(), d = 1200;
-      (function f(t) { const k = clamp((t - t0) / d), e = 1 - Math.pow(1 - k, 3); el.textContent = fmt(Math.round(to * e)); if (k < 1) requestAnimationFrame(f); })(t0);
-    });
-  }
-  const cio = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { countAll(false); cio.disconnect(); } }), { threshold: 0.4 });
-  $$('.count').forEach(el => cio.observe(el));
-
-  /* ── 3 · The demo types itself, and lights the wire it is using. ── */
-  const log = $('[data-chat]'), seq = $$('[data-seq]', log), typing = $('.typing', log), nodes = $$('[data-wire] li');
-  let run = 0;
-  const texts = new Map(); $$('[data-type]', log).forEach(el => texts.set(el, el.textContent));
-  const wait = ms => new Promise(r => setTimeout(r, ms));
-  function wire(k, flowing) { nodes.forEach((n, i) => { n.classList.toggle('done', i + 1 < k); n.classList.toggle('on', i + 1 === k); n.classList.toggle('flow', !!flowing && i + 1 === k); }); }
-  function finishChat() {
-    run++; typing.classList.add('gone');
-    seq.forEach(el => { el.classList.remove('wait', 'run'); if (el.classList.contains('step')) el.classList.add('done'); });
-    texts.forEach((t, el) => el.textContent = t);
-    $$('[data-after]', log).forEach(el => el.style.opacity = '');
-    wire(4, false);
-  }
-  async function playChat() {
-    if (!S.motion) return finishChat();
-    const id = ++run;
-    seq.forEach(el => { el.classList.add('wait'); el.classList.remove('done', 'run'); });
-    texts.forEach((t, el) => el.textContent = '');
-    $$('[data-after]', log).forEach(el => el.style.opacity = 0);
-    wire(0);
-    await wait(400);
-    for (const el of seq) {
-      if (id !== run) return;
-      const kind = el.dataset.seq, w = +el.dataset.w || 0;
-      if (kind === 'me') { el.classList.remove('wait'); await wait(900); }
-      else if (kind === 'step') { el.classList.remove('wait'); el.classList.add('run'); wire(w, true); await wait(1300); if (id !== run) return; el.classList.remove('run'); el.classList.add('done'); await wait(300); }
-      else {
-        log.insertBefore(typing, el); typing.classList.remove('gone'); wire(w === 4 ? 3 : 2, true); await wait(900); if (id !== run) return;
-        typing.classList.add('gone'); el.classList.remove('wait');
-        const tEl = $('[data-type]', el), full = texts.get(tEl);
-        for (let i = 1; i <= full.length; i++) { if (id !== run) return; tEl.textContent = full.slice(0, i); await wait(16); }
-        const after = $('[data-after]', el); if (after) { await wait(250); after.style.opacity = ''; }
-        await wait(600);
-      }
-    }
-    if (id === run) wire(4, false);
-  }
-  const chatIo = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { playChat(); chatIo.disconnect(); } }), { threshold: 0.35 });
-  if (S.motion) { seq.forEach(el => el.classList.add('wait')); chatIo.observe(log); }
-  $('[data-replay]').addEventListener('click', playChat);
-
-  layoutKeys(); layoutRing();
-  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(() => { layoutKeys(); layoutRing(); onScroll(); });
+  layoutKeys();
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(() => { layoutKeys(); onScroll(); });
   addEventListener('load', () => { layoutKeys(); onScroll(); });
   applyMotion();
+})();
+</script>
+
+<script>
+/* The flyby races. Each one starts when its world is reached and resets when you leave. Both clocks count real
+   seconds. The ask finishes and its clock stops; the by-hand side is still clicking when you move on. */
+(() => {
+  const RACES = {"shopify":{"name":"Shopify","views":{"rep":{"head":["Reports",""],"rows":[["Sales over time",""],["Sales by product",""],["Sessions by location",""],["Returning customers",""]]},"s0":{"chip":"Date: today","head":["Product","Units sold"],"rows":[["Partridgeberry jam","3"],["Wool mitts","1"],["Sea salt caramels","2"],["Molasses cookies","0"]]},"s1":{"chip":"Date: last month","head":["Product","Units sold"],"rows":[["Partridgeberry jam","187"],["Wool mitts","150"],["Sea salt caramels","212"],["Molasses cookies","96"]]},"s2":{"chip":"Date: last month","head":["Product","Units sold ↓"],"rows":[["Sea salt caramels","212"],["Partridgeberry jam","187"],["Wool mitts","150"],["Molasses cookies","96"]]},"inv":{"head":["Product","In stock"],"rows":[["Molasses cookies","60"],["Partridgeberry jam","120"],["Sea salt caramels","14"],["Wool mitts","9"]]}},"steps":[[3,"Analytics","Open Analytics",null],[3,"Analytics › Reports","Open Reports","rep"],[3,"Reports › Sales by product","Find Sales by product","s0"],[3,"Reports › Sales by product","Set the date range to last month","s1"],[3,"Reports › Sales by product","Sort by units sold","s2"],[2,"Products › Inventory","Now open Inventory, a separate screen","inv"],[2,"Products › Inventory","Check the stock on each product, one at a time","inv","scan"]],"prompt":"Pull last month's top 10 sellers by units sold, show current stock for each, and tell me which will run out in 30 days","work":["Reading last month's sales in Shopify","Checking the stock on each one"],"done":"You decide what to reorder."},"meta":{"name":"Meta Ads","views":{"c0":{"chip":"Date: today","head":["Campaign","Cost per result"],"rows":[["Fall sale","$4.30"],["New arrivals","$7.00"],["Local awareness","$9.10"],["Email sign-ups","$3.10"]]},"c7":{"chip":"Date: last 7 days","head":["Campaign","Cost per result"],"rows":[["Fall sale","$4.10"],["New arrivals","$6.80"],["Local awareness","$9.40"],["Email sign-ups","$3.20"]]},"p7":{"chip":"Date: the 7 days before","head":["Campaign","Cost per result"],"rows":[["Fall sale","$4.60"],["New arrivals","$6.10"],["Local awareness","$5.90"],["Email sign-ups","$3.40"]]}},"steps":[[0,"Ads Manager","Log into Ads Manager","c0"],[0,"Ads Manager › Campaigns","Set the date range to the last 7 days","c7"],[0,"Ads Manager › Campaigns","Read the spend and the cost per result","c7"],[0,"Ads Manager › Campaigns","Switch to the 7 days before","p7"],[0,"Ads Manager › Campaigns","Compare every campaign by eye, back and forth","c7","scan"]],"prompt":"Pull spend, cost per result, and ROAS for all active campaigns over the last 7 days vs. the 7 days before. Tell me which ad sets are underperforming and recommend which to pause.","work":["Reading the last 14 days in Meta Ads","Comparing this week with the one before"],"done":"You make the call to pause."},"quickbooks":{"name":"QuickBooks","views":{"rep":{"head":["Reports",""],"rows":[["Profit and loss",""],["Who owes you",""],["Balance sheet",""],["Sales by customer",""]]},"ar":{"head":["Customer","Overdue by"],"rows":[["Harbour Dental","12 days"],["Hillside Roofing","64 days"],["East End Yoga","31 days"],["Cove Road Cafe","4 days"]]},"inv":{"head":["New invoice",""],"rows":[["Customer","Harbour Dental"],["Item","Website maintenance retainer"],["Amount","$450"],["Due","In 15 days"]]}},"steps":[[3,"Reports","Open Reports","rep"],[3,"Reports › Who owes you","Open the report of who owes you","ar"],[3,"Reports › Who owes you","Read down the list and decide who to chase","ar"],[1,"Sales › New invoice","Now open a new invoice, a separate screen","inv"],[1,"Sales › New invoice","Fill in the customer, the item, the amount and the date","inv","scan"]],"prompt":"Show me who owes us, flag anyone over 60 days, and send Harbour Dental an invoice for the retainer","work":["Reading who owes you in QuickBooks","Preparing the invoice"],"done":"You check it, then it goes."},"gmail":{"name":"Gmail and Calendar","views":{"inb":{"chip":"29 unread","head":["From","Subject"],"rows":[["Hillside Roofing","Quote for the deck?"],["Weekly deals","Fall offers inside"],["Harbour Dental","Can we move Thursday?"],["Your supplier","Invoice attached"]]},"one":{"head":["Hillside Roofing",""],"rows":[["Subject","Quote for the deck?"],["Asks for","A price by Friday"],["Reply today?","Yes"],["Next","28 more to read"]]}},"steps":[[0,"Inbox","Open the inbox","inb"],[0,"Inbox › Hillside Roofing","Open the first email and read it","one"],[0,"Inbox › Hillside Roofing","Decide: reply today, later, or junk","one"],[0,"Inbox","Back to the inbox. Then the next one, and the next.","inb","scan"]],"prompt":"Group today's inbox into needs a reply today, can wait, and junk. Then find 30 minutes next week with Harbour Dental and send the invite.","work":["Reading today's inbox in Gmail","Checking both calendars"],"done":"Nothing sends without your OK."},"microsoftexcel":{"name":"Excel","views":{"sh":{"chip":"Sales.xlsx","head":["Category","Revenue"],"rows":[["Bread","$4,210"],["Pastry","$3,180"],["Coffee","$2,640"],["Catering","$1,900"]]},"pv":{"chip":"PivotTable fields","head":["Field","Set to"],"rows":[["Rows","Category"],["Columns","Month"],["Values","Sum of revenue"],["Chart","Not added yet"]]}},"steps":[[0,"Sales.xlsx","Open the sales workbook","sh"],[0,"Sales.xlsx","Select all of the sales data","sh"],[1,"Insert › PivotTable","Insert a pivot table","pv"],[1,"Insert › PivotTable","Set up each field, then build the chart","pv","scan"]],"prompt":"Add a pivot table of revenue by category this month vs. last, with a bar chart","work":["Reading the open workbook in Excel","Adding the table and the chart"],"done":"The live workbook is updated."},"hubspot":{"name":"HubSpot","views":{"all":{"head":["Deal","Last activity"],"rows":[["Hillside Roofing","3 days ago"],["Cove Road Cafe","21 days ago"],["East End Yoga","17 days ago"],["Harbour Dental","30 days ago"]]},"st":{"chip":"Last activity: over 14 days ago","head":["Deal","Last activity ↓"],"rows":[["Harbour Dental","30 days ago"],["Cove Road Cafe","21 days ago"],["East End Yoga","17 days ago"]]},"em":{"head":["New email",""],"rows":[["To","Harbour Dental"],["Subject","Following up"],["Message","Still typing…"]]}},"steps":[[1,"Deals","Open the deals list","all"],[1,"Deals","Filter by last activity date, then sort","st"],[1,"Deals › Harbour Dental","Open the first stalled deal and reread it","st"],[1,"Deals › New email","Write a follow-up by hand","em"],[1,"Deals","Back to the list. Next deal, same again.","st","scan"]],"prompt":"Show every deal with no activity in 14 days and draft a follow-up for each","work":["Finding the quiet deals in HubSpot","Drafting a follow-up for each"],"done":"You read each one and press send."}};
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+  const fmt = ms => { const s = Math.floor(ms / 1000); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+  const row = (r, c) => `<div class="scr-row${c || ''}"><span>${r[0]}</span><span>${r[1]}</span></div>`;
+  const all = [...document.querySelectorAll('[data-race]')].map(sec => {
+    const R = RACES[sec.dataset.race], hand = sec.querySelector('.lane.hand'), ask = sec.querySelector('.lane.ask');
+    const scr = hand.querySelector('.scr'), nav = [...hand.querySelectorAll('.scr-nav li')], crumb = hand.querySelector('.crumb'), view = hand.querySelector('.scr-view'), cur = hand.querySelector('.scr-cur'), hs = hand.querySelector('.lane-s');
+    const me = ask.querySelector('.rmsg.me span'), st = ask.querySelector('.rmsg.st'), ai = ask.querySelector('.rmsg.ai'), as = ask.querySelector('.lane-s');
+    const swH = hand.querySelector('.sw'), swA = ask.querySelector('.sw'), last = R.steps[R.steps.length - 1];
+    let run = 0, on = false, t0 = 0, tStop = 0, timer = 0;
+    const wait = (ms, id) => new Promise((ok, no) => setTimeout(() => id === run ? ok() : no(), ms));
+    const draw = k => { const v = R.views[k]; view.innerHTML = (v.chip ? `<p class="scr-chip">${v.chip}</p>` : '') + row(v.head, ' hd') + v.rows.map(r => row(r)).join(''); };
+    const menu = n => nav.forEach((li, k) => li.classList.toggle('on', k === n));
+    const point = t => { if (!t) return; const a = scr.getBoundingClientRect(), b = t.getBoundingClientRect(); if (!b.width) return;
+      const x = t.matches('li') ? b.width - 16 : t.matches('.scr-chip') ? b.width + 12 : t.firstElementChild.getBoundingClientRect().width + 26;
+      cur.style.transform = `translate(${(b.left - a.left + x).toFixed(1)}px, ${(b.top - a.top + b.height / 2).toFixed(1)}px)`; };
+    const clocks = () => { const now = performance.now(); swH.textContent = fmt(now - t0); swA.textContent = fmt((tStop || now) - t0); };
+    function reset() {
+      hand.classList.remove('go'); ask.classList.remove('go', 'sent', 'done'); menu(-1); crumb.textContent = R.name; view.innerHTML = ''; hs.textContent = ''; as.textContent = '';
+      me.textContent = ''; st.hidden = ai.hidden = true; swH.textContent = swA.textContent = '0:00'; cur.style.transform = '';
+    }
+    async function byHand(id) {
+      let n0 = -1, v0 = null;
+      for (let i = 0; i < R.steps.length; i++) {
+        const [n, c, cap, v, mode] = R.steps[i];
+        hs.innerHTML = `<b>Step ${i + 1}</b><span>${cap}</span>`;
+        if (n !== n0) { point(nav[n]); await wait(900, id); menu(n); n0 = n; }
+        crumb.textContent = c;
+        if (v && v !== v0) { view.classList.add('load'); await wait(700, id); draw(v); view.classList.remove('load'); v0 = v; }
+        point(view.querySelector('.scr-chip') || view.querySelector('.scr-row:not(.hd)'));
+        await wait(1700, id);
+        /* The last step is the slow one: every row, one at a time, for as long as you watch. */
+        if (mode === 'scan') for (;;) { const rows = [...view.querySelectorAll('.scr-row:not(.hd)')];
+          for (const r of rows) { point(r); rows.forEach(x => x.classList.toggle('on', x === r)); await wait(1900, id); }
+          hs.innerHTML = `<b>Still going</b><span>${cap}</span>`; }
+      }
+    }
+    async function justAsk(id) {
+      as.innerHTML = '<b>Typing</b><span>Plain words, nothing to learn</span>';
+      for (let i = 1; i <= R.prompt.length; i++) { me.textContent = R.prompt.slice(0, i); await wait(62, id); }
+      ask.classList.add('sent'); st.hidden = false; as.innerHTML = `<b>Working</b><span>The AI does it in ${R.name}</span>`;
+      for (const w of R.work) { st.textContent = w + '…'; await wait(2300, id); }
+      st.hidden = true; ai.hidden = false; tStop = performance.now(); ask.classList.add('done'); as.innerHTML = `<b>Done</b><span>${R.done}</span>`; clocks();
+    }
+    function start() { const id = ++run; reset(); t0 = performance.now(); tStop = 0; hand.classList.add('go'); ask.classList.add('go');
+      timer = setInterval(clocks, 250); byHand(id).catch(() => {}); justAsk(id).catch(() => {}); }
+    function stop() { run++; clearInterval(timer); reset(); }
+    /* Reduced motion: nothing races. The finished ask and the list of by-hand steps are simply shown. */
+    function still() { run++; clearInterval(timer); reset(); sec.classList.add('still'); menu(last[0]); crumb.textContent = last[1]; draw(last[3]);
+      hs.innerHTML = `<b>${R.steps.length} steps</b><span>${R.steps.map(s => s[2]).join('. ')}.</span>`;
+      me.textContent = R.prompt; ask.classList.add('sent', 'done'); ai.hidden = false; as.innerHTML = `<b>One ask</b><span>${R.done}</span>`; }
+    return { check(vh) { const r = sec.getBoundingClientRect(), now = r.top < vh * 0.3 && r.bottom > vh * 0.75;
+      if (now === on) return; on = now; if (reduce.matches) { if (now) still(); return; } sec.classList.remove('still'); now ? start() : stop(); },
+      redo() { on = false; } };
+  });
+  let queued = false;
+  const check = () => { queued = false; all.forEach(a => a.check(innerHeight)); };
+  const ask = () => { if (!queued) { queued = true; requestAnimationFrame(check); } };
+  addEventListener('scroll', ask, { passive: true }); addEventListener('resize', ask);
+  reduce.addEventListener('change', () => { all.forEach(a => a.redo()); ask(); });
+  ask();
 })();
 </script>
 
@@ -1325,7 +1231,9 @@ const tags = [...document.querySelectorAll('.body-tag:not(.ai)')], tagAi = q('.b
 
 /* Colours come from tokens.css — resolved inside the dark sky. */
 const css = getComputedStyle(document.documentElement);
-const tok = n => new THREE.Color(css.getPropertyValue(n).trim());
+/* Tokens are light-dark() pairs, so each one is read as a resolved colour through a probe element. */
+const probe = document.createElement('i'); probe.style.display = 'none'; document.body.append(probe);
+const tok = n => { probe.style.color = `var(${n})`; const cs = getComputedStyle(probe).color, m = cs.match(/[\d.]+/g) || [1, 1, 1], f = cs.startsWith('color(') ? 1 : 255; return new THREE.Color().setRGB(m[0] / f, m[1] / f, m[2] / f, THREE.SRGBColorSpace); };
 const WHITE = new THREE.Color(1, 1, 1);
 const C = { bg: tok('--bg'), sun1: tok('--sun1'), sun2: tok('--sun2'), ring: tok('--ring'), text: tok('--text'), sky: tok('--chart-5') };
 
@@ -1452,19 +1360,19 @@ function stars(n, r0, r1, size) {
 scene.add(stars(isSmall ? 1400 : 2600, 70, 140, 2.2), stars(isSmall ? 300 : 600, 22, 40, 2.6));
 
 /* Spacetime: a plane dipped by the summed potential of the three suns. */
-const gridU = { uB: bodyU, uLens: lensU, uAsp: aspU, uC: { value: new THREE.Vector3() }, uLock: { value: 99 }, uTime: timeU, uDepth: { value: 0.95 }, uChaos: { value: 1 }, uBase: { value: -0.35 }, uSoft: { value: 0.8 }, uCell: { value: 0.5 },
+const gridU = { uB: bodyU, uLens: lensU, uAsp: aspU, uC: { value: new THREE.Vector3() }, uP: { value: new THREE.Vector3() }, uLock: { value: 99 }, uTime: timeU, uDepth: { value: 0.95 }, uChaos: { value: 1 }, uBase: { value: -0.35 }, uSoft: { value: 0.8 }, uCell: { value: 0.5 },
   uLine: { value: C.text.clone().multiplyScalar(0.34) }, uWarm: { value: C.sun2.clone() }, uAlpha: { value: 1 } };
 const grid = new THREE.Mesh(new THREE.PlaneGeometry(48, 48, isSmall ? 150 : 240, isSmall ? 150 : 240).rotateX(-Math.PI / 2), new THREE.ShaderMaterial({ ...additive, uniforms: gridU,
-  vertexShader: LENS + `uniform vec3 uB[3]; uniform vec3 uC; uniform float uTime,uDepth,uChaos,uBase,uSoft,uLock; varying vec3 vW; varying float vPot; varying float vRing;
+  vertexShader: LENS + `uniform vec3 uB[3]; uniform vec3 uC; uniform vec3 uP; uniform float uTime,uDepth,uChaos,uBase,uSoft,uLock; varying vec3 vW; varying float vPot; varying float vRing;
     void main(){ vec3 p=position; float s=0., rip=0.;
       for(int i=0;i<3;i++){ vec2 d=p.xz-uB[i].xz; float r2=dot(d,d); s+=1./sqrt(r2+uSoft); float r=sqrt(r2); rip+=sin(r*2.3-uTime*2.6+float(i)*2.1)*exp(-r*.32); }
-      vec2 dc=p.xz-uC.xy; s+=uC.z*.35/sqrt(dot(dc,dc)+.6);
+      vec2 dc=p.xz-uC.xy; s+=uC.z*.35/sqrt(dot(dc,dc)+.6); vec2 dp=p.xz-uP.xy; s+=uP.z/sqrt(dot(dp,dp)+uSoft);
       float rr=length(p.xz), ring=exp(-pow(rr-uLock*6.5,2.)*.9)*exp(-uLock*.55); vRing=ring;
       p.y=uBase-uDepth*s+rip*.07*uChaos-ring*.45; vPot=s; vW=p; gl_Position=lens(projectionMatrix*modelViewMatrix*vec4(p,1.)); }`,
   fragmentShader: `uniform vec3 uB[3]; uniform vec3 uLine,uWarm; uniform float uCell,uAlpha,uChaos; varying vec3 vW; varying float vPot; varying float vRing;
     float gl(vec2 c,float w){ vec2 f=fwidth(c); vec2 g=abs(fract(c-.5)-.5)/f; return (1.-min(min(g.x,g.y)/w,1.))*(1.-smoothstep(.22,.55,max(f.x,f.y))); }
     void main(){ vec2 c=vW.xz/uCell; float minor=gl(c,1.), major=gl(c/4.,1.3);
-      float well=smoothstep(.75,2.4,vPot); float fade=1.-smoothstep(8.,21.,length(vW.xz));
+      float well=smoothstep(.75,2.4,vPot); float fade=1.-smoothstep(14.,23.,length(vW.xz));
       float glow=0.; for(int i=0;i<3;i++){ vec2 d=vW.xz-uB[i].xz; glow+=exp(-dot(d,d)*.45); }
       vec3 col=mix(uLine,uWarm*1.25,well);
       float a=(minor*.32+major*.6)*(.4+1.9*well)*fade;
@@ -1601,6 +1509,18 @@ const suns = SUNCOL.map((c, i) => { const m = new THREE.Mesh(quad, sunMat(c, i *
 const agent = new THREE.Mesh(quad, sunMat(C.ring.clone(), 9.1, 0.9, 0.12)); agent.material.uniforms.uQ.value = 3.4; agent.frustumCulled = false; agent.renderOrder = 6; scene.add(agent);
 const hub = new THREE.Mesh(quad, sunMat(C.ring.clone().lerp(WHITE, 0.3), 4.2, 0.45, 0.16)); hub.frustumCulled = false; hub.renderOrder = 6; scene.add(hub);
 
+/* ── The flybys: six tool worlds set in a wide circle round the business. The camera travels the whole
+   way round, and each world is wired back to the AI at the centre as it passes. ── */
+const WN = 6, WR = 12, WAZ = i => 40 + 60 * i;
+const WPOS = Array.from({ length: WN }, (_, i) => { const th = D2Rq(90 - WAZ(i)); return new THREE.Vector3(Math.cos(th) * WR, SUN_Y, Math.sin(th) * WR); });
+function D2Rq(d) { return d * Math.PI / 180; }
+const worlds = WPOS.map((p, i) => { const m = new THREE.Mesh(quad, sunMat((i % 2 ? C.sun2 : C.sun1).clone().lerp(i % 3 ? C.ring : WHITE, 0.3), 31 + i * 1.9, 1.9, 0.24)); m.material.uniforms.uFlare.value = 0.3; m.position.copy(p); m.frustumCulled = false; m.renderOrder = 6; m.visible = false; scene.add(m); return m; });
+const warcs = WPOS.map(() => { const r = ribbon(60, C.ring.clone(), 0.03, ARC_FRAG, false); r.mesh.visible = false; return r; });
+const worldTags = [...document.querySelectorAll('.world-tag')];
+const place = (e, v, al, dy) => { if (al < 0.01) { if (e.style.opacity !== '0') e.style.opacity = 0; return; } proj.copy(v).project(camera);
+  e.style.opacity = al.toFixed(3); e.style.transform = `translate3d(${((proj.x + 1) / 2 * W).toFixed(1)}px, ${((1 - proj.y) / 2 * H + dy).toFixed(1)}px, 0) translate(-50%, -50%)`; };
+let pingT = -99, pingSeen = 0;
+
 /* ── Post ── */
 const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
@@ -1643,7 +1563,7 @@ const scr = [[0, 0], [0, 0], [0, 0]];
 /* The five stops of "After you book" sit on the real orbit, in the order the ink reaches them. */
 const INK0 = 0.1, INK_SPAN = 0.9, STOP_U = [0, 1, 2, 3, 4].map(k => INK0 + (k + 0.5) / 5 * INK_SPAN);
 const jrEl = document.getElementById('after');
-const shown = { el: 22, az: 0, dist: 18.5, ox: 0.2, oy: 0.12 };
+const shown = { el: 22, az: 0, dist: 18.5, ox: 0.2, oy: 0.12, tx: 0, tz: 0 };
 const ui = tags[0].parentElement;
 let fov0 = 34, warp = 0, tagShow = 1, tagW = [90, 90, 90];
 
@@ -1655,6 +1575,7 @@ function frame(dtReal, still) {
   const dNow = offOrbit();
   /* Once the orbit has formed, steering lets go; if anything knocks it off, it comes back and the readout says so. */
   if (!still && sc.order > 0.9 && dNow > 0.006) ctl.k = Math.max(ctl.k, Math.min(1, 0.35 + dNow * 8));
+  if ((S.pingN | 0) !== pingSeen) { pingSeen = S.pingN | 0; pingT = clockT; }
   updateDisplay();
   /* The moment it locks: the camera eases in, the light swells once, then both let go. Full motion only. */
   const sinceLock = clockT - lockT, live = !R && !still && sinceLock >= 0;
@@ -1670,13 +1591,14 @@ function frame(dtReal, still) {
   /* One continuous camera move, eased so a fast flick still glides. */
   /* Reduced motion: one fixed, calm viewpoint. No flying, zooming or spinning; the framing only drifts slowly sideways. */
   const calmDist = portrait ? Math.max(14 * 1.3, 3.1 / (Math.tan(D2R(fov0 / 2)) * camera.aspect)) : 14;
-  const dist0 = R ? calmDist : portrait ? Math.max(sc.dist * 1.3, 3.1 / (Math.tan(D2R(fov0 / 2)) * camera.aspect)) : sc.dist;
+  const dist0 = R ? calmDist : portrait ? Math.max(sc.dist * 1.3, 3.1 * (1 - 0.45 * sc.fly) / (Math.tan(D2R(fov0 / 2)) * camera.aspect)) : sc.dist;
   shown.el = R ? 58 : lerp(shown.el, sc.el, a); shown.az = R ? 0 : lerp(shown.az, sc.az, a); shown.dist = R ? dist0 : lerp(shown.dist, dist0, a);
-  shown.ox = lerp(shown.ox, portrait ? 0 : sc.ox, a); shown.oy = lerp(shown.oy, portrait ? sc.poy : sc.oy, a);
+  shown.tx = lerp(shown.tx, sc.tx, a); shown.tz = lerp(shown.tz, sc.tz, a);
+  shown.ox = lerp(shown.ox, portrait ? 0.3 * sc.fly : sc.ox, a); shown.oy = lerp(shown.oy, portrait ? sc.poy : sc.oy, a);
   if (!R) { mouse.x += (mouse.tx - mouse.x) * 0.04; mouse.y += (mouse.ty - mouse.y) * 0.04; } else { mouse.x = mouse.y = 0; }
   const el = D2R(shown.el + mouse.y * 3 * (1 - sc.calm * 0.5));
   const az = D2R(shown.az) + (R ? 0 : Math.sin(clockT * 0.045) * 0.1 * (1 - sc.calm)) + mouse.x * 0.05;
-  tgt.set(0, lerp(-0.6, SUN_Y, smooth(22, 62, shown.el)), 0);
+  tgt.set(shown.tx, lerp(-0.6, SUN_Y, smooth(22, 62, shown.el)), shown.tz);
   const cd = shown.dist * (1 - (portrait ? 0.04 : 0.07) * easeIn);
   camera.position.set(tgt.x + cd * Math.cos(el) * Math.sin(az), tgt.y + cd * Math.sin(el), tgt.z + cd * Math.cos(el) * Math.cos(az));
   camera.lookAt(tgt);
@@ -1711,7 +1633,7 @@ function frame(dtReal, still) {
     proj.copy(v).project(camera); lensU.value[b].set(proj.x, proj.y, proj.z < 1 ? 0.05 * 11 / shown.dist : 0);
   }
   bloom.strength = lerp(0.36, 0.24, sc.calm) + 0.5 * swell;
-  gridU.uLock.value = still || R ? 99 : sinceLock;
+  gridU.uLock.value = still || R ? 99 : Math.min(sinceLock, clockT - pingT);
 
   /* The orbit, inked in by the scroll from a fixed start, so the stops are reached in order. */
   guide.mesh.visible = sc.ink > 0.002;
@@ -1750,8 +1672,18 @@ function frame(dtReal, still) {
   for (let k = 0; k < agentTrail.n; k++) { curve(ap - (agentTrail.n - 1 - k) * 0.0018, tmp2); agentTrail.pts[k * 3] = tmp2[0] * SC; agentTrail.pts[k * 3 + 1] = SUN_Y; agentTrail.pts[k * 3 + 2] = tmp2[1] * SC; }
   layRibbon(agentTrail, 0.7); agentTrail.mesh.material.uniforms.uAlpha.value = sc.agent;
 
+  /* The tool worlds. The one you are passing is lit and wired to the AI at the centre. */
+  const fl = sc.fly; gridU.uP.value.set(shown.tx, shown.tz, fl * 0.9);
+  worlds.forEach((m, i) => { const on = fl > 0.01; m.visible = warcs[i].mesh.visible = on; if (!on) return;
+    const near = Math.max(0, 1 - Math.abs(sc.wsel - i));
+    m.material.uniforms.uGain.value = fl * (0.3 + 0.28 * near); m.material.uniforms.uSize.value = 1.5 + 0.5 * near;
+    layArc(warcs[i], HUB, m.position, 2.2); warcs[i].mesh.material.uniforms.uAlpha.value = fl * (0.1 + 0.85 * near); });
+
   timeU.value = clockT; finalPass.uniforms.uTime.value = clockT;
   composer.render();
+
+  /* Each world wears its own mark, shown only while you are beside it. */
+  worldTags.forEach((e, i) => place(e, WPOS[i], (portrait ? 0 : 1) * fl * Math.max(0, 1 - Math.abs(sc.wsel - i) * 1.6), 0));
 
   /* Revenue, Costs, Time: a small tag under each sun, all the way through. They fade only where
      the scene is dimmed behind reading text, and step apart if two suns pass close together. */
@@ -1763,7 +1695,7 @@ function frame(dtReal, still) {
   for (let n = 1; n < 3; n++) for (let m = 0; m < n; m++) if (Math.abs(pos[n].x - pos[m].x) < 92 && pos[n].y - pos[m].y < 24) pos[n].y = pos[m].y + 24;
   pos.forEach(pp => { const e = tags[pp.i], hw = tagW[pp.i] / 2 + 10, x = Math.min(Math.max(pp.x, hw), W - hw);
     e.style.opacity = la.toFixed(3); e.style.transform = `translate3d(${x.toFixed(1)}px, ${pp.y.toFixed(1)}px, 0) translateX(-50%)`; e.classList.toggle('in', bd[pp.i] < 0.05); });
-  { const al = la * Math.max(sc.conn, sc.free * 0.75); tagAi.style.opacity = al.toFixed(3);
+  { const al = la * Math.max(sc.conn, sc.free * 0.75) * (1 - fl); tagAi.style.opacity = al.toFixed(3);
     if (al > 0.001) { proj.copy(HUB).project(camera); tagAi.style.transform = `translate3d(${((proj.x + 1) / 2 * W).toFixed(1)}px, ${((1 - proj.y) / 2 * H - 30).toFixed(1)}px, 0) translateX(-50%)`; } }
 
   /* The five stops, pinned to their places on the orbit. */
