@@ -17,13 +17,10 @@
 } }
 </script>
 <style>
-/* ── Local scale. The hero and the beats go past --fs-statement on purpose:
-   they are the page's two display moments. Everything else is on tokens. ── */
+/* ── Local values. Type sizes all come from tokens.css. ── */
 :root {
   --page-bg: var(--bg);            /* resolved at :root, so it survives into the dark sky */
-  --fs-hero: clamp(2.6rem, 7.4vw, 8.25rem);
-  --fs-beat: clamp(3.6rem, 12.5vw, 11rem);
-  --track-hero: -0.045em;
+    --track-hero: -0.045em;
   --section-pad: clamp(5rem, 14vh, 10rem);
 }
 * { box-sizing: border-box; }
@@ -90,7 +87,10 @@ footer { position: relative; z-index: 2; }
 .stop-mk { position: absolute; left: 0; top: 0; opacity: 0; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%; display: grid; place-items: center; font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: .04em; color: var(--muted); background: color-mix(in oklch, var(--bg) 82%, transparent); border: 1px solid var(--line-strong); will-change: transform, opacity; transition: background-color var(--dur-slow), color var(--dur-slow), border-color var(--dur-slow), box-shadow var(--dur-slow); }
 .stop-mk span { position: absolute; left: calc(100% + 10px); top: 50%; translate: 0 -50%; white-space: nowrap; padding: 5px 9px; border-radius: var(--radius-xs); background: color-mix(in oklch, var(--bg) 82%, transparent); border: 1px solid var(--line-strong); color: var(--text); letter-spacing: var(--track-label); text-transform: uppercase; opacity: 0; transition: opacity var(--dur-slow); }
 .stop-mk.flip span { left: auto; right: calc(100% + 10px); }
+.stop-mk { transition: width var(--dur-slow) var(--ease-out), height var(--dur-slow) var(--ease-out), margin var(--dur-slow) var(--ease-out), background-color var(--dur-slow), border-color var(--dur-slow), color var(--dur-fast), box-shadow var(--dur-slow); }
 .stop-mk.lit { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+/* A stop already passed shrinks to a dot on the orbit; only the current one keeps its number and name. */
+.stop-mk.lit:not(.cur) { width: 10px; height: 10px; margin: -5px 0 0 -5px; font-size: 0; }
 .stop-mk.cur { box-shadow: 0 0 0 6px var(--accent-quiet), 0 0 24px color-mix(in srgb, var(--ring) 45%, transparent); }
 .stop-mk.cur span { opacity: 1; }
 @media (max-width: 720px) { .stop-mk { width: 28px; height: 28px; margin: -14px 0 0 -14px; } .stop-mk span { display: none; } }
@@ -115,7 +115,7 @@ footer { position: relative; z-index: 2; }
 .beat-stack { display: grid; }
 .beat { visibility: hidden; }
 .beat-no { font: var(--fw-semibold) var(--fs-xs)/1 var(--font-mono); letter-spacing: var(--track-eyebrow); color: var(--accent-text); }
-.beat .beat-h { font-size: clamp(2.4rem, 6.2vw, 6.25rem); font-weight: var(--fw-black); letter-spacing: -0.045em; line-height: 0.98; margin: var(--space-3) 0 var(--space-4) -0.03em; max-width: 11ch; }
+.beat .beat-h { font-size: var(--fs-beat); font-weight: var(--fw-black); letter-spacing: -0.045em; line-height: 0.98; margin: var(--space-3) 0 var(--space-4) -0.03em; max-width: 11ch; }
 .beat .beat-h em { font-style: normal; }
 .beat .bw { display: inline-block; will-change: transform, opacity; }
 .beat .beat-h em .bw { background: var(--grad-headline); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .04em; }
@@ -343,13 +343,39 @@ html[data-motion="on"] .wire li.flow::after { animation: flow 1.1s var(--ease-in
 @media (max-width: 640px) { .wire li { padding-block: var(--space-3); } .wire small { font-size: var(--fs-xs); } }
 
 /* ── What it could be worth: the owner's own numbers, shown as a range ── */
-.roi-grid { display: grid; gap: var(--space-7); align-items: start; }
-@media (min-width: 1000px) { .roi-grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--space-8); } }
-.roi-copy { display: grid; gap: var(--space-5); }
-.roi-note { color: var(--muted); font-size: var(--fs-sm); max-width: 26rem; }
-.roi { background: var(--surface); backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); border: 1px solid var(--line); border-radius: var(--radius-2xl); box-shadow: var(--shadow-lg), var(--glass-inset); padding: clamp(var(--space-5), 3vw, var(--space-7)); display: grid; gap: var(--space-6); }
-.roi-in { display: grid; gap: var(--space-5); }
-.roi-f { display: grid; gap: var(--space-2); font-size: var(--fs-sm); font-weight: var(--fw-semibold); }
+.roi-top { display: grid; gap: var(--space-6); align-items: end; margin-bottom: var(--space-7); }
+.roi-top .sec-head { margin-bottom: 0; }
+@media (min-width: 1000px) { .roi-top { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--space-7); } }
+.roi-stat { margin: 0; display: grid; gap: var(--space-3); padding: var(--space-5); background: color-mix(in oklch, var(--bg) 88%, transparent); border: 1px solid var(--line); border-radius: var(--radius-xl); box-shadow: var(--glass-inset); }
+.roi-stat b { font: var(--fw-bold) var(--fs-stat)/1 var(--font-display); letter-spacing: var(--track-stat); color: var(--accent-text); font-variant-numeric: tabular-nums; }
+.roi-stat figcaption { color: var(--muted); font-size: var(--fs-sm); }
+.roi-sec a:not(.btn) { color: var(--text); text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 3px; }
+.roi-sec a:not(.btn):hover { color: var(--accent-text); }
+.roi-grid { display: grid; gap: var(--space-5); align-items: start; }
+@media (min-width: 1000px) { .roi-grid { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: var(--space-6); } .roi-res { position: sticky; top: calc(var(--nav-height) + var(--space-5)); } }
+.roi, .roi-res, .roi-how { background: color-mix(in oklch, var(--surface-solid) 94%, transparent); backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); border: 1px solid var(--line); border-radius: var(--radius-2xl); box-shadow: var(--shadow-lg), var(--glass-inset); }
+.roi { padding: clamp(var(--space-5), 3vw, var(--space-7)); display: grid; gap: var(--space-6); }
+.roi-q { display: grid; gap: var(--space-3); border: 0; padding: 0; margin: 0; min-width: 0; }
+.roi .q { display: grid; grid-template-columns: 1.4rem 1fr; column-gap: var(--space-3); align-items: baseline; padding: 0; font-size: var(--fs-body); font-weight: var(--fw-semibold); line-height: 1.35; }
+.roi .q i { flex: none; font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); font-style: normal; letter-spacing: .04em; color: var(--accent-text); width: 1.4rem; }
+.roi .q em { grid-column: 2; font-size: var(--fs-sm); font-style: normal; font-weight: var(--fw-regular, 400); color: var(--muted); }
+.roi-q > small, .roi-more > small { color: var(--muted); font-size: var(--fs-xs); line-height: 1.55; }
+.roi-q > select, .roi-q > .roi-row, .roi-q > .opts, .roi-q > small { margin-left: calc(1.4rem + var(--space-3)); }
+.roi select, .roi input[type=number] { min-height: var(--tap-min); width: 100%; padding: 0 var(--space-4); border-radius: var(--radius-md); border: 1px solid var(--line-strong); background: var(--bg); color: var(--text); font: inherit; font-size: var(--fs-body); }
+.roi select { appearance: none; -webkit-appearance: none; padding-right: 2.5rem; background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 20px) 50%, calc(100% - 14px) 50%; background-size: 6px 6px; background-repeat: no-repeat; max-width: 26rem; }
+.roi select:hover, .roi input[type=number]:hover { border-color: color-mix(in oklch, var(--text) 40%, transparent); }
+.roi select:focus-visible, .roi input[type=number]:focus-visible { outline: var(--focus-width) solid var(--focus-color); outline-offset: 2px; }
+.opts { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.opts.col { flex-direction: column; align-items: stretch; }
+.opt { position: relative; display: block; }
+.opt input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.opt span { display: flex; align-items: center; gap: var(--space-2); min-height: var(--tap-min); padding: var(--space-2) var(--space-4); border-radius: var(--radius-pill); border: 1px solid var(--line-strong); font-size: var(--fs-sm); line-height: 1.3; color: var(--text); transition: background-color var(--dur-fast), border-color var(--dur-fast), box-shadow var(--dur-base); }
+.opt span::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; border: 1px solid var(--muted); transition: background-color var(--dur-fast), border-color var(--dur-fast), box-shadow var(--dur-fast); }
+.opt:hover span { background: color-mix(in oklch, var(--text) 7%, transparent); }
+.opt input:checked + span { border-color: var(--accent); background: var(--accent-quiet); }
+.opt input:checked + span::before { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 8px var(--ring); }
+.opt input:focus-visible + span { outline: var(--focus-width) solid var(--focus-color); outline-offset: 3px; }
+.opts.col .opt span { border-radius: var(--radius-md); }
 .roi-row { display: grid; grid-template-columns: 1fr 4.5rem; gap: var(--space-4); align-items: center; }
 .roi-row output { font: var(--fw-bold) var(--fs-h3)/1 var(--font-display); text-align: right; font-variant-numeric: tabular-nums; }
 .roi input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: var(--tap-min); background: transparent; cursor: pointer; margin: 0; --fill: 30%; }
@@ -359,14 +385,53 @@ html[data-motion="on"] .wire li.flow::after { animation: flow 1.1s var(--ease-in
 .roi input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; margin-top: -9px; border-radius: 50%; background: var(--text); border: 4px solid var(--accent); box-shadow: 0 0 14px color-mix(in srgb, var(--ring) 60%, transparent); }
 .roi input[type=range]::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: var(--text); border: 4px solid var(--accent); }
 .roi input[type=range]:focus-visible { outline: var(--focus-width) solid var(--focus-color); outline-offset: 2px; border-radius: var(--radius-pill); }
-.roi-out { display: grid; gap: var(--space-3); grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--line); padding-top: var(--space-5); }
-.roi-k { display: grid; gap: 6px; align-content: start; }
-.roi-k b { font: var(--fw-bold) clamp(1.35rem, 2.4vw, 2rem)/1.05 var(--font-display); letter-spacing: var(--track-stat); font-variant-numeric: tabular-nums; }
-.roi-k:first-child b { color: var(--accent-text); }
-.roi-k small { color: var(--muted); font-size: var(--fs-xs); }
-.roi-how { font-size: var(--fs-xs); color: var(--muted); line-height: 1.6; }
-.roi-how .tag { margin-right: var(--space-2); }
-@media (max-width: 640px) { .roi-out { grid-template-columns: 1fr; } .roi-k { grid-template-columns: 7.5rem 1fr; align-items: baseline; column-gap: var(--space-3); } .roi-k small { grid-column: 2; } }
+.roi-more { border-top: 1px solid var(--line); padding-top: var(--space-4); display: grid; gap: var(--space-4); }
+.roi-more summary, .roi-how summary { cursor: pointer; min-height: var(--tap-min); display: flex; align-items: center; gap: var(--space-3); font-weight: var(--fw-semibold); list-style: none; }
+.roi-more summary::-webkit-details-marker, .roi-how summary::-webkit-details-marker { display: none; }
+.roi-more summary::before, .roi-how summary::before { content: "+"; font: var(--fw-medium) 1.25rem/1 var(--font-mono); color: var(--accent-text); width: 1.4rem; }
+.roi-more[open] summary::before, .roi-how[open] summary::before { content: "−"; }
+.roi-more summary span { margin-left: auto; font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--muted); }
+.roi-more summary:focus-visible, .roi-how summary:focus-visible { outline: var(--focus-width) solid var(--focus-color); outline-offset: 3px; border-radius: var(--radius-xs); }
+.roi-nums { display: grid; gap: var(--space-4); margin-top: var(--space-4); }
+@media (min-width: 720px) { .roi-nums { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: end; } }
+.roi-nums label { display: grid; gap: var(--space-2); font-size: var(--fs-sm); color: var(--muted); }
+.roi-res { padding: clamp(var(--space-5), 2.4vw, var(--space-6)); display: grid; gap: var(--space-5); }
+.roi-res-top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.roi-total { display: grid; gap: var(--space-2); }
+.roi-total b { font: var(--fw-bold) clamp(1.9rem, 1.3rem + 1.6vw, 2.75rem)/1.05 var(--font-display); letter-spacing: var(--track-stat); font-variant-numeric: tabular-nums; color: var(--accent-text); }
+.roi-total small, .roi-k small { color: var(--muted); font-size: var(--fs-xs); line-height: 1.5; }
+.roi-ks { margin: 0; display: grid; border-top: 1px solid var(--line); }
+.roi-k { display: grid; grid-template-columns: 6.5rem 1fr; gap: var(--space-3); padding-block: var(--space-4); border-bottom: 1px solid var(--line); align-items: baseline; }
+.roi-k dt { font: var(--fw-semibold) var(--fs-2xs)/1.3 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--muted); }
+.roi-k dd { margin: 0; display: grid; gap: 4px; }
+.roi-k b { font: var(--fw-bold) var(--fs-h3)/1.1 var(--font-display); letter-spacing: var(--track-stat); font-variant-numeric: tabular-nums; }
+.roi-fit, .roi-legacy { font-size: var(--fs-sm); color: var(--text); }
+.roi-legacy { color: var(--muted); padding: var(--space-3) var(--space-4); border: 1px dashed var(--line-strong); border-radius: var(--radius-md); }
+.roi-cta .btn { width: 100%; }
+.roi-note { color: var(--muted); font-size: var(--fs-xs); }
+.roi-how { margin-top: var(--space-5); padding: var(--space-3) clamp(var(--space-5), 3vw, var(--space-7)); }
+.roi-how-in { display: grid; gap: var(--space-6); padding-block: var(--space-4) var(--space-5); border-top: 1px solid var(--line); margin-top: var(--space-2); }
+@media (min-width: 800px) { .roi-how-in { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.roi-how-in > div { display: grid; gap: var(--space-3); align-content: start; }
+.roi-how h3 { font: var(--fw-semibold) var(--fs-h4)/1.3 var(--font-display); }
+.roi-how p { font-size: var(--fs-sm); color: var(--muted); line-height: 1.6; }
+.roi-how p:first-of-type { color: var(--text); font-family: var(--font-mono); font-size: var(--fs-xs); }
+@media (max-width: 640px) { .roi-q > select, .roi-q > .roi-row, .roi-q > .opts, .roi-q > small { margin-left: 0; } .roi-k { grid-template-columns: 1fr; gap: var(--space-2); } }
+/* No expert needed: the roles you no longer have to be, and what you say instead. */
+.say { margin-top: var(--space-9, 6rem); display: grid; gap: var(--space-6); }
+.say-head { display: grid; gap: var(--space-4); }
+.say-h { font-size: var(--fs-statement); font-weight: var(--fw-black, 800); letter-spacing: var(--track-statement); line-height: var(--lh-display); max-width: 14ch; text-wrap: balance; }
+.say-h em { font-style: normal; background: var(--grad-headline); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.say-h.hb em { background: none; }
+.say-list { list-style: none; margin: 0; padding: 0 var(--space-5); display: grid; background: color-mix(in oklch, var(--bg) 88%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid var(--line); border-radius: var(--radius-2xl); box-shadow: var(--shadow-md), var(--glass-inset); }
+.say-list li { display: grid; gap: var(--space-3); align-content: start; padding: var(--space-6) 0; border-bottom: 1px solid var(--line); }
+.say-list li:last-child { border-bottom: 0; }
+.say-list s { font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--muted); text-decoration-color: var(--accent); text-decoration-thickness: 1.5px; }
+.say-list q { font: var(--fw-semibold) var(--fs-h3)/1.3 var(--font-display); letter-spacing: var(--track-heading); quotes: "“" "”"; text-wrap: balance; }
+.say-list small { color: var(--muted); font-size: var(--fs-sm); }
+@media (min-width: 860px) { .say-list { grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 0; } .say-list li { padding: var(--space-6); border-bottom: 0; border-right: 1px solid var(--line); } .say-list li:last-child { border-right: 0; } }
+.say-src { font-size: var(--fs-xs); color: var(--muted); max-width: 56rem; line-height: 1.6; padding: var(--space-4) var(--space-5); background: color-mix(in oklch, var(--bg) 88%, transparent); border: 1px solid var(--line); border-radius: var(--radius-xl); }
+.say-src a { color: var(--text); text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 3px; }
 
 /* ── Promises: four equal columns, one calm step in size from title to line. ── */
 /* The scene keeps moving around the list, but the words sit on a calm, near-opaque panel. */
@@ -467,11 +532,11 @@ html[data-motion="on"] .scene-ui.lock-pop .body-tag { animation: tagset 1.3s var
 html[data-motion="on"] .scene-ui.lock-pop .body-tag:nth-child(2) { animation-delay: 90ms; }
 html[data-motion="on"] .scene-ui.lock-pop .body-tag:nth-child(3) { animation-delay: 180ms; }
 html[data-motion="on"] .scene-ui.lock-pop .body-tag.ai { animation-delay: 320ms; }
-@keyframes tagset { 0% { scale: 1; } 28% { scale: 1.22; } 100% { scale: 1; } }
+@keyframes tagset { 0% { filter: brightness(1); } 28% { filter: brightness(1.7); box-shadow: 0 0 0 6px color-mix(in oklch, var(--ok) 30%, transparent); } 100% { filter: brightness(1); } }
 /* Section headlines build word by word as the camera arrives. */
 .hw { display: inline-block; overflow: clip; padding-block: 0.08em 0.16em; margin-block: -0.08em -0.16em; vertical-align: top; }
 .hw > span { display: inline-block; transition: transform 0.95s var(--ease-out); transition-delay: calc(var(--i) * 65ms + 90ms); }
-.h2 em .hw > span, #close-h em .hw > span { background: var(--grad-headline); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .04em; }
+.h2 em .hw > span, .say-h em .hw > span, #close-h em .hw > span { background: var(--grad-headline); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .04em; }
 html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%); }
 /* Alive under the pointer: a light that follows it across cards, a primary button that leans toward it. */
 .fx-host { position: relative; }
@@ -611,7 +676,7 @@ html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%
     <div class="sec-head rv">
       <p class="eyebrow">One AI at the centre</p>
       <h2 class="h2">You ask. <em>It gets done.</em></h2>
-      <p class="lede">Claude or ChatGPT, set up for your team and connected to the tools you already use. We teach you to use it until it saves you hours every week.</p>
+      <p class="lede">Just say what you want. Claude or ChatGPT, set up for your team and connected to the tools you already use, works out the how.</p>
     </div>
     <div class="demo-grid">
       <div class="chat rv" style="--d:1" data-od-id="demo-chat">
@@ -646,6 +711,19 @@ html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%
           <li><b>Looked after</b>and finding more hours to save every month</li>
         </ul>
       </div>
+    </div>
+    <div class="say rv" data-od-id="no-expert">
+      <div class="say-head">
+        <p class="eyebrow">No expert needed</p>
+        <h3 class="say-h">Stop learning ten tools. <em>Talk to one.</em></h3>
+        <p class="lede">You bring what you want and the final say. The AI, connected to your tools, brings the know-how. It drafts and prepares; you check and approve.</p>
+      </div>
+      <ul class="say-list">
+        <li data-od-id="say-sheets"><s>Excel wizard</s><q>Which products made me money last month?</q><small>It reads your sales and answers in plain words.</small></li>
+        <li data-od-id="say-shop"><s>Shopify expert</s><q>Put the fall menu on the shop.</q><small>It drafts the changes. You approve them.</small></li>
+        <li data-od-id="say-ads"><s>Ad designer</s><q>Make an ad for Saturday's market.</q><small>It drafts the ad. You pick and post.</small></li>
+      </ul>
+      <p class="say-src">Studies point the same way. In a <a href="https://www.science.org/doi/10.1126/science.adh2586" rel="noopener">study in Science</a> of 444 professionals, an AI assistant cut writing time by about 40%, and the people who started weakest gained most. In a <a href="https://www.nber.org/papers/w31161" rel="noopener">study of 5,172 support staff</a>, newer staff gained 34% against 15% on average. Both studied office work at larger organisations, not small shops.</p>
     </div>
   </div>
 </section>
@@ -682,27 +760,127 @@ html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%
 </section>
 
 <section class="sec roi-sec" id="worth" data-od-id="roi" data-scene="roi">
-  <div class="wrap roi-grid">
-    <div class="roi-copy rv">
-      <p class="eyebrow">What it could be worth</p>
-      <h2 class="h2">Your numbers, <em>not ours.</em></h2>
-      <p class="lede">Small businesses that hand busywork to AI usually cut admin time by 20 to 40%. Put in yours and see the range.</p>
-      <p class="roi-note">An estimate from your own inputs. We check it with you on the call, then measure the real result in your portal.</p>
+  <div class="wrap">
+    <div class="roi-top">
+      <div class="sec-head rv">
+        <p class="eyebrow">What it could be worth</p>
+        <h2 class="h2">Your numbers, <em>not ours.</em></h2>
+        <p class="lede">Six quick questions about your business. Every rate behind the answer comes from published research, and we use the cautious end.</p>
+      </div>
+      <figure class="roi-stat rv" style="--d:1" data-od-id="roi-stat-cfib">
+        <b>735 hours</b>
+        <figcaption>What a Canadian small business spends on government paperwork in a year. 256 of those hours are red tape. <a href="https://www.cfib-fcei.ca/en/media/small-businesses-spend-over-250-hours-or-32-business-days-a-year-wrapped-up-in-red-tape" rel="noopener">CFIB, Canada's Red Tape Report, January 2025</a></figcaption>
+      </figure>
     </div>
-    <form class="roi rv" style="--d:1" data-roi data-od-id="roi-calculator" onsubmit="return false">
-      <div class="roi-in">
-        <label class="roi-f"><span>People on your team</span><span class="roi-row"><input type="range" min="1" max="30" step="1" value="4" data-in="people" aria-describedby="roi-people-v"><output id="roi-people-v" data-out="people">4</output></span></label>
-        <label class="roi-f"><span>Hours a week each, on admin and busywork</span><span class="roi-row"><input type="range" min="1" max="30" step="1" value="8" data-in="hours" aria-describedby="roi-hours-v"><output id="roi-hours-v" data-out="hours">8 h</output></span></label>
-        <label class="roi-f"><span>What an hour of their time costs you</span><span class="roi-row"><input type="range" min="15" max="120" step="1" value="30" data-in="rate" aria-describedby="roi-rate-v"><output id="roi-rate-v" data-out="rate">$30</output></span></label>
+    <div class="roi-grid">
+      <form class="roi rv" data-roi data-od-id="roi-calculator" onsubmit="return false">
+        <label class="roi-q" data-od-id="roi-q-industry"><span class="q"><i>1</i>What kind of business is it?</span>
+          <select data-in="ind">
+            <option value="retail">Retail or shop</option>
+            <option value="cafe">Restaurant or café</option>
+            <option value="trades">Trades or field service</option>
+            <option value="pro">Law, accounting or professional services</option>
+            <option value="clinic">Health or dental clinic</option>
+            <option value="salon">Salon, spa or personal care</option>
+            <option value="ecom">Online store</option>
+            <option value="other">Something else</option>
+          </select>
+        </label>
+        <fieldset class="roi-q" data-od-id="roi-q-team"><legend class="q"><i>2</i>How many people work there, including you?</legend>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="team" value="1" checked><span>1–5</span></label>
+            <label class="opt"><input type="radio" name="team" value="1.4"><span>6–15</span></label>
+            <label class="opt"><input type="radio" name="team" value="1.8"><span>16–30</span></label>
+            <label class="opt"><input type="radio" name="team" value="2.2"><span>31–50</span></label>
+          </div>
+        </fieldset>
+        <fieldset class="roi-q" data-od-id="roi-q-tools"><legend class="q"><i>3</i>Which of these do you use today? <em>Pick any.</em></legend>
+          <div class="opts">
+            <label class="opt"><input type="checkbox" name="tool" value="your books"><span>QuickBooks, Sage or Xero</span></label>
+            <label class="opt"><input type="checkbox" name="tool" value="your shop"><span>Shopify or Square</span></label>
+            <label class="opt"><input type="checkbox" name="tool" value="your email and documents"><span>Google Workspace or Microsoft 365</span></label>
+            <label class="opt"><input type="checkbox" name="tool" value="your ads"><span>Meta or Google Ads</span></label>
+            <label class="opt"><input type="checkbox" name="tool" value="your customer list"><span>Mailchimp, HubSpot or a CRM</span></label>
+            <label class="opt"><input type="checkbox" name="tool" value="your bookings"><span>A booking tool</span></label>
+            <label class="opt"><input type="checkbox" name="tool" value="your spreadsheets"><span>Mostly spreadsheets</span></label>
+            <label class="opt"><input type="checkbox" name="tool" value="legacy"><span>Older or industry-specific software</span></label>
+          </div>
+        </fieldset>
+        <label class="roi-q" data-od-id="roi-q-spend"><span class="q"><i>4</i>Roughly, what do you spend on software a month?</span>
+          <select data-in="spend">
+            <option value="0">Not sure</option>
+            <option value="100">Under $200</option>
+            <option value="350">$200 to $500</option>
+            <option value="750">$500 to $1,000</option>
+            <option value="1750">$1,000 to $2,500</option>
+            <option value="2500">$2,500 or more</option>
+          </select>
+          <small data-out="spend-hint"></small>
+        </label>
+        <label class="roi-q" data-od-id="roi-q-hours"><span class="q"><i>5</i>Hours a week on admin: email, books, scheduling, data entry, chasing paperwork</span>
+          <span class="roi-row"><input type="range" min="0" max="40" step="1" value="12" data-in="hours" aria-describedby="roi-hours-v"><output id="roi-hours-v" data-out="hours">12 h</output></span>
+          <small>Filled in from your answers above. Drag it to match your week.</small>
+        </label>
+        <fieldset class="roi-q" data-od-id="roi-q-leads"><legend class="q"><i>6</i>When someone calls, messages or fills in a form, what usually happens?</legend>
+          <div class="opts col">
+            <label class="opt"><input type="radio" name="lead" value="fast"><span>We answer almost every time, fast</span></label>
+            <label class="opt"><input type="radio" name="lead" value="slow" checked><span>We get back to most people, sometimes slowly</span></label>
+            <label class="opt"><input type="radio" name="lead" value="miss"><span>We often miss them or take a long time</span></label>
+          </div>
+          <small>Why we ask: in a Harvard Business Review study of 2,241 companies, firms that replied within an hour were 7 times more likely to have a real conversation than firms that waited one more hour. <a href="https://hbr.org/2011/03/the-short-life-of-online-sales-leads" rel="noopener">HBR, 2011</a></small>
+        </fieldset>
+        <details class="roi-more" data-od-id="roi-optional">
+          <summary>Know your own numbers? Add them <span>Optional</span></summary>
+          <div class="roi-nums">
+            <label><span>New customer inquiries a month</span><input type="number" inputmode="numeric" min="0" step="1" data-in="leads"></label>
+            <label><span>What a typical sale is worth ($)</span><input type="number" inputmode="decimal" min="0" step="1" data-in="sale"></label>
+            <label><span>What an hour of your team's time is worth ($)</span><input type="number" inputmode="decimal" min="0" step="0.01" data-in="wage" placeholder="32.35"></label>
+          </div>
+          <small>Left blank, we use a typical figure for your kind of business, and the average hourly wage in Newfoundland and Labrador.</small>
+        </details>
+      </form>
+      <aside class="roi-res rv" style="--d:1" data-roi-res data-od-id="roi-results" aria-live="polite">
+        <p class="roi-res-top"><span class="label">What it could be worth</span><span class="tag">Estimate</span></p>
+        <div class="roi-total" data-od-id="roi-total"><b data-out="total">—</b><small>a year, from the cautious end to the hopeful end</small></div>
+        <dl class="roi-ks">
+          <div class="roi-k" data-od-id="roi-time"><dt>Time saved</dt><dd><b data-out="time">—</b><small data-out="time-s"></small></dd></div>
+          <div class="roi-k" data-od-id="roi-saved"><dt>Money saved</dt><dd><b data-out="saved">—</b><small>a year on software you stop paying for</small></dd></div>
+          <div class="roi-k" data-od-id="roi-made"><dt>Money made</dt><dd><b data-out="made">—</b><small data-out="made-s"></small></dd></div>
+        </dl>
+        <p class="roi-fit" data-out="fit"></p>
+        <p class="roi-legacy" data-out="legacy" hidden>Moving off older software is not in these numbers. There is no reliable small-business figure for it, so we look at it with you on the call.</p>
+        <div class="roi-cta"><a class="btn btn-primary" href="mailto:hello@solenix.dev?subject=Book%20a%20call%20%E2%80%94%20my%20numbers" data-od-id="roi-cta">Book a call to check these</a></div>
+        <p class="roi-note">An estimate, not a promise. We check it with you on the call, then measure the real result in your portal.</p>
+      </aside>
+    </div>
+    <details class="roi-how rv" data-od-id="roi-method">
+      <summary>How we calculate this</summary>
+      <div class="roi-how-in">
+        <div>
+          <h3>Time saved</h3>
+          <p>Your admin hours × 8% (low) to 25% (high). The middle is 15%.</p>
+          <p>The low end sits near a <a href="https://www.stlouisfed.org/on-the-economy/2025/feb/impact-generative-ai-work-productivity" rel="noopener">St. Louis Fed survey</a>: people who use AI at work save about 5% of their hours, and one in five daily users saves four hours a week or more. We go a little above 5% because we set it up and teach your team. Controlled studies of single tasks found far more (<a href="https://www.nber.org/papers/w31161" rel="noopener">15 to 34%</a>, <a href="https://www.science.org/doi/10.1126/science.adh2586" rel="noopener">about 40%</a>). We do not use those for a whole week.</p>
+          <p>We value each hour at $32.35, the average hourly wage in Newfoundland and Labrador (<a href="https://www150.statcan.gc.ca/n1/daily-quotidien/241216/mc-a001-eng.htm" rel="noopener">Statistics Canada, 2024</a>), unless you enter your own.</p>
+        </div>
+        <div>
+          <h3>Money saved</h3>
+          <p>Monthly software spend × 12 × 10% (low) to 28% (high). The middle is 18%.</p>
+          <p>These rates are our own cautious assumption, not a published figure. The research on unused software covers large companies, where waste runs higher, so we stay well under it. What we can cite: only 1 in 10 Canadian small businesses has its tools fully joined up, and the top barrier is not knowing which ones are worth paying for (<a href="https://www.cfib-fcei.ca/en/media/digital-adoption-including-ai-paying-off-for-smes-but-gaps-remain" rel="noopener">CFIB, 2025, 1,683 owners</a>).</p>
+          <p>A spend band counts at its midpoint. “Not sure” uses a typical figure for your kind of business.</p>
+        </div>
+        <div>
+          <h3>Money made</h3>
+          <p>Inquiries a month × 12 × the share we expect to win back × a typical sale.</p>
+          <p>Answer fast already: 0%. Sometimes slow: 3 to 10%. Often missed: 8 to 25%. These shares are our own cautious assumptions. The <a href="https://hbr.org/2011/03/the-short-life-of-online-sales-leads" rel="noopener">Harvard Business Review study</a> shows speed matters; it does not give a share, so we keep ours low.</p>
+          <p>This is extra sales, before your costs. It is not profit.</p>
+        </div>
+        <div>
+          <h3>What we leave out</h3>
+          <p>Numbers published by companies selling software, such as dollars lost to missed calls. Savings from moving off older software, because there is no reliable small-business figure. Fewer no-shows, until we know your bookings.</p>
+          <p>The typical figures for each kind of business are our starting assumptions. Your own numbers replace them.</p>
+        </div>
       </div>
-      <div class="roi-out" aria-live="polite">
-        <div class="roi-k" data-od-id="roi-time"><span class="label">Time saved</span><b data-out="time">—</b><small data-out="time-s">hours a week</small></div>
-        <div class="roi-k" data-od-id="roi-saved"><span class="label">Money saved</span><b data-out="saved">—</b><small>a year, in paid hours back</small></div>
-        <div class="roi-k" data-od-id="roi-made"><span class="label">Money made</span><b data-out="made">—</b><small data-out="made-s">a year, if half those hours go to customers</small></div>
-      </div>
-      <p class="roi-how"><span class="tag">Estimate</span> people × hours × 20–40% = hours saved a week. × your hourly cost × 48 weeks = money saved. Half the hours back put into selling and serving, valued at the same hourly cost = money made.</p>
-      <div class="roi-cta"><a class="btn btn-primary" href="mailto:hello@solenix.dev?subject=Book%20a%20call%20%E2%80%94%20my%20numbers" data-od-id="roi-cta">Book a call to check these</a></div>
-    </form>
+    </details>
   </div>
 </section>
 
@@ -799,11 +977,11 @@ html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%
     { sel: '#portal', f: 0.5, dim: 0.62, el: 40, az: -42, dist: 19, ox: -0.12, oy: 0.02, poy: 0.1 },
     { sel: '#example', f: 0.15, conn: 1, k: 0.1, free: 0.3, dim: 0.66, el: 46, az: -22, dist: 15, ox: -0.2, oy: 0.04 },
     { sel: '#example', f: 0.85, conn: 1, k: 0.45, free: 0.6, dim: 0.66, el: 54, az: -8, dist: 13.5 },
-    { sel: '#after', f: 0, pin: 1, conn: 0, k: 0.9, free: 0.6, dim: 0, stops: 1, el: 64, az: 0, dist: 10.8, ox: 0.17, oy: 0.03, poy: 0.02, calm: 0.35 },
+    { sel: '#after', f: 0, pin: 1, conn: 0, k: 0.9, free: 0.6, dim: 0, stops: 1, el: 60, az: 34, dist: 9.6, ox: 0.21, oy: 0.02, poy: 0.02, calm: 0.35 },
     { sel: '#after', f: 0.3, pin: 1, k: 1, free: 1, third: 0.6, poy: -0.02 },
-    { sel: '#after', f: 0.78, pin: 1, k: 1, order: 1, ink: 1, third: 1, calm: 1, el: 70, az: 4 },
+    { sel: '#after', f: 0.78, pin: 1, k: 1, order: 1, ink: 1, third: 1, calm: 1, el: 64, az: 42 },
     { sel: '#after', f: 0.86, pin: 1, k: 0, agent: 1 },
-    { sel: '#after', f: 1, pin: 1, dist: 10.2 },
+    { sel: '#after', f: 1, pin: 1, dist: 9.4 },
     { sel: '#promises', f: 0.5, dim: 0.6, stops: 0, el: 50, az: 45, dist: 12.5, ox: 0, oy: 0.18, poy: 0.08 },
     { sel: '#worth', f: 0.5, dim: 0.7, el: 70, az: 70, dist: 13, ox: 0.26, oy: 0.04 },
     { sel: '#pricing', f: 0.5, dim: 0.45, el: 78, az: 95, dist: 13, ox: 0.24 },
@@ -886,37 +1064,56 @@ html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%
     scrollTo({ top: scrollY + r.top + total * 0.62, behavior: S.motion ? 'smooth' : 'auto' });
   }));
 
-  /* ── What it could be worth: every figure comes from the three inputs, shown as a 20–40% range. ── */
-  { const f = $('[data-roi]'), ins = {}, outs = {};
-    $$('[data-in]', f).forEach(i => ins[i.dataset.in] = i); $$('[data-out]', f).forEach(o => outs[o.dataset.out] = o);
-    const money = n => '$' + (Math.round(n / 100) * 100).toLocaleString('en-CA');
-    /* The figures roll to their new value instead of jumping; the first time they come into view they build from zero. */
-    const box = $('.roi-out', f), now = { ph: 0, r: 0 }, to = { ph: 0, r: 0 }; let rr = 0, seen = false;
+  /* ── What it could be worth. The model is design/roi-model.md: every rate is the cautious end of
+     published research, or a stated assumption. Output is always a low-to-high range, rounded down. ── */
+  { const f = $('[data-roi]'), res = $('[data-roi-res]'), out = {}, inp = {};
+    $$('[data-in]', f).forEach(i => inp[i.dataset.in] = i); $$('[data-out]', f).concat($$('[data-out]', res)).forEach(o => out[o.dataset.out] = o);
+    /* name, admin hours a week, software a month, inquiries a month, typical sale, what an inquiry is called */
+    const IND = { retail: ['retail shop', 12, 300, 80, 60, 'inquiries'], cafe: ['restaurant or café', 14, 250, 150, 40, 'bookings and orders'], trades: ['trades business', 12, 350, 40, 400, 'inquiries'],
+      pro: ['professional firm', 15, 500, 20, 1500, 'inquiries'], clinic: ['clinic', 14, 450, 60, 150, 'bookings'], salon: ['salon or spa', 10, 200, 100, 70, 'bookings'],
+      ecom: ['online store', 14, 600, 500, 75, 'inquiries and carts'], other: ['business', 10, 200, 20, 40, 'inquiries'] };
+    const TIME = [0.08, 0.25], TOOLS = [0.10, 0.28], LEAD = { fast: [0, 0], slow: [0.03, 0.10], miss: [0.08, 0.25] }, WAGE = 32.35;
+    const down = n => n < 1000 ? Math.floor(n / 50) * 50 : n < 10000 ? Math.floor(n / 100) * 100 : Math.floor(n / 1000) * 1000;
+    const money = n => '$' + down(n).toLocaleString('en-CA'), range = (a, b) => down(b) <= 0 ? '$0' : money(a) + '–' + money(b);
+    const fmtH = x => x < 10 ? (Math.floor(x * 2) / 2).toString() : Math.floor(x).toString();
+    const pick = n => $('input[name="' + n + '"]:checked', f);
+    const now = [0, 0, 0, 0, 0, 0, 0, 0], to = now.slice(); let rr = 0, seen = false, touched = false, wage = WAGE;
     const paint = () => {
-      const lo = now.ph * 0.2, hi = now.ph * 0.4, r = now.r, fmtH = x => x < 10 ? x.toFixed(1).replace(/\.0$/, '') : Math.round(x);
-      outs.time.textContent = fmtH(lo) + '–' + fmtH(hi) + ' h';
-      outs.saved.textContent = money(lo * r * 48) + '–' + money(hi * r * 48);
-      outs.made.textContent = money(lo * 0.5 * r * 48) + '–' + money(hi * 0.5 * r * 48);
+      const [h0, h1, s0, s1, m0, m1] = now, t0 = h0 * 52 * wage + s0 + m0, t1 = h1 * 52 * wage + s1 + m1;
+      out.total.textContent = range(t0, t1);
+      out.time.textContent = fmtH(h0) + '–' + fmtH(h1) + ' h';
+      out['time-s'].textContent = 'a week. Worth ' + range(h0 * 52 * wage, h1 * 52 * wage) + ' a year at $' + wage.toFixed(2) + ' an hour';
+      out.saved.textContent = range(s0, s1); out.made.textContent = range(m0, m1);
     };
-    const roll = () => {
-      rr = 0; now.ph += (to.ph - now.ph) * 0.16; now.r += (to.r - now.r) * 0.16;
-      if (Math.abs(to.ph - now.ph) < 0.05 && Math.abs(to.r - now.r) < 0.05) { now.ph = to.ph; now.r = to.r; box.removeAttribute('aria-busy'); } else rr = requestAnimationFrame(roll);
-      paint();
+    const roll = () => { rr = 0; let far = false;
+      for (let i = 0; i < now.length; i++) { now[i] += (to[i] - now[i]) * 0.18; if (Math.abs(to[i] - now[i]) > Math.max(0.02, Math.abs(to[i]) * 0.002)) far = true; else now[i] = to[i]; }
+      paint(); if (far) rr = requestAnimationFrame(roll); else res.removeAttribute('aria-busy'); };
+    const calc = e => {
+      const I = IND[inp.ind.value], scale = +pick('team').value, team = pick('team').nextElementSibling.textContent;
+      if (e && e.target === inp.hours) touched = true;
+      if (!touched) inp.hours.value = Math.min(40, Math.round(I[1] * scale));
+      const h = +inp.hours.value, spend = +inp.spend.value || I[2], lead = LEAD[pick('lead').value];
+      const leads = inp.leads.value === '' ? I[3] : Math.max(0, +inp.leads.value), sale = inp.sale.value === '' ? I[4] : Math.max(0, +inp.sale.value);
+      wage = +inp.wage.value > 0 ? +inp.wage.value : WAGE;
+      inp.leads.placeholder = I[3]; inp.sale.placeholder = I[4];
+      inp.hours.style.setProperty('--fill', (h / 40 * 100).toFixed(1) + '%'); out.hours.textContent = h + ' h';
+      out['spend-hint'].textContent = +inp.spend.value ? '' : 'We will use $' + I[2] + ' a month, a typical figure for a ' + I[0] + '.';
+      out['made-s'].textContent = lead[1] ? 'a year in extra sales, before your costs. From ' + leads.toLocaleString('en-CA') + ' ' + I[5] + ' a month at $' + sale.toLocaleString('en-CA') + ' each' : 'You already answer fast, so we count nothing here.';
+      const tools = $$('input[name="tool"]:checked', f).map(t => t.value), legacy = tools.includes('legacy'), names = tools.filter(t => t !== 'legacy');
+      const list = names.length > 1 ? names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1] : names[0];
+      out.fit.textContent = 'A ' + I[0] + ' with ' + team + ' people, about ' + h + ' admin hours a week and $' + spend.toLocaleString('en-CA') + ' a month on software.' + (list ? ' We would start by connecting ' + list + '.' : '');
+      out.legacy.hidden = !legacy;
+      [h * TIME[0], h * TIME[1], spend * 12 * TOOLS[0], spend * 12 * TOOLS[1], leads * 12 * lead[0] * sale, leads * 12 * lead[1] * sale].forEach((v, i) => to[i] = v);
+      if (!S.motion || !seen) { to.forEach((v, i) => now[i] = v); paint(); return; }
+      res.setAttribute('aria-busy', 'true'); if (!rr) rr = requestAnimationFrame(roll);
     };
-    const calc = () => {
-      const p = +ins.people.value, h = +ins.hours.value, r = +ins.rate.value;
-      Object.values(ins).forEach(i => i.style.setProperty('--fill', ((i.value - i.min) / (i.max - i.min) * 100).toFixed(1) + '%'));
-      outs.people.textContent = p; outs.hours.textContent = h + ' h'; outs.rate.textContent = '$' + r;
-      to.ph = p * h; to.r = r;
-      if (!S.motion || !seen) { now.ph = to.ph; now.r = to.r; paint(); return; }
-      box.setAttribute('aria-busy', 'true'); if (!rr) rr = requestAnimationFrame(roll);
-    };
-    f.addEventListener('input', calc); calc();
-    new IntersectionObserver((es, o) => es.forEach(e => { if (e.isIntersecting) { o.disconnect(); seen = true; if (S.motion) { now.ph = 0; box.setAttribute('aria-busy', 'true'); rr = requestAnimationFrame(roll); } } }), { threshold: 0.5 }).observe(box); }
+    f.addEventListener('input', calc); f.addEventListener('change', calc); calc();
+    new IntersectionObserver((es, o) => es.forEach(en => { if (en.isIntersecting) { o.disconnect(); seen = true; if (S.motion) { now.fill(0); res.setAttribute('aria-busy', 'true'); if (!rr) rr = requestAnimationFrame(roll); } } }), { threshold: 0.4 }).observe(res); }
+
 
   /* Section headlines build word by word, once, as their section arrives. */
   { const hio = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('play'); hio.unobserve(e.target); } }), { threshold: 0.6 });
-    $$('.sec .h2, .jr-head .h2, #close-h').forEach(h => {
+    $$('.sec .h2, .jr-head .h2, .say-h, #close-h').forEach(h => {
       h.setAttribute('aria-label', h.textContent.trim()); h.classList.add('hb'); let n = 0;
       [h, ...h.querySelectorAll('em')].forEach(el => [...el.childNodes].forEach(nd => { if (nd.nodeType !== 3 || !nd.textContent.trim()) return;
         const fr = document.createDocumentFragment();
@@ -1384,7 +1581,7 @@ const INK0 = 0.1, INK_SPAN = 0.9, STOP_U = [0, 1, 2, 3, 4].map(k => INK0 + (k + 
 const jrEl = document.getElementById('after');
 const shown = { el: 22, az: 0, dist: 18.5, ox: 0.2, oy: 0.12 };
 const ui = tags[0].parentElement;
-let fov0 = 34, warp = 0, tagW = [90, 90, 90];
+let fov0 = 34, warp = 0, tagShow = 1, tagW = [90, 90, 90];
 
 function frame(dtReal, still) {
   const R = !S.motion, sc = S.scene, a = still ? 1 : 1 - Math.exp(-dtReal * (R ? 1.4 : 5));
@@ -1416,7 +1613,7 @@ function frame(dtReal, still) {
   const el = D2R(shown.el + mouse.y * 3 * (1 - sc.calm * 0.5));
   const az = D2R(shown.az) + (R ? 0 : Math.sin(clockT * 0.045) * 0.1 * (1 - sc.calm)) + mouse.x * 0.05;
   tgt.set(0, lerp(-0.6, SUN_Y, smooth(22, 62, shown.el)), 0);
-  const cd = shown.dist * (1 - (portrait ? 0.04 : 0.12) * easeIn);
+  const cd = shown.dist * (1 - (portrait ? 0.04 : 0.07) * easeIn);
   camera.position.set(tgt.x + cd * Math.cos(el) * Math.sin(az), tgt.y + cd * Math.sin(el), tgt.z + cd * Math.cos(el) * Math.cos(az));
   camera.lookAt(tgt);
   if (!R) camera.rotateZ(Math.max(-0.09, Math.min(0.09, (sc.az - shown.az) * 0.004)));
@@ -1494,7 +1691,9 @@ function frame(dtReal, still) {
 
   /* Revenue, Costs, Time: a small tag under each sun, all the way through. They fade only where
      the scene is dimmed behind reading text, and step apart if two suns pass close together. */
-  const la = Math.max(0, Math.min(1, 1 - sc.dim / 0.4)), off = portrait ? 24 : 34;
+  /* On the journey the step is the subject, so the tags step back until the orbit holds. */
+  tagShow = lerp(tagShow, locked || sc.agent > 0.98 ? 1 : 0, still ? 1 : 1 - Math.exp(-dtReal * 4));
+  const la = Math.max(0, Math.min(1, 1 - sc.dim / 0.4)) * lerp(1, tagShow, sc.stops), off = portrait ? 24 : 34;
   const bd = [0, 1, 2].map(i => Math.hypot(disp[i * 2] - eight.p[i * 2], disp[i * 2 + 1] - eight.p[i * 2 + 1]));
   const pos = [0, 1, 2].map(i => { proj.copy(B[i]).project(camera); return { i, x: (proj.x + 1) / 2 * W, y: (1 - proj.y) / 2 * H + off }; }).sort((p0, p1) => p0.y - p1.y);
   for (let n = 1; n < 3; n++) for (let m = 0; m < n; m++) if (Math.abs(pos[n].x - pos[m].x) < 92 && pos[n].y - pos[m].y < 24) pos[n].y = pos[m].y + 24;
@@ -1508,8 +1707,8 @@ function frame(dtReal, still) {
     if (sc.stops < 0.01) { e.style.opacity = 0; return; }
     curve(STOP_U[k], tmp2); proj.set(tmp2[0] * SC, SUN_Y, tmp2[1] * SC).project(camera);
     const sx = (proj.x + 1) / 2 * W, sy = (1 - proj.y) / 2 * H, lit = sc.ink >= (k + 0.5) / 5 - 0.02;
-    e.style.opacity = (sc.stops * (lit ? 1 : 0.7)).toFixed(3); e.style.transform = `translate3d(${sx.toFixed(1)}px, ${sy.toFixed(1)}px, 0)`;
-    e.classList.toggle('lit', lit); e.classList.toggle('cur', k === S.jCur); e.classList.toggle('flip', sx > W - 240);
+    e.style.opacity = (lit ? sc.stops : 0).toFixed(3); e.style.transform = `translate3d(${sx.toFixed(1)}px, ${sy.toFixed(1)}px, 0)`;
+    e.classList.toggle('lit', lit); e.classList.toggle('cur', k === S.jCur && !(locked || sc.agent > 0.98)); e.classList.toggle('flip', sx > W - 240);
   });
 
   /* The payoff: the first moment it holds with no steering, the grid rings out and the labels settle. */
