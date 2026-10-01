@@ -82,7 +82,7 @@ img, svg { display: block; }
 .scene-ui { position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
 main { position: relative; z-index: 2; }
 footer { position: relative; z-index: 2; }
-.sky { position: relative; height: 160vh; height: 160svh; }
+.sky { position: relative; height: 100vh; height: 100svh; }
 .stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; pointer-events: none; }
 .stage a, .stage button { pointer-events: auto; }
 .stop-mk { position: absolute; left: 0; top: 0; opacity: 0; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%; display: grid; place-items: center; font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: .04em; color: var(--muted); background: color-mix(in oklch, var(--bg) 82%, transparent); border: 1px solid var(--line-strong); will-change: transform, opacity; transition: background-color var(--dur-slow), color var(--dur-slow), border-color var(--dur-slow), box-shadow var(--dur-slow); }
@@ -916,8 +916,8 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
     /* Hero and the Look beat, inside the pinned sky. */
     const r = sky.getBoundingClientRect(), p = clamp(-r.top / (r.height - vh));
     S.p = p;
-    const ho = 1 - smooth(0.06, 0.3, p);
-    hero.style.opacity = ho; hero.style.transform = m ? `translateY(${-p * 200}px)` : ''; hero.style.visibility = ho < 0.02 ? 'hidden' : '';
+    const ho = 1; /* the words never fade; they scroll away as the guide arrives, so there is no empty screen */
+    hero.style.opacity = ho; hero.style.transform = ''; hero.style.visibility = ho < 0.02 ? 'hidden' : '';
     if (cue) cue.style.opacity = 1 - smooth(0, 0.08, p);
     let any = 0;
     /* Full motion: words rise in one by one. Reduced: the whole line fades in together, nothing moves. */
