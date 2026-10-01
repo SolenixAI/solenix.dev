@@ -18,7 +18,7 @@ Solenix's website and client portal. Next.js on Vercel · Supabase · Stripe · 
 
 - One version of everything. No copies, and no version names (`-v2`, `v3`) in files, headings or comments. History lives in git.
 - Change a design in Open Design first, then the app. Don't hand-edit `design/*.html`.
-- Dark only. There is no light theme.
+- The site is dark. The portal follows the device (light or dark) and has a manual choice.
 - Latest stable versions. No secrets in code or output.
 - `npm run check` enforces these rules. The git pre-commit hook and Claude Code's hooks (`.claude/settings.json`) run it. When you find a new failure mode, add a check for it.
 

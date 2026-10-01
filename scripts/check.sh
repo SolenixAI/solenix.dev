@@ -18,6 +18,8 @@ grep -rn -E '· v[0-9]|\(v[0-9]\)|/\* v[0-9]|\bv[0-9] ·' design/DESIGN.md desig
 # The public site is dark; only the portal ([data-portal]) may follow the device.
 grep -q '^\[data-portal\]:not(\[data-theme\]) { color-scheme: light dark; }' design/tokens.css || bad "tokens.css: the portal must follow the device ([data-portal] color-scheme: light dark)"
 grep -q 'data-portal' 'app/(portal)/layout.tsx' || bad "portal layout must set data-portal"
+grep -n -i -E 'dark only|no light theme' AGENTS.md design/DESIGN.md \
+  | while read -r l; do echo "check: contradicts the theme decision (site dark, portal follows the device): ${l:0:80}"; done | grep . && fail=1
 
 # No on-page Motion switch; the OS reduced-motion setting is the control.
 grep -n -E 'motion-toggle|class="word">Motion<' design/*.html 2>/dev/null \
