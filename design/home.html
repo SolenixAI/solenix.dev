@@ -1255,6 +1255,19 @@ const DT = 0.004, T8 = 6.32591398, SC = 2.1, SUN_Y = 0.15;
    Steering is a real control force, a = gravity + kp(x* − x) + kd(v* − v); scroll sets its strength.
    Near the end steering drops to zero and the orbit holds on its own, which the figure-eight does. */
 const ctl = { k: 0, soft: 0.35, conf: 1 };
+/* The six tools are bodies too: six masses set in a wide circle round the business, each with its own well.
+   Until the plan they pull Revenue, Costs and Time off course; once the AI holds the orbit, they let go. */
+const WN = 6, WR = 12, WAZ = i => 40 + 60 * i, TOOL_M = [1, 0.8, 1.2, 0.85, 1.1, 0.9], TOOL_G = 10;
+const WPOS = Array.from({ length: WN }, (_, i) => { const th = D2Rq(90 - WAZ(i)); return new THREE.Vector3(Math.cos(th) * WR, SUN_Y, Math.sin(th) * WR); });
+function D2Rq(d) { return d * Math.PI / 180; }
+/* Roaming. The physics runs in its own small frame; `roam` says where in the world each body's frame sits
+   (o: an x,z offset per body) and how far the three are spread. Until the plan these keep moving, so the
+   bodies really cross the plane. At the plan they come home: offsets go to zero and the spread to one. */
+const roam = { o: new Float64Array(6), sp: 1, mx: 0, mz: 0, r: 0, q: 1, ax: 0, az: -1 };
+/* Simulation frame to world. `q` flattens the three along the line of sight (ax, az), so beside a tool
+   they spread wide across the open sky without dropping into the rows of text. q is 1 everywhere else. */
+const wv = [0, 0];
+function toWorld(px, py, k) { const d = (px * roam.ax + py * roam.az) * (1 - roam.q), K = SC * roam.sp; wv[0] = (px - d * roam.ax) * K + roam.o[k]; wv[1] = (py - d * roam.az) * K + roam.o[k + 1]; return wv; }
 function makeSys(p, v) { return { p: Float64Array.from(p), v: Float64Array.from(v), a: new Float64Array(6), t: 0 }; }
 function gravity(s, soft2, conf) {
   const p = s.p, a = s.a; a.fill(0);
@@ -1271,12 +1284,18 @@ for (const arr of [cv, cp]) { const mx = (arr[0] + arr[2] + arr[4]) / 3, my = (a
 const eight = makeSys(P8, V8);   // the exact orbit, never touched
 const sys = makeSys(cp, cv);     // what you see
 const W8 = 4;                  // steering stiffness, in sim time
-const ctrlA = new Float64Array(6);
+const ctrlA = new Float64Array(6), toolA = new Float64Array(6);
 /* Your cursor (or finger) is a faint fourth mass on the plane. It tugs the suns and the dust. */
 const cur = { x: 0, y: 0, m: 0 };
 function accelSys() {
   gravity(sys, ctl.soft * ctl.soft, ctl.conf);
   if (cur.m > 0.001) for (let i = 0; i < 3; i++) { const dx = cur.x - sys.p[i * 2], dy = cur.y - sys.p[i * 2 + 1], r2 = dx * dx + dy * dy + 0.09, f = cur.m * 0.05 / (r2 * Math.sqrt(r2)); sys.a[i * 2] += dx * f; sys.a[i * 2 + 1] += dy * f; }
+  /* Most of the pull the three share is taken up by where they roam; what is left drags and stretches them toward the tool. */
+  if (ctl.conf > 0.001) { const K = SC * roam.sp; let mx = 0, mz = 0; toolA.fill(0);
+    for (let i = 0; i < 3; i++) { toWorld(sys.p[i * 2], sys.p[i * 2 + 1], i * 2); const wx = wv[0], wz = wv[1];
+      for (let j = 0; j < WN; j++) { const dx = WPOS[j].x - wx, dz = WPOS[j].z - wz, r2 = dx * dx + dz * dz + 1.2, f = TOOL_G * TOOL_M[j] * ctl.conf / (r2 * Math.sqrt(r2) * K); toolA[i * 2] += dx * f; toolA[i * 2 + 1] += dz * f; }
+      mx += toolA[i * 2] / 3; mz += toolA[i * 2 + 1] / 3; }
+    for (let i = 0; i < 3; i++) { sys.a[i * 2] += toolA[i * 2] - 0.7 * mx; sys.a[i * 2 + 1] += toolA[i * 2 + 1] - 0.7 * mz; } }
   const kp = ctl.k * W8 * W8, kd = ctl.k * 2 * W8;
   for (let k = 0; k < 6; k++) { ctrlA[k] = kp * (eight.p[k] - sys.p[k]) + kd * (eight.v[k] - sys.v[k]); sys.a[k] += ctrlA[k]; }
 }
@@ -1299,12 +1318,8 @@ function curve(u, out) { u = ((u % 1) + 1) % 1; const f = u * LUT_N, i = Math.fl
 
 /* Trail history of what you see, pushed by simulation time so one full loop is exactly HN samples. */
 const HN = 300, PUSH = T8 / HN;
-/* Roaming. The physics runs in its own small frame; `roam` says where in the world each body's frame sits
-   (o: an x,z offset per body) and how far the three are spread. Until the plan these keep moving, so the
-   bodies really cross the plane. At the plan they come home: offsets go to zero and the spread to one. */
-const roam = { o: new Float64Array(6), sp: 1, mx: 0, mz: 0, r: 0 };
 const hist = { p: new Float32Array(HN * 6), w: new Float32Array(HN * 6), head: 0, next: 0 };
-function push() { const i = hist.head = (hist.head + 1) % HN; for (let k = 0; k < 6; k++) { hist.p[i * 6 + k] = sys.p[k]; hist.w[i * 6 + k] = sys.p[k] * SC * roam.sp + roam.o[k]; } }
+function push() { const i = hist.head = (hist.head + 1) % HN; for (let k = 0; k < 6; k++) hist.p[i * 6 + k] = sys.p[k]; for (let k = 0; k < 6; k += 2) { toWorld(sys.p[k], sys.p[k + 1], k); hist.w[i * 6 + k] = wv[0]; hist.w[i * 6 + k + 1] = wv[1]; } }
 function advance(simDt) {
   const n = Math.round(simDt / DT);
   for (let i = 0; i < n; i++) { step(); if (sys.t >= hist.next) { push(); hist.next += PUSH; } }
@@ -1360,41 +1375,46 @@ vec4 lens(vec4 cp){ if(cp.w<=0.) return cp; vec2 n=cp.xy/cp.w;
 const timeU = { value: 0 };
 
 /* Starfield: two shells for parallax. */
-function stars(n, r0, r1, size) {
-  const g = new THREE.BufferGeometry(), pos = new Float32Array(n * 3), seed = new Float32Array(n);
-  for (let i = 0; i < n; i++) { const u = Math.random() * 2 - 1, t = Math.random() * Math.PI * 2, r = r0 + Math.random() * (r1 - r0), s = Math.sqrt(1 - u * u);
-    pos[i * 3] = r * s * Math.cos(t); pos[i * 3 + 1] = r * u; pos[i * 3 + 2] = r * s * Math.sin(t); seed[i] = Math.random(); }
+/* `lat` gathers a shell into a band across the sky, tilted off the plane, so the dark has a far side. */
+function stars(n, r0, r1, size, lat = 0) {
+  const g = new THREE.BufferGeometry(), pos = new Float32Array(n * 3), seed = new Float32Array(n), ct = Math.cos(1.02), st = Math.sin(1.02);
+  for (let i = 0; i < n; i++) { const u = lat ? Math.sin(gauss() * lat) : Math.random() * 2 - 1, t = Math.random() * Math.PI * 2, r = r0 + Math.random() * (r1 - r0), s = Math.sqrt(Math.max(0, 1 - u * u));
+    const x = r * s * Math.cos(t), y = r * u, z = r * s * Math.sin(t);
+    pos[i * 3] = x; pos[i * 3 + 1] = lat ? y * ct - z * st : y; pos[i * 3 + 2] = lat ? y * st + z * ct : z; seed[i] = Math.random(); }
   g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('aSeed', new THREE.BufferAttribute(seed, 1));
   const m = new THREE.ShaderMaterial({ ...additive, uniforms: { uTime: timeU, uPx: { value: size }, uWarm: { value: C.sun1 }, uCool: { value: C.sky }, uLens: lensU, uAsp: aspU },
     vertexShader: LENS + `attribute float aSeed; uniform float uTime,uPx; varying float vA; varying float vS;
       void main(){ vec4 mv=modelViewMatrix*vec4(position,1.); gl_Position=lens(projectionMatrix*mv); vS=aSeed;
         vA=(0.25+0.75*pow(aSeed,3.))*(0.7+0.3*sin(uTime*(1.+aSeed*2.)+aSeed*40.)); gl_PointSize=uPx*(0.6+pow(aSeed,4.)*2.2); }`,
     fragmentShader: `uniform vec3 uWarm,uCool; varying float vA; varying float vS;
-      void main(){ float d=length(gl_PointCoord-.5); float a=smoothstep(.5,0.,d); a*=a; vec3 c=mix(vec3(.9),vS>.8?uWarm:uCool,.22); gl_FragColor=vec4(c*a*vA*.9,1.); }` });
+      void main(){ float d=length(gl_PointCoord-.5); float a=smoothstep(.5,0.,d); a*=a; vec3 c=mix(vec3(.9),vS>.8?uWarm:uCool,.22); gl_FragColor=vec4(c*a*vA*1.2,1.); }` });
   const pts = new THREE.Points(g, m); pts.frustumCulled = false; pts.renderOrder = 0; return pts;
 }
-scene.add(stars(isSmall ? 1400 : 2600, 70, 140, 2.2), stars(isSmall ? 300 : 600, 22, 40, 2.6));
+scene.add(stars(isSmall ? 2200 : 4200, 70, 140, 2.5), stars(isSmall ? 300 : 600, 22, 40, 2.6), stars(isSmall ? 3000 : 6500, 150, 210, 1.8, 0.2));
 
-/* Spacetime: a plane dipped by the summed potential of the three suns. */
-const gridU = { uB: bodyU, uLens: lensU, uAsp: aspU, uC: { value: new THREE.Vector3() }, uP: { value: new THREE.Vector3() }, uLock: { value: 99 }, uTime: timeU, uDepth: { value: 0.95 }, uChaos: { value: 1 }, uBase: { value: -0.35 }, uSoft: { value: 0.8 }, uCell: { value: 0.5 },
+/* Spacetime: each of the three suns and each of the six tools dips its own well. A well ends a short way out
+   (WELL_R), so nine bodies make nine wells, not one basin, and the lines show only where space is bent. */
+const WELL_R = 2, toolU = { value: WPOS.map((p, i) => new THREE.Vector3(p.x, p.z, TOOL_M[i])) };
+const gridU = { uB: bodyU, uT: toolU, uLens: lensU, uAsp: aspU, uC: { value: new THREE.Vector3() }, uLock: { value: 99 }, uTime: timeU, uDepth: { value: 0.95 }, uChaos: { value: 1 }, uBase: { value: -0.35 }, uSoft: { value: 0.3 }, uR: { value: 1 / Math.sqrt(WELL_R * WELL_R + 0.3) }, uCell: { value: 0.5 },
   uLine: { value: C.text.clone().multiplyScalar(0.34) }, uWarm: { value: C.sun2.clone() }, uAlpha: { value: 1 } };
 const grid = new THREE.Mesh(new THREE.PlaneGeometry(48, 48, isSmall ? 150 : 240, isSmall ? 150 : 240).rotateX(-Math.PI / 2), new THREE.ShaderMaterial({ ...additive, uniforms: gridU,
-  vertexShader: LENS + `uniform vec3 uB[3]; uniform vec3 uC; uniform vec3 uP; uniform float uTime,uDepth,uChaos,uBase,uSoft,uLock; varying vec3 vW; varying float vPot; varying float vRing;
+  vertexShader: LENS + `uniform vec3 uB[3]; uniform vec3 uT[6]; uniform vec3 uC; uniform float uTime,uDepth,uChaos,uBase,uSoft,uR,uLock; varying vec3 vW; varying float vPot; varying float vRing;
     void main(){ vec3 p=position; float s=0., rip=0.;
-      for(int i=0;i<3;i++){ vec2 d=p.xz-uB[i].xz; float r2=dot(d,d); s+=1./sqrt(r2+uSoft); float r=sqrt(r2); rip+=sin(r*2.3-uTime*2.6+float(i)*2.1)*exp(-r*.32); }
-      vec2 dc=p.xz-uC.xy; s+=uC.z*.35/sqrt(dot(dc,dc)+.6); vec2 dp=p.xz-uP.xy; s+=uP.z/sqrt(dot(dp,dp)+uSoft);
+      for(int i=0;i<3;i++){ vec2 d=p.xz-uB[i].xz; float r2=dot(d,d); float w=max(0.,1./sqrt(r2+uSoft)-uR); s+=w*w/(w+.12); float r=sqrt(r2); rip+=sin(r*2.3-uTime*2.6+float(i)*2.1)*exp(-r*.32); }
+      for(int i=0;i<6;i++){ vec2 d=p.xz-uT[i].xy; float w=max(0.,1./sqrt(dot(d,d)+.5)-.305); s+=uT[i].z*w*w/(w+.12); }
+      vec2 dc=p.xz-uC.xy; s+=uC.z*.35/sqrt(dot(dc,dc)+.6);
       float rr=length(p.xz), ring=exp(-pow(rr-uLock*6.5,2.)*.9)*exp(-uLock*.55); vRing=ring;
       p.y=uBase-uDepth*s+rip*.07*uChaos-ring*.45; vPot=s; vW=p; gl_Position=lens(projectionMatrix*modelViewMatrix*vec4(p,1.)); }`,
   fragmentShader: `uniform vec3 uB[3]; uniform vec3 uLine,uWarm; uniform float uCell,uAlpha,uChaos; varying vec3 vW; varying float vPot; varying float vRing;
     float gl(vec2 c,float w){ vec2 f=fwidth(c); vec2 g=abs(fract(c-.5)-.5)/f; return (1.-min(min(g.x,g.y)/w,1.))*(1.-smoothstep(.22,.55,max(f.x,f.y))); }
     void main(){ vec2 c=vW.xz/uCell; float minor=gl(c,1.), major=gl(c/4.,1.3);
-      float well=smoothstep(.75,2.4,vPot); float fade=1.-smoothstep(14.,23.,length(vW.xz));
+      float well=smoothstep(.35,1.5,vPot), bent=smoothstep(.0,.4,vPot); float fade=1.-smoothstep(14.,23.,length(vW.xz));
       float glow=0.; for(int i=0;i<3;i++){ vec2 d=vW.xz-uB[i].xz; glow+=exp(-dot(d,d)*.45); }
       vec3 col=mix(uLine,uWarm*1.25,well);
-      float a=(minor*.32+major*.6)*(.4+1.9*well)*fade;
+      float a=(minor*.32+major*.6)*(.27+.3*bent+1.7*well)*fade;
       gl_FragColor=vec4((col*a*(1.+vRing*2.5)+uWarm*glow*.035*fade+uWarm*vRing*.12*fade)*uAlpha,1.); }` }));
 grid.frustumCulled = false; grid.renderOrder = 1; scene.add(grid);
-function gridY(x, z) { let s = 0; for (const b of bodyU.value) { const dx = x - b.x, dz = z - b.z; s += 1 / Math.sqrt(dx * dx + dz * dz + 0.8); } return gridU.uBase.value - gridU.uDepth.value * s; }
+function gridY(x, z) { let s = 0; for (const b of bodyU.value) { const dx = x - b.x, dz = z - b.z; const w = Math.max(0, 1 / Math.sqrt(dx * dx + dz * dz + 0.3) - gridU.uR.value); s += w * w / (w + 0.12); } return gridU.uBase.value - gridU.uDepth.value * s; }
 
 /* Dust: test particles pulled by the same three suns. */
 const DN = isSmall ? 3200 : 7000;
@@ -1415,7 +1435,7 @@ let shownBlend = 0;
 function updateDisplay() {
   const b = shownBlend, a = 1 - b;
   for (let k = 0; k < 6; k++) { disp[k] = sys.p[k] * a + eight.p[k] * b; dispV[k] = sys.v[k] * a + eight.v[k] * b; }
-  for (let i = 0; i < 3; i++) bodyU.value[i].set(disp[i * 2] * SC * roam.sp + roam.o[i * 2], SUN_Y, disp[i * 2 + 1] * SC * roam.sp + roam.o[i * 2 + 1]);
+  for (let i = 0; i < 3; i++) { toWorld(disp[i * 2], disp[i * 2 + 1], i * 2); bodyU.value[i].set(wv[0], SUN_Y, wv[1]); }
 }
 updateDisplay();
 for (let i = 0; i < DN; i++) { spawn(i); D.ph[i] = Math.random(); D.off[i] = gauss() * (Math.random() < 0.85 ? 0.035 : 0.12); D.j[i] = gauss(); dSeed[i] = Math.random(); }
@@ -1527,10 +1547,7 @@ const hub = new THREE.Mesh(quad, sunMat(C.ring.clone().lerp(WHITE, 0.3), 4.2, 0.
 
 /* ── The flybys: six tool worlds set in a wide circle round the business. The camera travels the whole
    way round, and each world is wired back to the AI at the centre as it passes. ── */
-const WN = 6, WR = 12, WAZ = i => 40 + 60 * i;
-const WPOS = Array.from({ length: WN }, (_, i) => { const th = D2Rq(90 - WAZ(i)); return new THREE.Vector3(Math.cos(th) * WR, SUN_Y, Math.sin(th) * WR); });
-function D2Rq(d) { return d * Math.PI / 180; }
-const worlds = WPOS.map((p, i) => { const m = new THREE.Mesh(quad, sunMat((i % 2 ? C.sun2 : C.sun1).clone().lerp(i % 3 ? C.ring : WHITE, 0.3), 31 + i * 1.9, 1.9, 0.24)); m.material.uniforms.uFlare.value = 0.3; m.position.copy(p); m.frustumCulled = false; m.renderOrder = 6; m.visible = false; scene.add(m); return m; });
+const worlds = WPOS.map((p, i) => { const m = new THREE.Mesh(quad, sunMat((i % 2 ? C.sun2 : C.sun1).clone().lerp(i % 3 ? C.ring : WHITE, 0.3), 31 + i * 1.9, 1.9, 0.24)); m.material.uniforms.uFlare.value = 0.3; m.position.copy(p); m.frustumCulled = false; m.renderOrder = 6; scene.add(m); return m; });
 const warcs = WPOS.map(() => { const r = ribbon(60, C.ring.clone(), 0.03, ARC_FRAG, false); r.mesh.visible = false; return r; });
 const worldTags = [...document.querySelectorAll('.world-tag')];
 const place = (e, v, al, dy) => { if (al < 0.01) { if (e.style.opacity !== '0') e.style.opacity = 0; return; } proj.copy(v).project(camera);
@@ -1591,6 +1608,22 @@ const ui = tags[0].parentElement;
 const heroH1 = document.querySelector('.h1'), heroCta = document.querySelector('.hero-ctas'), heroBeat = document.querySelector('.sky .beat'), heroBeatH = heroBeat && heroBeat.querySelector('.beat-h'), guideBlocks = [...document.querySelectorAll('#guide .jr-head, #guide .guide-say')]; let heroBox = [0, 0, 0, 0], guideBox = [], heroBoxDirty = true;
 addEventListener('scroll', () => { heroBoxDirty = true; }, { passive: true }); addEventListener('resize', () => { heroBoxDirty = true; });
 const ROAM_RATE = [2.1, 1.2, 0.75];
+/* Tool sections: the bodies keep to the open sky. The tallest band of the screen with no small text in it is
+   measured from the page itself; the roam is aimed at that band and sized to fit inside it. */
+const open = { y0: 0, y1: 0, at: -9, k: 0, x: 0, z: 0, sp: 1, size: 1, q: 1, side: 9, deep: 9, stacked: 0 };
+function measureOpen() {
+  const sec = document.querySelector(S.sec); if (!sec || !sec.classList.contains('race')) return;
+  const head = sec.querySelector('.race-head').getBoundingClientRect(), lanes = sec.querySelector('.lanes').getBoundingClientRect();
+  let y0 = head.bottom, y1 = lanes.top; open.stacked = sec.querySelector('.lane.ask').getBoundingClientRect().top > lanes.top + 40 ? 1 : 0;
+  /* Lanes stacked: they fill the screen, so take the tallest gap between the rows themselves. */
+  if (open.stacked) {
+    const rows = [...sec.querySelectorAll('.race-head, .lane > header, .scr-bar, .scr-nav, .scr-view > *, .rmsg, .lane-s, .race-note')].map(e => e.getBoundingClientRect()).filter(r => r.height > 2 && r.width > 2).sort((a, b) => a.top - b.top);
+    let edge = rows.length ? rows[0].bottom : 0, best = 0;
+    for (const r of rows) { if (r.top - edge > best) { best = r.top - edge; y0 = edge; y1 = r.top; } edge = Math.max(edge, r.bottom); }
+  }
+  y0 = Math.max(0, y0); y1 = Math.min(H, y1);
+  if (y1 - y0 > 48) { open.y0 = y0; open.y1 = y1; }
+}
 /* Reduced motion: these sections hold their own still view, reached by a cut, never a flight. [elevation, distance] */
 const RVIEW = { '#guide': [44, 12.5], '#promises': [17, 8.8] };
 let secR = '', heroR = 1, fov0 = 34, warp = 0, tagShow = 1, tagW = [90, 90, 90];
@@ -1606,13 +1639,32 @@ function frame(dtReal, still) {
   if ((S.pingN | 0) !== pingSeen) { pingSeen = S.pingN | 0; pingT = clockT; }
   /* Where the bodies roam: a place set by the section, ahead of or beside where the camera looks. Each body
      heads there at its own pace and wanders round it, so between sections they string out across the plane. */
-  { const azr = D2R(shown.az), rs = sc.rs * fitX, bx = shown.tx - Math.sin(azr) * sc.rf + Math.cos(azr) * rs, bz = shown.tz - Math.cos(azr) * sc.rf - Math.sin(azr) * rs;
+  { const azr = D2R(shown.az), rs = sc.rs * fitX; let bx = shown.tx - Math.sin(azr) * sc.rf + Math.cos(azr) * rs, bz = shown.tz - Math.cos(azr) * sc.rf - Math.sin(azr) * rs;
+    /* Beside a tool: aim the roam at the open band, as it sweeps from one side to the other with the scroll. */
+    const inFly = R ? (stn > 0 ? 1 : 0) : sc.fly; open.k = inFly > 0.5 && open.y1 > open.y0 ? smooth(0.5, 1, inFly) : 0;
+    if (inFly > 0.5 && clockT - open.at > 0.3) { open.at = clockT; measureOpen(); }
+    if (open.k > 0) { const half = (open.y1 - open.y0) / 2, sway = Math.max(-1, Math.min(1, sc.rs / 3)) * (W < 900 ? 0.08 : 0.2);
+      ndc.set(sway * 2, 1 - (open.y0 + half) / H * 2); ray.setFromCamera(ndc, camera);
+      if (!ray.ray.intersectPlane(plane, hit)) hit.copy(ray.ray.direction).setY(0).normalize().multiplyScalar(9).add(camera.position).setY(SUN_Y);
+      const dx = hit.x - shown.tx, dz = hit.z - shown.tz, far = Math.hypot(dx, dz); if (far > 7) { hit.x = shown.tx + dx * 7 / far; hit.z = shown.tz + dz * 7 / far; }
+      const dc = Math.max(1, camera.position.distanceTo(hit)), ppu = H / (2 * Math.tan(D2R(camera.fov / 2)) * dc), tilt = Math.max(0.2, (camera.position.y - SUN_Y) / dc);
+      /* A body nearer than the band is tall is drawn smaller, so it still sits inside the band. */
+      open.size = Math.max(0.3, Math.min(1, 0.55 * half / (0.44 * ppu)));
+      /* Room in world units: across the band (less the sway), and through it along the line of sight. */
+      const disc = 0.44 * ppu * open.size; open.side = Math.max(0.3, (W * (W < 900 ? 0.42 : 0.3) - disc) / ppu); open.deep = Math.max(0.04, (half - disc) / (tilt * ppu));
+      open.sp = Math.max(0.12, Math.min(1.6, 0.65 * open.side / (1.6 * SC))); open.q = Math.max(0.08, Math.min(1, 0.75 * open.deep / (1.6 * SC * open.sp)));
+      open.x += (hit.x - open.x) * (still ? 1 : 1 - Math.exp(-dtReal * 3)); open.z += (hit.z - open.z) * (still ? 1 : 1 - Math.exp(-dtReal * 3));
+      bx += (open.x - bx) * open.k; bz += (open.z - bz) * open.k; }
     let r = 0;
     for (let i = 0; i < 3; i++) { const g = still ? 1 : 1 - Math.exp(-dtReal * ROAM_RATE[i] * (R ? 0.5 : 1));
       let wx = bx + sc.rw * Math.sin(clockT * (0.23 + i * 0.05) + i * 2.1), wz = bz + sc.rw * Math.cos(clockT * (0.19 + i * 0.04) + i * 1.3);
       if (fitX < 1) { const side = ((wx - bx) * Math.cos(azr) - (wz - bz) * Math.sin(azr)) * (1 - fitX); wx -= side * Math.cos(azr); wz += side * Math.sin(azr); }
+      /* In the open band the wander runs along the band, not across it into the rows. */
+      if (open.k > 0) { const amp = sc.rw + 1e-6, deep = (-(wx - bx) * Math.sin(azr) - (wz - bz) * Math.cos(azr)) * open.k * (1 - Math.min(1, 0.25 * open.deep / amp)), side = ((wx - bx) * Math.cos(azr) - (wz - bz) * Math.sin(azr)) * open.k * (1 - Math.min(1, 0.35 * open.side / (amp * fitX)));
+        wx += deep * Math.sin(azr) - side * Math.cos(azr); wz += deep * Math.cos(azr) + side * Math.sin(azr); }
       roam.o[i * 2] += (wx - roam.o[i * 2]) * g; roam.o[i * 2 + 1] += (wz - roam.o[i * 2 + 1]) * g; r = Math.max(r, Math.abs(roam.o[i * 2]), Math.abs(roam.o[i * 2 + 1])); }
-    roam.sp += ((fitX < 1 ? 1 + (sc.sp - 1) * fitX : sc.sp) - roam.sp) * (still ? 1 : 1 - Math.exp(-dtReal * 1.4)); roam.r = r + Math.abs(roam.sp - 1);
+    const spT = fitX < 1 ? 1 + (sc.sp - 1) * fitX : sc.sp; roam.sp += ((open.k > 0 ? lerp(spT, Math.min(spT, open.sp), open.k) : spT) - roam.sp) * (still ? 1 : 1 - Math.exp(-dtReal * 1.4)); roam.r = r + Math.abs(roam.sp - 1) + Math.abs(roam.q - 1);
+    roam.ax = -Math.sin(azr); roam.az = -Math.cos(azr); roam.q += ((open.k > 0 ? lerp(1, open.q, open.k) : 1) - roam.q) * (still ? 1 : 1 - Math.exp(-dtReal * 1.4)); if (Math.abs(roam.q - 1) < 1e-3) roam.q = 1;
     roam.mx = (roam.o[0] + roam.o[2] + roam.o[4]) / 3; roam.mz = (roam.o[1] + roam.o[3] + roam.o[5]) / 3; }
   updateDisplay();
   /* The moment it locks: the camera eases in, the light swells once, then both let go. Full motion only. */
@@ -1673,7 +1725,7 @@ function frame(dtReal, still) {
     suns[b].position.copy(v);
     /* Warm and dramatic, but never so bright it swallows the body, its trail or a label. */
     const u = suns[b].material.uniforms;
-    u.uSize.value = lerp(1.75, portrait ? 1.35 : 1.25, sc.calm); u.uGain.value = (lerp(0.72, 0.62, sc.calm) + 0.3 * swell) * (1 - 0.45 * sc.fly); u.uFlare.value = lerp(0.45, 0.18, sc.calm);
+    u.uSize.value = lerp(1.75, portrait ? 1.35 : 1.25, sc.calm) * lerp(1, open.size, open.k); u.uGain.value = (lerp(0.72, 0.62, sc.calm) + 0.3 * swell) * (1 - 0.45 * sc.fly); u.uFlare.value = lerp(0.45, 0.18, sc.calm);
     /* Lens strength for this sun, in screen units, shrinking with distance. */
     proj.copy(v).project(camera); lensU.value[b].set(proj.x, proj.y, proj.z < 1 ? 0.05 * 11 / shown.dist : 0);
   }
@@ -1692,7 +1744,7 @@ function frame(dtReal, still) {
   dustU.uOrder.value = sc.order;
   const phase = eight.t / T8;
   for (let i = 0; i < DN; i++) {
-    const ro = (i % 3) * 2; let x = D.x[i] * SC * roam.sp + roam.o[ro], z = D.y[i] * SC * roam.sp + roam.o[ro + 1], y = gridY(x, z) * 0.7 + SUN_Y * 0.3 + D.j[i] * 0.06;
+    toWorld(D.x[i], D.y[i], (i % 3) * 2); let x = wv[0], z = wv[1], y = gridY(x, z) * 0.7 + SUN_Y * 0.3 + D.j[i] * 0.06;
     if (sc.order > 0) {
       curve(D.ph[i] + phase, tmp2); const ax = tmp2[0], ay = tmp2[1];
       curve(D.ph[i] + phase + 0.002, tmp2); let nx = -(tmp2[1] - ay), ny = tmp2[0] - ax; const nl = Math.hypot(nx, ny) || 1;
@@ -1718,10 +1770,11 @@ function frame(dtReal, still) {
   layRibbon(agentTrail, 0.7); agentTrail.mesh.material.uniforms.uAlpha.value = sc.agent;
 
   /* The tool worlds. The one you are passing is lit and wired to the AI at the centre. */
-  const fl = R ? (stn > 0 ? 1 : 0) : sc.fly, wsel = R ? stn - 1 : sc.wsel; gridU.uP.value.set(shown.tx, shown.tz, fl * 0.9);
-  worlds.forEach((m, i) => { const on = fl > 0.01; m.visible = warcs[i].mesh.visible = on; if (!on) return;
-    const near = Math.max(0, 1 - Math.abs(wsel - i));
-    m.material.uniforms.uGain.value = fl * (0.3 + 0.28 * near); m.material.uniforms.uSize.value = 1.5 + 0.5 * near;
+  const fl = R ? (stn > 0 ? 1 : 0) : sc.fly, wsel = R ? stn - 1 : sc.wsel; 
+  worlds.forEach((m, i) => { const on = fl > 0.01, near = fl * Math.max(0, 1 - Math.abs(wsel - i)); warcs[i].mesh.visible = on;
+    toolU.value[i].z = TOOL_M[i] * (0.8 + 0.7 * near);
+    /* Stacked lanes leave the tool no clear sky of its own, so there it glows softer behind the rows. */
+    m.material.uniforms.uGain.value = (0.2 + 0.1 * fl + 0.28 * near) * (1 - 0.5 * open.stacked * near); m.material.uniforms.uSize.value = (1.5 + 0.5 * near) * (0.8 + 0.2 * TOOL_M[i]); if (!on) return;
     layArc(warcs[i], HUB, m.position, 2.2); warcs[i].mesh.material.uniforms.uAlpha.value = fl * (0.1 + 0.85 * near); });
 
   timeU.value = clockT; finalPass.uniforms.uTime.value = clockT;
