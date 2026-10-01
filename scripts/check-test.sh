@@ -8,7 +8,11 @@ tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
 pass=0; fail=0
 
-fresh() { rm -rf "$tmp/r"; git clone -q --local "$root" "$tmp/r"; }
+# A clone of the repo as it is on disk now, uncommitted changes included (so new rules are tested before they're committed).
+fresh() {
+  rm -rf "$tmp/r"; git clone -q --local "$root" "$tmp/r"
+  (cd "$root" && git ls-files -co --exclude-standard) | rsync -a --files-from=- "$root/" "$tmp/r/"
+}
 expect() { # expect <pass|fail> <name>
   if (cd "$tmp/r" && bash scripts/check.sh >/dev/null 2>&1); then got=pass; else got=fail; fi
   if [ "$got" = "$1" ]; then pass=$((pass + 1)); echo "ok    $2"; else fail=$((fail + 1)); echo "WRONG $2 (expected check to $1, it did $got)"; fi
@@ -52,6 +56,20 @@ else fail=$((fail + 1)); echo "WRONG race lane rule could not be exercised (no '
 
 fresh; awk '{print} /The flyby races\./ && !d {print "if (matchMedia(\"(prefers-reduced-motion: reduce)\").matches) {}"; d=1}' "$tmp/r/design/home.html" > "$tmp/h" && mv "$tmp/h" "$tmp/r/design/home.html"
 expect fail "races stop under Reduce Motion"
+
+fresh; mkdir -p "$tmp/r/app/(site)/law"
+expect fail "an industry page (app/(site)/law)"
+
+fresh; sed -i '' 's#</body>#<p>Care plans from $199/month</p></body>#' "$tmp/r/design/home.html"
+expect fail "a public price on the homepage"
+
+# The pre-commit hook refuses a staged secret (a made-up key in a known key format).
+fresh; printf 'const key = "sk_live_%s"\n' "51Hq3bWd9ExampleOnlyNotARealKeyZx7Tn2Lm8Pq4Rs6Uv0Wy" > "$tmp/r/lib/leak.ts"
+if (cd "$tmp/r" && git add lib/leak.ts && bash .githooks/pre-commit >/dev/null 2>&1); then fail=$((fail + 1)); echo "WRONG a staged secret got past pre-commit"; else pass=$((pass + 1)); echo "ok    a staged secret is refused at commit"; fi
+
+# The sign-in link guard (.claude/hooks/sign-in-link-guard.sh).
+lg() { jq -n --arg c "$1" '{tool_name:"Bash",tool_input:{command:$c}}' | bash "$root/.claude/hooks/sign-in-link-guard.sh" >/dev/null 2>&1; echo $?; }
+if [ "$(lg 'curl -X POST $SUPABASE_URL/auth/v1/admin/generate_link')" = 2 ] && [ "$(lg 'npm run build')" = 0 ]; then pass=$((pass + 1)); echo "ok    sign-in link guard blocks admin link generation, allows the rest"; else fail=$((fail + 1)); echo "WRONG sign-in link guard"; fi
 
 # The Claude Code edit guard (.claude/hooks/guard.sh).
 hook() { jq -n --arg p "$1" '{tool_input:{file_path:$p}}' | bash "$root/.claude/hooks/guard.sh" >/dev/null 2>&1; echo $?; }

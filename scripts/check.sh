@@ -47,6 +47,20 @@ grep -n -E '^\.lane \{[^}]*(background|backdrop-filter)' design/home.html \
 awk '/The flyby races\./,/<\/script>/' design/home.html | grep -n -E 'prefers-reduced-motion|reduce\.matches' \
   | while read -r l; do echo "check: the races must play under reduced motion (no reduced-motion branch in the race script): ${l:0:60}"; done | grep . && fail=1
 
+# No industry pages: the site speaks to every small business (design/DESIGN.md Decisions).
+find "app/(site)" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | grep -i -E '/(law|legal|lawyers?|dental|dentists?|clinic|medical|realty|real-estate|restaurants?|trades?|accountants?|accounting)$' \
+  | while read -r d; do echo "check: industry page $d (no industry pages; one site for every small business)"; done | grep . && fail=1
+
+# No public prices: both numbers are agreed on the call (design/DESIGN.md Pricing).
+python3 - design/home.html <<'PY' || fail=1
+import re, sys, importlib.util as u
+s = u.spec_from_file_location("v", "scripts/voice-check.py"); v = u.module_from_spec(s); s.loader.exec_module(v)
+text = re.sub(r"\s+", " ", v.visible_text(open(sys.argv[1]).read()))
+hits = re.findall(r".{0,30}(?:\$\s?\d[\d,]*(?:\.\d+)?\s?(?:/|per )\s?(?:mo|month|year|yr|hour|hr)\b|starting at \$|from \$\d|plans? start).{0,30}", text, re.I)
+for h in hits: print(f"check: public price on the homepage: …{h.strip()}…")
+sys.exit(1 if hits else 0)
+PY
+
 # Every source of truth named in AGENTS.md exists.
 for f in design/DESIGN.md design/tokens.css design/home.html design/app.html design/roi-model.md design/before-after.md supabase/config.toml; do
   [ -f "$f" ] || bad "missing source of truth: $f"
