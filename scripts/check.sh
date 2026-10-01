@@ -74,6 +74,19 @@ if not m: print("check: the plan's stops were not found in design/home.html (ol.
 sys.exit(bad)
 PY
 
+# Every race on the homepage is sourced in design/before-after.md (one source of truth for the examples).
+python3 - design/home.html design/before-after.md <<'PY' || fail=1
+import json, re, sys
+html, ba = open(sys.argv[1]).read(), open(sys.argv[2]).read()
+m = re.search(r"const RACES = (\{.*?\});\n", html, re.S)
+names = [r["name"] for r in json.loads(m.group(1)).values()] if m else []
+heads = " ".join(re.findall(r"^## .*$", ba, re.M)).lower()
+missing = [n for n in names if not all(w in heads for w in re.findall(r"[a-z]+", n.lower()) if w not in ("and",))]
+for n in missing: print(f"check: race \"{n}\" on the homepage has no section in design/before-after.md")
+if not m: print("check: no RACES table found in design/home.html")
+sys.exit(1 if missing or not m else 0)
+PY
+
 # Every source of truth named in AGENTS.md exists.
 for f in design/DESIGN.md design/tokens.css design/home.html design/app.html design/roi-model.md design/before-after.md supabase/config.toml; do
   [ -f "$f" ] || bad "missing source of truth: $f"
