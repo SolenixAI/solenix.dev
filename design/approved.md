@@ -5,3 +5,5 @@ Things Jager has approved. Each line is a phrase that must stay on the homepage,
 - Your business is a three-body problem
 - From one call to a stable orbit.
 - Book a call
+- You don't need to be an expert
+- Stop learning ten tools. Talk to one.
