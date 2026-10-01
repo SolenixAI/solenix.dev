@@ -33,7 +33,7 @@ grep -qx 'email: enable_signup = true' /tmp/solenix-signup.txt || bad "[auth.ema
 grep -q 'POSTHOG_SNIPPET' app/route.ts && grep -q 'capture_pageleave' lib/analytics.ts || bad "homepage has no analytics (app/route.ts + lib/analytics.ts)"
 
 # Every source of truth named in AGENTS.md exists.
-for f in design/DESIGN.md design/tokens.css design/home.html design/app.html design/roi-model.md supabase/config.toml; do
+for f in design/DESIGN.md design/tokens.css design/home.html design/app.html design/roi-model.md design/before-after.md supabase/config.toml; do
   [ -f "$f" ] || bad "missing source of truth: $f"
 done
 

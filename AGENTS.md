@@ -7,7 +7,8 @@ Solenix's website and client portal. Next.js on Vercel · Supabase · Stripe · 
 - Brand rules: the Open Design design system "Solenix", exported to `design/DESIGN.md`
 - Token values: `design/tokens.css` (the app imports it in `app/globals.css`)
 - Homepage: `design/home.html` (served as-is at `/`)
-- ROI calculator model and every constant behind it, with sources: `design/roi-model.md`
+- Before/after examples (real tasks, real connectors, sourced times): `design/before-after.md`
+- ROI model and every constant behind it, with sources: `design/roi-model.md`
 - Homepage quality, scored 0–100 per section after every change: `design/scorecard.md`
 - Portal design: `design/app.html` (the app under `app/(portal)` is built to match it)
 - Supabase config and schema: `supabase/config.toml`, `supabase/migrations/`
