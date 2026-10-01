@@ -8,6 +8,7 @@
 //          motion allowed; demonstrations (DEMO_SCENES) must stay alive with
 //          Reduce Motion on, because reduced motion stops camera movement, not
 //          the demonstration.
+import os from "node:os"
 import { chromium } from "playwright"
 
 const URL = process.argv[2] ?? "http://localhost:3000/"
@@ -51,7 +52,18 @@ const worldShare = () => {
   return seen / total
 }
 
+// Timing is only meaningful on a calm machine: the race clocks advance with CPU time, so a choked
+// Mac makes races look slow (a false failure). Wait up to 10 minutes for the 1-minute load average
+// to fall under the core count, and print the load next to every timing.
+const cores = os.cpus().length
+for (let waited = 0; os.loadavg()[0] > cores && waited < 600; waited += 15) {
+  if (waited === 0) console.log(`waiting for a calm machine (load ${os.loadavg()[0].toFixed(1)} > ${cores} cores)`)
+  await new Promise((r) => setTimeout(r, 15000))
+}
 const browser = await chromium.launch()
+// Never leave a headless browser behind: an orphan keeps rendering the 3D scene and chokes the Mac
+// (three orphans at ~250% CPU each made every timing on 2026-10-01 look slow).
+for (const sig of ["SIGINT", "SIGTERM", "SIGHUP"]) process.on(sig, () => browser.close().finally(() => process.exit(130)))
 let failed = 0, flaky = 0
 const rows = []
 for (const [vpName, viewport] of Object.entries(VIEWPORTS)) {
@@ -101,7 +113,10 @@ for (const [vpName, viewport] of Object.entries(VIEWPORTS)) {
       const secs = (Date.now() - t0) / 1000
       const slow = !ok || secs > MAX_PAYOFF_S
       if (slow) failed++
-      rows.push(`${slow ? "FAIL" : "ok  "} ${vpName.padEnd(7)} ${motion === "reduce" ? "reduced" : "motion "} ${id.padEnd(20)} payoff ${ok ? secs.toFixed(1) + " s" : "not reached"}${slow ? ` (must be within ${MAX_PAYOFF_S} s)` : ""}`)
+      const load = os.loadavg()[0]
+      const busy = load > cores
+      if (slow && busy) failed--, flaky++ // not trusted: measured on a choked machine
+      rows.push(`${slow ? (busy ? "LOAD" : "FAIL") : "ok  "} ${vpName.padEnd(7)} ${motion === "reduce" ? "reduced" : "motion "} ${id.padEnd(20)} payoff ${ok ? secs.toFixed(1) + " s" : "not reached"}${slow ? ` (must be within ${MAX_PAYOFF_S} s)` : ""}  load ${load.toFixed(1)}/${cores}${slow && busy ? " (machine busy: rerun when calm)" : ""}`)
     }
     await page.close()
   }

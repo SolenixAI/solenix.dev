@@ -121,3 +121,19 @@ After: "Add a pivot table of revenue by category this month vs. last, with a bar
 **6. HubSpot — stop losing deals that went quiet**
 Before: filter the pipeline for stale deals, open each one, write a follow-up by hand — 20–30 minutes for ten deals.
 After: "Show every deal with no activity in 14 days and draft a follow-up for each" — HubSpot's own MCP server went GA with write access in April 2026, so the drafts land ready to send in 12–18 minutes, the owner just reviews and hits send.
+
+---
+
+## Example data shown in the homepage races
+
+Every name and amount below is made up for the demonstration and is tagged "Example" on the page. None is a client, a result or a price.
+
+| Race | What the race ends on | Example names and amounts |
+|---|---|---|
+| Stripe | The invoice, sent | Invoice to Harbour Dental · $450 · website care · due in 15 days |
+| Shopify | The reorder email, waiting on Approve | Sea salt caramels, 14 left · Wool mitts, 9 left |
+| HubSpot | A follow-up note on each quiet deal | Harbour Dental · Cove Road Cafe · East End Yoga |
+| Meta Ads | The ad that brings no buyers, paused | Local awareness ad · no purchases in 7 days |
+| Excel | The corrected total | Sales total $12,480 (was $11,930; one row was missed) |
+| Gmail and Calendar | Replies drafted and the meeting booked | 3 replies · meeting with Harbour Dental, Tuesday 10:30 |
+

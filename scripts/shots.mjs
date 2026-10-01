@@ -15,6 +15,9 @@ const ONLY = process.env.ONLY?.split(",") // e.g. ONLY=pane
 
 await mkdir(OUT, { recursive: true })
 const browser = await chromium.launch()
+// Never leave a headless browser behind: an orphan keeps rendering the 3D scene and chokes the Mac
+// (three orphans at ~250% CPU each made every timing on 2026-10-01 look slow).
+for (const sig of ["SIGINT", "SIGTERM", "SIGHUP"]) process.on(sig, () => browser.close().finally(() => process.exit(130)))
 const index = []
 for (const [vp, viewport] of Object.entries(VIEWPORTS)) {
   if (ONLY && !ONLY.includes(vp)) continue
