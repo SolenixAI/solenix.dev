@@ -3,7 +3,10 @@ import { GithubIcon } from "@/components/brand/github-icon"
 import { HeroSky, lightStyle } from "@/components/site/sky"
 import { Button } from "@/components/ui/button"
 import { Card, CardTitle } from "@/components/ui/card"
-import { Cmd, Tools } from "./tools"
+import { Badge } from "@/components/ui/badge"
+import { ago, count } from "@/lib/format"
+import { getTools, MARKETPLACE_FILE, MARKETPLACE_REPO as REPO, type Tool } from "@/lib/marketplace"
+import { Cmd } from "./tools"
 
 export const metadata: Metadata = {
   title: "Agents Marketplace",
@@ -16,8 +19,49 @@ export const metadata: Metadata = {
   },
 }
 
-const REPO = "https://github.com/SolenixAI/agents-marketplace"
-const MARKETPLACE_FILE = `${REPO}/blob/main/.agents/plugins/marketplace.json`
+/** Stars, last update and licence, read live from the tool's GitHub repo. */
+function Signals({ tool }: { tool: Tool }) {
+  const s = tool.stats
+  if (!s || !tool.repo) return null
+  return (
+    <p className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
+      <a className="text-foreground" href={`https://github.com/${tool.repo}/stargazers`} title={`Stars on ${tool.repo}`}>
+        ★ {count(s.stars)}
+      </a>
+      {s.pushedAt > 0 && <span>Updated {ago(s.pushedAt)}</span>}
+      {s.license && <span>{s.license}</span>}
+      {s.archived && <span>Archived</span>}
+    </p>
+  )
+}
+
+function Tools({ tools }: { tools: Tool[] | null }) {
+  if (!tools || tools.length === 0) {
+    return (
+      <Card className="items-start border-dashed bg-sunken shadow-none">
+        <CardTitle>{tools ? "No tools listed yet" : "We could not load the list"}</CardTitle>
+        <a className="text-sm text-ember-text" href={MARKETPLACE_FILE}>See it on GitHub →</a>
+      </Card>
+    )
+  }
+  return (
+    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      {tools.map((t, i) => (
+        <Card key={t.name + i}>
+          <Badge variant="plain">{t.category}</Badge>
+          <CardTitle>{t.name}</CardTitle>
+          <Signals tool={t} />
+          <p className="text-sm text-muted-foreground">{t.description}</p>
+          <p className="label">Claude Code</p>
+          <Cmd text={`/plugin install ${t.name}@solenix`} />
+          <p className="label">Codex / ChatGPT</p>
+          <Cmd text={`codex plugin add ${t.name}@solenix`} />
+          <a className="mt-auto text-sm text-ember-text" href={t.source}>Source →</a>
+        </Card>
+      ))}
+    </div>
+  )
+}
 
 function Head({ id, title, lede }: { id: string; title: string; lede: React.ReactNode }) {
   return (
@@ -28,7 +72,10 @@ function Head({ id, title, lede }: { id: string; title: string; lede: React.Reac
   )
 }
 
-export default function Agents() {
+export const revalidate = 3600
+
+export default async function Agents() {
+  const tools = await getTools()
   return (
     <>
       <section className="lit pt-(--space-hero) pb-(--space-section)" style={lightStyle({ x: "84%", y: "-10%", size: "26rem", strength: 0.45, orbit: "56rem" })}>
@@ -99,9 +146,9 @@ export default function Agents() {
           <Head
             id="tools-title"
             title="Tools"
-            lede={<>Each tool is its vendor&apos;s own plugin. This list is read live from the <a className="text-ember-text" href={MARKETPLACE_FILE}>marketplace file</a>.</>}
+            lede={<>Each tool is its vendor&apos;s own plugin. This list and each tool&apos;s GitHub stars are read live from the <a className="text-ember-text" href={MARKETPLACE_FILE}>marketplace file</a>.</>}
           />
-          <Tools />
+          <Tools tools={tools} />
         </section>
       </div>
     </>
