@@ -1,24 +1,22 @@
 # solenix.dev
 
-Solenix's website and client portal. Next.js on Vercel · Supabase · Stripe · PostHog · Linear.
+Solenix sets up AI inside the tools a small business already uses. This repo is its website and client portal.
 
-## Sources of truth (one each; everything else derives from them)
+**The goal:** a small-business owner who has barely used AI lands on the homepage, understands in seconds what Solenix does, believes it, and books a call. Judge every change by that.
 
-- Brand rules and Jager's decisions: `design/DESIGN.md`
-- Token values: `design/tokens.css` (the app imports it in `app/globals.css`)
-- Homepage: `design/home.html` (served as-is at `/`)
-- ROI model and every constant behind it, with sources: `design/roi-model.md`
-- What Jager has approved (must stay, word for word): `design/approved.md`
-- Review scores: `design/scorecard.md`. They're a guide; Jager's verdict is final.
-- Research behind design decisions: `design/research/`
-- Portal design: `design/app.html` (the app under `app/(portal)` is built to match it)
-- Supabase config and schema: `supabase/config.toml`, `supabase/migrations/`
-- Client projects: Linear. Billing: Stripe.
+## Before you change a page
 
-## Rules
+- Read Jager's decisions (`design/DESIGN.md`, "Decisions") and the lines he approved word for word (`design/approved.md`). Both are binding.
+- The homepage is `design/home.html`, served as it is at `/`. Its 3D scene is the main experience; the text sits in it and never covers it with panels.
+- Change one named thing at a time, through Open Design. Look at the result yourself at his browser size, then show him before the next change. His verdict on what he sees is the only test of a design.
+- The portal (`app/(portal)`) is built to match `design/app.html`. The site is dark; the portal follows the device.
 
-- One version of everything. No copies, and no version names (`-v2`, `v3`) in files, headings or comments. History lives in git.
-- Design changes go through Open Design runs, one named change per run. Its own harness supplies the skills and checks. Each result is reviewed and shown to Jager before the next (Jager, 2026-10-01).
-- The site is dark. The portal follows the device (light or dark) and has a manual choice.
-- Latest stable versions. No secrets in code or output.
-- `npm run check` enforces these rules, and `npm run check:test` proves each one by breaking it on purpose. The git pre-commit hook and Claude Code's hooks (`.claude/settings.json`) run it. When you find a new failure mode, add a check for it.
+## Run and check
+
+- `npm run dev` serves the site. `npm run shots` captures each section in a real GPU browser.
+- `npm run check` enforces the rules here, and `npm run check:test` proves each rule by breaking it on purpose. Both run before every commit.
+- When you find a new way to fail, add a check for it.
+
+## Stack
+
+Next.js on Vercel, Supabase (`supabase/`), Stripe for billing, PostHog, Linear for the plan. Keep one version of everything; history lives in git.
