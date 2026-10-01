@@ -10,6 +10,7 @@ Solenix's website and client portal. Next.js on Vercel · Supabase · Stripe · 
 - Before/after examples (real tasks, real connectors, sourced times): `design/before-after.md`
 - ROI model and every constant behind it, with sources: `design/roi-model.md`
 - Homepage quality, scored 0–100 per section after every change: `design/scorecard.md`
+- Research behind design decisions (sourced, skeptic-checked): `design/research/` (`site-playbook.md` for homepage decisions and the six examples, `demos.md` for demo techniques)
 - Portal design: `design/app.html` (the app under `app/(portal)` is built to match it)
 - Supabase config and schema: `supabase/config.toml`, `supabase/migrations/`
 - Client projects: Linear. Billing: Stripe.
@@ -20,7 +21,7 @@ Solenix's website and client portal. Next.js on Vercel · Supabase · Stripe · 
 - Change a design in Open Design first, then the app. Don't hand-edit `design/*.html`.
 - The site is dark. The portal follows the device (light or dark) and has a manual choice.
 - Latest stable versions. No secrets in code or output.
-- `npm run check` enforces these rules. The git pre-commit hook and Claude Code's hooks (`.claude/settings.json`) run it. When you find a new failure mode, add a check for it.
+- `npm run check` enforces these rules, and `npm run check:test` proves each one by breaking it on purpose. The git pre-commit hook and Claude Code's hooks (`.claude/settings.json`) run it. When you find a new failure mode, add a check for it.
 
 ## Open Design
 
