@@ -32,7 +32,7 @@ The system behind solenix.dev. Solenix is one tech expert for small businesses i
 - **Navigation:** nav links go to real pages, never jump-scrolling around one page.
 - **Tools are shown as their real logos** (official marks, unaltered, "the tools you already use", no implied partnership, small trademark note), not generic words.
 - **Pricing:** no prices anywhere public. "Two numbers. Both in writing." Value-based per initiative: what it's worth to the client + three options, highest first; monthly care plan per client.
-- **ROI:** only sourced numbers from design/roi-model.md; per initiative Before → Now → $ → payback.
+- **ROI:** no on-page calculator or "Your numbers, not ours" section on the website. Numbers only from design/roi-model.md, shown per initiative in the portal (Before → Now → $ → payback) and worked out with the owner on the call.
 - **Book a call** is a real booking page (Google Calendar appointment schedule), never a mailto link.
 - **Portal words:** *Initiatives* are Solenix's consulting projects with the client (Linear projects), never "your initiatives". *Billing* is Solenix billing the client — never imply we manage their bills. Tabs: Overview · Initiatives · Billing. Solenix is the first client (dogfood).
 - **Sign-in:** passkey, Google, email link (opens a Continue page). Invite-only. No Apple.
