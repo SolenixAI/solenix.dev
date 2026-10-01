@@ -34,6 +34,16 @@ for (const [vp, viewport] of Object.entries(VIEWPORTS)) {
         await page.screenshot({ path: path.join(OUT, file) })
         index.push({ file, viewport: vp, motion, scene: s.scene, id: s.id, step: k + 1, of: steps })
       }
+      // A scene that plays to an end (a race) also gets its finished frame: the payoff is what's judged.
+      const hasEnd = await page.evaluate((id) => !!document.querySelector(`#${id} [data-state]`), s.id)
+      if (hasEnd) {
+        await page.evaluate((y) => scrollTo(0, y), s.top)
+        const done = await page.waitForFunction((id) => document.querySelector(`#${id} [data-state]`)?.dataset.state === "done", s.id, { timeout: 45000 }).then(() => true, () => false)
+        await page.waitForTimeout(800)
+        const file = `${vp}-${motion === "reduce" ? "reduced" : "motion"}-${s.id}-done.png`
+        await page.screenshot({ path: path.join(OUT, file) })
+        index.push({ file, viewport: vp, motion, scene: s.scene, id: s.id, step: "done", reachedDone: done })
+      }
     }
     await page.close()
   }
