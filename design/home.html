@@ -1033,7 +1033,7 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
   ];
   const KEYS = [
     /* 1 · Chaos */
-    { sel: '.sky', f: 0, pin: 1, k: 0, free: 0, order: 0, ink: 0, third: 0, el: HERO.el, az: 0, dist: HERO.dist, ox: 0.1, oy: 0.05, poy: 0.2, calm: 0, dim: 0, labels: 0, conn: 0, agent: 0, stops: 0, tx: 0, tz: 0, fly: 0, wsel: 0, hero: 1, lens: HERO.lens, rf: 0, rs: 0, sp: 1, rw: 0, shl: 0 },
+    { sel: '.sky', f: 0, pin: 1, k: 0, free: 0, order: 0, ink: 0, third: 0, el: HERO.el, az: 0, dist: HERO.dist, ox: 0.1, oy: 0.05, poy: 0.13, calm: 0, dim: 0, labels: 0, conn: 0, agent: 0, stops: 0, tx: 0, tz: 0, fly: 0, wsel: 0, hero: 1, lens: HERO.lens, rf: 0, rs: 0, sp: 1, rw: 0, shl: 0 },
     { sel: '.sky', f: 0.55, pin: 1, labels: 1, el: 15, az: -12, dist: 7.2, ox: 0.12, oy: 0.05 },
     { sel: '.sky', f: 1, pin: 1, labels: 0, el: 18, az: -24, dist: 7.8 },
     /* From here to the plan nothing is steered. The three bodies stay wild and range across the world:
@@ -1043,7 +1043,7 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
     { sel: '#guide', f: 0.9, pin: 1, el: 36, az: 34, dist: 11.5, rf: -0.4, rs: 2.2, sp: 1.5 },
     /* 3 · The flybys: six tool worlds, each its own place and its own view. The bodies come too, still wild. */
     ...FLY.flatMap((w, i) => [
-      { sel: '#fly-' + w.id, f: 0.15, pin: 1, wsel: i, tx: w.tx, tz: w.tz, az: 70 + i * 60, conn: 0, k: 0, free: 0, fly: 1, dim: 1, shl: 0, el: w.el, dist: w.dist, ox: 0, oy: -0.1, poy: 0.4, rf: w.a[0], rs: w.a[1], sp: w.sp, rw: w.rw },
+      { sel: '#fly-' + w.id, f: 0.15, pin: 1, wsel: i, tx: w.tx, tz: w.tz, az: 70 + i * 60, conn: 0, k: 0, free: 0, fly: 1, dim: 1, shl: 0, el: w.el, dist: w.dist, ox: 0, oy: -0.1, poy: -0.08, rf: w.a[0], rs: w.a[1], sp: w.sp, rw: w.rw },
       { sel: '#fly-' + w.id, f: 0.8, pin: 1, az: 80 + i * 60, rf: w.b[0], rs: w.b[1] } ]),
     /* 4 · The plan: back to the centre. Only here are they steered, and only here does the orbit form. */
     { sel: '#after', f: 0, pin: 1, fly: 0, tx: 0, tz: 0, k: 0.45, free: 0.4, dim: 0, stops: 1, el: 60, az: 394, dist: 9.6, ox: 0.21, oy: 0.02, poy: 0.02, calm: 0.35, rf: 0, rs: 0, sp: 1, rw: 0, shl: 0.85 },
@@ -1053,7 +1053,7 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
     { sel: '#promises', f: 0.1, pin: 1, stops: 0, shl: 0, el: 17, az: 438, dist: 8.8, lens: 8, ox: 0.24, oy: 0.03, poy: -0.04 },
     { sel: '#promises', f: 1, pin: 1, el: 14, az: 510 },
     /* 5 · Stable orbit: steering lets go and it holds. Seen whole, from high above. */
-    { sel: '#close', f: 0.35, k: 0, agent: 1, lens: 0, el: 56, az: 532, dist: 12.5, ox: 0.24, oy: 0.08, poy: 0.3 },
+    { sel: '#close', f: 0.35, k: 0, agent: 1, lens: 0, el: 56, az: 532, dist: 12.5, ox: 0.24, oy: 0.08, poy: 0.24 },
     { sel: '#close', f: 1, el: 60, az: 540, dist: 13.5 }
   ];
   const PARAMS = Object.keys(KEYS[0]).filter(k => !['sel', 'f', 'pin', 'gap'].includes(k));
@@ -1557,15 +1557,20 @@ const finalPass = new ShaderPass({ uniforms: { tDiffuse: { value: null }, uTime:
 composer.addPass(finalPass);
 
 /* ── Layout ── */
-let W = 1, H = 1, portrait = false;
+/* A tall window keeps the wide window's lens and distance, so the bodies stay as large and as close. What changes
+   is sideways: the roam is squeezed to the share of the width it has (fitX), the view is centred, and the camera
+   backs off only as far as the subject needs to fit across (fit). The narrowest windows get a wider lens (lensK), so they stay close too. */
+let W = 1, H = 1, portrait = false, fitX = 1, lensK = 1, heroK = 0.9;
+const fit = (d, need, fovS) => portrait ? Math.max(d, need / (Math.tan(D2R(fovS / 2)) * camera.aspect)) : d;
 function resize() {
   W = stage.clientWidth; H = stage.clientHeight; portrait = W / H < 0.85;
+  const tall = portrait ? Math.max(0, Math.min(1, (0.8 - W / H) / 0.34)) : 0; fitX = portrait ? Math.min(1, W / H / 1.6) : 1; lensK = 1 - 0.4 * tall; heroK = 0.9 - 0.3 * tall;
   renderer.setPixelRatio(dpr); renderer.setSize(W, H, false);
   composer.setPixelRatio(dpr); composer.setSize(W, H);
   bloom.resolution.set(W / 2, H / 2);
   finalPass.uniforms.uRes.value.set(W * dpr, H * dpr);
   dustU.uPx.value = dpr * (portrait ? 1.2 : 1.35);
-  camera.aspect = W / H; fov0 = camera.fov = portrait ? 50 : (W / H > 2 ? 30 : 34); camera.updateProjectionMatrix(); aspU.value = W / H;
+  camera.aspect = W / H; fov0 = camera.fov = portrait ? 34 + 10 * tall : (W / H > 2 ? 30 : 34); camera.updateProjectionMatrix(); aspU.value = W / H;
   tagW = tags.map(e => e.offsetWidth || 90);
 }
 
@@ -1601,12 +1606,13 @@ function frame(dtReal, still) {
   if ((S.pingN | 0) !== pingSeen) { pingSeen = S.pingN | 0; pingT = clockT; }
   /* Where the bodies roam: a place set by the section, ahead of or beside where the camera looks. Each body
      heads there at its own pace and wanders round it, so between sections they string out across the plane. */
-  { const azr = D2R(shown.az), bx = shown.tx - Math.sin(azr) * sc.rf + Math.cos(azr) * sc.rs, bz = shown.tz - Math.cos(azr) * sc.rf - Math.sin(azr) * sc.rs;
+  { const azr = D2R(shown.az), rs = sc.rs * fitX, bx = shown.tx - Math.sin(azr) * sc.rf + Math.cos(azr) * rs, bz = shown.tz - Math.cos(azr) * sc.rf - Math.sin(azr) * rs;
     let r = 0;
     for (let i = 0; i < 3; i++) { const g = still ? 1 : 1 - Math.exp(-dtReal * ROAM_RATE[i] * (R ? 0.5 : 1));
-      const wx = bx + sc.rw * Math.sin(clockT * (0.23 + i * 0.05) + i * 2.1), wz = bz + sc.rw * Math.cos(clockT * (0.19 + i * 0.04) + i * 1.3);
+      let wx = bx + sc.rw * Math.sin(clockT * (0.23 + i * 0.05) + i * 2.1), wz = bz + sc.rw * Math.cos(clockT * (0.19 + i * 0.04) + i * 1.3);
+      if (fitX < 1) { const side = ((wx - bx) * Math.cos(azr) - (wz - bz) * Math.sin(azr)) * (1 - fitX); wx -= side * Math.cos(azr); wz += side * Math.sin(azr); }
       roam.o[i * 2] += (wx - roam.o[i * 2]) * g; roam.o[i * 2 + 1] += (wz - roam.o[i * 2 + 1]) * g; r = Math.max(r, Math.abs(roam.o[i * 2]), Math.abs(roam.o[i * 2 + 1])); }
-    roam.sp += (sc.sp - roam.sp) * (still ? 1 : 1 - Math.exp(-dtReal * 1.4)); roam.r = r + Math.abs(roam.sp - 1);
+    roam.sp += ((fitX < 1 ? 1 + (sc.sp - 1) * fitX : sc.sp) - roam.sp) * (still ? 1 : 1 - Math.exp(-dtReal * 1.4)); roam.r = r + Math.abs(roam.sp - 1);
     roam.mx = (roam.o[0] + roam.o[2] + roam.o[4]) / 3; roam.mz = (roam.o[1] + roam.o[3] + roam.o[5]) / 3; }
   updateDisplay();
   /* The moment it locks: the camera eases in, the light swells once, then both let go. Full motion only. */
@@ -1616,7 +1622,7 @@ function frame(dtReal, still) {
   /* Scrolling between sections is a move through the world: the lens widens a touch and the camera banks into the turn. */
   warp = R || still ? 0 : lerp(warp, Math.min(1, scrollVel / 3.5), 1 - Math.exp(-dtReal * 6));
   const heroAmt = R ? heroR : sc.hero;
-  const fov = fov0 + 5 * warp - 1.5 * easeIn + (R ? S.hero.lens * heroR : sc.lens) * (portrait ? 0.35 : 1);
+  const fovS = fov0 + (R ? S.hero.lens * heroR : sc.lens) * lensK, fov = fovS + 5 * warp - 1.5 * easeIn;
   if (Math.abs(fov - camera.fov) > 0.01) { camera.fov = fov; camera.updateProjectionMatrix(); }
   finalPass.uniforms.uCA.value = 0.008 + 0.02 * warp + 0.012 * swell;
   finalPass.uniforms.uShade.value = heroAmt; finalPass.uniforms.uShadeL.value = sc.shl; finalPass.uniforms.uShadeB.value = R ? (stn > 0 ? 1 : 0) : sc.fly; finalPass.uniforms.uPort.value = portrait ? 1 : 0;
@@ -1624,8 +1630,8 @@ function frame(dtReal, still) {
 
   /* One continuous camera move, eased so a fast flick still glides. */
   /* Reduced motion: one fixed, calm viewpoint. No flying, zooming or spinning; the framing only drifts slowly sideways. */
-  const calmDist = portrait ? Math.max(14 * 1.3, 3.1 / (Math.tan(D2R(fov0 / 2)) * camera.aspect)) : 14;
-  const rv = RVIEW[secR], dist0 = R ? (stn > 0 ? Math.min(calmDist, S.fly[stn - 1].dist * (portrait ? 1.3 : 1.05)) : heroR ? S.hero.dist * (portrait ? 1.3 : 1) : rv ? rv[1] * (portrait ? 1.3 : 1) : calmDist) : portrait ? Math.max(sc.dist * 1.3, 3.1 * (1 - 0.45 * sc.fly) * lerp(1, 0.5, sc.hero) / (Math.tan(D2R(fov0 / 2)) * camera.aspect)) : sc.dist;
+  const calmDist = fit(14, 3.1, fovS);
+  const rv = RVIEW[secR], dist0 = R ? (stn > 0 ? Math.min(calmDist, fit(S.fly[stn - 1].dist * 1.05, 1.7, fovS)) : heroR ? fit(S.hero.dist, 3.1 * heroK, fovS) : rv ? fit(rv[1], 3.1, fovS) : calmDist) : fit(sc.dist, 3.1 * (1 - 0.45 * sc.fly) * lerp(1, heroK, sc.hero), fovS);
   shown.el = R ? (stn > 0 ? S.fly[stn - 1].el : heroR ? S.hero.el + 2 : rv ? rv[0] : 58) : lerp(shown.el, sc.el, a); shown.az = R ? (stn > 0 ? WAZ(stn - 1) + 30 : 0) : lerp(shown.az, sc.az, a); shown.dist = R ? dist0 : lerp(shown.dist, dist0, a);
   /* Reduced motion: no flight between worlds. The camera holds one station per scene and cuts to the next under a dip. */
   if (R) { const want = sc.fly > 0.5 ? 1 + Math.max(0, Math.min(WN - 1, Math.round(sc.wsel))) : 0;
@@ -1633,7 +1639,7 @@ function frame(dtReal, still) {
     if ((want !== stn || wantH !== heroR || wantS !== secR) && !stnBusy) { stnBusy = true; canvas.classList.add('dip'); setTimeout(() => { stn = want; heroR = wantH; secR = wantS; canvas.classList.remove('dip'); stnBusy = false; }, 210); }
     shown.tx = stn > 0 ? WPOS[stn - 1].x : 0; shown.tz = stn > 0 ? WPOS[stn - 1].z : 0;
   } else { stn = -1; shown.tx = lerp(shown.tx, sc.tx, a); shown.tz = lerp(shown.tz, sc.tz, a); }
-  shown.ox = lerp(shown.ox, portrait ? 0.3 * sc.fly : sc.ox, a); shown.oy = lerp(shown.oy, portrait ? sc.poy : sc.oy, a);
+  shown.ox = lerp(shown.ox, portrait ? 0 : sc.ox, a); shown.oy = lerp(shown.oy, portrait ? sc.poy : sc.oy, a);
   if (!R) { mouse.x += (mouse.tx - mouse.x) * 0.04; mouse.y += (mouse.ty - mouse.y) * 0.04; } else { mouse.x = mouse.y = 0; }
   const el = D2R(shown.el + mouse.y * 3 * (1 - sc.calm * 0.5));
   const az = D2R(shown.az) + (R ? 0 : Math.sin(clockT * 0.045) * 0.1 * (1 - sc.calm)) + mouse.x * 0.05;
