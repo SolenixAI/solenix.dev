@@ -36,6 +36,7 @@ The system behind solenix.dev. Solenix is one tech expert for small businesses i
 - **ROI:** no on-page calculator or "Your numbers, not ours" section on the website. Numbers only from design/roi-model.md, shown per initiative in the portal (Before → Now → $ → payback) and worked out with the owner on the call.
 - **Book a call** is a real booking page (Google Calendar appointment schedule), never a mailto link.
 - **Portal words:** *Initiatives* are Solenix's consulting projects with the client (Linear projects), never "your initiatives". *Billing* is Solenix billing the client — never imply we manage their bills. Tabs: Overview · Initiatives · Billing. Solenix is the first client (dogfood).
+- **Agents page (/agents):** for any AI agent, not one vendor. Every tool has one "Copy for any AI" button — a short plain-language prompt with its link and install command that any agent can follow (e.g. `npx skills add <repo>` for skills); client-specific commands sit behind it. Open-source tools show live usefulness signals from GitHub and package registries — stars, last updated, official/first-party, weekly downloads where they exist — never hand-typed numbers. Same dark 3D world as the homepage.
 - **Sign-in:** passkey, Google, email link (opens a Continue page). Invite-only. No Apple.
 
 ## Color Palette
