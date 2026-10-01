@@ -101,6 +101,11 @@ for m in missing: print(f"check: approved by Jager but missing from the homepage
 sys.exit(1 if missing else 0)
 PY
 
+# Open Design's own anti-slop linter: no P0 findings on the homepage.
+if command -v od >/dev/null && curl -s -m 2 http://127.0.0.1:55666 >/dev/null; then
+  OD_DAEMON_URL=http://127.0.0.1:55666 od lint design/home.html --fail-on p0 >/dev/null 2>&1 || bad "od lint: P0 design finding in design/home.html (run: od lint design/home.html)"
+fi
+
 # Every source of truth named in AGENTS.md exists.
 for f in design/DESIGN.md design/tokens.css design/home.html design/app.html design/roi-model.md design/before-after.md supabase/config.toml; do
   [ -f "$f" ] || bad "missing source of truth: $f"
