@@ -87,3 +87,12 @@ Ten judges, one per scene, scored screenshots. A skeptic then tried to refute ev
 | **Page** | **53** | **37** | **49** | **36** | **50** | **53** |
 
 Cause: the races are still flat interface over the world; scenes don't read in one look; nothing leads to Book a call.
+
+### Independent review: races as bodies (2026-10-01)
+
+| | 3D world | Clarity | Wow | Pull | Read | Brevity |
+| --- | --- | --- | --- | --- | --- | --- |
+| Previous review | 53 | 37 | 49 | 36 | 50 | 53 |
+| **This review** | **66** | **38** | **49** | **36** | **57** | **78** |
+
+Form improves with each pass. Clarity and pull don't move: a stranger still can't tell in one glance what Solenix does, and nothing makes them want it. That's the message, not the drawing.

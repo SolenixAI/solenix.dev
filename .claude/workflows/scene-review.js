@@ -39,8 +39,9 @@ const JUDGED = {
       what: { type: 'string' }, evidence_file: { type: 'string' }, severity: { type: 'string', enum: ['blocker', 'major', 'minor'] }, fix_intent: { type: 'string' } },
       required: ['what', 'evidence_file', 'severity', 'fix_intent'] } },
     best_thing: { type: 'string' },
+    biggest_lift: { type: 'string' },
   },
-  required: ['scene', 'scores', 'failures', 'best_thing'],
+  required: ['scene', 'scores', 'failures', 'best_thing', 'biggest_lift'],
 }
 
 const REFUTED = {
@@ -52,7 +53,7 @@ const REFUTED = {
 
 const reviewed = await pipeline(
   SCENES,
-  (s) => agent(`${BAR}\n\nScene: "${s.id}" (${s.label}). Open EVERY one of these screenshots with the Read tool. "motion" means Reduce Motion is off and "reduced" means it is on; each is one screen-height step through the scene after about 2 seconds of play:\n${s.files.map((f) => `${SHOTS}/${f}`).join('\n')}\n\nScore each dimension 0–100 against the bar (85 means good enough to show the founder; 95 means unbelievable). List every failure you can SEE, citing the exact screenshot file, its severity (blocker: the founder would reject the page for it; major: clearly mediocre; minor: polish), and the fix as intent rather than a feature list. Be harsh but only claim what is visible.`, { label: `judge:${s.id}`, phase: 'Judge', schema: JUDGED }),
+  (s) => agent(`${BAR}\n\nScene: "${s.id}" (${s.label}). Open EVERY one of these screenshots with the Read tool. "motion" means Reduce Motion is off and "reduced" means it is on; each is one screen-height step through the scene after about 2 seconds of play:\n${s.files.map((f) => `${SHOTS}/${f}`).join('\n')}\n\nScore each dimension 0–100 against the bar (85 means good enough to show the founder; 95 means unbelievable). List every failure you can SEE, citing the exact screenshot file, its severity (blocker: the founder would reject the page for it; major: clearly mediocre; minor: polish), and the fix as intent rather than a feature list. Then name biggest_lift: the ONE change that would raise this scene's lowest score the most, concrete enough to act on (what the owner should see, not CSS). Be harsh but only claim what is visible.`, { label: `judge:${s.id}`, phase: 'Judge', schema: JUDGED }),
   (j, s) => {
     if (!j) return null
     const serious = j.failures.filter((f) => f.severity !== 'minor')
@@ -70,6 +71,6 @@ const majors = ok.flatMap((r) => r.confirmed.filter((f) => f.severity === 'major
 log(`page: ${JSON.stringify(page)}; confirmed blockers ${blockers.length}, majors ${majors.length}`)
 
 phase('Decide')
-const decision = await agent(`You decide whether the solenix.dev homepage is ready to show its founder, from a verified scene review.\n\nRule: ready only if there are 0 confirmed blockers, at most 2 confirmed majors, and every page dimension averages 85 or more. Otherwise write the next Open Design brief.\n\nThe brief style is strict. Open Design works best with a short verdict plus intent: under 180 words, no feature lists, and no CSS or code. Group the confirmed failures by the underlying cause (e.g. "the races are still panels"), not one line per failure. Lead with the founder's standard and end with "Before you finish, check every scene at 872×837 with motion on and off."\n\nPage averages: ${JSON.stringify(page)}\nConfirmed blockers: ${JSON.stringify(blockers)}\nConfirmed majors: ${JSON.stringify(majors)}\nBest things per scene (keep these): ${JSON.stringify(ok.map((r) => ({ scene: r.scene, best: r.best_thing })))}\n\nReturn JSON: {ready: boolean, reason: string, brief: string (empty if ready)}.`, { label: 'decide', phase: 'Decide', schema: { type: 'object', properties: { ready: { type: 'boolean' }, reason: { type: 'string' }, brief: { type: 'string' } }, required: ['ready', 'reason', 'brief'] } })
+const decision = await agent(`You decide whether the solenix.dev homepage is ready to show its founder, from a verified scene review.\n\nRule: ready only if there are 0 confirmed blockers, at most 2 confirmed majors, and every page dimension averages 85 or more. Otherwise write the next Open Design brief.\n\nThe brief style is strict. Open Design works best with a short verdict plus intent: under 180 words, no feature lists, and no CSS or code. Group the confirmed failures by the underlying cause (e.g. "the races are still panels"), not one line per failure. Lead with the founder's standard and end with "Before you finish, check every scene at 872×837 with motion on and off."\n\nPage averages: ${JSON.stringify(page)}\nConfirmed blockers: ${JSON.stringify(blockers)}\nConfirmed majors: ${JSON.stringify(majors)}\nBest things per scene (keep these): ${JSON.stringify(ok.map((r) => ({ scene: r.scene, best: r.best_thing })))}\nBiggest lift per scene (build the brief from these, grouped by cause, when failures are few): ${JSON.stringify(ok.map((r) => ({ scene: r.scene, lowest: Object.entries(r.scores).sort((a, b) => a[1] - b[1])[0], lift: r.biggest_lift })))}\n\nReturn JSON: {ready: boolean, reason: string, brief: string (empty if ready)}.`, { label: 'decide', phase: 'Decide', schema: { type: 'object', properties: { ready: { type: 'boolean' }, reason: { type: 'string' }, brief: { type: 'string' } }, required: ['ready', 'reason', 'brief'] } })
 
-return { page, decision, scenes: ok.map((r) => ({ scene: r.scene, scores: r.scores, confirmed: r.confirmed, refuted: (r.refuted || []).length, minor: r.minor.length, best: r.best_thing })) }
+return { page, decision, scenes: ok.map((r) => ({ scene: r.scene, scores: r.scores, confirmed: r.confirmed, refuted: (r.refuted || []).length, minor: r.minor.length, best: r.best_thing, lift: r.biggest_lift })) }
