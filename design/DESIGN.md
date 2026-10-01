@@ -25,7 +25,7 @@ The system behind solenix.dev. Solenix is one tech expert for small businesses i
 
 ## Decisions (Jager's, binding on every page; his latest word wins)
 
-- Homepage base: Open Design version 20, his pick. Everything after it made it worse. Changes go through Open Design, one named change per run, and he judges each before the next.
+- Homepage base: Open Design version 19, which he restored on 2026-10-01 as the best so far (git tag `approved-baseline`). Never fall below it. Changes go through Open Design, one named change per run, and he judges each before the next.
 - The hero opens with "Your business is a three-body problem", and a small-business owner must understand in seconds what Solenix does and want to call.
 - No examples, races, live runs or disclaimers ("one second here is one minute", "can't" lines).
 - Keep "From one call to a stable orbit": five stops, slow enough to read, visuals over text, steps never overlapping.
