@@ -20,9 +20,11 @@ for (const [vp, viewport] of Object.entries(VIEWPORTS)) {
   if (ONLY && !ONLY.includes(vp)) continue
   for (const motion of ["no-preference", "reduce"]) {
     const page = await browser.newPage({ viewport, deviceScaleFactor: 1, reducedMotion: motion })
-    await page.goto(URL, { waitUntil: "networkidle" })
-    const scenes = await page.$$eval("[data-scene]", (els) =>
+    await page.goto(URL, { waitUntil: "networkidle", timeout: 60000 }).catch(() => page.waitForTimeout(3000))
+    let scenes = await page.$$eval("[data-scene]", (els) =>
       els.map((e) => ({ id: e.id, scene: e.dataset.scene, top: e.getBoundingClientRect().top + scrollY, height: e.offsetHeight })))
+    // Any other site (e.g. a reference page to calibrate the review): its first three screens as one "page" scene.
+    if (!scenes.length) scenes = [{ id: process.env.NAME ?? "page", scene: "page", top: 0, height: viewport.height * 3 }]
     for (const s of scenes) {
       const steps = Math.max(1, Math.round(s.height / viewport.height))
       for (let k = 0; k < steps; k++) {
