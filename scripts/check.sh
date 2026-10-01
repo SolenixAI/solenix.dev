@@ -40,9 +40,9 @@ grep -rn ">Tools we use<" app components design/*.html 2>/dev/null | while read 
 # Copy follows the Voice rules: no banned words (the list lives in design/DESIGN.md).
 python3 scripts/voice-check.py design/home.html design/app.html || fail=1
 
-# The homepage happens inside the 3D world: the race lanes are bare type, never a filled or blurred panel.
-grep -n -E '^\.lane \{[^}]*(background|backdrop-filter)' design/home.html \
-  | while read -r l; do echo "check: race lane is a panel over the world (no background or blur on .lane): ${l:0:60}"; done | grep . && fail=1
+# The homepage happens inside the 3D world: a race is bodies and one tape, never lanes or screens of interface laid over it.
+grep -n -E 'class="(lane|scr|rchat)[" ]' design/home.html \
+  | while read -r l; do echo "check: race interface laid over the world (no .lane or .scr; play the race as bodies in the scene): ${l:0:60}"; done | grep . && fail=1
 # Reduced motion quiets the camera only: the races must still play.
 awk '/The flyby races\./,/<\/script>/' design/home.html | grep -n -E 'prefers-reduced-motion|reduce\.matches' \
   | while read -r l; do echo "check: the races must play under reduced motion (no reduced-motion branch in the race script): ${l:0:60}"; done | grep . && fail=1

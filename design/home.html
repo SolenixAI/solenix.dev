@@ -557,99 +557,49 @@ html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%
 .qa p { padding-bottom: var(--space-4); font-size: var(--fs-lede); max-width: 28rem; }
 .world .veil { display: none; }
 .tm-note { font-size: var(--fs-xs); color: var(--faint); flex-basis: 100%; }
-/* ── The flybys: the same job run twice, in time-lapse, inside each tool's world. The time gap is drawn in the
-   world as two light trails on one minutes axis. Below it, bare type either side: by hand clicks through the
-   tool, the ask is typed and ends on the owner's real output with one Approve click. No panels. ── */
-.eyebrow.toolname::before { display: none; }
-.eyebrow.toolname .lg { width: 20px; height: 20px; color: var(--text); }
+/* ── The flybys: the same job run twice, in time-lapse, as bodies inside each tool's world. The page adds one
+   headline and one action; the only thing to read is the tape, two light trails on one minutes axis. ── */
 .race { position: relative; height: 260vh; height: 260svh; }
 .race-pin { position: sticky; top: 0; height: 100vh; height: 100svh; }
-.race-in { height: 100%; max-width: 78rem; display: grid; grid-template-rows: auto minmax(0, 1fr) auto auto; gap: var(--space-4); padding-top: calc(var(--nav-height) + clamp(.75rem, 3vh, 2rem)); padding-bottom: clamp(.75rem, 2vh, 1.5rem); }
-.race-head { display: grid; gap: var(--space-3); justify-items: start; max-width: 40rem; text-shadow: 0 0 26px var(--bg), 0 0 10px var(--bg), 0 1px 2px var(--bg); }
-.race-head .h2 { font-size: clamp(1.5rem, 1rem + 2.2vw, 2.75rem); }
+.race-in { height: 100%; max-width: 78rem; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; padding-top: calc(var(--nav-height) + clamp(.75rem, 3vh, 2rem)); padding-bottom: clamp(.75rem, 2.5vh, 1.75rem); }
+/* One headline. Everything else in the scene is a body in the world, or the tape. */
+.race-head { max-width: 30rem; text-shadow: 0 0 26px var(--bg), 0 0 10px var(--bg), 0 1px 2px var(--bg); }
+.race-head .h2 { font-size: clamp(1.7rem, 1.1rem + 2.4vw, 3rem); }
 .sr-race { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-.lanes { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(1.5rem, 6vw, 6rem); height: clamp(13rem, 32vh, 17rem); }
-.lane { min-height: 0; min-width: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: var(--space-3); text-shadow: 0 0 16px var(--bg), 0 0 7px var(--bg), 0 1px 2px var(--bg); }
-.lane > header { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); padding-bottom: var(--space-2); border-bottom: 1px solid var(--line-strong); transition: border-color var(--dur-slow); }
-.lane.ask.done > header { border-color: var(--ok); }
-.lane-t { font: var(--fw-semibold) var(--fs-xs)/1 var(--font-mono); letter-spacing: var(--track-eyebrow); text-transform: uppercase; color: var(--muted); }
-.lane.ask .lane-t { color: var(--accent-text); }
-.lane .ex { padding: 3px 8px; border-radius: var(--radius-pill); border: 1px dashed var(--line-strong); font: var(--fw-medium) var(--fs-2xs)/1.2 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--muted); }
-.scr { position: relative; min-height: 0; overflow: hidden; display: grid; align-content: start; gap: var(--space-2); }
-.scr-bar { display: flex; align-items: center; gap: var(--space-2); min-width: 0; font: var(--fw-medium) var(--fs-2xs)/1.2 var(--font-mono); color: var(--muted); }
-.scr-bar .lg { width: 16px; height: 16px; color: var(--text); }
-.scr-bar .crumb { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.scr-nav { list-style: none; margin: 0; padding: 0; display: flex; gap: var(--space-4); font-size: var(--fs-sm); color: var(--muted); }
-.scr-nav li { padding: 2px 0 4px; border-bottom: 2px solid transparent; }
-.scr-nav li.on { color: var(--text); border-bottom-color: var(--accent); }
-.scr-view { min-width: 0; display: grid; align-content: start; font-size: var(--fs-sm); transition: opacity 160ms; }
-.scr-view.load { opacity: .2; }
-.scr-chip { justify-self: start; margin: 0 0 2px; padding: 2px 10px; border-radius: var(--radius-pill); border: 1px solid var(--line-strong); font: var(--fw-medium) var(--fs-2xs)/1.2 var(--font-mono); color: var(--text); }
-.scr-row { display: flex; justify-content: space-between; gap: var(--space-3); padding: 4px 0; border-top: 1px solid var(--line); color: var(--text); font-variant-numeric: tabular-nums; transition: color var(--dur-fast); }
-.scr-row span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.scr-row span:last-child { flex: none; color: var(--muted); }
-.scr-row.hd { display: none; }
-.scr-row.on, .scr-row.on span:last-child { color: var(--accent-text); }
-.scr-cur { position: absolute; left: 0; top: 0; width: 12px; height: 12px; margin: -6px; border-radius: 50%; background: var(--text); box-shadow: 0 0 0 5px color-mix(in oklch, var(--text) 22%, transparent), 0 0 18px var(--ring); opacity: 0; pointer-events: none; transition: transform 420ms var(--ease-in-out), opacity 180ms; }
-.lane.go .scr-cur.show { opacity: 1; }
-.lane-s { margin: 0; min-height: 1.45em; display: flex; align-items: baseline; gap: var(--space-2); font-size: var(--fs-sm); line-height: 1.45; color: var(--muted); }
-.lane-s b { flex: none; font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--text); }
-.lane.ask.done .lane-s b { color: var(--ok); }
-/* The one honest limit, shown once the ask is done. */
-.lane-s.cant { opacity: 0; transition: opacity var(--dur-slow); }
-.lane.done .lane-s.cant { opacity: 1; }
-.rchat { gap: var(--space-3); }
-.rmsg { margin: 0; font-size: var(--fs-sm); line-height: 1.45; }
-.rmsg.me { font: var(--fw-semibold) var(--fs-h4)/1.35 var(--font-display); color: var(--text); text-wrap: pretty; }
-.rmsg.me:has(span:empty) { visibility: hidden; }
-.rmsg.me span::before { content: "\201C"; } .lane.sent .rmsg.me span::after { content: "\201D"; }
-.lane.go:not(.sent) .rmsg.me::after { content: ""; display: inline-block; width: 2px; height: 1em; margin-left: 2px; vertical-align: -2px; background: var(--accent-text); }
-.rmsg.st { font: var(--fw-medium) var(--fs-xs)/1.3 var(--font-mono); color: var(--accent-text); }
-.rmsg.st[hidden], .out[hidden] { display: none; }
-/* The output: the real thing the owner gets, waiting for one click. */
-.out { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 2px var(--space-4); padding-top: var(--space-3); border-top: 1px solid var(--line-strong); }
-.out-t { margin: 0; font: var(--fw-bold) var(--fs-h3)/1.2 var(--font-display); letter-spacing: var(--track-heading); color: var(--text); }
-.out-s { margin: 0; grid-column: 1; font-size: var(--fs-sm); color: var(--muted); }
-.approve { grid-column: 2; grid-row: 1 / span 2; display: inline-grid; place-items: center; min-height: var(--tap-min); padding: 0 var(--space-5); border-radius: var(--radius-pill); border: 1px solid var(--line-strong); font: var(--fw-semibold) var(--fs-sm)/1 var(--font-text); color: var(--text); text-shadow: none; transition: border-color var(--dur-base), color var(--dur-base), box-shadow var(--dur-base), scale 140ms; }
-.approve > * { grid-area: 1 / 1; font-style: normal; font-weight: inherit; }
-.approve i { visibility: hidden; }
-.approve.press { scale: .94; }
-.lane.done .approve { border-color: var(--ok); color: var(--ok); box-shadow: 0 0 24px color-mix(in srgb, var(--ok) 28%, transparent); }
-.lane.done .approve b { visibility: hidden; } .lane.done .approve i { visibility: visible; }
-.race-foot { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); min-height: var(--tap-min); }
-.race-note { margin: 0; font-size: var(--fs-xs); line-height: 1.5; color: var(--muted); text-shadow: 0 0 12px var(--bg), 0 1px 2px var(--bg); }
-.race-note a { color: var(--text); text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 3px; }
+/* One action: it arrives the moment the ask is done, while the by-hand side is still going. */
+.race-foot { grid-row: 3; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--space-4); min-height: 3.25rem; }
+.race-cta { opacity: 0; visibility: hidden; translate: 0 8px; transition: opacity var(--dur-slow), translate var(--dur-slow) var(--ease-out), visibility 0s linear var(--dur-slow); }
+.race.is-won .race-cta { opacity: 1; visibility: visible; translate: none; transition: opacity var(--dur-slow), translate var(--dur-slow) var(--ease-out); }
+.race-note { margin: 0; font-size: var(--fs-2xs); line-height: 1.4; color: var(--faint); text-shadow: 0 0 12px var(--bg), 0 1px 2px var(--bg); }
+.race-note a { color: var(--muted); text-decoration: underline; text-underline-offset: 3px; }
 .race-note a:focus-visible { outline: var(--focus-width) solid var(--focus-color); outline-offset: 3px; border-radius: var(--radius-xs); }
-.race-acts { flex: none; display: flex; align-items: center; gap: var(--space-3); }
-.race-cta { opacity: 0; visibility: hidden; transition: opacity var(--dur-slow), visibility 0s linear var(--dur-slow); }
-.race.is-done .race-cta { opacity: 1; visibility: visible; transition: opacity var(--dur-slow); }
-/* In the world: the clock rides the head of each light trail; ticks mark the minutes; each lit body says why. */
-.trail-tag, .tick-tag, .item-tag { position: absolute; left: 0; top: 0; opacity: 0; white-space: nowrap; will-change: transform, opacity; text-shadow: 0 0 12px var(--bg), 0 0 5px var(--bg), 0 1px 2px var(--bg); }
+.race-ctl { appearance: none; width: var(--tap-min); height: var(--tap-min); border-radius: 50%; border: 1px solid var(--line-strong); background: transparent; color: var(--text); display: grid; place-items: center; cursor: pointer; transition: border-color var(--dur-fast), box-shadow var(--dur-base); }
+.race-ctl[hidden] { visibility: hidden; display: grid; }
+.race-ctl:hover { border-color: var(--text); box-shadow: 0 0 18px color-mix(in srgb, var(--ring) 35%, transparent); }
+.race-ctl:focus-visible { outline: var(--focus-width) solid var(--focus-color); outline-offset: 3px; }
+.race-ctl svg { grid-area: 1 / 1; width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; display: none; }
+.race-ctl[data-state="running"] .i-pause, .race-ctl[data-state="paused"] .i-play, .race-ctl[data-state="done"] .i-again { display: block; }
+/* In the world: the clock rides the head of each light trail and ticks mark the minutes. The ask is written beside
+   the tool while it travels; the result carries its name and your one click. */
+.trail-tag, .tick-tag, .ask-tag, .res-tag { position: absolute; left: 0; top: 0; opacity: 0; white-space: nowrap; will-change: transform, opacity; text-shadow: 0 0 12px var(--bg), 0 0 5px var(--bg), 0 1px 2px var(--bg); }
 .trail-tag { display: flex; align-items: baseline; gap: var(--space-2); font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--muted); }
-.trail-tag b { font: var(--fw-bold) var(--fs-h2)/1 var(--font-display); letter-spacing: var(--track-heading); text-transform: none; font-variant-numeric: tabular-nums; color: var(--text); }
-.trail-tag.ask { color: var(--accent-text); } .trail-tag.ask b { color: var(--accent-text); }
-.trail-tag.stop b, .trail-tag.stop { color: var(--ok); }
-.trail-tag.hand.stop, .trail-tag.hand.stop b { color: var(--text); }
+.trail-tag b { font: var(--fw-bold) var(--fs-h1)/1 var(--font-display); letter-spacing: var(--track-heading); text-transform: none; font-variant-numeric: tabular-nums; color: var(--text); }
+.trail-tag.ask, .trail-tag.ask b { color: var(--accent-text); }
+.trail-tag.ask.stop, .trail-tag.ask.stop b { color: var(--ok); }
 .tick-tag { font: var(--fw-medium) var(--fs-2xs)/1 var(--font-mono); color: var(--faint); }
-.item-tag { padding: 4px 8px; border-radius: var(--radius-pill); border: 1px solid color-mix(in oklch, var(--accent) 60%, transparent); font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--accent-text); }
+.ask-tag { max-width: min(19rem, 38vw); white-space: normal; text-align: right; font: var(--fw-semibold) var(--fs-h3)/1.3 var(--font-display); letter-spacing: var(--track-heading); color: var(--text); text-wrap: balance; }
+.res-tag { display: flex; align-items: center; gap: var(--space-3); font: var(--fw-bold) var(--fs-h3)/1.2 var(--font-display); letter-spacing: var(--track-heading); color: var(--text); }
+.res-tag i { font: var(--fw-semibold) var(--fs-sm)/1 var(--font-text); font-style: normal; letter-spacing: 0; padding: 8px 14px; border-radius: var(--radius-pill); border: 1px solid var(--line-strong); text-shadow: none; transition: scale 140ms, color var(--dur-base), border-color var(--dur-base), box-shadow var(--dur-base); }
+.res-tag.press i { scale: .92; border-color: var(--text); }
+.res-tag.ok i { color: var(--ok); border-color: var(--ok); box-shadow: 0 0 22px color-mix(in srgb, var(--ok) 30%, transparent); }
 @media (max-width: 699px) {
-  .race-in { gap: var(--space-2); padding-top: calc(var(--nav-height) + var(--space-2)); padding-bottom: var(--space-2); }
-  .race-head { gap: var(--space-2); }
-  .lanes { grid-template-columns: minmax(0, 1fr); gap: var(--space-3); height: auto; }
-  .lane { gap: var(--space-2); }
-  .lane > header { padding-bottom: var(--space-1); }
-  .lane.hand .scr { height: 5.6rem; } .lane.ask .scr { height: 8.4rem; }
-  .scr-nav, .scr-chip { display: none; }
-  .scr-row { padding: 3px 0; }
-  .rmsg.me { font-size: var(--fs-body); }
-  .out-t { font-size: var(--fs-h4); }
-  .lane-s { font-size: var(--fs-xs); }
-  .race-note { font-size: var(--fs-2xs); }
-  .race-note a { display: none; }
+  .race-in { padding-top: calc(var(--nav-height) + var(--space-3)); padding-bottom: var(--space-3); }
+  .race-foot { grid-template-columns: auto auto; justify-content: space-between; row-gap: var(--space-2); }
+  .race-note { grid-column: 1 / -1; grid-row: 2; }
   .trail-tag b { font-size: var(--fs-h3); }
-  .item-tag { display: none; }
+  .ask-tag { font-size: var(--fs-body); max-width: 44vw; }
+  .res-tag { font-size: var(--fs-body); flex-direction: column; align-items: flex-start; gap: var(--space-2); max-width: 46vw; white-space: normal; }
 }
-@media (max-height: 999px) { .scr-chip { display: none; } }
 html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relative; height: auto; } html:not(.js) .sr-race { position: static; width: auto; height: auto; clip-path: none; white-space: normal; }
 .world-tag { width: 52px; height: 52px; background: color-mix(in oklch, var(--bg) 88%, transparent); border-color: color-mix(in oklch, var(--accent) 55%, transparent); box-shadow: 0 0 24px color-mix(in srgb, var(--ring) 40%, transparent); }
 .world-tag .lg { width: 26px; height: 26px; }
@@ -661,13 +611,20 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
 .fallback { display: none; } .world.gl-off .fallback { display: grid; }
 /* Chaos is one screen: the first race is already running on the second. */
 .sky { height: 150vh; height: 150svh; } .beats { display: none; }
-/* The plan: five equal stops, one full screen each, each with one picture on the orbit and ten words at most. */
+/* The plan and the promises: one headline, one number and name at a time, one action. The stop itself is the
+   lit marker on the orbit, so its name is not repeated beside it. */
 #after { height: 640vh; height: 640svh; }
 .stop-mk svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; transition: width var(--dur-slow) var(--ease-out), height var(--dur-slow) var(--ease-out); }
 .stop-mk.cur { width: 64px; height: 64px; margin: -32px 0 0 -32px; }
 .stop-mk.cur svg { width: 30px; height: 30px; }
 .stop-mk.lit:not(.cur) svg { display: none; }
-.jr-steps p { max-width: 20rem; }
+.stop-mk span { display: none; }
+.jr-in { grid-template-rows: auto minmax(0, 1fr) auto auto; row-gap: var(--space-5); }
+.jr-steps .no { font: var(--fw-bold) var(--fs-h1)/1 var(--font-display); letter-spacing: var(--track-heading); font-variant-numeric: tabular-nums; }
+.jr-cta { justify-self: start; pointer-events: auto; }
+.jr-dots { display: none; }
+/* The close: the headline, the action, and who you are dealing with. */
+.close-ctas .textlink { display: none; }
 </style>
 </head>
 <body>
@@ -730,7 +687,7 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
         <div class="wrap">
           <p class="eyebrow">Solenix · St. John's, NL</p>
           <h1 class="h1" data-od-id="hero-headline"><span class="w" style="--i:0"><span>Your</span></span> <span class="w" style="--i:1"><span>business</span></span> <span class="w" style="--i:2"><span>is</span></span> <span class="w" style="--i:3"><span>a</span></span> <span class="w g" style="--i:4"><span>three&#8209;body</span></span> <span class="w g" style="--i:5"><span>problem.</span></span></h1>
-          <p class="hero-sub">A dozen tools, pulling you apart. Scroll, and watch one AI settle them.</p>
+          <p class="hero-sub">One AI runs your tools. You just ask.</p>
           <div class="hero-ctas">
             <a class="btn btn-primary" href="/book" data-od-id="hero-cta">Book a call</a>
           </div>
@@ -748,43 +705,13 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
   <div class="race-pin">
     <div class="wrap race-in">
       <header class="race-head">
-        <p class="eyebrow toolname"><svg class="lg" aria-hidden="true"><use href="#lg-stripe"/></svg>Stripe · Get paid</p>
         <h2 class="h2">You don't need to be an expert <em>anymore.</em></h2>
-        <p class="sr-race">By hand: Open Invoices. Read who is overdue. Start a new invoice. Fill it in, field by field. Or just ask: “Who owes us? Send Harbour Dental their invoice.” Then you approve: Invoice · Harbour Dental. Typical times, estimated: by hand 10 to 15 minutes, asked 2 to 5.</p>
+        <p class="sr-race">Stripe. By hand: Open Invoices. Read who is overdue. Start a new invoice. Fill it in, field by field. Or just ask: “Who owes us? Send Harbour Dental their invoice.” The AI does the work in Stripe and you approve the result: Invoice to Harbour Dental, sent. Typical times, estimated: by hand 10 to 15 minutes, asked 2 to 5. It can't use QuickBooks in Canada yet, so this is Stripe.</p>
       </header>
-      <div class="race-sky" aria-hidden="true"></div>
-      <div class="lanes" aria-hidden="true">
-        <article class="lane hand" data-od-id="race-stripe-by-hand">
-          <header><span class="lane-t">By hand</span><span class="ex">Example</span></header>
-          <div class="scr">
-            <div class="scr-bar"><svg class="lg"><use href="#lg-stripe"/></svg><span class="crumb">Stripe</span></div>
-            <ul class="scr-nav"><li>Home</li><li>Transactions</li><li>Customers</li><li>Billing</li></ul>
-            <div class="scr-view"></div>
-            <i class="scr-cur"></i>
-          </div>
-          <p class="lane-s"></p>
-        </article>
-        <article class="lane ask" data-od-id="race-stripe-just-ask">
-          <header><span class="lane-t">Just ask</span><span class="ex">Example</span></header>
-          <div class="scr rchat">
-            <p class="rmsg me"><span></span></p>
-            <p class="rmsg st" hidden></p>
-            <div class="out" hidden data-od-id="race-stripe-output">
-              <p class="out-t">Invoice · Harbour Dental</p>
-              <p class="out-s">Website care · due in 15 days</p>
-              <span class="approve"><b>Approve</b><i>Sent</i></span>
-            </div>
-            <i class="scr-cur"></i>
-          </div>
-          <p class="lane-s cant">It can't use QuickBooks in Canada yet. This is Stripe.</p>
-        </article>
-      </div>
       <div class="race-foot">
-        <p class="race-note">One second here is one minute there. Typical times, estimated. <a href="https://docs.stripe.com/mcp" rel="noopener" data-od-id="race-stripe-verify">See the source</a></p>
-        <div class="race-acts">
-          <button class="btn btn-ghost btn-sm race-ctl" type="button" data-od-id="race-stripe-replay">Pause</button>
-          <a class="btn btn-primary btn-sm race-cta" href="/book" data-od-id="race-stripe-cta">Book a call</a>
-        </div>
+        <a class="btn btn-primary race-cta" href="/book" data-od-id="race-stripe-cta">Book a call</a>
+        <p class="race-note">Example. A second here is a minute of work, estimated. <a href="https://docs.stripe.com/mcp" rel="noopener" data-od-id="race-stripe-verify">Source</a></p>
+        <button class="race-ctl" type="button" aria-label="Pause" data-od-id="race-stripe-replay"><svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12M15 6v12"/></svg><svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10-6.5z"/></svg><svg class="i-again" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12a7 7 0 1 1-2.4-5.3M19 4v4h-4"/></svg></button>
       </div>
     </div>
   </div>
@@ -794,43 +721,13 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
   <div class="race-pin">
     <div class="wrap race-in">
       <header class="race-head">
-        <p class="eyebrow toolname"><svg class="lg" aria-hidden="true"><use href="#lg-shopify"/></svg>Shopify · Stay in stock</p>
         <h2 class="h2">Keep best sellers <em>in stock.</em></h2>
-        <p class="sr-race">By hand: Open Reports. Set the date to last month. Sort by units sold. Open Inventory, a separate screen. Check stock, one product at a time. Or just ask: “What will run out this month? Draft the reorder.” Then you approve: Reorder · 2 products. Typical times, estimated: by hand 15 to 25 minutes, asked 3 to 5.</p>
+        <p class="sr-race">Shopify. By hand: Open Reports. Set the date to last month. Sort by units sold. Open Inventory, a separate screen. Check stock, one product at a time. Or just ask: “What will run out this month? Draft the reorder.” The AI does the work in Shopify and you approve the result: Reorder for 2 products, sent. Typical times, estimated: by hand 15 to 25 minutes, asked 3 to 5. It can't refund or cancel an order.</p>
       </header>
-      <div class="race-sky" aria-hidden="true"></div>
-      <div class="lanes" aria-hidden="true">
-        <article class="lane hand" data-od-id="race-shopify-by-hand">
-          <header><span class="lane-t">By hand</span><span class="ex">Example</span></header>
-          <div class="scr">
-            <div class="scr-bar"><svg class="lg"><use href="#lg-shopify"/></svg><span class="crumb">Shopify</span></div>
-            <ul class="scr-nav"><li>Home</li><li>Orders</li><li>Products</li><li>Analytics</li></ul>
-            <div class="scr-view"></div>
-            <i class="scr-cur"></i>
-          </div>
-          <p class="lane-s"></p>
-        </article>
-        <article class="lane ask" data-od-id="race-shopify-just-ask">
-          <header><span class="lane-t">Just ask</span><span class="ex">Example</span></header>
-          <div class="scr rchat">
-            <p class="rmsg me"><span></span></p>
-            <p class="rmsg st" hidden></p>
-            <div class="out" hidden data-od-id="race-shopify-output">
-              <p class="out-t">Reorder · 2 products</p>
-              <p class="out-s">Sea salt caramels, Wool mitts</p>
-              <span class="approve"><b>Approve</b><i>Reorder sent</i></span>
-            </div>
-            <i class="scr-cur"></i>
-          </div>
-          <p class="lane-s cant">It can't refund or cancel an order.</p>
-        </article>
-      </div>
       <div class="race-foot">
-        <p class="race-note">One second here is one minute there. Typical times, estimated. <a href="https://help.shopify.com/en/manual/ai-powered-tools/connecting-ai-tools/shopify-connector-for-claude" rel="noopener" data-od-id="race-shopify-verify">See the source</a></p>
-        <div class="race-acts">
-          <button class="btn btn-ghost btn-sm race-ctl" type="button" data-od-id="race-shopify-replay">Pause</button>
-          <a class="btn btn-primary btn-sm race-cta" href="/book" data-od-id="race-shopify-cta">Book a call</a>
-        </div>
+        <a class="btn btn-primary race-cta" href="/book" data-od-id="race-shopify-cta">Book a call</a>
+        <p class="race-note">Example. A second here is a minute of work, estimated. <a href="https://help.shopify.com/en/manual/ai-powered-tools/connecting-ai-tools/shopify-connector-for-claude" rel="noopener" data-od-id="race-shopify-verify">Source</a></p>
+        <button class="race-ctl" type="button" aria-label="Pause" data-od-id="race-shopify-replay"><svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12M15 6v12"/></svg><svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10-6.5z"/></svg><svg class="i-again" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12a7 7 0 1 1-2.4-5.3M19 4v4h-4"/></svg></button>
       </div>
     </div>
   </div>
@@ -840,43 +737,13 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
   <div class="race-pin">
     <div class="wrap race-in">
       <header class="race-head">
-        <p class="eyebrow toolname"><svg class="lg" aria-hidden="true"><use href="#lg-hubspot"/></svg>HubSpot · Follow up</p>
         <h2 class="h2">No deal dies <em>in silence.</em></h2>
-        <p class="sr-race">By hand: Open the deals list. Filter by last activity. Open the first quiet deal. Write a follow-up by hand. Next deal. Same again.. Or just ask: “Which deals went quiet? Draft a note for each.” Then you approve: 3 follow-ups drafted. Typical times, estimated: by hand 20 to 30 minutes for ten deals, asked 12 to 18.</p>
+        <p class="sr-race">HubSpot. By hand: Open the deals list. Filter by last activity. Open the first quiet deal. Write a follow-up by hand. Then the next deal, the same again. Or just ask: “Which deals went quiet? Draft a note for each.” The AI does the work in HubSpot and you approve the result: 3 follow-ups drafted, logged. Typical times, estimated: by hand 20 to 30 minutes for ten deals, asked 12 to 18. It can't send the email. You press send.</p>
       </header>
-      <div class="race-sky" aria-hidden="true"></div>
-      <div class="lanes" aria-hidden="true">
-        <article class="lane hand" data-od-id="race-hubspot-by-hand">
-          <header><span class="lane-t">By hand</span><span class="ex">Example</span></header>
-          <div class="scr">
-            <div class="scr-bar"><svg class="lg"><use href="#lg-hubspot"/></svg><span class="crumb">HubSpot</span></div>
-            <ul class="scr-nav"><li>Contacts</li><li>Deals</li><li>Tasks</li><li>Reports</li></ul>
-            <div class="scr-view"></div>
-            <i class="scr-cur"></i>
-          </div>
-          <p class="lane-s"></p>
-        </article>
-        <article class="lane ask" data-od-id="race-hubspot-just-ask">
-          <header><span class="lane-t">Just ask</span><span class="ex">Example</span></header>
-          <div class="scr rchat">
-            <p class="rmsg me"><span></span></p>
-            <p class="rmsg st" hidden></p>
-            <div class="out" hidden data-od-id="race-hubspot-output">
-              <p class="out-t">3 follow-ups drafted</p>
-              <p class="out-s">A task logged on each deal</p>
-              <span class="approve"><b>Approve</b><i>Logged</i></span>
-            </div>
-            <i class="scr-cur"></i>
-          </div>
-          <p class="lane-s cant">It can't send the email. You press send.</p>
-        </article>
-      </div>
       <div class="race-foot">
-        <p class="race-note">One second here is one minute there. Typical times, estimated. <a href="https://developers.hubspot.com/changelog/remote-hubspot-mcp-server-is-now-generally-available" rel="noopener" data-od-id="race-hubspot-verify">See the source</a></p>
-        <div class="race-acts">
-          <button class="btn btn-ghost btn-sm race-ctl" type="button" data-od-id="race-hubspot-replay">Pause</button>
-          <a class="btn btn-primary btn-sm race-cta" href="/book" data-od-id="race-hubspot-cta">Book a call</a>
-        </div>
+        <a class="btn btn-primary race-cta" href="/book" data-od-id="race-hubspot-cta">Book a call</a>
+        <p class="race-note">Example. A second here is a minute of work, estimated. <a href="https://developers.hubspot.com/changelog/remote-hubspot-mcp-server-is-now-generally-available" rel="noopener" data-od-id="race-hubspot-verify">Source</a></p>
+        <button class="race-ctl" type="button" aria-label="Pause" data-od-id="race-hubspot-replay"><svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12M15 6v12"/></svg><svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10-6.5z"/></svg><svg class="i-again" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12a7 7 0 1 1-2.4-5.3M19 4v4h-4"/></svg></button>
       </div>
     </div>
   </div>
@@ -886,43 +753,13 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
   <div class="race-pin">
     <div class="wrap race-in">
       <header class="race-head">
-        <p class="eyebrow toolname"><svg class="lg" aria-hidden="true"><use href="#lg-meta"/></svg>Meta Ads · Stop wasted ads</p>
         <h2 class="h2">Stop paying for <em>dead ads.</em></h2>
-        <p class="sr-race">By hand: Log into Ads Manager. Set the last 7 days. Switch to the week before. Compare each campaign by eye. Or just ask: “Which ad brings no buyers? Pause it.” Then you approve: Pause · Local awareness. Typical times, estimated: by hand 15 to 20 minutes, asked 3 to 5.</p>
+        <p class="sr-race">Meta Ads. By hand: Log into Ads Manager. Set the last 7 days. Switch to the week before. Compare each campaign by eye. Or just ask: “Which ad brings no buyers? Pause it.” The AI does the work in Meta Ads and you approve the result: Local awareness ad, paused. Typical times, estimated: by hand 15 to 20 minutes, asked 3 to 5. It can't switch a new ad on. That stays with you.</p>
       </header>
-      <div class="race-sky" aria-hidden="true"></div>
-      <div class="lanes" aria-hidden="true">
-        <article class="lane hand" data-od-id="race-meta-by-hand">
-          <header><span class="lane-t">By hand</span><span class="ex">Example</span></header>
-          <div class="scr">
-            <div class="scr-bar"><svg class="lg"><use href="#lg-meta"/></svg><span class="crumb">Meta Ads</span></div>
-            <ul class="scr-nav"><li>Campaigns</li><li>Ad sets</li><li>Ads</li><li>Reports</li></ul>
-            <div class="scr-view"></div>
-            <i class="scr-cur"></i>
-          </div>
-          <p class="lane-s"></p>
-        </article>
-        <article class="lane ask" data-od-id="race-meta-just-ask">
-          <header><span class="lane-t">Just ask</span><span class="ex">Example</span></header>
-          <div class="scr rchat">
-            <p class="rmsg me"><span></span></p>
-            <p class="rmsg st" hidden></p>
-            <div class="out" hidden data-od-id="race-meta-output">
-              <p class="out-t">Pause · Local awareness</p>
-              <p class="out-s">No purchases in 7 days</p>
-              <span class="approve"><b>Approve</b><i>Paused</i></span>
-            </div>
-            <i class="scr-cur"></i>
-          </div>
-          <p class="lane-s cant">It can't switch a new ad on. That stays with you.</p>
-        </article>
-      </div>
       <div class="race-foot">
-        <p class="race-note">One second here is one minute there. Typical times, estimated. <a href="https://developers.facebook.com/documentation/ads-commerce/ads-ai-connectors/ads-mcp-server/ads-mcp-server-tools-ad-creation-and-management" rel="noopener" data-od-id="race-meta-verify">See the source</a></p>
-        <div class="race-acts">
-          <button class="btn btn-ghost btn-sm race-ctl" type="button" data-od-id="race-meta-replay">Pause</button>
-          <a class="btn btn-primary btn-sm race-cta" href="/book" data-od-id="race-meta-cta">Book a call</a>
-        </div>
+        <a class="btn btn-primary race-cta" href="/book" data-od-id="race-meta-cta">Book a call</a>
+        <p class="race-note">Example. A second here is a minute of work, estimated. <a href="https://developers.facebook.com/documentation/ads-commerce/ads-ai-connectors/ads-mcp-server/ads-mcp-server-tools-ad-creation-and-management" rel="noopener" data-od-id="race-meta-verify">Source</a></p>
+        <button class="race-ctl" type="button" aria-label="Pause" data-od-id="race-meta-replay"><svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12M15 6v12"/></svg><svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10-6.5z"/></svg><svg class="i-again" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12a7 7 0 1 1-2.4-5.3M19 4v4h-4"/></svg></button>
       </div>
     </div>
   </div>
@@ -932,43 +769,13 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
   <div class="race-pin">
     <div class="wrap race-in">
       <header class="race-head">
-        <p class="eyebrow toolname"><svg class="lg" aria-hidden="true"><use href="#lg-microsoftexcel"/></svg>Excel · Check the numbers</p>
         <h2 class="h2">Trust <em>your numbers.</em></h2>
-        <p class="sr-race">By hand: Open the workbook. Find the total that looks wrong. Trace the formula. Check it, cell by cell. Or just ask: “Check my totals. What if prices rise 5%?” Then you approve: Total fixed · cell B14. Typical times, estimated: by hand 15 to 30 minutes, asked about 5.</p>
+        <p class="sr-race">Excel. By hand: Open the workbook. Find the total that looks wrong. Trace the formula. Check it, cell by cell. Or just ask: “Check my totals. What if prices rise 5%?” The AI does the work in Excel and you approve the result: Total in cell B14, fixed. Typical times, estimated: by hand 15 to 30 minutes, asked about 5. It can't run macros.</p>
       </header>
-      <div class="race-sky" aria-hidden="true"></div>
-      <div class="lanes" aria-hidden="true">
-        <article class="lane hand" data-od-id="race-microsoftexcel-by-hand">
-          <header><span class="lane-t">By hand</span><span class="ex">Example</span></header>
-          <div class="scr">
-            <div class="scr-bar"><svg class="lg"><use href="#lg-microsoftexcel"/></svg><span class="crumb">Excel</span></div>
-            <ul class="scr-nav"><li>Home</li><li>Insert</li><li>Formulas</li><li>Data</li></ul>
-            <div class="scr-view"></div>
-            <i class="scr-cur"></i>
-          </div>
-          <p class="lane-s"></p>
-        </article>
-        <article class="lane ask" data-od-id="race-microsoftexcel-just-ask">
-          <header><span class="lane-t">Just ask</span><span class="ex">Example</span></header>
-          <div class="scr rchat">
-            <p class="rmsg me"><span></span></p>
-            <p class="rmsg st" hidden></p>
-            <div class="out" hidden data-od-id="race-microsoftexcel-output">
-              <p class="out-t">Total fixed · cell B14</p>
-              <p class="out-s">It had missed one row</p>
-              <span class="approve"><b>Approve</b><i>Updated</i></span>
-            </div>
-            <i class="scr-cur"></i>
-          </div>
-          <p class="lane-s cant">It can't run macros.</p>
-        </article>
-      </div>
       <div class="race-foot">
-        <p class="race-note">One second here is one minute there. Typical times, estimated. <a href="https://claude.com/docs/office-agents/excel" rel="noopener" data-od-id="race-microsoftexcel-verify">See the source</a></p>
-        <div class="race-acts">
-          <button class="btn btn-ghost btn-sm race-ctl" type="button" data-od-id="race-microsoftexcel-replay">Pause</button>
-          <a class="btn btn-primary btn-sm race-cta" href="/book" data-od-id="race-microsoftexcel-cta">Book a call</a>
-        </div>
+        <a class="btn btn-primary race-cta" href="/book" data-od-id="race-microsoftexcel-cta">Book a call</a>
+        <p class="race-note">Example. A second here is a minute of work, estimated. <a href="https://claude.com/docs/office-agents/excel" rel="noopener" data-od-id="race-microsoftexcel-verify">Source</a></p>
+        <button class="race-ctl" type="button" aria-label="Pause" data-od-id="race-microsoftexcel-replay"><svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12M15 6v12"/></svg><svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10-6.5z"/></svg><svg class="i-again" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12a7 7 0 1 1-2.4-5.3M19 4v4h-4"/></svg></button>
       </div>
     </div>
   </div>
@@ -978,43 +785,13 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
   <div class="race-pin">
     <div class="wrap race-in">
       <header class="race-head">
-        <p class="eyebrow toolname"><svg class="lg" aria-hidden="true"><use href="#lg-gmail"/></svg>Gmail and Calendar · Answer in time</p>
         <h2 class="h2">Never miss <em>paying work.</em></h2>
-        <p class="sr-race">By hand: Open the inbox. Open the first email. Decide: now, later or junk. Back. Then the next one.. Or just ask: “What needs a reply today? Book Harbour Dental.” Then you approve: Invite · Tuesday 10:30. Typical times, estimated: by hand 20 to 40 minutes, asked 5.</p>
+        <p class="sr-race">Gmail and Calendar. By hand: Open the inbox. Open the first email. Decide: now, later or junk. Go back. Then the next one. Or just ask: “What needs a reply today? Book Harbour Dental.” The AI does the work in Gmail and Calendar and you approve the result: Harbour Dental, Tuesday 10:30, booked. Typical times, estimated: by hand 20 to 40 minutes, asked 5. It can't read what is inside an attachment.</p>
       </header>
-      <div class="race-sky" aria-hidden="true"></div>
-      <div class="lanes" aria-hidden="true">
-        <article class="lane hand" data-od-id="race-gmail-by-hand">
-          <header><span class="lane-t">By hand</span><span class="ex">Example</span></header>
-          <div class="scr">
-            <div class="scr-bar"><svg class="lg"><use href="#lg-gmail"/></svg><span class="crumb">Gmail and Calendar</span></div>
-            <ul class="scr-nav"><li>Inbox</li><li>Starred</li><li>Sent</li><li>Drafts</li></ul>
-            <div class="scr-view"></div>
-            <i class="scr-cur"></i>
-          </div>
-          <p class="lane-s"></p>
-        </article>
-        <article class="lane ask" data-od-id="race-gmail-just-ask">
-          <header><span class="lane-t">Just ask</span><span class="ex">Example</span></header>
-          <div class="scr rchat">
-            <p class="rmsg me"><span></span></p>
-            <p class="rmsg st" hidden></p>
-            <div class="out" hidden data-od-id="race-gmail-output">
-              <p class="out-t">Invite · Tuesday 10:30</p>
-              <p class="out-s">Harbour Dental · 30 minutes</p>
-              <span class="approve"><b>Approve</b><i>Booked</i></span>
-            </div>
-            <i class="scr-cur"></i>
-          </div>
-          <p class="lane-s cant">It can't read what is inside an attachment.</p>
-        </article>
-      </div>
       <div class="race-foot">
-        <p class="race-note">One second here is one minute there. Typical times, estimated. <a href="https://support.claude.com/en/articles/10166901-use-google-workspace-connectors" rel="noopener" data-od-id="race-gmail-verify">See the source</a></p>
-        <div class="race-acts">
-          <button class="btn btn-ghost btn-sm race-ctl" type="button" data-od-id="race-gmail-replay">Pause</button>
-          <a class="btn btn-primary btn-sm race-cta" href="/book" data-od-id="race-gmail-cta">Book a call</a>
-        </div>
+        <a class="btn btn-primary race-cta" href="/book" data-od-id="race-gmail-cta">Book a call</a>
+        <p class="race-note">Example. A second here is a minute of work, estimated. <a href="https://support.claude.com/en/articles/10166901-use-google-workspace-connectors" rel="noopener" data-od-id="race-gmail-verify">Source</a></p>
+        <button class="race-ctl" type="button" aria-label="Pause" data-od-id="race-gmail-replay"><svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12M15 6v12"/></svg><svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10-6.5z"/></svg><svg class="i-again" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12a7 7 0 1 1-2.4-5.3M19 4v4h-4"/></svg></button>
       </div>
     </div>
   </div>
@@ -1024,16 +801,17 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
   <div class="jr-pin">
     <div class="wrap jr-in">
       <div class="jr-head">
-        <p class="eyebrow">The plan</p>
+        
         <h2 class="h2">From one call to a <em>stable orbit.</em></h2>
       </div>
       <ol class="jr-steps" data-steps>
-        <li><span class="no">01 / 05</span><h3>A clear picture</h3><p>One call. We find your lost hours.</p></li>
-        <li><span class="no">02 / 05</span><h3>Your own portal</h3><p>Everything in one place.</p></li>
-        <li><span class="no">03 / 05</span><h3>Your new website</h3><p>Built to bring in calls.</p></li>
-        <li><span class="no">04 / 05</span><h3>Your choice, in writing</h3><p>Three options. You pick.</p></li>
-        <li><span class="no">05 / 05</span><h3>Looked after</h3><p>Hours back, every month.</p></li>
+        <li><span class="no">01 / 05</span><h3>A clear picture</h3></li>
+        <li><span class="no">02 / 05</span><h3>Your own portal</h3></li>
+        <li><span class="no">03 / 05</span><h3>Your new website</h3></li>
+        <li><span class="no">04 / 05</span><h3>Your choice, in writing</h3></li>
+        <li><span class="no">05 / 05</span><h3>Looked after</h3></li>
       </ol>
+      <a class="btn btn-primary jr-cta" href="/book">Book a call</a>
       <div class="jr-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
     </div>
   </div>
@@ -1043,15 +821,16 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
   <div class="jr-pin">
     <div class="wrap jr-in">
       <div class="jr-head">
-        <p class="eyebrow">What we put in writing</p>
+        
         <h2 class="h2">Four promises, <em>on paper.</em></h2>
       </div>
       <ol class="jr-steps" data-promises>
-        <li data-od-id="promise-price"><span class="no">01 / 04</span><h3>Fixed price</h3><p>One number, agreed before we start. No surprise invoices.</p></li>
-        <li data-od-id="promise-own"><span class="no">02 / 04</span><h3>You own it all</h3><p>Accounts, code and data in your name. Nothing to buy back.</p></li>
-        <li data-od-id="promise-plain"><span class="no">03 / 04</span><h3>Plain English</h3><p>Updates you read in a minute, on your phone.</p></li>
-        <li data-od-id="promise-lockin"><span class="no">04 / 04</span><h3>No lock-in</h3><p>Leave any month. Keep everything you paid for.</p></li>
+        <li data-od-id="promise-price"><span class="no">01 / 04</span><h3>Fixed price</h3></li>
+        <li data-od-id="promise-own"><span class="no">02 / 04</span><h3>You own it all</h3></li>
+        <li data-od-id="promise-plain"><span class="no">03 / 04</span><h3>Plain English</h3></li>
+        <li data-od-id="promise-lockin"><span class="no">04 / 04</span><h3>No lock-in</h3></li>
       </ol>
+      <a class="btn btn-primary jr-cta" href="/book">Book a call</a>
       <div class="jr-dots" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
     </div>
   </div>
@@ -1060,7 +839,7 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
 <section class="close-sec" id="close" data-od-id="closing" data-scene="close" aria-labelledby="close-h">
   <div class="wrap close-in">
     <h2 id="close-h" class="rv">Let's find your <em>stable orbit.</em></h2>
-    <p class="rv">A short call. We find your lost hours.</p>
+    
     <div class="close-ctas rv">
       <a class="btn btn-primary" href="/book" data-od-id="closing-cta">Book a call</a>
       <a class="textlink" href="mailto:hello@solenix.dev">hello@solenix.dev</a>
@@ -1129,7 +908,7 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
     { sel: '#fly-gmail', f: 0.15, pin: 1, wsel: 5, tx: -4.10, tz: 11.28, az: 370 },
     { sel: '#fly-gmail', f: 0.8, pin: 1, az: 380 },
     /* 4 · The plan: back to the centre, and the orbit is drawn in. */
-    { sel: '#after', f: 0, pin: 1, fly: 0, tx: 0, tz: 0, k: 0.9, free: 0.6, dim: 0, stops: 1, el: 60, az: 394, dist: 9.6, ox: 0.21, oy: 0.02, poy: 0.02, calm: 0.35, conn: 1 },
+    { sel: '#after', f: 0, pin: 1, fly: 0, tx: 0, tz: 0, k: 0.9, free: 0.6, dim: 0, stops: 1, el: 60, az: 394, dist: 11.2, ox: 0.25, oy: 0.03, poy: 0.02, calm: 0.35, conn: 1 },
     { sel: '#after', f: 0.1852, pin: 1, k: 1, free: 1, ink: 0.2, third: 0.44, az: 396, poy: -0.02 },
     { sel: '#after', f: 0.3704, pin: 1, k: 1, free: 1, ink: 0.4, third: 0.58, az: 398 },
     { sel: '#after', f: 0.5556, pin: 1, k: 1, free: 1, ink: 0.6, third: 0.72, az: 400 },
@@ -1249,73 +1028,27 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
 
 <script>
 /* The flyby races. Each one starts as its world comes into view, plays to Done on its own clock and keeps its last
-   frame; Replay runs it again. It is a time-lapse: one second on screen is one minute of work, and each lane stops at
-   its typical time. The live minutes are shared with the 3D scene, which draws them as two light trails on one axis.
+   frame; the round control pauses it or plays it again. It is a time-lapse: one second on screen is one minute of
+   work, and each side stops at its typical time. Nothing is drawn here: this script only keeps the clock and shares
+   it with the 3D scene, which plays the ask, the work and the result as bodies in the tool's world.
    Reduced motion does not stop them: the setting quiets the camera, and the demonstration still has to be seen. */
 (() => {
-  const RACES = {"stripe":{"name":"Stripe","views":{"lst":{"head":["Customer","Overdue by"],"rows":[["Harbour Dental","12 days"],["Hillside Roofing","64 days"],["East End Yoga","31 days"],["Cove Road Cafe","4 days"]]},"new":{"head":["New invoice",""],"rows":[["Customer","Harbour Dental"],["Item","Website care"],["Due","In 15 days"],["Send","By email"]]}},"steps":[[3,"Billing › Invoices","Open Invoices","lst"],[3,"Billing › Invoices","Read who is overdue","lst"],[3,"Invoices › Create","Start a new invoice","new"],[3,"Invoices › Create","Fill it in, field by field","new","scan"]],"prompt":"Who owes us? Send Harbour Dental their invoice.","work":["Reading invoices in Stripe","Writing the invoice"],"hand":10,"ask":5,"items":[["12 days",0],["64 days late",1],["31 days late",1],["4 days",0],["9 days",0],["2 days",0]],"form":"ring"},"shopify":{"name":"Shopify","views":{"rep":{"head":["Reports",""],"rows":[["Sales over time",""],["Sales by product",""],["Sessions by location",""],["Returning customers",""]]},"s1":{"chip":"Date: last month","head":["Product","Units sold"],"rows":[["Partridgeberry jam","187"],["Wool mitts","150"],["Sea salt caramels","212"],["Molasses cookies","96"]]},"s2":{"chip":"Date: last month","head":["Product","Units sold ↓"],"rows":[["Sea salt caramels","212"],["Partridgeberry jam","187"],["Wool mitts","150"],["Molasses cookies","96"]]},"inv":{"head":["Product","In stock"],"rows":[["Molasses cookies","60"],["Partridgeberry jam","120"],["Sea salt caramels","14"],["Wool mitts","9"]]}},"steps":[[3,"Analytics › Reports","Open Reports","rep"],[3,"Reports › Sales by product","Set the date to last month","s1"],[3,"Reports › Sales by product","Sort by units sold","s2"],[2,"Products › Inventory","Open Inventory, a separate screen","inv"],[2,"Products › Inventory","Check stock, one product at a time","inv","scan"]],"prompt":"What will run out this month? Draft the reorder.","work":["Reading last month's sales in Shopify","Checking stock","Drafting the email in Gmail"],"hand":15,"ask":5,"items":[["9 days left",1],["120 days",0],["14 days left",1],["60 days",0],["88 days",0],["45 days",0]],"form":"ring"},"hubspot":{"name":"HubSpot","views":{"all":{"head":["Deal","Last activity"],"rows":[["Hillside Roofing","3 days ago"],["Cove Road Cafe","21 days ago"],["East End Yoga","17 days ago"],["Harbour Dental","30 days ago"]]},"st":{"chip":"Last activity: over 14 days ago","head":["Deal","Last activity ↓"],"rows":[["Harbour Dental","30 days ago"],["Cove Road Cafe","21 days ago"],["East End Yoga","17 days ago"]]},"em":{"head":["New email",""],"rows":[["To","Harbour Dental"],["Subject","Following up"],["Message","Still typing…"]]}},"steps":[[1,"Deals","Open the deals list","all"],[1,"Deals","Filter by last activity","st"],[1,"Deals › Harbour Dental","Open the first quiet deal","st"],[1,"Deals › New email","Write a follow-up by hand","em"],[1,"Deals","Next deal. Same again.","st","scan"]],"prompt":"Which deals went quiet? Draft a note for each.","work":["Finding quiet deals in HubSpot","Reading the last talk on each","Drafting three notes","Logging a task on each deal"],"hand":20,"ask":18,"items":[["30 days quiet",1],["3 days",0],["21 days quiet",1],["5 days",0],["17 days quiet",1],["1 day",0]],"form":"row"},"meta":{"name":"Meta Ads","views":{"c7":{"chip":"Date: last 7 days","head":["Campaign","Purchases"],"rows":[["Fall sale","31"],["New arrivals","12"],["Local awareness","0"],["Email sign-ups","9"]]},"p7":{"chip":"Date: the 7 days before","head":["Campaign","Purchases"],"rows":[["Fall sale","27"],["New arrivals","14"],["Local awareness","1"],["Email sign-ups","8"]]}},"steps":[[0,"Ads Manager › Campaigns","Log into Ads Manager","c7"],[0,"Ads Manager › Campaigns","Set the last 7 days","c7"],[0,"Ads Manager › Campaigns","Switch to the week before","p7"],[0,"Ads Manager › Campaigns","Compare each campaign by eye","c7","scan"]],"prompt":"Which ad brings no buyers? Pause it.","work":["Reading 14 days of results in Meta Ads","Comparing the two weeks"],"hand":15,"ask":5,"items":[["bought",0],["did not buy",1],["bought",0],["bought",0],["bought",0],["bought",0]],"form":"row"},"microsoftexcel":{"name":"Excel","views":{"sh":{"chip":"Sales.xlsx","head":["Category","Units"],"rows":[["Bread","421"],["Pastry","318"],["Coffee","264"],["Catering","190"]]},"fx":{"chip":"Formulas › Trace","head":["Cell","Formula"],"rows":[["B14","=SUM(B2:B12)"],["B2 to B12","In the total"],["B13","Left out"],["B14","Fix by hand"]]}},"steps":[[0,"Sales.xlsx","Open the workbook","sh"],[0,"Sales.xlsx","Find the total that looks wrong","sh"],[2,"Formulas › Trace","Trace the formula","fx"],[2,"Formulas › Trace","Check it, cell by cell","fx","scan"]],"prompt":"Check my totals. What if prices rise 5%?","work":["Reading the open workbook in Excel","Tracing the total","Working out the what-if"],"hand":15,"ask":5,"items":[["",0],["",0],["",0],["",0],["",0],["row missed",1]],"form":"grid"},"gmail":{"name":"Gmail and Calendar","views":{"inb":{"chip":"29 unread","head":["From","Subject"],"rows":[["Hillside Roofing","Quote for the deck?"],["Weekly deals","Fall offers inside"],["Harbour Dental","Can we move Thursday?"],["Your supplier","Invoice attached"]]},"one":{"head":["Hillside Roofing",""],"rows":[["Subject","Quote for the deck?"],["Asks for","A price by Friday"],["Reply today?","Yes"],["Next","28 more to read"]]}},"steps":[[0,"Inbox","Open the inbox","inb"],[0,"Inbox › Hillside Roofing","Open the first email","one"],[0,"Inbox › Hillside Roofing","Decide: now, later or junk","one"],[0,"Inbox","Back. Then the next one.","inb","scan"]],"prompt":"What needs a reply today? Book Harbour Dental.","work":["Reading today's inbox in Gmail","Drafting three replies","Checking both calendars"],"hand":20,"ask":5,"items":[["3 hours waiting",1],["",0],["5 hours waiting",1],["",0],["1 hour waiting",1],["",0]],"form":"fan"}};
-  const S = window.solenix, MIN = 1000;
-  S.races = Object.keys(RACES).map(id => ({ id, items: RACES[id].items, form: RACES[id].form, max: RACES[id].hand }));
-  S.rs = S.races.map(() => ({ h: 0, a: 0, hDone: false, aDone: false, on: false }));
-  const row = r => `<div class="scr-row"><span>${r[0]}</span><span>${r[1]}</span></div>`;
+  const RACES = {"stripe":{"name":"Stripe","prompt":"Who owes us? Send Harbour Dental their invoice.","out":["Invoice to Harbour Dental","Sent"],"hand":10,"ask":5,"hot":[0,1,1,0,0,0]},"shopify":{"name":"Shopify","prompt":"What will run out this month? Draft the reorder.","out":["Reorder for 2 products","Sent"],"hand":15,"ask":5,"hot":[1,0,1,0,0,0]},"hubspot":{"name":"HubSpot","prompt":"Which deals went quiet? Draft a note for each.","out":["3 follow-ups drafted","Logged"],"hand":20,"ask":18,"hot":[1,0,1,0,1,0]},"meta":{"name":"Meta Ads","prompt":"Which ad brings no buyers? Pause it.","out":["Local awareness ad","Paused"],"hand":15,"ask":5,"hot":[0,1,0,0,0,0]},"microsoftexcel":{"name":"Excel","prompt":"Check my totals. What if prices rise 5%?","out":["Total in cell B14","Fixed"],"hand":15,"ask":5,"hot":[0,0,0,0,0,1]},"gmail":{"name":"Gmail and Calendar","prompt":"What needs a reply today? Book Harbour Dental.","out":["Harbour Dental, Tuesday 10:30","Booked"],"hand":20,"ask":5,"hot":[1,0,1,0,1,0]}};
+  const S = window.solenix, MIN = 1000, clamp01 = v => Math.max(0, Math.min(1, v));
+  S.races = Object.keys(RACES).map(id => RACES[id]);
+  S.rs = S.races.map(() => ({ h: 0, a: 0, p: 0, q: 0, ask: '', hDone: false, aDone: false, on: false }));
   const all = [...document.querySelectorAll('[data-race]')].map((sec, idx) => {
-    const R = RACES[sec.dataset.race], st8 = S.rs[idx], hand = sec.querySelector('.lane.hand'), ask = sec.querySelector('.lane.ask');
-    const scr = hand.querySelector('.scr'), nav = [...hand.querySelectorAll('.scr-nav li')], crumb = hand.querySelector('.crumb'), view = hand.querySelector('.scr-view'), cur = hand.querySelector('.scr-cur'), hs = hand.querySelector('.lane-s');
-    const chat = ask.querySelector('.scr'), me = ask.querySelector('.rmsg.me span'), st = ask.querySelector('.rmsg.st'), out = ask.querySelector('.out'), ok = ask.querySelector('.approve'), cur2 = ask.querySelector('.scr-cur');
-    const ctl = sec.querySelector('.race-ctl');
-    const TH = R.hand * MIN, TA = R.ask * MIN;
-    let run = 0, state = 'idle', vt = 0, last = 0, timer = 0, waiters = [], open = 0;
-    const wait = (ms, id) => new Promise((yes, no) => waiters.push({ at: vt + ms, yes, no, id }));
-    const draw = k => { const v = R.views[k]; view.innerHTML = (v.chip ? `<p class="scr-chip">${v.chip}</p>` : '') + v.rows.map(row).join(''); };
-    const menu = n => nav.forEach((li, k) => li.classList.toggle('on', k === n));
-    const point = (c, box, t, dx, dy) => { if (!t) return; const a = box.getBoundingClientRect(), b = t.getBoundingClientRect(); if (!b.width) return;
-      c.classList.add('show'); c.style.transform = `translate(${(b.left - a.left + dx(b)).toFixed(1)}px, ${(b.top - a.top + b.height / 2 + dy).toFixed(1)}px)`; };
-    const share = () => { st8.h = Math.min(vt, TH) / MIN; st8.a = Math.min(vt, TA) / MIN; st8.hDone = vt >= TH; st8.aDone = vt >= TA; st8.on = state !== 'idle'; };
-    function label() { ctl.textContent = state === 'done' ? 'Replay' : state === 'paused' ? 'Play' : 'Pause'; ctl.hidden = state === 'idle'; sec.classList.toggle('is-done', state === 'done'); }
-    function reset() {
-      run++; waiters.forEach(w => w.no()); waiters = []; clearInterval(timer); vt = 0; state = 'idle';
-      hand.classList.remove('go', 'done'); ask.classList.remove('go', 'sent', 'done'); ok.classList.remove('press'); menu(-1); crumb.textContent = R.name; view.innerHTML = ''; hs.textContent = '';
-      me.textContent = ''; st.hidden = out.hidden = true; cur.classList.remove('show'); cur2.classList.remove('show'); cur.style.transform = cur2.style.transform = ''; share(); label();
-    }
-    /* By hand: every step and every row takes its even share of the typical time, so the lane ends exactly on it. */
-    async function byHand(id) {
-      const beats = R.steps.reduce((n, s) => n + (s[4] === 'scan' ? R.views[s[3]].rows.length : 1), 0), per = TH / beats;
-      let n0 = -1, v0 = null;
-      for (let i = 0; i < R.steps.length; i++) {
-        const [n, c, cap, v, mode] = R.steps[i];
-        hs.innerHTML = `<b>Step ${i + 1}</b><span>${cap}</span>`;
-        if (n !== n0) { point(cur, scr, nav[n], b => b.width / 2, 15); menu(n); n0 = n; }
-        crumb.textContent = c;
-        if (v && v !== v0) { view.classList.add('load'); await wait(per * 0.2, id); draw(v); view.classList.remove('load'); v0 = v; if (mode !== 'scan') await wait(per * 0.8, id); }
-        else if (mode !== 'scan') await wait(per, id);
-        if (mode === 'scan') { const rows = [...view.querySelectorAll('.scr-row')];
-          for (const r of rows) { point(cur, scr, r, () => r.firstElementChild.getBoundingClientRect().width + 22, 0); rows.forEach(x => x.classList.toggle('on', x === r)); await wait(per, id); } }
-      }
-      await wait(Math.max(0, TH - vt), id);
-      hand.classList.add('done'); cur.classList.remove('show'); hs.innerHTML = `<b>Done</b><span>${R.steps.length} steps, by hand</span>`;
-    }
-    /* The ask: typed, worked on in the tool, and ended on the owner's real output with one Approve click. */
-    async function justAsk(id) {
-      const type = TA * 0.4, work = TA * 0.3, each = type / R.prompt.length;
-      for (let i = 1; i <= R.prompt.length; i++) { me.textContent = R.prompt.slice(0, i); await wait(each, id); }
-      ask.classList.add('sent'); st.hidden = false;
-      for (const w of R.work) { st.textContent = w + '…'; await wait(work / R.work.length, id); }
-      st.hidden = true; out.hidden = false;
-      point(cur2, chat, ok, b => b.width / 2, 6);
-      await wait(Math.max(0, TA - vt - 160), id); ok.classList.add('press');
-      await wait(Math.max(0, TA - vt), id); ok.classList.remove('press'); cur2.classList.remove('show'); ask.classList.add('done');
-    }
-    function pump() {
-      const now = performance.now(); if (state === 'running') vt += Math.min(120, now - last); last = now;
-      waiters = waiters.filter(w => { if (w.id !== run) { w.no(); return false; } if (state === 'done' || vt >= w.at) { w.yes(); return false; } return true; });
-      share();
-      /* Done: both lanes are let through to their last frame, then the clock stops for good. */
-      if (state === 'running' && vt >= Math.max(TH, TA) + 300) { state = 'done'; share(); label(); }
-      else if (state === 'done' && open <= 0) clearInterval(timer);
-    }
-    function start() { reset(); const id = run; state = 'running'; last = performance.now(); hand.classList.add('go'); ask.classList.add('go'); label();
-      open = 2; const end = () => { if (id === run) open--; };
-      timer = setInterval(pump, 40); byHand(id).then(end, end); justAsk(id).then(end, end); }
+    const R = RACES[sec.dataset.race], st = S.rs[idx], ctl = sec.querySelector('.race-ctl'), TH = R.hand * MIN, TA = R.ask * MIN;
+    let state = 'idle', vt = 0, last = 0, timer = 0;
+    /* p and q are how far the ask and the by-hand path have got, 0 to 1; the ask is typed over its first third. */
+    const share = () => { st.h = Math.min(vt, TH) / MIN; st.a = Math.min(vt, TA) / MIN; st.p = clamp01(vt / TA); st.q = clamp01(vt / TH);
+      st.ask = R.prompt.slice(0, Math.ceil(R.prompt.length * clamp01(vt / (TA * 0.33)))); st.hDone = vt >= TH; st.aDone = vt >= TA; st.on = state !== 'idle';
+      sec.classList.toggle('is-won', st.on && st.aDone); };
+    const label = () => { ctl.dataset.state = state; ctl.setAttribute('aria-label', state === 'done' ? 'Play it again' : state === 'paused' ? 'Play' : 'Pause'); ctl.hidden = state === 'idle'; };
+    function pump() { const now = performance.now(); if (state === 'running') vt += Math.min(120, now - last); last = now; share();
+      if (state === 'running' && vt >= Math.max(TH, TA) + 300) { state = 'done'; clearInterval(timer); label(); } }
+    function reset() { clearInterval(timer); vt = 0; state = 'idle'; share(); label(); }
+    function start() { reset(); state = 'running'; last = performance.now(); timer = setInterval(pump, 40); share(); label(); }
     ctl.addEventListener('click', () => {
       if (state === 'done' || state === 'idle') start();
       else if (state === 'running') { state = 'paused'; label(); }
@@ -1646,8 +1379,10 @@ const worldTags = [...document.querySelectorAll('.world-tag')];
 const place = (e, v, al, dy) => { if (al < 0.01) { if (e.style.opacity !== '0') e.style.opacity = 0; return; } proj.copy(v).project(camera);
   e.style.opacity = al.toFixed(3); e.style.transform = `translate3d(${((proj.x + 1) / 2 * W).toFixed(1)}px, ${((1 - proj.y) / 2 * H + dy).toFixed(1)}px, 0) translate(-50%, -50%)`; };
 let pingT = -99, pingSeen = 0, stn = -1, stnBusy = false;
-/* ── Inside each tool's world: the bodies the job is about, and the time gap drawn as two light trails on one
-   minutes axis. The race script shares its live minutes. Time is only ever a length here, never a size. ── */
+/* ── Each race happens in its tool's world, as bodies. The small bodies round the tool are the things the job is
+   about. By hand, one pale body visits them one at a time. Asked, a spark flies to the tool, every body lights at
+   once, and the result comes out toward you. In front of it all lies the tape: two light trails on one minutes
+   axis. Time is only ever a length here, never a size. The race script shares the clock; this draws it. ── */
 const RS = S.rs || [], RC = S.races || [], ITEM_N = 6, AXIS_MIN = 20;
 /* A trail is lit along its whole length, brightest at the head, so both read from the same origin. */
 const TRAIL_FRAG = `uniform vec3 uCol,uHot; uniform float uAlpha; varying float vT,vS;
@@ -1655,62 +1390,83 @@ const TRAIL_FRAG = `uniform vec3 uCol,uHot; uniform float uAlpha; varying float 
     float a=(.4+.6*pow(vT,1.6))*uAlpha; vec3 c=mix(uCol,uHot,core*.5)*(edge*.6+core*.85)*(1.+1.4*pow(vT,14.)); gl_FragColor=vec4(c*a,1.); }`;
 const trailH = ribbon(24, WHITE.clone().multiplyScalar(0.5), 0.085, TRAIL_FRAG, false), trailA = ribbon(24, C.sun1.clone(), 0.085, TRAIL_FRAG, false), axisR = ribbon(16, C.ring.clone(), 0.014, ARC_FRAG, false);
 [trailH, trailA, axisR].forEach(r => { r.mesh.visible = false; });
-const items = WPOS.map((p, i) => Array.from({ length: ITEM_N }, (_, j) => { const m = new THREE.Mesh(quad, sunMat((j % 2 ? C.sun2 : C.sun1).clone(), 71 + i * 7 + j * 3.1, 0.45, 0.2)); m.material.uniforms.uFlare.value = 0.1; m.frustumCulled = false; m.renderOrder = 6; m.visible = false; m.userData.g = 0.2; scene.add(m); return m; }));
-const itemOff = (form, j) => {
-  /* An arc round the far side of the world, clear of the time axis in front of it. */
-  if (form === 'ring') { const a = -1.55 + j * 0.62; return [-Math.cos(a) * 1.3 + 0.1, Math.sin(a) * 1.3]; }
-  if (form === 'row') return [-0.2 - j * 0.6, -1.15];
-  if (form === 'grid') return [-0.5 - Math.floor(j / 3) * 0.62, 0.95 + (j % 3) * 0.58];
-  const a = -0.45 + j * 0.4; return [-Math.sin(a) * 1.55 - 0.15, Math.cos(a) * 1.55];
-};
+const body = (col, seed, size) => { const m = new THREE.Mesh(quad, sunMat(col, seed, size, 0.2)); m.material.uniforms.uFlare.value = 0.1; m.frustumCulled = false; m.renderOrder = 6; m.visible = false; scene.add(m); return m; };
+const items = Array.from({ length: ITEM_N }, (_, j) => body((j % 2 ? C.sun2 : C.sun1).clone(), 71 + j * 3.1, 0.42));
+const handB = body(WHITE.clone().multiplyScalar(0.8), 91, 0.3), askB = body(C.sun1.clone().lerp(WHITE, 0.4), 93, 0.34);
+const resB = body(C.sun1.clone(), 95, 0.6), okB = body(tok('--ok'), 97, 0.6);
 const sceneUi = document.querySelector('.scene-ui');
 const mkTag = (cls, html) => { const e = document.createElement('div'); e.className = cls; e.innerHTML = html || ''; sceneUi.append(e); return e; };
 const tagH = mkTag('trail-tag hand', '<span>By hand</span><b></b>'), tagA = mkTag('trail-tag ask', '<span>Asked</span><b></b>');
 const tickTags = [5, 10, 15, 20].map(m => { const e = mkTag('tick-tag', m === 20 ? '20 min' : String(m)); e._m = m; return e; });
-const itemTags = Array.from({ length: 3 }, () => mkTag('item-tag'));
-const vR = new THREE.Vector3(), vB = new THREE.Vector3(), vO = new THREE.Vector3(), vA = new THREE.Vector3(), vE = new THREE.Vector3(), vU = new THREE.Vector3(), vV = new THREE.Vector3(), vP = new THREE.Vector3();
-let itemShow = 0;
-function raceWorld(fl, wsel, dtReal) {
+const askTag = mkTag('ask-tag'), resTag = mkTag('res-tag', '<b></b><i></i>');
+const vR = new THREE.Vector3(), vB = new THREE.Vector3(), vO = new THREE.Vector3(), vA = new THREE.Vector3(), vE = new THREE.Vector3(), vP = new THREE.Vector3(), vS0 = new THREE.Vector3(), vDock = new THREE.Vector3(), vAsk = new THREE.Vector3();
+const itemP = Array.from({ length: ITEM_N }, () => new THREE.Vector3());
+const ease = t => t * t * (3 - 2 * t), c01 = v => Math.max(0, Math.min(1, v));
+function raceWorld(fl, wsel) {
   const wi = Math.max(0, Math.min(WN - 1, Math.round(wsel))), near = fl * Math.max(0, 1 - Math.abs(wsel - wi) * 2.2), rs = RS[wi], rc = RC[wi], on = near > 0.02 && rs && rc;
-  trailH.mesh.visible = trailA.mesh.visible = axisR.mesh.visible = !!on;
-  items.forEach((row, i) => row.forEach(m => { m.visible = !!on && i === wi; }));
-  if (!on) { itemShow = 0; return null; }
-  const Wp = WPOS[wi];
-  /* The axis lies on the ground in front of the world, left to right as you look at it. */
+  [trailH, trailA, axisR].forEach(r => { r.mesh.visible = !!on; });
+  [...items, handB, askB, resB, okB].forEach(m => { m.visible = !!on; });
+  if (!on) return null;
+  const Wp = WPOS[wi], p = rs.p, q = rs.q, live = rs.on ? 1 : 0;
   vR.setFromMatrixColumn(camera.matrixWorld, 0); vR.y = 0; vR.normalize(); vB.setFromMatrixColumn(camera.matrixWorld, 2); vB.y = 0; vB.normalize();
-  vO.copy(Wp).addScaledVector(vB, 1.55); vO.y = 0.06;
-  const L = Math.min(2 * camera.position.distanceTo(vO) * Math.tan(D2R(camera.fov / 2)) * camera.aspect * 0.78, 5.6), unit = L / AXIS_MIN;
+  /* The tape lies on the ground well in front of the world, left to right, with nothing else near it. */
+  vO.copy(Wp).addScaledVector(vB, 3.1); vO.y = 0.06;
+  const L = Math.min(2 * camera.position.distanceTo(vO) * Math.tan(D2R(camera.fov / 2)) * camera.aspect * 0.74, 5.6), unit = L / AXIS_MIN;
   vO.addScaledVector(vR, -L / 2);
   layArc(axisR, vO, vE.copy(vO).addScaledVector(vR, L), 0); axisR.mesh.material.uniforms.uAlpha.value = near * 0.55;
-  const hLen = Math.max(0.02, rs.h * unit), aLen = Math.max(0.02, rs.a * unit);
-  vA.copy(vO).addScaledVector(vB, -0.14); layArc(trailH, vA, vE.copy(vA).addScaledVector(vR, hLen), 0); trailH.mesh.material.uniforms.uAlpha.value = near * (rs.on ? 1 : 0);
+  vA.copy(vO).addScaledVector(vB, -0.14); layArc(trailH, vA, vE.copy(vA).addScaledVector(vR, Math.max(0.02, rs.h * unit)), 0); trailH.mesh.material.uniforms.uAlpha.value = near * live;
   const headH = vE.clone();
-  vA.copy(vO).addScaledVector(vB, 0.14); layArc(trailA, vA, vE.copy(vA).addScaledVector(vR, aLen), 0); trailA.mesh.material.uniforms.uAlpha.value = near * (rs.on ? 1.25 : 0);
+  vA.copy(vO).addScaledVector(vB, 0.14); layArc(trailA, vA, vE.copy(vA).addScaledVector(vR, Math.max(0.02, rs.a * unit)), 0); trailA.mesh.material.uniforms.uAlpha.value = near * live * 1.25;
   const headA = vE.clone();
-  /* The bodies: quiet until the answer lands, then the ones that matter light and the rest go dark. */
-  vU.set(Wp.x, 0, Wp.z).normalize(); vV.set(-vU.z, 0, vU.x);
-  itemShow = lerp(itemShow, rs.aDone ? 1 : 0, 1 - Math.exp(-dtReal * 5));
-  const hot = [];
-  items[wi].forEach((m, j) => { const o = itemOff(rc.form, j), isHot = rc.items[j][1];
-    m.position.copy(Wp).addScaledVector(vU, o[0]).addScaledVector(vV, o[1]);
-    const u = m.material.uniforms; u.uGain.value = near * lerp(0.2, isHot ? 0.95 : 0.05, itemShow); u.uSize.value = lerp(0.42, isHot ? 0.66 : 0.36, itemShow);
-    if (isHot && rc.items[j][0]) hot.push([m.position, rc.items[j][0]]); });
-  return { near, rs, unit, L, headH, headA, hot, o: vO.clone() };
+  /* The things the job is about: an arc round the right and far side of the world, clear of the headline and the tape. */
+  const work = c01((p - 0.4) / 0.4), shown = c01((p - 0.8) / 0.08), seen = Math.floor(q * ITEM_N + 0.001);
+  items.forEach((m, j) => { const a = -0.6 + j * 0.5; itemP[j].copy(Wp).addScaledVector(vR, Math.cos(a) * 1.4).addScaledVector(vB, -Math.sin(a) * 1.4); m.position.copy(itemP[j]);
+    const u = m.material.uniforms, byHand = j < seen ? 0.36 : 0.16, lit = work * ITEM_N > j ? 0.7 : byHand, hot = rc.hot[j];
+    u.uGain.value = near * lerp(lit, hot ? 1 : 0.07, shown); u.uSize.value = lerp(0.42, hot ? 0.64 : 0.34, shown); });
+  /* By hand: one pale body goes round them one at a time, for as long as the job takes. */
+  vS0.copy(Wp).addScaledVector(vR, -1.25).addScaledVector(vB, 0.7);
+  { const f = Math.min(q * ITEM_N, ITEM_N - 1e-4), k = Math.floor(f), t = ease(c01((f - k) * 2.2));
+    handB.position.copy(k ? itemP[k - 1] : vS0).lerp(itemP[k], t); handB.position.y += 0.26;
+    handB.material.uniforms.uGain.value = near * live * (rs.hDone ? 0.25 : 0.85); }
+  /* Asked: the spark leaves you, reaches the tool, and the tool does the work. */
+  { const t = ease(c01(p / 0.4)), u = 1 - t; vAsk.copy(vO).addScaledVector(vB, -0.5); vAsk.y = 0.35;
+    askB.position.set(u * u * vAsk.x + 2 * u * t * (vAsk.x + Wp.x) / 2 + t * t * Wp.x, u * u * vAsk.y + 2 * u * t * 1.7 + t * t * Wp.y, u * u * vAsk.z + 2 * u * t * (vAsk.z + Wp.z) / 2 + t * t * Wp.z);
+    askB.material.uniforms.uGain.value = near * live * (p > 0 && p < 0.4 ? 1 : 0);
+    if (p > 0.4 && p < 0.8) worlds[wi].material.uniforms.uGain.value += near * 0.3 * (0.5 + 0.5 * Math.sin(clockT * 9)); }
+  /* The result comes out of the world toward you and waits for your one click; approved, it turns green. */
+  vDock.copy(Wp).addScaledVector(vB, 1.55).addScaledVector(vR, -0.55);
+  { const t = ease(c01((p - 0.8) / 0.1)), g = near * live * c01((p - 0.8) / 0.03);
+    resB.position.copy(Wp).lerp(vDock, t); okB.position.copy(resB.position);
+    resB.material.uniforms.uGain.value = g * (rs.aDone ? 0 : 0.95); okB.material.uniforms.uGain.value = g * (rs.aDone ? 1 : 0);
+    resB.material.uniforms.uSize.value = okB.material.uniforms.uSize.value = 0.6; }
+  return { near, rs, rc, unit, headH, headA, o: vO.clone(), wp: Wp, resAt: t01(p) };
 }
+const t01 = p => c01((p - 0.86) / 0.06);
 function raceTags(rw) {
-  if (!rw) { [tagH, tagA, ...tickTags, ...itemTags].forEach(e => { if (e.style.opacity !== '0') e.style.opacity = 0; }); return; }
-  const { near, rs } = rw, small = W < 700;
+  if (!rw) { [tagH, tagA, askTag, resTag, ...tickTags].forEach(e => { if (e.style.opacity !== '0') e.style.opacity = 0; }); return; }
+  const { near, rs, rc } = rw, live = rs.on ? 1 : 0;
   tagH.lastChild.textContent = Math.floor(rs.h) + ' min'; tagA.lastChild.textContent = Math.floor(rs.a) + ' min';
   tagH.classList.toggle('stop', rs.hDone); tagA.classList.toggle('stop', rs.aDone);
-  placeL(tagH, rw.headH, near * (rs.on ? 1 : 0), -28); placeL(tagA, rw.headA, near * (rs.on ? 1 : 0), 28);
-  tickTags.forEach(e => place(e, vP.copy(rw.o).addScaledVector(vR, e._m * rw.unit).addScaledVector(vB, 0.5), near * 0.9, 0));
-  itemTags.forEach((e, k) => { const h = rw.hot[k]; if (!h) { e.style.opacity = 0; return; } if (e.textContent !== h[1]) e.textContent = h[1]; place(e, h[0], near * itemShow, 26); });
+  placeL(tagH, rw.headH, near * live, -30); placeL(tagA, rw.headA, near * live, 30);
+  tickTags.forEach(e => place(e, vP.copy(rw.o).addScaledVector(vR, e._m * rw.unit).addScaledVector(vB, 1.0), near * 0.9, 0));
+  /* The ask is written beside the world while it travels, and clears once the work is done. */
+  const quote = rs.ask ? '“' + rs.ask + (rs.p >= 0.33 ? '”' : '') : '';
+  if (askTag.textContent !== quote) askTag.textContent = quote;
+  placeSide(askTag, vP.copy(rw.wp).addScaledVector(vR, -1.3), near * live * (1 - c01((rs.p - 0.72) / 0.08)), -1);
+  if (resTag.firstChild.textContent !== rc.out[0]) resTag.firstChild.textContent = rc.out[0];
+  const word = rs.aDone ? rc.out[1] : 'Approve'; if (resTag.lastChild.textContent !== word) resTag.lastChild.textContent = word;
+  resTag.classList.toggle('ok', rs.aDone); resTag.classList.toggle('press', rs.p > 0.97 && !rs.aDone);
+  placeSide(resTag, vDock, near * live * rw.resAt, 1);
 }
-/* A trail's clock sits at its head, kept inside the screen. */
+/* A trail's clock sits at its head; at the edge of the screen it steps above or below its own trail instead. */
 const placeL = (e, v, al, dy) => { if (al < 0.01) { if (e.style.opacity !== '0') e.style.opacity = 0; return; } proj.copy(v).project(camera);
   let x = (proj.x + 1) / 2 * W + 16, y = (1 - proj.y) / 2 * H; const w = e.offsetWidth || 150;
-  /* Beside the head; at the edge of the screen it steps above or below its own trail instead. */
   if (x + w > W - 12) { x = W - 12 - w; y += dy; }
+  e.style.opacity = al.toFixed(3); e.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) translate(0, -50%)`; };
+/* A label beside its body: side 1 to the right of it, side -1 ending to the left of it. Kept inside the screen. */
+const placeSide = (e, v, al, side) => { if (al < 0.01) { if (e.style.opacity !== '0') e.style.opacity = 0; return; } proj.copy(v).project(camera);
+  const w = e.offsetWidth || 200, px = (proj.x + 1) / 2 * W, y = (1 - proj.y) / 2 * H;
+  const x = side > 0 ? Math.min(px + 30, W - 12 - w) : Math.max(12, px - w);
   e.style.opacity = al.toFixed(3); e.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) translate(0, -50%)`; };
 
 
@@ -1876,7 +1632,7 @@ function frame(dtReal, still) {
     m.material.uniforms.uGain.value = fl * (0.3 + 0.28 * near); m.material.uniforms.uSize.value = 1.5 + 0.5 * near;
     layArc(warcs[i], HUB, m.position, 2.2); warcs[i].mesh.material.uniforms.uAlpha.value = fl * (0.1 + 0.85 * near); });
 
-  const rw = raceWorld(fl, wsel, dtReal);
+  const rw = raceWorld(fl, wsel);
   timeU.value = clockT; finalPass.uniforms.uTime.value = clockT;
   composer.render();
   raceTags(rw);

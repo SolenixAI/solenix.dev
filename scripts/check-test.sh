@@ -50,11 +50,10 @@ expect fail "orphaned Open Design sidecar"
 fresh; rm "$tmp/r/design/roi-model.md"
 expect fail "a source of truth goes missing"
 
-fresh; sed -i '' 's|^\.lane {|.lane { background: black; |' "$tmp/r/design/home.html"
-if grep -q '^\.lane { background' "$tmp/r/design/home.html"; then expect fail "race lane becomes a panel over the world"
-else fail=$((fail + 1)); echo "WRONG race lane rule could not be exercised (no '.lane {' rule in home.html): a skipped proof is not a proof"; fi
+fresh; sed -i '' 's#</body>#<article class="lane hand">By hand</article></body>#' "$tmp/r/design/home.html"
+expect fail "race interface laid over the world (a .lane comes back)"
 
-fresh; sed -i '' 's|<p>Everything in one place.</p>|<p>Everything in one place, and a good many more words than any owner will read here.</p>|' "$tmp/r/design/home.html"
+fresh; sed -i '' 's|<h3>Your own portal</h3>|<h3>Your own portal, and a good many more words than any owner will read here</h3>|' "$tmp/r/design/home.html"
 if grep -q 'a good many more words' "$tmp/r/design/home.html"; then expect fail "plan stop over ten words"
 else fail=$((fail + 1)); echo "WRONG plan stop rule could not be exercised (stop copy not found in home.html): a skipped proof is not a proof"; fi
 
