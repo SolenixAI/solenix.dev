@@ -147,3 +147,7 @@ Pace: about 2–5 points a pass, roughly 40 min each. The judges are a proxy; th
 | readable outcome labels | 10–1 | 6–0 | 4–0 | readability 9–2; same words, larger, body face |
 
 Rule learned: cut words, but never the outcome words.
+
+| #9 | after 5 A/B wins in a row | 65 | 48 | 50 | 49 | 64 | 69 |
+
+**Plateau (2026-10-01, 07:30).** Five blind A/B wins in a row, yet absolute scores sit at about 50 against the bar of 85: a local maximum for this approach. The judges' shared cause: scenes tell results with captions and numbers. They want each scene to be a short wordless event in the world (problem → ask → output → saving). The next step is Jager's call: (a) commit to that bigger build per scene, or (b) publish and let real owners' behaviour (PostHog: scroll depth, race completion, Book a call) decide.
