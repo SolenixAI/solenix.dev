@@ -10,7 +10,8 @@
     "check": "bash scripts/check.sh",
     "prepare": "git config core.hooksPath .githooks",
     "scenes": "node scripts/scene-check.mjs",
-    "shots": "node scripts/shots.mjs"
+    "shots": "node scripts/shots.mjs",
+    "check:test": "bash scripts/check-test.sh"
   },
   "engines": {
     "node": ">=22"
