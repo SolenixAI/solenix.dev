@@ -128,12 +128,13 @@ After: "Show every deal with no activity in 14 days and draft a follow-up for ea
 
 Every name and amount below is made up for the demonstration and is tagged "Example" on the page. None is a client, a result or a price.
 
-| Race | What the race ends on | Example names and amounts |
+| Race | The owner's thing, before | After the ask lands |
 |---|---|---|
-| Stripe | The invoice, sent | Invoice to Harbour Dental · $450 · website care · due in 15 days |
-| Shopify | The reorder email, waiting on Approve | Sea salt caramels, 14 left · Wool mitts, 9 left |
-| HubSpot | A follow-up note on each quiet deal | Harbour Dental · Cove Road Cafe · East End Yoga |
-| Meta Ads | The ad that brings no buyers, paused | Local awareness ad · no purchases in 7 days |
-| Excel | The corrected total | Sales total $12,480 (was $11,930; one row was missed) |
-| Gmail and Calendar | Replies drafted and the meeting booked | 3 replies · meeting with Harbour Dental, Tuesday 10:30 |
+| Stripe | Harbour Dental invoice · $450 · website care · 30 days late · Unpaid | Paid · reminder sent |
+| Shopify | Sea salt caramels · 14 left on the shelf · Running out | 120 on the shelf · Restocked |
+| HubSpot | 3 quiet deals · no word in 30 days | Followed up · a note written for each |
+| Meta Ads | Local awareness ad · On, no buyers · $0 kept this week | Off · $210 kept this week |
+| Excel | Sales total $11,930 · Wrong · one row was missed | $12,480 · Right · every row counted |
+| Gmail and Calendar | 3 emails waiting on you · Unanswered since this morning | 0 · Answered · Harbour Dental booked, Tuesday 10:30 |
 
+The first screen shows the Stripe example (Unpaid to Paid) as the page opens.

@@ -60,6 +60,9 @@ else fail=$((fail + 1)); echo "WRONG plan stop rule could not be exercised (stop
 fresh; awk '{print} /The flyby races\./ && !d {print "if (matchMedia(\"(prefers-reduced-motion: reduce)\").matches) {}"; d=1}' "$tmp/r/design/home.html" > "$tmp/h" && mv "$tmp/h" "$tmp/r/design/home.html"
 expect fail "races stop under Reduce Motion"
 
+fresh; awk '{print} /^\.stop-mk\.cur svg/ && !d {print ".stop-mk.cur { animation: stop-pop 700ms; }"; d=1}' "$tmp/r/design/home.html" > "$tmp/h" && mv "$tmp/h" "$tmp/r/design/home.html"
+expect fail "stop marker animation that freezes under Reduce Motion"
+
 fresh; mkdir -p "$tmp/r/app/(site)/law"
 expect fail "an industry page (app/(site)/law)"
 

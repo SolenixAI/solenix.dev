@@ -46,6 +46,10 @@ grep -n -E 'class="(lane|scr|rchat)[" ]' design/home.html \
 # Reduced motion quiets the camera only: the races must still play.
 awk '/The flyby races\./,/<\/script>/' design/home.html | grep -n -E 'prefers-reduced-motion|reduce\.matches' \
   | while read -r l; do echo "check: the races must play under reduced motion (no reduced-motion branch in the race script): ${l:0:60}"; done | grep . && fail=1
+# Reduced motion freezes keyframe animations at their first frame (tokens.css), so a stop marker's size and place
+# must never depend on one: animate it only inside a prefers-reduced-motion: no-preference block.
+grep -n -E '^\.stop-mk[^{]*\{[^}]*animation:' design/home.html \
+  | while read -r l; do echo "check: stop marker animated outside a no-preference block (it freezes small under Reduce Motion): ${l:0:60}"; done | grep . && fail=1
 
 # No industry pages: the site speaks to every small business (design/DESIGN.md Decisions).
 find "app/(site)" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | grep -i -E '/(law|legal|lawyers?|dental|dentists?|clinic|medical|realty|real-estate|restaurants?|trades?|accountants?|accounting)$' \

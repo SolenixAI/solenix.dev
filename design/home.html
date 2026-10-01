@@ -591,20 +591,23 @@ html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%
 .ask-tag { max-width: min(19rem, 38vw); white-space: normal; text-align: right; font: var(--fw-semibold) var(--fs-h3)/1.3 var(--font-display); letter-spacing: var(--track-heading); color: var(--text); text-wrap: balance; }
 /* The payoff is the scene: the finished work, named, with its amount and your one click. */
 .pay-tag { position: absolute; left: 0; top: 0; opacity: 0; will-change: transform, opacity; display: flex; align-items: center; gap: var(--space-5); white-space: nowrap; text-shadow: 0 0 18px var(--bg), 0 0 8px var(--bg), 0 2px 3px var(--bg); }
-.pay-tag b { font: 800 clamp(3rem, 2rem + 4.4vw, 4.5rem)/1 var(--font-display); letter-spacing: -0.045em; font-variant-numeric: tabular-nums; color: var(--accent-text); transition: color var(--dur-base); }
+.pay-tag b { font: 800 clamp(3rem, 2rem + 4.4vw, 4.5rem)/1 var(--font-display); letter-spacing: -0.045em; font-variant-numeric: tabular-nums; color: var(--warn); transition: color var(--dur-base); }
 .pay-tag b:empty { display: none; }
 .pay-tag > span { display: grid; gap: var(--space-2); justify-items: start; }
 .pay-tag small { font: var(--fw-medium) var(--fs-2xs)/1 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--muted); padding: 3px 8px; border-radius: var(--radius-pill); border: 1px dashed var(--line-strong); text-shadow: none; }
 .pay-tag em { font: var(--fw-bold) var(--fs-h2)/1.15 var(--font-display); font-style: normal; letter-spacing: var(--track-heading); color: var(--text); }
 .pay-tag u { display: grid; gap: 2px; text-decoration: none; font-size: var(--fs-body); line-height: 1.35; color: var(--text); }
-.pay-tag i { margin-top: var(--space-1); font: var(--fw-semibold) var(--fs-sm)/1 var(--font-text); font-style: normal; padding: 9px 16px; border-radius: var(--radius-pill); border: 1px solid var(--line-strong); color: var(--text); text-shadow: none; transition: scale 140ms, color var(--dur-base), border-color var(--dur-base), box-shadow var(--dur-base); }
+.pay-tag i { margin-top: var(--space-1); font: var(--fw-semibold) var(--fs-sm)/1 var(--font-text); font-style: normal; padding: 9px 16px; border-radius: var(--radius-pill); border: 1px solid var(--warn); color: var(--warn); text-shadow: none; transition: scale 140ms, color var(--dur-base), border-color var(--dur-base), box-shadow var(--dur-base); }
 .pay-tag.press i { scale: .92; border-color: var(--text); }
 .pay-tag.ok b { color: var(--ok); }
 .pay-tag.ok i { color: var(--ok); border-color: var(--ok); box-shadow: 0 0 22px color-mix(in srgb, var(--ok) 30%, transparent); }
 /* Waiting on you: the one click is yours, and it is lit. */
 .pay-tag.wait i { color: var(--accent-text); border-color: var(--accent); box-shadow: 0 0 0 5px var(--accent-quiet), 0 0 24px color-mix(in srgb, var(--ring) 45%, transparent); }
 /* The time tape is a small supporting line under the work. */
-.trail-tag b, .trail-tag.ask b { font-size: var(--fs-h4); }
+.trail-tag b, .trail-tag.ask b { font-size: var(--fs-body); }
+.trail-tag.hand b { color: var(--muted); }
+/* Screen 1: the same kind of moment, small, beside its tool. */
+.pay-tag.hero-moment { gap: var(--space-4); } .pay-tag.hero-moment b { font-size: clamp(2.25rem, 1.6rem + 2.4vw, 3.25rem); } .pay-tag.hero-moment em { font-size: var(--fs-h4); } .pay-tag.hero-moment u { font-size: var(--fs-sm); }
 @media (max-width: 699px) {
   .race-in { padding-top: calc(var(--nav-height) + var(--space-3)); padding-bottom: var(--space-3); }
   .race-foot { grid-template-columns: auto auto; justify-content: space-between; row-gap: var(--space-2); }
@@ -612,6 +615,8 @@ html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%
   .ask-tag { font-size: var(--fs-body); max-width: 44vw; }
   /* On a phone the finished work stands in the calm space under the tape, never off the edge. */
   .pay-tag { transform: none !important; left: var(--space-4); right: var(--space-4); top: 57%; flex-direction: column; align-items: flex-start; gap: var(--space-2); white-space: normal; } .pay-tag b { font-size: 3rem; } .pay-tag em { font-size: var(--fs-h3); } .pay-tag small { order: -1; }
+  /* Screen 1 on a phone: the moment sits in the calm band between the tools and the headline. */
+  .pay-tag.hero-moment { top: 32%; z-index: 2; flex-direction: row; align-items: center; gap: var(--space-3); } .pay-tag.hero-moment b { font-size: 2.5rem; } .pay-tag.hero-moment u { display: none; }
 }
 html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relative; height: auto; } html:not(.js) .sr-race { position: static; width: auto; height: auto; clip-path: none; white-space: normal; }
 .world-tag { width: 52px; height: 52px; background: color-mix(in oklch, var(--bg) 88%, transparent); border-color: color-mix(in oklch, var(--accent) 55%, transparent); box-shadow: 0 0 24px color-mix(in srgb, var(--ring) 40%, transparent); }
@@ -629,13 +634,22 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
    lit marker on the orbit, so its name is not repeated beside it. */
 #after { height: 640vh; height: 640svh; }
 .stop-mk svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; transition: width var(--dur-slow) var(--ease-out), height var(--dur-slow) var(--ease-out); }
-.stop-mk.cur { width: 64px; height: 64px; margin: -32px 0 0 -32px; }
-.stop-mk.cur svg { width: 30px; height: 30px; }
+/* One large event per stop: the stop you are at arrives big, fully in frame, and keeps ringing out. */
+.stop-mk.cur { width: 104px; height: 104px; margin: -52px 0 0 -52px; z-index: 1; box-shadow: 0 0 0 10px var(--accent-quiet), 0 0 0 11px color-mix(in oklch, var(--accent) 55%, transparent), 0 0 36px color-mix(in srgb, var(--ring) 50%, transparent); }
+.stop-mk.cur svg { width: 48px; height: 48px; }
+.stop-mk.prom.cur { box-shadow: 0 0 0 10px color-mix(in oklch, var(--ok) 18%, transparent), 0 0 0 11px color-mix(in oklch, var(--ok) 55%, transparent), 0 0 36px color-mix(in srgb, var(--ok) 40%, transparent); }
+/* The pop and the ring going out are extra; with reduced motion the stop simply stands there, large and ringed. */
+@media (prefers-reduced-motion: no-preference) {
+  .stop-mk.cur { animation: stop-pop 700ms var(--ease-out); }
+  .stop-mk.cur::after { content: ""; position: absolute; inset: -3px; border-radius: 50%; border: 2px solid var(--accent); animation: stop-ring 1.8s var(--ease-out) infinite; pointer-events: none; }
+  .stop-mk.prom.cur::after { border-color: var(--ok); }
+}
+@keyframes stop-pop { from { scale: .35; } 60% { scale: 1.12; } to { scale: 1; } }
+@keyframes stop-ring { from { scale: 1; opacity: .85; } to { scale: 1.9; opacity: 0; } }
 /* Every stop stays on the orbit: the ones behind you filled, the one you are at large, the ones ahead outlined. */
 .stop-mk.lit:not(.cur) { width: 34px; height: 34px; margin: -17px 0 0 -17px; font-size: inherit; }
 /* The four promises sit on the settled orbit; each one seals green as it is given. */
 .stop-mk.prom.lit { background: color-mix(in oklch, var(--ok) 20%, var(--bg)); border-color: var(--ok); color: var(--ok); }
-.stop-mk.prom.cur { box-shadow: 0 0 0 6px color-mix(in oklch, var(--ok) 22%, transparent), 0 0 24px color-mix(in srgb, var(--ok) 40%, transparent); }
 .stop-mk span { display: none; }
 .jr-in { grid-template-rows: auto minmax(0, 1fr) auto auto; row-gap: var(--space-5); }
 .jr-steps .no { font: var(--fw-bold) var(--fs-h1)/1 var(--font-display); letter-spacing: var(--track-heading); font-variant-numeric: tabular-nums; }
@@ -643,6 +657,12 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
 .jr-dots { display: none; }
 /* The close: the headline, the action, and who you are dealing with. */
 .close-ctas .textlink { display: none; }
+/* The close is the hero shot: one clean orbit above, the line, and Book a call directly beneath it. */
+.close-sec { align-items: end; }
+.close-in { justify-items: center; text-align: center; padding-right: 0; padding-block: var(--space-7) var(--space-8); }
+.close-sec h2 { max-width: none; font-size: clamp(2.4rem, 5.2vw, 4.5rem); }
+.close-ctas { justify-content: center; margin-top: var(--space-5); }
+.close-in .trust { justify-content: center; }
 /* The first screen's words stand on calm dark: the sky deepens behind them and the world keeps to the upper right. */
 .hero-copy { isolation: isolate; }
 .hero-copy::before { content: ""; position: absolute; z-index: -1; left: 0; bottom: -8rem; width: min(100%, 52rem); height: calc(100% + 16rem); background: radial-gradient(ellipse 70% 60% at 30% 52%, color-mix(in oklch, var(--bg) 92%, transparent) 35%, transparent 100%); pointer-events: none; }
@@ -943,8 +963,8 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
     { sel: '#promises', f: 0.1, pin: 1, stops: 0, el: 40, az: 438, dist: 12, ox: 0.24, oy: 0.03, poy: -0.04 },
     { sel: '#promises', f: 1, pin: 1, el: 34, az: 510 },
     /* 5 · Stable orbit: steering lets go and it holds. */
-    { sel: '#close', f: 0.35, k: 0, agent: 1, tools: 1, el: 30, az: 532, dist: 13.5, ox: 0.05, oy: 0.24, poy: 0.24 },
-    { sel: '#close', f: 1, el: 32, az: 536, dist: 14 }
+    { sel: '#close', f: 0.35, k: 0, agent: 1, el: 34, az: 532, dist: 11.5, ox: 0, oy: 0.2, poy: 0.24 },
+    { sel: '#close', f: 1, el: 35, az: 536, dist: 12 }
   ];
   const PARAMS = Object.keys(KEYS[0]).filter(k => !['sel', 'f', 'pin', 'gap'].includes(k));
   for (let i = 1; i < KEYS.length; i++) PARAMS.forEach(k => { if (KEYS[i][k] === undefined) KEYS[i][k] = KEYS[i - 1][k]; });
@@ -1058,7 +1078,7 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
    it with the 3D scene, which plays the ask, the work and the result as bodies in the tool's world.
    Reduced motion does not stop them: the setting quiets the camera, and the demonstration still has to be seen. */
 (() => {
-  const RACES = {"stripe":{"name":"Stripe","prompt":"Who owes us? Send Harbour Dental their invoice.","out":["Invoice sent to Harbour Dental","Sent"],"hand":10,"ask":5,"hot":[0,1,1,0,0,0],"doc":{"t":"Invoice to Harbour Dental","big":"$450","lines":["Website care · due in 15 days"]}},"shopify":{"name":"Shopify","prompt":"What will run out this month? Draft the reorder.","out":["Stock reordered in time","Sent"],"hand":15,"ask":5,"hot":[1,0,1,0,0,0],"doc":{"t":"Reorder email, ready to send","big":"","lines":["Sea salt caramels · 14 left","Wool mitts · 9 left"],"wait":1}},"hubspot":{"name":"HubSpot","prompt":"Which deals went quiet? Draft a note for each.","out":["3 quiet deals followed up","Logged"],"hand":20,"ask":18,"hot":[1,0,1,0,1,0],"doc":{"t":"3 follow-up notes, written","big":"","lines":["Harbour Dental","Cove Road Cafe","East End Yoga"]}},"meta":{"name":"Meta Ads","prompt":"Which ad brings no buyers? Pause it.","out":["The ad wasting your money","Paused"],"hand":15,"ask":5,"hot":[0,1,0,0,0,0],"doc":{"t":"Local awareness ad","big":"Off","lines":["No purchases in 7 days"],"dark":1}},"microsoftexcel":{"name":"Excel","prompt":"Check my totals. What if prices rise 5%?","out":["The wrong total in your sales sheet","Fixed"],"hand":15,"ask":5,"hot":[0,0,0,0,0,1],"doc":{"t":"Sales total, corrected","big":"$12,480","lines":["Was $11,930 · one row was missed"]}},"gmail":{"name":"Gmail and Calendar","prompt":"What needs a reply today? Book Harbour Dental.","out":["Today's inbox answered, meeting set","Booked"],"hand":20,"ask":5,"hot":[1,0,1,0,1,0],"doc":{"t":"Meeting with Harbour Dental","big":"Tue 10:30","lines":["3 replies drafted for you"]}}};
+  const RACES = {"stripe":{"name":"Stripe","prompt":"Who owes us? Send Harbour Dental their invoice.","out":["Invoice sent to Harbour Dental","Sent"],"hand":10,"ask":5,"hot":[0,1,1,0,0,0],"doc":{"t":"Harbour Dental invoice","big":"$450","a":["Unpaid","Website care · 30 days late"],"b":["Paid","Website care · reminder sent"]}},"shopify":{"name":"Shopify","prompt":"What will run out this month? Draft the reorder.","out":["Stock reordered in time","Sent"],"hand":15,"ask":5,"hot":[1,0,1,0,0,0],"doc":{"t":"Sea salt caramels","n":[14,120],"a":["Running out","left on the shelf"],"b":["Restocked","on the shelf"],"grow":1}},"hubspot":{"name":"HubSpot","prompt":"Which deals went quiet? Draft a note for each.","out":["3 quiet deals followed up","Logged"],"hand":20,"ask":18,"hot":[1,0,1,0,1,0],"doc":{"t":"Quiet deals","big":"3","a":["Gone quiet","No word in 30 days"],"b":["Followed up","A note written for each"]}},"meta":{"name":"Meta Ads","prompt":"Which ad brings no buyers? Pause it.","out":["The ad wasting your money","Paused"],"hand":15,"ask":5,"hot":[0,1,0,0,0,0],"doc":{"t":"Local awareness ad","n":[0,210],"pre":"$","a":["On · no buyers","kept this week"],"b":["Off","kept this week"],"dark":1}},"microsoftexcel":{"name":"Excel","prompt":"Check my totals. What if prices rise 5%?","out":["The wrong total in your sales sheet","Fixed"],"hand":15,"ask":5,"hot":[0,0,0,0,0,1],"doc":{"t":"Sales total","n":[11930,12480],"pre":"$","a":["Wrong","One row was missed"],"b":["Right","Every row counted"]}},"gmail":{"name":"Gmail and Calendar","prompt":"What needs a reply today? Book Harbour Dental.","out":["Today's inbox answered, meeting set","Booked"],"hand":20,"ask":5,"hot":[1,0,1,0,1,0],"doc":{"t":"Emails waiting on you","n":[3,0],"a":["Unanswered","Since this morning"],"b":["Answered","Harbour Dental booked, Tue 10:30"]}}};
   const S = window.solenix, clamp01 = v => Math.max(0, Math.min(1, v));
   S.races = Object.keys(RACES).map(id => RACES[id]);
   S.rs = S.races.map(() => ({ h: 0, a: 0, p: 0, q: 0, ask: '', hDone: false, aDone: false, on: false, vis: 0 }));
@@ -1434,6 +1454,7 @@ const askTag = mkTag('ask-tag'), payTag = mkTag('pay-tag', '<b></b><span><small>
 const vR = new THREE.Vector3(), vB = new THREE.Vector3(), vO = new THREE.Vector3(), vA = new THREE.Vector3(), vE = new THREE.Vector3(), vP = new THREE.Vector3(), vS0 = new THREE.Vector3(), vDock = new THREE.Vector3(), vAsk = new THREE.Vector3();
 const itemP = Array.from({ length: ITEM_N }, () => new THREE.Vector3());
 const ease = t => t * t * (3 - 2 * t), c01 = v => Math.max(0, Math.min(1, v));
+const inFrame = (x, y, big) => { if (!big) return [x, y]; x = Math.min(Math.max(x, 76), W - 76); y = Math.min(Math.max(y, 160), H - 76); if (x < 470 && y > H - 330) x = Math.min(470, W - 76); return [x, y]; };
 function raceWorld(fl, wsel) {
   const wi = Math.max(0, Math.min(WN - 1, Math.round(wsel))), near = fl * Math.max(0, 1 - Math.abs(wsel - wi) * 2.2), rs = RS[wi], rc = RC[wi], on = near > 0.02 && rs && rc;
   [trailH, trailA, axisR, gapR].forEach(r => { r.mesh.visible = !!on; });
@@ -1445,19 +1466,22 @@ function raceWorld(fl, wsel) {
   vO.copy(Wp).addScaledVector(vB, 3.1); vO.y = 0.06;
   const L = Math.min(2 * camera.position.distanceTo(vO) * Math.tan(D2R(camera.fov / 2)) * camera.aspect * 0.74, 5.6), unit = L / AXIS_MIN;
   vO.addScaledVector(vR, -L / 2);
-  layArc(axisR, vO, vE.copy(vO).addScaledVector(vR, L), 0); axisR.mesh.material.uniforms.uAlpha.value = near * 0.55;
-  vA.copy(vO).addScaledVector(vB, -0.14); layArc(trailH, vA, vE.copy(vA).addScaledVector(vR, Math.max(0.02, rs.h * unit)), 0); trailH.mesh.material.uniforms.uAlpha.value = near * live;
+  layArc(axisR, vO, vE.copy(vO).addScaledVector(vR, L), 0); axisR.mesh.material.uniforms.uAlpha.value = near * 0.3;
+  vA.copy(vO).addScaledVector(vB, -0.14); layArc(trailH, vA, vE.copy(vA).addScaledVector(vR, Math.max(0.02, rs.h * unit)), 0); trailH.mesh.material.uniforms.uAlpha.value = near * live * 0.6;
   const headH = vE.clone();
-  vA.copy(vO).addScaledVector(vB, 0.14); layArc(trailA, vA, vE.copy(vA).addScaledVector(vR, Math.max(0.02, rs.a * unit)), 0); trailA.mesh.material.uniforms.uAlpha.value = near * live * 1.25;
+  vA.copy(vO).addScaledVector(vB, 0.14); layArc(trailA, vA, vE.copy(vA).addScaledVector(vR, Math.max(0.02, rs.a * unit)), 0); trailA.mesh.material.uniforms.uAlpha.value = near * live * 0.8;
   const headA = vE.clone(), back = rs.h - rs.a;
   /* What you get back: the ask has stopped and by hand is still going. That stretch is yours, and it is green. */
-  layArc(gapR, headA, vE.copy(vA).addScaledVector(vR, Math.max(rs.a * unit + 0.02, rs.h * unit)), 0); gapR.mesh.material.uniforms.uAlpha.value = near * live * (back > 0.05 ? 0.9 : 0);
+  layArc(gapR, headA, vE.copy(vA).addScaledVector(vR, Math.max(rs.a * unit + 0.02, rs.h * unit)), 0); gapR.mesh.material.uniforms.uAlpha.value = near * live * (back > 0.05 ? 0.6 : 0);
   /* The things the job is about: an arc round the right and far side of the world, clear of the headline and the tape. */
-  const work = c01((p - 0.4) / 0.4), shown = c01((p - 0.8) / 0.08), seen = Math.floor(q * ITEM_N + 0.001);
+  const work = c01((p - 0.4) / 0.4), shown = c01((p - 0.8) / 0.08), flip = ease(c01((p - 0.9) / 0.1)), seen = Math.floor(q * ITEM_N + 0.001);
   items.forEach((m, j) => { const a = -0.6 + j * 0.5; itemP[j].copy(Wp).addScaledVector(vR, Math.cos(a) * 1.4).addScaledVector(vB, -Math.sin(a) * 1.4); m.position.copy(itemP[j]);
     const u = m.material.uniforms, byHand = j < seen ? 0.36 : 0.16, lit = work * ITEM_N > j ? 0.7 : byHand, hot = rc.hot[j];
     /* The ones the answer picked out stay lit; a paused ad is the one that goes dark. */
-    const dk = rc.doc.dark; u.uGain.value = near * lerp(lit, hot ? (dk ? 0.02 : 1) : (dk ? 0.55 : 0.07), shown); u.uSize.value = lerp(0.42, hot && !dk ? 0.64 : 0.34, shown); });
+    const dk = rc.doc.dark, gr = rc.doc.grow;
+    /* The owner's things start as they are (quiet, unpaid, nearly empty, or a dead ad still burning) and change when the ask lands. */
+    if (hot) { u.uGain.value = near * lerp(dk ? 0.95 : 0.16, dk ? 0.02 : 1, flip); u.uSize.value = lerp(gr ? 0.2 : 0.42, dk ? 0.3 : gr ? 0.78 : 0.64, flip); }
+    else { u.uGain.value = near * lerp(lit, dk ? 0.55 : 0.07, shown); u.uSize.value = lerp(0.42, 0.34, shown); } });
   /* By hand: one pale body goes round them one at a time, for as long as the job takes. */
   vS0.copy(Wp).addScaledVector(vR, -1.25).addScaledVector(vB, 0.7);
   { const f = Math.min(q * ITEM_N, ITEM_N - 1e-4), k = Math.floor(f), t = ease(c01((f - k) * 2.2));
@@ -1474,7 +1498,7 @@ function raceWorld(fl, wsel) {
   vDock.addScaledVector(vR, -((payTag.offsetWidth || 320) / 2 + 30) * 2 * camera.position.distanceTo(vDock) * Math.tan(D2R(camera.fov / 2)) / H);
   { const t = ease(c01((p - 0.8) / 0.1)), g = near * live * c01((p - 0.8) / 0.03);
     resB.position.copy(Wp).lerp(vDock, t); okB.position.copy(resB.position);
-    { const sealed = rs.aDone && !rc.doc.wait; resB.material.uniforms.uGain.value = g * (sealed ? 0 : 0.95); okB.material.uniforms.uGain.value = g * (sealed ? 1 : 0); }
+    { const sealed = rs.aDone; resB.material.uniforms.uGain.value = g * (sealed ? 0 : 0.95); okB.material.uniforms.uGain.value = g * (sealed ? 1 : 0); }
     resB.material.uniforms.uSize.value = okB.material.uniforms.uSize.value = 0.6; }
   return { near, rs, rc, unit, headH, headA, back, o: vO.clone(), wp: Wp, resAt: t01(p) };
 }
@@ -1488,17 +1512,30 @@ function raceTags(rw) {
   /* Under the tape: the ask's clock ends at its head, and the minutes you get back start there. */
   const mins = Math.floor(rw.back + 0.001); if (tagBack.firstChild.textContent !== mins + ' min') tagBack.firstChild.textContent = mins + ' min';
   placeUnder(tagA, rw.headA, near * live, -1); placeUnder(tagBack, rw.headA, near * live * (mins >= 1 ? 1 : 0), 1);
-  tickTags.forEach(e => place(e, vP.copy(rw.o).addScaledVector(vR, e._m * rw.unit).addScaledVector(vB, 1.0), near * 0.9 * vis, 0));
+  tickTags.forEach(e => place(e, vP.copy(rw.o).addScaledVector(vR, e._m * rw.unit).addScaledVector(vB, 1.0), near * 0.4 * vis, 0));
   /* The ask is written beside the world while it travels, and clears once the work is done. */
   const quote = rs.ask ? '“' + rs.ask + (rs.p >= 0.33 ? '”' : '') : '';
   if (askTag.textContent !== quote) askTag.textContent = quote;
   placeSide(askTag, vP.copy(rw.wp).addScaledVector(vR, -1.3), near * live * (1 - c01((rs.p - 0.72) / 0.08)), -1);
-  /* The payoff is the finished work itself: what was made, for whom, and your one click on it. */
-  const d = rc.doc, col = payTag.lastChild, ttl = col.children[1], lines = col.children[2], pill = col.children[3];
-  if (ttl.textContent !== d.t) { ttl.textContent = d.t; payTag.firstChild.textContent = d.big; lines.innerHTML = d.lines.map(l => '<span>' + l + '</span>').join(''); }
-  const word = rs.aDone && !d.wait ? rc.out[1] : 'Approve'; if (pill.textContent !== word) pill.textContent = word;
-  payTag.classList.toggle('ok', rs.aDone && !d.wait); payTag.classList.toggle('wait', rs.aDone && !!d.wait); payTag.classList.toggle('press', !d.wait && rs.p > 0.88 && rs.p < 0.92);
-  placeSide(payTag, vDock, near * live * rw.resAt, 1);
+  /* The owner's own thing, in its bad state from the start; the moment the ask lands it changes in front of them. */
+  const d = rc.doc, st = rs.aDone ? d.b : d.a, col = payTag.lastChild;
+  setDoc(payTag, d.n ? (d.pre || '') + Math.round(lerp(d.n[0], d.n[1], rs.aDone ? 1 : ease(c01((rs.p - 0.9) / 0.1)))).toLocaleString('en-CA') : d.big, d.t, st[1], st[0]);
+  payTag.classList.toggle('ok', rs.aDone);
+  placeSide(payTag, vDock, near * live, 1);
+}
+const setDoc = (e, big, t, line, pill) => { const c = e.lastChild.children; if (e.firstChild.textContent !== big) e.firstChild.textContent = big;
+  if (c[1].textContent !== t) c[1].textContent = t; if (c[2].textContent !== line) c[2].textContent = line; if (c[3].textContent !== pill) c[3].textContent = pill; };
+/* Screen 1: one such moment, already happening as the page opens. The unpaid invoice beside its tool turns paid. */
+const heroTag = mkTag('pay-tag hero-moment', '<b></b><span><small>Example</small><em></em><u></u><i></i></span>'); let heroT0 = 0;
+function heroMoment(al) {
+  if (al < 0.02 || !RC[0]) { if (heroTag.style.opacity !== '0') heroTag.style.opacity = 0; return; }
+  if (!heroT0) heroT0 = performance.now();
+  const t = (performance.now() - heroT0) / 1000, paid = t > 1.2, d = RC[0].doc, st = paid ? d.b : d.a;
+  setDoc(heroTag, d.big, d.t, st[1], st[0]); heroTag.classList.toggle('ok', paid);
+  /* It stands on the calm sky just left of the ring of tools, clear of every body and badge. */
+  let mx = W, my = 0; WPOS.forEach(v => { proj.copy(v).project(camera); const px = (proj.x + 1) / 2 * W; if (px < mx) { mx = px; my = (1 - proj.y) / 2 * H; } });
+  const w = heroTag.offsetWidth || 300, x = Math.max(12, Math.min(mx - 44 - w, W - 12 - w)), y = Math.min(Math.max(my + 50, 150), H * 0.4);
+  heroTag.style.opacity = (al * c01(t / 0.35)).toFixed(3); heroTag.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) translate(0, -50%)`;
 }
 /* A trail's clock sits at its head; at the edge of the screen it steps above or below its own trail instead. */
 const placeL = (e, v, al, dy) => { if (al < 0.01) { if (e.style.opacity !== '0') e.style.opacity = 0; return; } proj.copy(v).project(camera);
@@ -1686,7 +1723,7 @@ function frame(dtReal, still) {
   const rw = raceWorld(fl, wsel);
   timeU.value = clockT; finalPass.uniforms.uTime.value = clockT;
   composer.render();
-  raceTags(rw);
+  raceTags(rw); heroMoment(sc.tools * (1 - fl));
 
   /* Each world wears its own mark, shown only while you are beside it. */
   worldTags.forEach((e, i) => { place(e, WPOS[i], Math.max(tl, (portrait ? 0 : 1) * fl * Math.max(0, 1 - Math.abs(wsel - i) * 1.6)), 0); e.classList.toggle('sm', tl > 0.5); });
@@ -1709,14 +1746,15 @@ function frame(dtReal, still) {
     if (sc.stops < 0.01) { e.style.opacity = 0; return; }
     curve(STOP_U[k], tmp2); proj.set(tmp2[0] * SC, SUN_Y, tmp2[1] * SC).project(camera);
     const sx = (proj.x + 1) / 2 * W, sy = (1 - proj.y) / 2 * H, lit = S.jCur >= k || locked || sc.agent > 0.98;
-    e.style.opacity = ((lit ? 1 : 0.5) * sc.stops).toFixed(3); e.style.transform = `translate3d(${sx.toFixed(1)}px, ${sy.toFixed(1)}px, 0)`;
+    e.style.opacity = ((lit ? 1 : 0.5) * sc.stops).toFixed(3); { const [cx, cy] = inFrame(sx, sy, k === S.jCur && !(locked || sc.agent > 0.98)); e.style.transform = `translate3d(${cx.toFixed(1)}px, ${cy.toFixed(1)}px, 0)`; }
     e.classList.toggle('lit', lit); e.classList.toggle('cur', k === S.jCur && !(locked || sc.agent > 0.98)); e.classList.toggle('flip', sx > W - 240);
   });
 
   /* The four promises, on the settled orbit: given ones sealed, the current one large. */
+  /* The current stop is always whole on screen, and never on the caption. */
   S.proms.forEach((e, k) => { const on = S.prOn || 0; if (on < 0.01) { e.style.opacity = 0; return; }
     curve(0.125 + k * 0.25, tmp2); proj.set(tmp2[0] * SC, SUN_Y, tmp2[1] * SC).project(camera);
-    const lit = (S.prCur | 0) >= k; e.style.opacity = lit ? 1 : 0.75; e.style.transform = `translate3d(${((proj.x + 1) / 2 * W).toFixed(1)}px, ${((1 - proj.y) / 2 * H).toFixed(1)}px, 0)`;
+    const lit = (S.prCur | 0) >= k, isCur = k === (S.prCur | 0), [cx, cy] = inFrame((proj.x + 1) / 2 * W, (1 - proj.y) / 2 * H, isCur); e.style.opacity = lit ? 1 : 0.75; e.style.transform = `translate3d(${cx.toFixed(1)}px, ${cy.toFixed(1)}px, 0)`;
     e.classList.toggle('lit', lit); e.classList.toggle('cur', k === (S.prCur | 0)); });
 
   /* The payoff: the first moment it holds with no steering, the grid rings out and the labels settle. */
