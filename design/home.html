@@ -3,7 +3,6 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="dark">
 <title>Solenix — Your business is a three-body problem</title>
 <meta name="description" content="One AI at the centre of the tools you already use, set up and taught by a St. John's tech expert. Hours back, lower costs, more sales.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -82,7 +81,7 @@ img, svg { display: block; }
 .scene-ui { position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
 main { position: relative; z-index: 2; }
 footer { position: relative; z-index: 2; }
-.sky { position: relative; height: 100vh; height: 100svh; }
+.sky { position: relative; height: 230vh; height: 230svh; }
 .stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; pointer-events: none; }
 .stage a, .stage button { pointer-events: auto; }
 .stop-mk { position: absolute; left: 0; top: 0; opacity: 0; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%; display: grid; place-items: center; font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: .04em; color: var(--muted); background: color-mix(in oklch, var(--bg) 82%, transparent); border: 1px solid var(--line-strong); will-change: transform, opacity; transition: background-color var(--dur-slow), color var(--dur-slow), border-color var(--dur-slow), box-shadow var(--dur-slow); }
@@ -259,21 +258,15 @@ html[data-motion="on"] .pulse::after { animation: pulse 2.4s var(--ease-out) inf
 /* ── After you book: a pinned stretch where the eight forms in the scene itself.
    The five stops sit on the real orbit; the card shows what you get at each one. ── */
 .jr { position: relative; height: 380vh; height: 380svh; }
-/* The guide: you don't need to be an expert (restored from version 19) */
-.guide-say { align-self: end; display: grid; gap: var(--space-4); max-width: 30rem; text-shadow: 0 0 26px var(--bg), 0 0 10px var(--bg), 0 1px 2px var(--bg); }
-.w-big { font: var(--fw-bold) var(--fs-h1)/1.12 var(--font-display); letter-spacing: var(--track-heading); text-wrap: balance; }
-#guide { height: 210vh; height: 210svh; }
-#guide .jr-head { text-shadow: 0 0 26px var(--bg), 0 0 10px var(--bg), 0 1px 2px var(--bg); }
-
 .jr-pin { position: sticky; top: 0; height: 100vh; height: 100svh; }
 .jr-in { height: 100%; display: grid; grid-template-rows: auto 1fr auto; padding-top: calc(var(--nav-height) + clamp(1.5rem, 6vh, 4rem)); padding-bottom: clamp(2rem, 9vh, 6rem); }
 .jr-head { display: grid; gap: var(--space-4); max-width: 30rem; }
 .jr-head .h2 { font-size: clamp(2.1rem, 4.4vw, 3.6rem); }
 .jr.locked .jr-head .h2 em { filter: drop-shadow(0 0 18px color-mix(in srgb, var(--sun2) 55%, transparent)); }
 .jr-steps { list-style: none; padding: 0; margin: 0; display: grid; align-self: end; max-width: 26rem; }
-.jr-steps li { grid-area: 1 / 1; display: grid; gap: var(--space-3); align-content: end; opacity: 0; visibility: hidden; transform: translateY(14px); transition: opacity 0s, transform 0s, visibility 0s; }
+.jr-steps li { grid-area: 1 / 1; display: grid; gap: var(--space-3); align-content: end; opacity: 0; visibility: hidden; transform: translateY(14px); transition: opacity 420ms var(--ease-out), transform 420ms var(--ease-out), visibility 0s linear 420ms; }
 @media (prefers-reduced-motion: reduce) { .jr-steps li, .jr-steps li.on { transform: none !important; } }
-.jr-steps li.on { opacity: 1; visibility: visible; transform: none; transition: opacity 380ms var(--ease-out) 60ms, transform 380ms var(--ease-out) 60ms, visibility 0s; }
+.jr-steps li.on { opacity: 1; visibility: visible; transform: none; transition: opacity 420ms var(--ease-out), transform 420ms var(--ease-out), visibility 0s; }
 .jr-steps .no { font: var(--fw-semibold) var(--fs-xs)/1 var(--font-mono); letter-spacing: var(--track-eyebrow); color: var(--accent-text); }
 .jr-steps h3 { font-size: clamp(1.9rem, 3.4vw, 2.9rem); font-weight: var(--fw-bold); letter-spacing: var(--track-display); line-height: 1.04; }
 .jr-steps p { font-size: var(--fs-lede); color: var(--muted); }
@@ -563,117 +556,97 @@ html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%
 .qa p { padding-bottom: var(--space-4); font-size: var(--fs-lede); max-width: 28rem; }
 .world .veil { display: none; }
 .tm-note { font-size: var(--fs-xs); color: var(--faint); flex-basis: 100%; }
-/* ── The flybys: the same job run twice, in time-lapse, inside each tool's world. The time gap is drawn in the
-   world as two light trails on one minutes axis. Below it, bare type either side: by hand clicks through the
-   tool, the ask is typed and ends on the owner's real output with one Approve click. No panels. ── */
+/* ── The flybys: the same job run twice, side by side, in real time. Bare type hangs either side of each tool's world:
+   one clicks through the tool by hand, one types the ask. No times are stated; the two clocks show it. ── */
 .eyebrow.toolname::before { display: none; }
 .eyebrow.toolname .lg { width: 20px; height: 20px; color: var(--text); }
-.race { position: relative; height: 260vh; height: 260svh; }
+.race { position: relative; height: 240vh; height: 240svh; }
 .race-pin { position: sticky; top: 0; height: 100vh; height: 100svh; }
-.race-in { height: 100%; max-width: 78rem; display: grid; grid-template-rows: auto minmax(0, 1fr) auto auto; gap: var(--space-4); padding-top: calc(var(--nav-height) + clamp(.75rem, 3vh, 2rem)); padding-bottom: clamp(.75rem, 2vh, 1.5rem); }
-.race-head { display: grid; gap: var(--space-3); justify-items: start; max-width: 40rem; text-shadow: 0 0 26px var(--bg), 0 0 10px var(--bg), 0 1px 2px var(--bg); }
-.race-head .h2 { font-size: clamp(1.5rem, 1rem + 2.2vw, 2.75rem); }
+.race-in { height: 100%; max-width: 78rem; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: var(--space-5); padding-top: calc(var(--nav-height) + clamp(1rem, 4vh, 2.5rem)); padding-bottom: clamp(1rem, 3vh, 2rem); }
+.race-head { display: grid; gap: var(--space-3); justify-items: start; max-width: 46rem; text-shadow: 0 0 26px var(--bg), 0 0 10px var(--bg), 0 1px 2px var(--bg); }
+.race-head .h2 { font-size: clamp(1.55rem, 1rem + 2.4vw, 3rem); }
 .sr-race { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-.lanes { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(1.5rem, 6vw, 6rem); height: clamp(13rem, 32vh, 17rem); }
+.lanes { display: grid; grid-template-columns: minmax(0, 1fr) clamp(13rem, 25vw, 24rem) minmax(0, 1fr); min-height: 0; height: 100%; max-height: max(27rem, 42vh); align-self: end; }
+/* No panels. Each lane is bare type and hairlines on the sky, one either side of the tool's world, so the
+   universe stays in view behind and between them. A soft shadow of the night keeps every word readable. */
 .lane { min-height: 0; min-width: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: var(--space-3); text-shadow: 0 0 16px var(--bg), 0 0 7px var(--bg), 0 1px 2px var(--bg); }
-.lane > header { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); padding-bottom: var(--space-2); border-bottom: 1px solid var(--line-strong); transition: border-color var(--dur-slow); }
-.lane.ask.done > header { border-color: var(--ok); }
+.lane.ask { grid-column: 3; }
+.lane > header { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-3); padding-bottom: var(--space-3); border-bottom: 1px solid var(--line-strong); transition: border-color var(--dur-slow); }
+.lane.done > header { border-color: var(--ok); }
 .lane-t { font: var(--fw-semibold) var(--fs-xs)/1 var(--font-mono); letter-spacing: var(--track-eyebrow); text-transform: uppercase; color: var(--muted); }
 .lane.ask .lane-t { color: var(--accent-text); }
-.lane .ex { padding: 3px 8px; border-radius: var(--radius-pill); border: 1px dashed var(--line-strong); font: var(--fw-medium) var(--fs-2xs)/1.2 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--muted); }
-.scr { position: relative; min-height: 0; overflow: hidden; display: grid; align-content: start; gap: var(--space-2); }
-.scr-bar { display: flex; align-items: center; gap: var(--space-2); min-width: 0; font: var(--fw-medium) var(--fs-2xs)/1.2 var(--font-mono); color: var(--muted); }
+.sw { font: var(--fw-bold) var(--fs-h1)/1 var(--font-display); letter-spacing: var(--track-heading); font-variant-numeric: tabular-nums; color: var(--text); }
+.lane.done .sw { color: var(--ok); }
+.scr { position: relative; min-height: 0; overflow: hidden; display: grid; grid-template-rows: auto minmax(0, 1fr); }
+.scr-bar { display: flex; align-items: center; gap: var(--space-2); min-width: 0; padding-bottom: var(--space-3); font: var(--fw-medium) var(--fs-2xs)/1.2 var(--font-mono); color: var(--muted); }
 .scr-bar .lg { width: 16px; height: 16px; color: var(--text); }
 .scr-bar .crumb { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.scr-nav { list-style: none; margin: 0; padding: 0; display: flex; gap: var(--space-4); font-size: var(--fs-sm); color: var(--muted); }
-.scr-nav li { padding: 2px 0 4px; border-bottom: 2px solid transparent; }
+.scr-bar .ex { margin-left: auto; flex: none; padding: 3px 8px; border-radius: var(--radius-pill); border: 1px dashed var(--line-strong); letter-spacing: var(--track-label); text-transform: uppercase; }
+.rdot { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--sun1); box-shadow: 0 0 10px var(--sun2); }
+.scr-main { display: grid; grid-template-rows: auto minmax(0, 1fr); min-height: 0; }
+.scr-nav { list-style: none; margin: 0; padding: 0 0 var(--space-2); display: flex; gap: var(--space-4); font-size: var(--fs-sm); color: var(--muted); }
+.scr-nav li { padding: 4px 0; border-bottom: 2px solid transparent; }
 .scr-nav li.on { color: var(--text); border-bottom-color: var(--accent); }
-.scr-view { min-width: 0; display: grid; align-content: start; font-size: var(--fs-sm); transition: opacity 160ms; }
+.scr-view { min-width: 0; display: grid; align-content: start; font-size: var(--fs-sm); transition: opacity var(--dur-base); }
 .scr-view.load { opacity: .2; }
-.scr-chip { justify-self: start; margin: 0 0 2px; padding: 2px 10px; border-radius: var(--radius-pill); border: 1px solid var(--line-strong); font: var(--fw-medium) var(--fs-2xs)/1.2 var(--font-mono); color: var(--text); }
-.scr-row { display: flex; justify-content: space-between; gap: var(--space-3); padding: 4px 0; border-top: 1px solid var(--line); color: var(--text); font-variant-numeric: tabular-nums; transition: color var(--dur-fast); }
+.scr-chip { justify-self: start; margin: var(--space-1) 0 var(--space-2); padding: 4px 10px; border-radius: var(--radius-pill); border: 1px solid var(--line-strong); font: var(--fw-medium) var(--fs-2xs)/1.2 var(--font-mono); color: var(--text); }
+.scr-row { display: flex; justify-content: space-between; gap: var(--space-3); padding: 7px 0; border-top: 1px solid var(--line); color: var(--text); font-variant-numeric: tabular-nums; transition: color var(--dur-fast); }
 .scr-row span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .scr-row span:last-child { flex: none; color: var(--muted); }
-.scr-row.hd { display: none; }
+.scr-row.hd, .scr-row.hd span:last-child { border-top: 0; font: var(--fw-semibold) var(--fs-2xs)/1.4 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--muted); }
 .scr-row.on, .scr-row.on span:last-child { color: var(--accent-text); }
-.scr-cur { position: absolute; left: 0; top: 0; width: 12px; height: 12px; margin: -6px; border-radius: 50%; background: var(--text); box-shadow: 0 0 0 5px color-mix(in oklch, var(--text) 22%, transparent), 0 0 18px var(--ring); opacity: 0; pointer-events: none; transition: transform 420ms var(--ease-in-out), opacity 180ms; }
-.lane.go .scr-cur.show { opacity: 1; }
+.scr-cur { position: absolute; left: 0; top: 0; width: 12px; height: 12px; margin: -6px; border-radius: 50%; background: var(--text); box-shadow: 0 0 0 5px color-mix(in oklch, var(--text) 22%, transparent), 0 0 18px var(--ring); opacity: 0; pointer-events: none; transition: transform 700ms var(--ease-in-out), opacity 180ms; }
+.lane.go .scr-cur { opacity: 1; }
 .lane-s { margin: 0; min-height: 1.45em; display: flex; align-items: baseline; gap: var(--space-2); font-size: var(--fs-sm); line-height: 1.45; color: var(--muted); }
 .lane-s b { flex: none; font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--text); }
-.lane.ask.done .lane-s b { color: var(--ok); }
-/* The one honest limit, shown once the ask is done. */
-.lane-s.cant { opacity: 0; transition: opacity var(--dur-slow); }
-.lane.done .lane-s.cant { opacity: 1; }
-.rchat { gap: var(--space-3); }
+.lane.done .lane-s b { color: var(--ok); }
+.chat-body { min-height: 0; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-start; gap: var(--space-3); }
 .rmsg { margin: 0; font-size: var(--fs-sm); line-height: 1.45; }
-.rmsg.me { font: var(--fw-semibold) var(--fs-h4)/1.35 var(--font-display); color: var(--text); text-wrap: pretty; }
+.rmsg.me { font: var(--fw-semibold) var(--fs-h4)/1.4 var(--font-display); color: var(--text); text-wrap: pretty; }
 .rmsg.me:has(span:empty) { visibility: hidden; }
 .rmsg.me span::before { content: "\201C"; } .lane.sent .rmsg.me span::after { content: "\201D"; }
 .lane.go:not(.sent) .rmsg.me::after { content: ""; display: inline-block; width: 2px; height: 1em; margin-left: 2px; vertical-align: -2px; background: var(--accent-text); }
 .rmsg.st { font: var(--fw-medium) var(--fs-xs)/1.3 var(--font-mono); color: var(--accent-text); }
-.rmsg.st[hidden], .out[hidden] { display: none; }
-/* The output: the real thing the owner gets, waiting for one click. */
-.out { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 2px var(--space-4); padding-top: var(--space-3); border-top: 1px solid var(--line-strong); }
-.out-t { margin: 0; font: var(--fw-bold) var(--fs-h3)/1.2 var(--font-display); letter-spacing: var(--track-heading); color: var(--text); }
-.out-s { margin: 0; grid-column: 1; font-size: var(--fs-sm); color: var(--muted); }
-.approve { grid-column: 2; grid-row: 1 / span 2; display: inline-grid; place-items: center; min-height: var(--tap-min); padding: 0 var(--space-5); border-radius: var(--radius-pill); border: 1px solid var(--line-strong); font: var(--fw-semibold) var(--fs-sm)/1 var(--font-text); color: var(--text); text-shadow: none; transition: border-color var(--dur-base), color var(--dur-base), box-shadow var(--dur-base), scale 140ms; }
-.approve > * { grid-area: 1 / 1; font-style: normal; font-weight: inherit; }
-.approve i { visibility: hidden; }
-.approve.press { scale: .94; }
-.lane.done .approve { border-color: var(--ok); color: var(--ok); box-shadow: 0 0 24px color-mix(in srgb, var(--ok) 28%, transparent); }
-.lane.done .approve b { visibility: hidden; } .lane.done .approve i { visibility: visible; }
-.race-foot { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); min-height: var(--tap-min); }
+.rmsg.ai { display: grid; }
+.rmsg.ai[hidden], .rmsg.st[hidden] { display: none; }
+.rmsg.ai p { margin: 0; padding-top: var(--space-3); border-top: 1px solid var(--line); font-weight: var(--fw-semibold); color: var(--text); }
 .race-note { margin: 0; font-size: var(--fs-xs); line-height: 1.5; color: var(--muted); text-shadow: 0 0 12px var(--bg), 0 1px 2px var(--bg); }
-.race-note a { color: var(--text); text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 3px; }
-.race-note a:focus-visible { outline: var(--focus-width) solid var(--focus-color); outline-offset: 3px; border-radius: var(--radius-xs); }
-.race-acts { flex: none; display: flex; align-items: center; gap: var(--space-3); }
-.race-cta { opacity: 0; visibility: hidden; transition: opacity var(--dur-slow), visibility 0s linear var(--dur-slow); }
-.race.is-done .race-cta { opacity: 1; visibility: visible; transition: opacity var(--dur-slow); }
-/* In the world: the clock rides the head of each light trail; ticks mark the minutes; each lit body says why. */
-.trail-tag, .tick-tag, .item-tag { position: absolute; left: 0; top: 0; opacity: 0; white-space: nowrap; will-change: transform, opacity; text-shadow: 0 0 12px var(--bg), 0 0 5px var(--bg), 0 1px 2px var(--bg); }
-.trail-tag { display: flex; align-items: baseline; gap: var(--space-2); font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--muted); }
-.trail-tag b { font: var(--fw-bold) var(--fs-h2)/1 var(--font-display); letter-spacing: var(--track-heading); text-transform: none; font-variant-numeric: tabular-nums; color: var(--text); }
-.trail-tag.ask { color: var(--accent-text); } .trail-tag.ask b { color: var(--accent-text); }
-.trail-tag.stop b, .trail-tag.stop { color: var(--ok); }
-.trail-tag.hand.stop, .trail-tag.hand.stop b { color: var(--text); }
-.tick-tag { font: var(--fw-medium) var(--fs-2xs)/1 var(--font-mono); color: var(--faint); }
-.item-tag { padding: 4px 8px; border-radius: var(--radius-pill); border: 1px solid color-mix(in oklch, var(--accent) 60%, transparent); font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--accent-text); }
-@media (max-width: 699px) {
-  .race-in { gap: var(--space-2); padding-top: calc(var(--nav-height) + var(--space-2)); padding-bottom: var(--space-2); }
+@media (max-width: 899px) {
+  .race-in { gap: var(--space-3); padding-top: calc(var(--nav-height) + var(--space-3)); padding-bottom: var(--space-3); }
   .race-head { gap: var(--space-2); }
-  .lanes { grid-template-columns: minmax(0, 1fr); gap: var(--space-3); height: auto; }
+  .lanes { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-4); max-height: none; }
   .lane { gap: var(--space-2); }
-  .lane > header { padding-bottom: var(--space-1); }
-  .lane.hand .scr { height: 5.6rem; } .lane.ask .scr { height: 8.4rem; }
-  .scr-nav, .scr-chip { display: none; }
-  .scr-row { padding: 3px 0; }
+  .lane.ask { grid-column: 1; }
+  .lane > header { padding-bottom: var(--space-2); }
+  .sw { font-size: 1.5rem; }
+  .scr-nav, .scr-row.hd, .rchat .scr-bar { display: none; }
+  .rchat { grid-template-rows: minmax(0, 1fr); }
+  .scr-bar { padding-bottom: var(--space-2); }
+  .scr-row { padding: 4px 0; }
+  .chat-body { justify-content: flex-end; }
   .rmsg.me { font-size: var(--fs-body); }
-  .out-t { font-size: var(--fs-h4); }
+  .lane.done .rmsg.me span { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
   .lane-s { font-size: var(--fs-xs); }
   .race-note { font-size: var(--fs-2xs); }
-  .race-note a { display: none; }
-  .trail-tag b { font-size: var(--fs-h3); }
-  .item-tag { display: none; }
 }
-@media (max-height: 999px) { .scr-chip { display: none; } }
+/* Short phones: the note and the date chip give their room to the two screens. */
+@media (max-width: 899px) and (max-height: 740px) {
+  .race-note, .scr-chip { display: none; }
+  .lane-s span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .race-in { padding-bottom: var(--space-2); }
+  .race-head .h2 { font-size: 1.35rem; }
+  .scr-row { padding: 2px 0; }
+}
 html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relative; height: auto; } html:not(.js) .sr-race { position: static; width: auto; height: auto; clip-path: none; white-space: normal; }
 .world-tag { width: 52px; height: 52px; background: color-mix(in oklch, var(--bg) 88%, transparent); border-color: color-mix(in oklch, var(--accent) 55%, transparent); box-shadow: 0 0 24px color-mix(in srgb, var(--ring) 40%, transparent); }
 .world-tag .lg { width: 26px; height: 26px; }
 @media (max-width: 899px) { .close-sec { align-items: end; } .close-in { padding-block: var(--space-7); } }
+/* The guide: one pinned scene. The words keep to the left edge, top and bottom; the world holds the rest. */
+#guide { height: 210vh; height: 210svh; }
+.guide-say { align-self: end; display: grid; gap: var(--space-4); max-width: 30rem; text-shadow: 0 0 26px var(--bg), 0 0 10px var(--bg), 0 1px 2px var(--bg); }
+#guide .jr-head { text-shadow: 0 0 26px var(--bg), 0 0 10px var(--bg), 0 1px 2px var(--bg); }
 /* Reduced motion: the camera does not fly. It cuts between stations under a short dip to dark. */
-#gl { opacity: 0; transition: opacity 500ms linear; } .world.gl-on #gl { opacity: 1; } .world.gl-on #gl.dip { opacity: 0; transition-duration: 200ms; }
-/* The page opens on the scene: the sky is there before the 3D loads, and the still orbit shows only if it cannot. */
-.world { background: var(--texture-stars), var(--bg); }
-.fallback { display: none; } .world.gl-off .fallback { display: grid; }
-/* Chaos is one screen: the first race is already running on the second. */
-.sky { height: 150vh; height: 150svh; } .beats { display: none; }
-/* The plan: five equal stops, one full screen each, each with one picture on the orbit and ten words at most. */
-#after { height: 640vh; height: 640svh; }
-.stop-mk svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; transition: width var(--dur-slow) var(--ease-out), height var(--dur-slow) var(--ease-out); }
-.stop-mk.cur { width: 64px; height: 64px; margin: -32px 0 0 -32px; }
-.stop-mk.cur svg { width: 30px; height: 30px; }
-.stop-mk.lit:not(.cur) svg { display: none; }
-.jr-steps p { max-width: 20rem; }
+#gl { transition: opacity 200ms linear; } #gl.dip { opacity: 0; }
 </style>
 </head>
 <body>
@@ -701,7 +674,6 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
 <symbol id="lg-gmail" viewBox="0 0 24 24"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></symbol>
 <symbol id="lg-microsoftexcel" viewBox="0 0 24 24"><path d="M23 1.5q.41 0 .7.3.3.29.3.7v19q0 .41-.3.7-.29.3-.7.3H7q-.41 0-.7-.3-.3-.29-.3-.7V18H1q-.41 0-.7-.3-.3-.29-.3-.7V7q0-.41.3-.7Q.58 6 1 6h5V2.5q0-.41.3-.7.29-.3.7-.3zM6 13.28l1.42 2.66h2.14l-2.38-3.87 2.34-3.8H7.46l-1.3 2.4-.05.08-.04.09-.64-1.28-.66-1.29H2.59l2.27 3.82-2.48 3.85h2.16zM14.25 21v-3H7.5v3zm0-4.5v-3.75H12v3.75zm0-5.25V7.5H12v3.75zm0-5.25V3H7.5v3zm8.25 15v-3h-6.75v3zm0-4.5v-3.75h-6.75v3.75zm0-5.25V7.5h-6.75v3.75zm0-5.25V3h-6.75v3Z"/></symbol>
 <symbol id="lg-hubspot" viewBox="0 0 24 24"><path d="M18.164 7.93V5.084a2.198 2.198 0 001.267-1.978v-.067A2.2 2.2 0 0017.238.845h-.067a2.2 2.2 0 00-2.193 2.193v.067a2.196 2.196 0 001.252 1.973l.013.006v2.852a6.22 6.22 0 00-2.969 1.31l.012-.01-7.828-6.095A2.497 2.497 0 104.3 4.656l-.012.006 7.697 5.991a6.176 6.176 0 00-1.038 3.446c0 1.343.425 2.588 1.147 3.607l-.013-.02-2.342 2.343a1.968 1.968 0 00-.58-.095h-.002a2.033 2.033 0 102.033 2.033 1.978 1.978 0 00-.1-.595l.005.014 2.317-2.317a6.247 6.247 0 104.782-11.134l-.036-.005zm-.964 9.378a3.206 3.206 0 113.215-3.207v.002a3.206 3.206 0 01-3.207 3.207z"/></symbol>
-<symbol id="lg-stripe" viewBox="0 0 24 24"><path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.594-7.305h.003z"/></symbol>
 </svg>
 <div class="world" aria-hidden="true">
   <div class="fallback" aria-hidden="true">
@@ -715,17 +687,17 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
   <div class="body-tag" data-od-id="tag-costs"><i></i>Costs</div>
   <div class="body-tag" data-od-id="tag-time"><i></i>Time</div>
   <div class="body-tag ai" data-od-id="tag-ai">AI</div>
-  <div class="moon-tag world-tag"><svg class="lg"><use href="#lg-stripe"/></svg></div>
   <div class="moon-tag world-tag"><svg class="lg"><use href="#lg-shopify"/></svg></div>
-  <div class="moon-tag world-tag"><svg class="lg"><use href="#lg-hubspot"/></svg></div>
   <div class="moon-tag world-tag"><svg class="lg"><use href="#lg-meta"/></svg></div>
-  <div class="moon-tag world-tag"><svg class="lg"><use href="#lg-microsoftexcel"/></svg></div>
+  <div class="moon-tag world-tag"><svg class="lg"><use href="#lg-quickbooks"/></svg></div>
   <div class="moon-tag world-tag"><svg class="lg"><use href="#lg-gmail"/></svg></div>
-  <div class="stop-mk" data-k="0"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg><span>A clear picture</span></div>
-  <div class="stop-mk" data-k="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18v14H3zM3 9h18M8 9v10"/></svg><span>Your own portal</span></div>
-  <div class="stop-mk" data-k="2"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg><span>Your new website</span></div>
-  <div class="stop-mk" data-k="3"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16M6 16l9-9 3 3-9 9H6z"/></svg><span>Your choice</span></div>
-  <div class="stop-mk" data-k="4"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6zM8.5 12l2.5 2.5 4.5-5"/></svg><span>Looked after</span></div>
+  <div class="moon-tag world-tag"><svg class="lg"><use href="#lg-microsoftexcel"/></svg></div>
+  <div class="moon-tag world-tag"><svg class="lg"><use href="#lg-hubspot"/></svg></div>
+  <div class="stop-mk" data-k="0">01<span>A clear picture</span></div>
+  <div class="stop-mk" data-k="1">02<span>Your own portal</span></div>
+  <div class="stop-mk" data-k="2">03<span>Your new website</span></div>
+  <div class="stop-mk" data-k="3">04<span>Your choice</span></div>
+  <div class="stop-mk" data-k="4">05<span>Looked after</span></div>
 </div>
 
 <main id="main">
@@ -736,7 +708,7 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
         <div class="wrap">
           <p class="eyebrow">Solenix · St. John's, NL</p>
           <h1 class="h1" data-od-id="hero-headline"><span class="w" style="--i:0"><span>Your</span></span> <span class="w" style="--i:1"><span>business</span></span> <span class="w" style="--i:2"><span>is</span></span> <span class="w" style="--i:3"><span>a</span></span> <span class="w g" style="--i:4"><span>three&#8209;body</span></span> <span class="w g" style="--i:5"><span>problem.</span></span></h1>
-          <p class="hero-sub">We set up AI inside the tools your business already uses, so the busywork gets done for you.</p>
+          <p class="hero-sub">Revenue, costs and time, pulled apart by a dozen tools. Scroll, and watch one AI at the centre settle them. Hours back, every week.</p>
           <div class="hero-ctas">
             <a class="btn btn-primary" href="/book" data-od-id="hero-cta">Book a call</a>
           </div>
@@ -765,6 +737,198 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
   </div>
 </section>
 
+<section class="race" id="fly-shopify" data-od-id="flyby-shopify" data-scene="flyby" data-race="shopify">
+  <div class="race-pin">
+    <div class="wrap race-in">
+      <header class="race-head">
+        <p class="eyebrow toolname"><svg class="lg" aria-hidden="true"><use href="#lg-shopify"/></svg>Shopify</p>
+        <h2 class="h2">What sold, and <em>what to reorder.</em></h2>
+        <p class="sr-race">By hand: Open Analytics. Open Reports. Find Sales by product. Set the date range to last month. Sort by units sold. Now open Inventory, a separate screen. Check the stock on each product, one at a time. Or just ask: “Pull last month's top 10 sellers by units sold, show current stock for each, and tell me which will run out in 30 days”</p>
+      </header>
+      <div class="lanes" aria-hidden="true">
+        <article class="lane hand" data-od-id="race-shopify-by-hand">
+          <header><span class="lane-t">By hand</span><span class="sw">0:00</span></header>
+          <div class="scr">
+            <div class="scr-bar"><svg class="lg"><use href="#lg-shopify"/></svg><span class="crumb">Shopify</span><span class="ex">Example</span></div>
+            <div class="scr-main"><ul class="scr-nav"><li>Home</li><li>Orders</li><li>Products</li><li>Analytics</li></ul><div class="scr-view"></div></div>
+            <i class="scr-cur"></i>
+          </div>
+          <p class="lane-s"></p>
+        </article>
+        <article class="lane ask" data-od-id="race-shopify-just-ask">
+          <header><span class="lane-t">Just ask</span><span class="sw">0:00</span></header>
+          <div class="scr rchat">
+            <div class="scr-bar"><i class="rdot"></i><span class="crumb">Your AI, connected to Shopify</span><span class="ex">Example</span></div>
+            <div class="chat-body"><p class="rmsg me"><span></span></p><p class="rmsg st" hidden></p><div class="rmsg ai" hidden><div class="scr-row"><span>Sea salt caramels</span><span>212 sold · 14 left</span></div><div class="scr-row"><span>Wool mitts</span><span>150 sold · 9 left</span></div><div class="scr-row"><span>Partridgeberry jam</span><span>187 sold · 120 left</span></div><p>Caramels and mitts will run out within 30 days. Reorder those two.</p></div></div>
+          </div>
+          <p class="lane-s"></p>
+        </article>
+      </div>
+      <p class="race-note">A replay with example data. Both clocks run in real time on your screen. It works through Shopify's official connector for Claude.</p>
+    </div>
+  </div>
+</section>
+
+<section class="race" id="fly-meta" data-od-id="flyby-meta" data-scene="flyby" data-race="meta">
+  <div class="race-pin">
+    <div class="wrap race-in">
+      <header class="race-head">
+        <p class="eyebrow toolname"><svg class="lg" aria-hidden="true"><use href="#lg-meta"/></svg>Meta Ads</p>
+        <h2 class="h2">Which ads worked, and <em>which to pause.</em></h2>
+        <p class="sr-race">By hand: Log into Ads Manager. Set the date range to the last 7 days. Read the spend and the cost per result. Switch to the 7 days before. Compare every campaign by eye, back and forth. Or just ask: “Pull spend, cost per result, and ROAS for all active campaigns over the last 7 days vs. the 7 days before. Tell me which ad sets are underperforming and recommend which to pause.”</p>
+      </header>
+      <div class="lanes" aria-hidden="true">
+        <article class="lane hand" data-od-id="race-meta-by-hand">
+          <header><span class="lane-t">By hand</span><span class="sw">0:00</span></header>
+          <div class="scr">
+            <div class="scr-bar"><svg class="lg"><use href="#lg-meta"/></svg><span class="crumb">Meta Ads</span><span class="ex">Example</span></div>
+            <div class="scr-main"><ul class="scr-nav"><li>Campaigns</li><li>Ad sets</li><li>Ads</li><li>Reports</li></ul><div class="scr-view"></div></div>
+            <i class="scr-cur"></i>
+          </div>
+          <p class="lane-s"></p>
+        </article>
+        <article class="lane ask" data-od-id="race-meta-just-ask">
+          <header><span class="lane-t">Just ask</span><span class="sw">0:00</span></header>
+          <div class="scr rchat">
+            <div class="scr-bar"><i class="rdot"></i><span class="crumb">Your AI, connected to Meta Ads</span><span class="ex">Example</span></div>
+            <div class="chat-body"><p class="rmsg me"><span></span></p><p class="rmsg st" hidden></p><div class="rmsg ai" hidden><div class="scr-row"><span>Local awareness</span><span>$5.90 → $9.40</span></div><div class="scr-row"><span>New arrivals</span><span>$6.10 → $6.80</span></div><div class="scr-row"><span>Fall sale</span><span>$4.60 → $4.10</span></div><p>Local awareness now costs far more per result. I would pause it.</p></div></div>
+          </div>
+          <p class="lane-s"></p>
+        </article>
+      </div>
+      <p class="race-note">A replay with example data. Both clocks run in real time on your screen. It works through Meta's own connector.</p>
+    </div>
+  </div>
+</section>
+
+<section class="race" id="fly-quickbooks" data-od-id="flyby-quickbooks" data-scene="flyby" data-race="quickbooks">
+  <div class="race-pin">
+    <div class="wrap race-in">
+      <header class="race-head">
+        <p class="eyebrow toolname"><svg class="lg" aria-hidden="true"><use href="#lg-quickbooks"/></svg>QuickBooks</p>
+        <h2 class="h2">Who owes you, <em>and the invoice sent.</em></h2>
+        <p class="sr-race">By hand: Open Reports. Open the report of who owes you. Read down the list and decide who to chase. Now open a new invoice, a separate screen. Fill in the customer, the item, the amount and the date. Or just ask: “Show me who owes us, flag anyone over 60 days, and send Harbour Dental an invoice for the retainer”</p>
+      </header>
+      <div class="lanes" aria-hidden="true">
+        <article class="lane hand" data-od-id="race-quickbooks-by-hand">
+          <header><span class="lane-t">By hand</span><span class="sw">0:00</span></header>
+          <div class="scr">
+            <div class="scr-bar"><svg class="lg"><use href="#lg-quickbooks"/></svg><span class="crumb">QuickBooks</span><span class="ex">Example</span></div>
+            <div class="scr-main"><ul class="scr-nav"><li>Dashboard</li><li>Sales</li><li>Expenses</li><li>Reports</li></ul><div class="scr-view"></div></div>
+            <i class="scr-cur"></i>
+          </div>
+          <p class="lane-s"></p>
+        </article>
+        <article class="lane ask" data-od-id="race-quickbooks-just-ask">
+          <header><span class="lane-t">Just ask</span><span class="sw">0:00</span></header>
+          <div class="scr rchat">
+            <div class="scr-bar"><i class="rdot"></i><span class="crumb">Your AI, connected to QuickBooks</span><span class="ex">Example</span></div>
+            <div class="chat-body"><p class="rmsg me"><span></span></p><p class="rmsg st" hidden></p><div class="rmsg ai" hidden><div class="scr-row"><span>Hillside Roofing</span><span>64 days · flagged</span></div><div class="scr-row"><span>East End Yoga</span><span>31 days</span></div><div class="scr-row"><span>Harbour Dental</span><span>12 days</span></div><p>The retainer invoice for Harbour Dental is ready to send.</p></div></div>
+          </div>
+          <p class="lane-s"></p>
+        </article>
+      </div>
+      <p class="race-note">A replay with example data. Both clocks run in real time on your screen. It works through Intuit's official connector.</p>
+    </div>
+  </div>
+</section>
+
+<section class="race" id="fly-gmail" data-od-id="flyby-gmail" data-scene="flyby" data-race="gmail">
+  <div class="race-pin">
+    <div class="wrap race-in">
+      <header class="race-head">
+        <p class="eyebrow toolname"><svg class="lg" aria-hidden="true"><use href="#lg-gmail"/></svg>Gmail and Calendar</p>
+        <h2 class="h2">The inbox sorted, <em>the meeting booked.</em></h2>
+        <p class="sr-race">By hand: Open the inbox. Open the first email and read it. Decide: reply today, later, or junk. Back to the inbox. Then the next one, and the next.. Or just ask: “Group today's inbox into needs a reply today, can wait, and junk. Then find 30 minutes next week with Harbour Dental and send the invite.”</p>
+      </header>
+      <div class="lanes" aria-hidden="true">
+        <article class="lane hand" data-od-id="race-gmail-by-hand">
+          <header><span class="lane-t">By hand</span><span class="sw">0:00</span></header>
+          <div class="scr">
+            <div class="scr-bar"><svg class="lg"><use href="#lg-gmail"/></svg><span class="crumb">Gmail and Calendar</span><span class="ex">Example</span></div>
+            <div class="scr-main"><ul class="scr-nav"><li>Inbox</li><li>Starred</li><li>Sent</li><li>Drafts</li></ul><div class="scr-view"></div></div>
+            <i class="scr-cur"></i>
+          </div>
+          <p class="lane-s"></p>
+        </article>
+        <article class="lane ask" data-od-id="race-gmail-just-ask">
+          <header><span class="lane-t">Just ask</span><span class="sw">0:00</span></header>
+          <div class="scr rchat">
+            <div class="scr-bar"><i class="rdot"></i><span class="crumb">Your AI, connected to Gmail and Calendar</span><span class="ex">Example</span></div>
+            <div class="chat-body"><p class="rmsg me"><span></span></p><p class="rmsg st" hidden></p><div class="rmsg ai" hidden><div class="scr-row"><span>Needs a reply today</span><span>4</span></div><div class="scr-row"><span>Can wait</span><span>9</span></div><div class="scr-row"><span>Junk and newsletters</span><span>16</span></div><p>Tuesday at 10:30 works for you both. The invite is ready to send.</p></div></div>
+          </div>
+          <p class="lane-s"></p>
+        </article>
+      </div>
+      <p class="race-note">A replay with example data. Both clocks run in real time on your screen. It works through the official Gmail and Calendar connectors.</p>
+    </div>
+  </div>
+</section>
+
+<section class="race" id="fly-microsoftexcel" data-od-id="flyby-microsoftexcel" data-scene="flyby" data-race="microsoftexcel">
+  <div class="race-pin">
+    <div class="wrap race-in">
+      <header class="race-head">
+        <p class="eyebrow toolname"><svg class="lg" aria-hidden="true"><use href="#lg-microsoftexcel"/></svg>Excel</p>
+        <h2 class="h2">The sales workbook, <em>updated for you.</em></h2>
+        <p class="sr-race">By hand: Open the sales workbook. Select all of the sales data. Insert a pivot table. Set up each field, then build the chart. Or just ask: “Add a pivot table of revenue by category this month vs. last, with a bar chart”</p>
+      </header>
+      <div class="lanes" aria-hidden="true">
+        <article class="lane hand" data-od-id="race-microsoftexcel-by-hand">
+          <header><span class="lane-t">By hand</span><span class="sw">0:00</span></header>
+          <div class="scr">
+            <div class="scr-bar"><svg class="lg"><use href="#lg-microsoftexcel"/></svg><span class="crumb">Excel</span><span class="ex">Example</span></div>
+            <div class="scr-main"><ul class="scr-nav"><li>Home</li><li>Insert</li><li>Data</li><li>Review</li></ul><div class="scr-view"></div></div>
+            <i class="scr-cur"></i>
+          </div>
+          <p class="lane-s"></p>
+        </article>
+        <article class="lane ask" data-od-id="race-microsoftexcel-just-ask">
+          <header><span class="lane-t">Just ask</span><span class="sw">0:00</span></header>
+          <div class="scr rchat">
+            <div class="scr-bar"><i class="rdot"></i><span class="crumb">Your AI, connected to Excel</span><span class="ex">Example</span></div>
+            <div class="chat-body"><p class="rmsg me"><span></span></p><p class="rmsg st" hidden></p><div class="rmsg ai" hidden><div class="scr-row"><span>Bread</span><span>$3,900 → $4,210</span></div><div class="scr-row"><span>Pastry</span><span>$3,320 → $3,180</span></div><div class="scr-row"><span>Coffee</span><span>$2,410 → $2,640</span></div><p>The pivot table and a bar chart are in the workbook. Your formulas are untouched.</p></div></div>
+          </div>
+          <p class="lane-s"></p>
+        </article>
+      </div>
+      <p class="race-note">A replay with example data. Both clocks run in real time on your screen. Claude edits the open Excel file. It cannot yet edit a Google Sheet in place.</p>
+    </div>
+  </div>
+</section>
+
+<section class="race" id="fly-hubspot" data-od-id="flyby-hubspot" data-scene="flyby" data-race="hubspot">
+  <div class="race-pin">
+    <div class="wrap race-in">
+      <header class="race-head">
+        <p class="eyebrow toolname"><svg class="lg" aria-hidden="true"><use href="#lg-hubspot"/></svg>HubSpot</p>
+        <h2 class="h2">The deals that went quiet, <em>followed up.</em></h2>
+        <p class="sr-race">By hand: Open the deals list. Filter by last activity date, then sort. Open the first stalled deal and reread it. Write a follow-up by hand. Back to the list. Next deal, same again.. Or just ask: “Show every deal with no activity in 14 days and draft a follow-up for each”</p>
+      </header>
+      <div class="lanes" aria-hidden="true">
+        <article class="lane hand" data-od-id="race-hubspot-by-hand">
+          <header><span class="lane-t">By hand</span><span class="sw">0:00</span></header>
+          <div class="scr">
+            <div class="scr-bar"><svg class="lg"><use href="#lg-hubspot"/></svg><span class="crumb">HubSpot</span><span class="ex">Example</span></div>
+            <div class="scr-main"><ul class="scr-nav"><li>Contacts</li><li>Deals</li><li>Tasks</li><li>Reports</li></ul><div class="scr-view"></div></div>
+            <i class="scr-cur"></i>
+          </div>
+          <p class="lane-s"></p>
+        </article>
+        <article class="lane ask" data-od-id="race-hubspot-just-ask">
+          <header><span class="lane-t">Just ask</span><span class="sw">0:00</span></header>
+          <div class="scr rchat">
+            <div class="scr-bar"><i class="rdot"></i><span class="crumb">Your AI, connected to HubSpot</span><span class="ex">Example</span></div>
+            <div class="chat-body"><p class="rmsg me"><span></span></p><p class="rmsg st" hidden></p><div class="rmsg ai" hidden><div class="scr-row"><span>Harbour Dental</span><span>Draft ready</span></div><div class="scr-row"><span>Cove Road Cafe</span><span>Draft ready</span></div><div class="scr-row"><span>East End Yoga</span><span>Draft ready</span></div><p>Three deals went quiet. Each one has a follow-up that mentions your last talk.</p></div></div>
+          </div>
+          <p class="lane-s"></p>
+        </article>
+      </div>
+      <p class="race-note">A replay with example data. Both clocks run in real time on your screen. It works through HubSpot's own connector.</p>
+    </div>
+  </div>
+</section>
+
 <section class="jr" id="after" data-od-id="journey" data-scene="journey">
   <div class="jr-pin">
     <div class="wrap jr-in">
@@ -773,11 +937,11 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
         <h2 class="h2">From one call to a <em>stable orbit.</em></h2>
       </div>
       <ol class="jr-steps" data-steps>
-        <li><span class="no">01 / 05</span><h3>A clear picture</h3><p>One call. We find your lost hours.</p></li>
-        <li><span class="no">02 / 05</span><h3>Your own portal</h3><p>Everything in one place.</p></li>
-        <li><span class="no">03 / 05</span><h3>Your new website</h3><p>Built to bring in calls.</p></li>
-        <li><span class="no">04 / 05</span><h3>A fixed price, in writing</h3><p>Agreed on the call. No surprise invoice.</p></li>
-        <li><span class="no">05 / 05</span><h3>Looked after</h3><p>Hours back, every month.</p></li>
+        <li><span class="no">01 / 05</span><h3>A clear picture</h3><p>One call. We find the hours and dollars your tools are costing you.</p></li>
+        <li><span class="no">02 / 05</span><h3>Your own portal</h3><p>Your website, plans and bills in one place. No more chasing logins.</p></li>
+        <li><span class="no">03 / 05</span><h3>Your new website</h3><p>Built to bring in orders and calls, not just to look nice. You see it first.</p></li>
+        <li><span class="no">04 / 05</span><h3>Your choice, in writing</h3><p>Three options, each weighed against what the result is worth to you. You pick, and you see it pay back.</p></li>
+        <li><span class="no">05 / 05</span><h3>Looked after</h3><p>One AI at the centre, your team using it daily, and the hours saved adding up every month.</p></li>
       </ol>
       <div class="jr-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
     </div>
@@ -805,7 +969,7 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
 <section class="close-sec" id="close" data-od-id="closing" data-scene="close" aria-labelledby="close-h">
   <div class="wrap close-in">
     <h2 id="close-h" class="rv">Let's find your <em>stable orbit.</em></h2>
-    <p class="rv">A short call. We find your lost hours.</p>
+    <p class="rv">A short call. We find where your hours and dollars are going, and what one AI at the centre would change.</p>
     <div class="close-ctas rv">
       <a class="btn btn-primary" href="/book" data-od-id="closing-cta">Book a call</a>
       <a class="textlink" href="mailto:hello@solenix.dev">hello@solenix.dev</a>
@@ -860,22 +1024,31 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
     { sel: '.sky', f: 0, pin: 1, k: 0, free: 0, order: 0, ink: 0, third: 0, el: 22, az: 0, dist: 18.5, ox: 0.2, oy: 0.12, poy: 0.22, calm: 0, dim: 0, labels: 0, conn: 0, agent: 0, stops: 0, tx: 0, tz: 0, fly: 0, wsel: 0 },
     { sel: '.sky', f: 0.55, pin: 1, labels: 1, el: 27, az: -10, dist: 16.5, ox: 0.22, oy: 0.1 },
     { sel: '.sky', f: 1, pin: 1, labels: 0, el: 33, az: -22, dist: 17 },
-    /* 2 and 3 · The guide and the flybys: the AI is lit at the centre and the first race is already running. Out past six tool worlds, all the way round. */
-    /* 4 · The plan: back to the centre, and the orbit is drawn in. */
+    /* 2 · The guide: the AI ignites at the centre and the first wires go out. */
     { sel: '#guide', f: 0.25, pin: 1, conn: 1, k: 0.15, free: 0.3, el: 38, az: 6, dist: 9.2, ox: 0.16, oy: 0.02, poy: 0.02 },
     { sel: '#guide', f: 0.9, pin: 1, k: 0.3, free: 0.4, el: 32, az: 26, dist: 10 },
-    { sel: '#after', f: 0, pin: 1, fly: 0, tx: 0, tz: 0, k: 0.9, free: 0.6, dim: 0, stops: 1, el: 60, az: 394, dist: 9.6, ox: 0.21, oy: 0.02, poy: 0.02, calm: 0.35, conn: 1 },
-    { sel: '#after', f: 0.1852, pin: 1, k: 1, free: 1, ink: 0.2, third: 0.44, el: 30, az: 430, dist: 8.5, poy: -0.02 },
-    { sel: '#after', f: 0.3704, pin: 1, k: 1, free: 1, ink: 0.4, third: 0.58, el: 62, az: 480, dist: 11 },
-    { sel: '#after', f: 0.5556, pin: 1, k: 1, free: 1, ink: 0.6, third: 0.72, el: 24, az: 540, dist: 8 },
-    { sel: '#after', f: 0.7407, pin: 1, k: 1, free: 1, ink: 0.8, third: 0.86, el: 50, az: 600, dist: 10.5 },
-    { sel: '#after', f: 0.9259, pin: 1, k: 1, free: 1, ink: 1.0, third: 1.00, el: 64, az: 650, dist: 13 },
-    { sel: '#after', f: 1, pin: 1, k: 1, order: 1, ink: 1, third: 1, calm: 1, el: 64, az: 660, dist: 13 },
+    /* 3 · The flybys: out past six tool worlds, all the way round. */
+    { sel: '#fly-shopify', f: 0.15, pin: 1, wsel: 0, tx: 7.71, tz: 9.19, az: 70, conn: 0, k: 0.3, free: 0.4, fly: 1, dim: 1, el: 24, dist: 8.6, ox: 0, oy: -0.1, poy: 0.4 },
+    { sel: '#fly-shopify', f: 0.8, pin: 1, az: 80 },
+    { sel: '#fly-meta', f: 0.15, pin: 1, wsel: 1, tx: 11.82, tz: -2.08, az: 130 },
+    { sel: '#fly-meta', f: 0.8, pin: 1, az: 140 },
+    { sel: '#fly-quickbooks', f: 0.15, pin: 1, wsel: 2, tx: 4.10, tz: -11.28, az: 190 },
+    { sel: '#fly-quickbooks', f: 0.8, pin: 1, az: 200 },
+    { sel: '#fly-gmail', f: 0.15, pin: 1, wsel: 3, tx: -7.71, tz: -9.19, az: 250 },
+    { sel: '#fly-gmail', f: 0.8, pin: 1, az: 260 },
+    { sel: '#fly-microsoftexcel', f: 0.15, pin: 1, wsel: 4, tx: -11.82, tz: 2.08, az: 310 },
+    { sel: '#fly-microsoftexcel', f: 0.8, pin: 1, az: 320 },
+    { sel: '#fly-hubspot', f: 0.15, pin: 1, wsel: 5, tx: -4.10, tz: 11.28, az: 370 },
+    { sel: '#fly-hubspot', f: 0.8, pin: 1, az: 380 },
+    /* 4 · The plan: back to the centre, and the orbit is drawn in. */
+    { sel: '#after', f: 0, pin: 1, fly: 0, tx: 0, tz: 0, k: 0.9, free: 0.6, dim: 0, stops: 1, el: 60, az: 394, dist: 9.6, ox: 0.21, oy: 0.02, poy: 0.02, calm: 0.35 },
+    { sel: '#after', f: 0.35, pin: 1, k: 1, free: 1, third: 0.6, poy: -0.02 },
+    { sel: '#after', f: 1, pin: 1, k: 1, order: 1, ink: 1, third: 1, calm: 1, el: 64, az: 402 },
     { sel: '#promises', f: 0.1, pin: 1, stops: 0, el: 40, az: 438, dist: 12, ox: 0.24, oy: 0.03, poy: -0.04 },
     { sel: '#promises', f: 1, pin: 1, el: 34, az: 510 },
     /* 5 · Stable orbit: steering lets go and it holds. */
-    { sel: '#close', f: 0.35, k: 0, agent: 1, el: 30, az: 532, dist: 10.5, ox: 0.05, oy: 0.15, poy: 0.24 },
-    { sel: '#close', f: 1, el: 32, az: 536, dist: 11 }
+    { sel: '#close', f: 0.35, k: 0, agent: 1, el: 56, az: 532, dist: 12.5, ox: 0.24, oy: 0.08, poy: 0.3 },
+    { sel: '#close', f: 1, el: 60, az: 540, dist: 13.5 }
   ];
   const PARAMS = Object.keys(KEYS[0]).filter(k => !['sel', 'f', 'pin', 'gap'].includes(k));
   for (let i = 1; i < KEYS.length; i++) PARAMS.forEach(k => { if (KEYS[i][k] === undefined) KEYS[i][k] = KEYS[i - 1][k]; });
@@ -916,8 +1089,8 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
     /* Hero and the Look beat, inside the pinned sky. */
     const r = sky.getBoundingClientRect(), p = clamp(-r.top / (r.height - vh));
     S.p = p;
-    const ho = 1; /* the words never fade; they scroll away as the guide arrives, so there is no empty screen */
-    hero.style.opacity = ho; hero.style.transform = ''; hero.style.visibility = ho < 0.02 ? 'hidden' : '';
+    const ho = 1 - smooth(0.06, 0.3, p);
+    hero.style.opacity = ho; hero.style.transform = m ? `translateY(${-p * 200}px)` : ''; hero.style.visibility = ho < 0.02 ? 'hidden' : '';
     if (cue) cue.style.opacity = 1 - smooth(0, 0.08, p);
     let any = 0;
     /* Full motion: words rise in one by one. Reduced: the whole line fades in together, nothing moves. */
@@ -928,7 +1101,7 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
     S.retAlpha = S.scene.labels;
     /* The journey: one card at a time, keyed to how far the orbit is inked in. */
     const jrR = jr.getBoundingClientRect(), inJ = jrR.top < vh * 0.4 && jrR.bottom > vh * 0.3, ink = S.scene.ink;
-    const cur = inJ ? Math.max(0, Math.min(4, Math.floor(clamp(-jrR.top / (jrR.height - vh)) * 5.4))) : -1;
+    const cur = inJ ? Math.max(0, Math.min(4, Math.floor(ink * 5 - 0.4))) : -1;
     S.jCur = cur;
     jSteps.forEach((li, i) => li.classList.toggle('on', i === Math.max(0, cur) && (inJ || jrR.top < vh)));
     jDots.forEach((d, i) => d.classList.toggle('on', i <= cur));
@@ -983,93 +1156,64 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
 </script>
 
 <script>
-/* The flyby races. Each one starts as its world comes into view, plays to Done on its own clock and keeps its last
-   frame; Replay runs it again. It is a time-lapse: one second on screen is one minute of work, and each lane stops at
-   its typical time. The live minutes are shared with the 3D scene, which draws them as two light trails on one axis.
+/* The flyby races. Each one starts when its world is reached and resets when you leave. Both clocks count real
+   seconds. The ask finishes and its clock stops; the by-hand side is still clicking when you move on.
    Reduced motion does not stop them: the setting quiets the camera, and the demonstration still has to be seen. */
 (() => {
-  const RACES = {"stripe":{"name":"Stripe","views":{"lst":{"head":["Customer","Overdue by"],"rows":[["Harbour Dental","12 days"],["Hillside Roofing","64 days"],["East End Yoga","31 days"],["Cove Road Cafe","4 days"]]},"new":{"head":["New invoice",""],"rows":[["Customer","Harbour Dental"],["Item","Website care"],["Due","In 15 days"],["Send","By email"]]}},"steps":[[3,"Billing › Invoices","Open Invoices","lst"],[3,"Billing › Invoices","Read who is overdue","lst"],[3,"Invoices › Create","Start a new invoice","new"],[3,"Invoices › Create","Fill it in, field by field","new","scan"]],"prompt":"Who owes us? Send Harbour Dental their invoice.","work":["Reading invoices in Stripe","Writing the invoice"],"hand":10,"ask":5,"items":[["12 days",0],["64 days late",1],["31 days late",1],["4 days",0],["9 days",0],["2 days",0]],"form":"ring"},"shopify":{"name":"Shopify","views":{"rep":{"head":["Reports",""],"rows":[["Sales over time",""],["Sales by product",""],["Sessions by location",""],["Returning customers",""]]},"s1":{"chip":"Date: last month","head":["Product","Units sold"],"rows":[["Partridgeberry jam","187"],["Wool mitts","150"],["Sea salt caramels","212"],["Molasses cookies","96"]]},"s2":{"chip":"Date: last month","head":["Product","Units sold ↓"],"rows":[["Sea salt caramels","212"],["Partridgeberry jam","187"],["Wool mitts","150"],["Molasses cookies","96"]]},"inv":{"head":["Product","In stock"],"rows":[["Molasses cookies","60"],["Partridgeberry jam","120"],["Sea salt caramels","14"],["Wool mitts","9"]]}},"steps":[[3,"Analytics › Reports","Open Reports","rep"],[3,"Reports › Sales by product","Set the date to last month","s1"],[3,"Reports › Sales by product","Sort by units sold","s2"],[2,"Products › Inventory","Open Inventory, a separate screen","inv"],[2,"Products › Inventory","Check stock, one product at a time","inv","scan"]],"prompt":"What will run out this month? Draft the reorder.","work":["Reading last month's sales in Shopify","Checking stock","Drafting the email in Gmail"],"hand":15,"ask":5,"items":[["9 days left",1],["120 days",0],["14 days left",1],["60 days",0],["88 days",0],["45 days",0]],"form":"ring"},"hubspot":{"name":"HubSpot","views":{"all":{"head":["Deal","Last activity"],"rows":[["Hillside Roofing","3 days ago"],["Cove Road Cafe","21 days ago"],["East End Yoga","17 days ago"],["Harbour Dental","30 days ago"]]},"st":{"chip":"Last activity: over 14 days ago","head":["Deal","Last activity ↓"],"rows":[["Harbour Dental","30 days ago"],["Cove Road Cafe","21 days ago"],["East End Yoga","17 days ago"]]},"em":{"head":["New email",""],"rows":[["To","Harbour Dental"],["Subject","Following up"],["Message","Still typing…"]]}},"steps":[[1,"Deals","Open the deals list","all"],[1,"Deals","Filter by last activity","st"],[1,"Deals › Harbour Dental","Open the first quiet deal","st"],[1,"Deals › New email","Write a follow-up by hand","em"],[1,"Deals","Next deal. Same again.","st","scan"]],"prompt":"Which deals went quiet? Draft a note for each.","work":["Finding quiet deals in HubSpot","Reading the last talk on each","Drafting three notes","Logging a task on each deal"],"hand":20,"ask":18,"items":[["30 days quiet",1],["3 days",0],["21 days quiet",1],["5 days",0],["17 days quiet",1],["1 day",0]],"form":"row"},"meta":{"name":"Meta Ads","views":{"c7":{"chip":"Date: last 7 days","head":["Campaign","Purchases"],"rows":[["Fall sale","31"],["New arrivals","12"],["Local awareness","0"],["Email sign-ups","9"]]},"p7":{"chip":"Date: the 7 days before","head":["Campaign","Purchases"],"rows":[["Fall sale","27"],["New arrivals","14"],["Local awareness","1"],["Email sign-ups","8"]]}},"steps":[[0,"Ads Manager › Campaigns","Log into Ads Manager","c7"],[0,"Ads Manager › Campaigns","Set the last 7 days","c7"],[0,"Ads Manager › Campaigns","Switch to the week before","p7"],[0,"Ads Manager › Campaigns","Compare each campaign by eye","c7","scan"]],"prompt":"Which ad brings no buyers? Pause it.","work":["Reading 14 days of results in Meta Ads","Comparing the two weeks"],"hand":15,"ask":5,"items":[["bought",0],["did not buy",1],["bought",0],["bought",0],["bought",0],["bought",0]],"form":"row"},"microsoftexcel":{"name":"Excel","views":{"sh":{"chip":"Sales.xlsx","head":["Category","Units"],"rows":[["Bread","421"],["Pastry","318"],["Coffee","264"],["Catering","190"]]},"fx":{"chip":"Formulas › Trace","head":["Cell","Formula"],"rows":[["B14","=SUM(B2:B12)"],["B2 to B12","In the total"],["B13","Left out"],["B14","Fix by hand"]]}},"steps":[[0,"Sales.xlsx","Open the workbook","sh"],[0,"Sales.xlsx","Find the total that looks wrong","sh"],[2,"Formulas › Trace","Trace the formula","fx"],[2,"Formulas › Trace","Check it, cell by cell","fx","scan"]],"prompt":"Check my totals. What if prices rise 5%?","work":["Reading the open workbook in Excel","Tracing the total","Working out the what-if"],"hand":15,"ask":5,"items":[["",0],["",0],["",0],["",0],["",0],["row missed",1]],"form":"grid"},"gmail":{"name":"Gmail and Calendar","views":{"inb":{"chip":"29 unread","head":["From","Subject"],"rows":[["Hillside Roofing","Quote for the deck?"],["Weekly deals","Fall offers inside"],["Harbour Dental","Can we move Thursday?"],["Your supplier","Invoice attached"]]},"one":{"head":["Hillside Roofing",""],"rows":[["Subject","Quote for the deck?"],["Asks for","A price by Friday"],["Reply today?","Yes"],["Next","28 more to read"]]}},"steps":[[0,"Inbox","Open the inbox","inb"],[0,"Inbox › Hillside Roofing","Open the first email","one"],[0,"Inbox › Hillside Roofing","Decide: now, later or junk","one"],[0,"Inbox","Back. Then the next one.","inb","scan"]],"prompt":"What needs a reply today? Book Harbour Dental.","work":["Reading today's inbox in Gmail","Drafting three replies","Checking both calendars"],"hand":20,"ask":5,"items":[["3 hours waiting",1],["",0],["5 hours waiting",1],["",0],["1 hour waiting",1],["",0]],"form":"fan"}};
-  const S = window.solenix, MIN = 1000;
-  S.races = Object.keys(RACES).map(id => ({ id, items: RACES[id].items, form: RACES[id].form, max: RACES[id].hand }));
-  S.rs = S.races.map(() => ({ h: 0, a: 0, hDone: false, aDone: false, on: false }));
-  const row = r => `<div class="scr-row"><span>${r[0]}</span><span>${r[1]}</span></div>`;
-  const all = [...document.querySelectorAll('[data-race]')].map((sec, idx) => {
-    const R = RACES[sec.dataset.race], st8 = S.rs[idx], hand = sec.querySelector('.lane.hand'), ask = sec.querySelector('.lane.ask');
+  const RACES = {"shopify":{"name":"Shopify","views":{"rep":{"head":["Reports",""],"rows":[["Sales over time",""],["Sales by product",""],["Sessions by location",""],["Returning customers",""]]},"s0":{"chip":"Date: today","head":["Product","Units sold"],"rows":[["Partridgeberry jam","3"],["Wool mitts","1"],["Sea salt caramels","2"],["Molasses cookies","0"]]},"s1":{"chip":"Date: last month","head":["Product","Units sold"],"rows":[["Partridgeberry jam","187"],["Wool mitts","150"],["Sea salt caramels","212"],["Molasses cookies","96"]]},"s2":{"chip":"Date: last month","head":["Product","Units sold ↓"],"rows":[["Sea salt caramels","212"],["Partridgeberry jam","187"],["Wool mitts","150"],["Molasses cookies","96"]]},"inv":{"head":["Product","In stock"],"rows":[["Molasses cookies","60"],["Partridgeberry jam","120"],["Sea salt caramels","14"],["Wool mitts","9"]]}},"steps":[[3,"Analytics","Open Analytics",null],[3,"Analytics › Reports","Open Reports","rep"],[3,"Reports › Sales by product","Find Sales by product","s0"],[3,"Reports › Sales by product","Set the date range to last month","s1"],[3,"Reports › Sales by product","Sort by units sold","s2"],[2,"Products › Inventory","Now open Inventory, a separate screen","inv"],[2,"Products › Inventory","Check the stock on each product, one at a time","inv","scan"]],"prompt":"Pull last month's top 10 sellers by units sold, show current stock for each, and tell me which will run out in 30 days","work":["Reading last month's sales in Shopify","Checking the stock on each one"],"done":"You decide what to reorder."},"meta":{"name":"Meta Ads","views":{"c0":{"chip":"Date: today","head":["Campaign","Cost per result"],"rows":[["Fall sale","$4.30"],["New arrivals","$7.00"],["Local awareness","$9.10"],["Email sign-ups","$3.10"]]},"c7":{"chip":"Date: last 7 days","head":["Campaign","Cost per result"],"rows":[["Fall sale","$4.10"],["New arrivals","$6.80"],["Local awareness","$9.40"],["Email sign-ups","$3.20"]]},"p7":{"chip":"Date: the 7 days before","head":["Campaign","Cost per result"],"rows":[["Fall sale","$4.60"],["New arrivals","$6.10"],["Local awareness","$5.90"],["Email sign-ups","$3.40"]]}},"steps":[[0,"Ads Manager","Log into Ads Manager","c0"],[0,"Ads Manager › Campaigns","Set the date range to the last 7 days","c7"],[0,"Ads Manager › Campaigns","Read the spend and the cost per result","c7"],[0,"Ads Manager › Campaigns","Switch to the 7 days before","p7"],[0,"Ads Manager › Campaigns","Compare every campaign by eye, back and forth","c7","scan"]],"prompt":"Pull spend, cost per result, and ROAS for all active campaigns over the last 7 days vs. the 7 days before. Tell me which ad sets are underperforming and recommend which to pause.","work":["Reading the last 14 days in Meta Ads","Comparing this week with the one before"],"done":"You make the call to pause."},"quickbooks":{"name":"QuickBooks","views":{"rep":{"head":["Reports",""],"rows":[["Profit and loss",""],["Who owes you",""],["Balance sheet",""],["Sales by customer",""]]},"ar":{"head":["Customer","Overdue by"],"rows":[["Harbour Dental","12 days"],["Hillside Roofing","64 days"],["East End Yoga","31 days"],["Cove Road Cafe","4 days"]]},"inv":{"head":["New invoice",""],"rows":[["Customer","Harbour Dental"],["Item","Website maintenance retainer"],["Amount","$450"],["Due","In 15 days"]]}},"steps":[[3,"Reports","Open Reports","rep"],[3,"Reports › Who owes you","Open the report of who owes you","ar"],[3,"Reports › Who owes you","Read down the list and decide who to chase","ar"],[1,"Sales › New invoice","Now open a new invoice, a separate screen","inv"],[1,"Sales › New invoice","Fill in the customer, the item, the amount and the date","inv","scan"]],"prompt":"Show me who owes us, flag anyone over 60 days, and send Harbour Dental an invoice for the retainer","work":["Reading who owes you in QuickBooks","Preparing the invoice"],"done":"You check it, then it goes."},"gmail":{"name":"Gmail and Calendar","views":{"inb":{"chip":"29 unread","head":["From","Subject"],"rows":[["Hillside Roofing","Quote for the deck?"],["Weekly deals","Fall offers inside"],["Harbour Dental","Can we move Thursday?"],["Your supplier","Invoice attached"]]},"one":{"head":["Hillside Roofing",""],"rows":[["Subject","Quote for the deck?"],["Asks for","A price by Friday"],["Reply today?","Yes"],["Next","28 more to read"]]}},"steps":[[0,"Inbox","Open the inbox","inb"],[0,"Inbox › Hillside Roofing","Open the first email and read it","one"],[0,"Inbox › Hillside Roofing","Decide: reply today, later, or junk","one"],[0,"Inbox","Back to the inbox. Then the next one, and the next.","inb","scan"]],"prompt":"Group today's inbox into needs a reply today, can wait, and junk. Then find 30 minutes next week with Harbour Dental and send the invite.","work":["Reading today's inbox in Gmail","Checking both calendars"],"done":"Nothing sends without your OK."},"microsoftexcel":{"name":"Excel","views":{"sh":{"chip":"Sales.xlsx","head":["Category","Revenue"],"rows":[["Bread","$4,210"],["Pastry","$3,180"],["Coffee","$2,640"],["Catering","$1,900"]]},"pv":{"chip":"PivotTable fields","head":["Field","Set to"],"rows":[["Rows","Category"],["Columns","Month"],["Values","Sum of revenue"],["Chart","Not added yet"]]}},"steps":[[0,"Sales.xlsx","Open the sales workbook","sh"],[0,"Sales.xlsx","Select all of the sales data","sh"],[1,"Insert › PivotTable","Insert a pivot table","pv"],[1,"Insert › PivotTable","Set up each field, then build the chart","pv","scan"]],"prompt":"Add a pivot table of revenue by category this month vs. last, with a bar chart","work":["Reading the open workbook in Excel","Adding the table and the chart"],"done":"The live workbook is updated."},"hubspot":{"name":"HubSpot","views":{"all":{"head":["Deal","Last activity"],"rows":[["Hillside Roofing","3 days ago"],["Cove Road Cafe","21 days ago"],["East End Yoga","17 days ago"],["Harbour Dental","30 days ago"]]},"st":{"chip":"Last activity: over 14 days ago","head":["Deal","Last activity ↓"],"rows":[["Harbour Dental","30 days ago"],["Cove Road Cafe","21 days ago"],["East End Yoga","17 days ago"]]},"em":{"head":["New email",""],"rows":[["To","Harbour Dental"],["Subject","Following up"],["Message","Still typing…"]]}},"steps":[[1,"Deals","Open the deals list","all"],[1,"Deals","Filter by last activity date, then sort","st"],[1,"Deals › Harbour Dental","Open the first stalled deal and reread it","st"],[1,"Deals › New email","Write a follow-up by hand","em"],[1,"Deals","Back to the list. Next deal, same again.","st","scan"]],"prompt":"Show every deal with no activity in 14 days and draft a follow-up for each","work":["Finding the quiet deals in HubSpot","Drafting a follow-up for each"],"done":"You read each one and press send."}};
+  const fmt = ms => { const s = Math.floor(ms / 1000); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+  const row = (r, c) => `<div class="scr-row${c || ''}"><span>${r[0]}</span><span>${r[1]}</span></div>`;
+  const all = [...document.querySelectorAll('[data-race]')].map(sec => {
+    const R = RACES[sec.dataset.race], hand = sec.querySelector('.lane.hand'), ask = sec.querySelector('.lane.ask');
     const scr = hand.querySelector('.scr'), nav = [...hand.querySelectorAll('.scr-nav li')], crumb = hand.querySelector('.crumb'), view = hand.querySelector('.scr-view'), cur = hand.querySelector('.scr-cur'), hs = hand.querySelector('.lane-s');
-    const chat = ask.querySelector('.scr'), me = ask.querySelector('.rmsg.me span'), st = ask.querySelector('.rmsg.st'), out = ask.querySelector('.out'), ok = ask.querySelector('.approve'), cur2 = ask.querySelector('.scr-cur');
-    const ctl = sec.querySelector('.race-ctl');
-    const TH = R.hand * MIN, TA = R.ask * MIN;
-    let run = 0, state = 'idle', vt = 0, last = 0, timer = 0, waiters = [], open = 0;
-    const wait = (ms, id) => new Promise((yes, no) => waiters.push({ at: vt + ms, yes, no, id }));
-    const draw = k => { const v = R.views[k]; view.innerHTML = (v.chip ? `<p class="scr-chip">${v.chip}</p>` : '') + v.rows.map(row).join(''); };
+    const me = ask.querySelector('.rmsg.me span'), st = ask.querySelector('.rmsg.st'), ai = ask.querySelector('.rmsg.ai'), as = ask.querySelector('.lane-s');
+    const swH = hand.querySelector('.sw'), swA = ask.querySelector('.sw');
+    let run = 0, on = false, t0 = 0, tStop = 0, timer = 0;
+    const wait = (ms, id) => new Promise((ok, no) => setTimeout(() => id === run ? ok() : no(), ms));
+    const draw = k => { const v = R.views[k]; view.innerHTML = (v.chip ? `<p class="scr-chip">${v.chip}</p>` : '') + row(v.head, ' hd') + v.rows.map(r => row(r)).join(''); };
     const menu = n => nav.forEach((li, k) => li.classList.toggle('on', k === n));
-    const point = (c, box, t, dx, dy) => { if (!t) return; const a = box.getBoundingClientRect(), b = t.getBoundingClientRect(); if (!b.width) return;
-      c.classList.add('show'); c.style.transform = `translate(${(b.left - a.left + dx(b)).toFixed(1)}px, ${(b.top - a.top + b.height / 2 + dy).toFixed(1)}px)`; };
-    const share = () => { st8.h = Math.min(vt, TH) / MIN; st8.a = Math.min(vt, TA) / MIN; st8.hDone = vt >= TH; st8.aDone = vt >= TA; st8.on = state !== 'idle'; };
-    function label() { ctl.textContent = state === 'done' ? 'Replay' : state === 'paused' ? 'Play' : 'Pause'; ctl.hidden = state === 'idle'; sec.classList.toggle('is-done', state === 'done'); }
+    const point = t => { if (!t) return; const a = scr.getBoundingClientRect(), b = t.getBoundingClientRect(); if (!b.width) return;
+      const x = t.matches('li') ? b.width / 2 : t.matches('.scr-chip') ? b.width + 12 : t.firstElementChild.getBoundingClientRect().width + 26;
+      cur.style.transform = `translate(${(b.left - a.left + x).toFixed(1)}px, ${(b.top - a.top + b.height / 2 + (t.matches('li') ? 17 : 0)).toFixed(1)}px)`; };
+    const clocks = () => { const now = performance.now(); swH.textContent = fmt(now - t0); swA.textContent = fmt((tStop || now) - t0); };
     function reset() {
-      run++; waiters.forEach(w => w.no()); waiters = []; clearInterval(timer); vt = 0; state = 'idle';
-      hand.classList.remove('go', 'done'); ask.classList.remove('go', 'sent', 'done'); ok.classList.remove('press'); menu(-1); crumb.textContent = R.name; view.innerHTML = ''; hs.textContent = '';
-      me.textContent = ''; st.hidden = out.hidden = true; cur.classList.remove('show'); cur2.classList.remove('show'); cur.style.transform = cur2.style.transform = ''; share(); label();
+      hand.classList.remove('go'); ask.classList.remove('go', 'sent', 'done'); menu(-1); crumb.textContent = R.name; view.innerHTML = ''; hs.textContent = ''; as.textContent = '';
+      me.textContent = ''; st.hidden = ai.hidden = true; swH.textContent = swA.textContent = '0:00'; cur.style.transform = '';
     }
-    /* By hand: every step and every row takes its even share of the typical time, so the lane ends exactly on it. */
     async function byHand(id) {
-      const beats = R.steps.reduce((n, s) => n + (s[4] === 'scan' ? R.views[s[3]].rows.length : 1), 0), per = TH / beats;
       let n0 = -1, v0 = null;
       for (let i = 0; i < R.steps.length; i++) {
         const [n, c, cap, v, mode] = R.steps[i];
         hs.innerHTML = `<b>Step ${i + 1}</b><span>${cap}</span>`;
-        if (n !== n0) { point(cur, scr, nav[n], b => b.width / 2, 15); menu(n); n0 = n; }
+        if (n !== n0) { point(nav[n]); await wait(900, id); menu(n); n0 = n; }
         crumb.textContent = c;
-        if (v && v !== v0) { view.classList.add('load'); await wait(per * 0.2, id); draw(v); view.classList.remove('load'); v0 = v; if (mode !== 'scan') await wait(per * 0.8, id); }
-        else if (mode !== 'scan') await wait(per, id);
-        if (mode === 'scan') { const rows = [...view.querySelectorAll('.scr-row')];
-          for (const r of rows) { point(cur, scr, r, () => r.firstElementChild.getBoundingClientRect().width + 22, 0); rows.forEach(x => x.classList.toggle('on', x === r)); await wait(per, id); } }
+        if (v && v !== v0) { view.classList.add('load'); await wait(700, id); draw(v); view.classList.remove('load'); v0 = v; }
+        point(view.querySelector('.scr-chip') || view.querySelector('.scr-row:not(.hd)'));
+        await wait(1700, id);
+        /* The last step is the slow one: every row, one at a time, for as long as you watch. */
+        if (mode === 'scan') for (;;) { const rows = [...view.querySelectorAll('.scr-row:not(.hd)')];
+          for (const r of rows) { point(r); rows.forEach(x => x.classList.toggle('on', x === r)); await wait(1900, id); }
+          hs.innerHTML = `<b>Still going</b><span>${cap}</span>`; }
       }
-      await wait(Math.max(0, TH - vt), id);
-      hand.classList.add('done'); cur.classList.remove('show'); hs.innerHTML = `<b>Done</b><span>${R.steps.length} steps, by hand</span>`;
     }
-    /* The ask: typed, worked on in the tool, and ended on the owner's real output with one Approve click. */
     async function justAsk(id) {
-      const type = Math.min(900, TA * 0.4), work = TA * 0.3, each = type / R.prompt.length; /* the ask types in under a second */
-      for (let i = 1; i <= R.prompt.length; i++) { me.textContent = R.prompt.slice(0, i); await wait(each, id); }
-      ask.classList.add('sent'); st.hidden = false;
-      for (const w of R.work) { st.textContent = w + '…'; await wait(work / R.work.length, id); }
-      st.hidden = true; out.hidden = false;
-      point(cur2, chat, ok, b => b.width / 2, 6);
-      await wait(Math.max(0, TA - vt - 160), id); ok.classList.add('press');
-      await wait(Math.max(0, TA - vt), id); ok.classList.remove('press'); cur2.classList.remove('show'); ask.classList.add('done');
+      as.innerHTML = '<b>Typing</b><span>Plain words, nothing to learn</span>';
+      for (let i = 1; i <= R.prompt.length; i++) { me.textContent = R.prompt.slice(0, i); await wait(62, id); }
+      ask.classList.add('sent'); st.hidden = false; as.innerHTML = `<b>Working</b><span>The AI does it in ${R.name}</span>`;
+      for (const w of R.work) { st.textContent = w + '…'; await wait(2300, id); }
+      st.hidden = true; ai.hidden = false; tStop = performance.now(); ask.classList.add('done'); as.innerHTML = `<b>Done</b><span>${R.done}</span>`; clocks();
     }
-    function pump() {
-      const now = performance.now(); if (state === 'running') vt += Math.min(120, now - last); last = now;
-      waiters = waiters.filter(w => { if (w.id !== run) { w.no(); return false; } if (state === 'done' || vt >= w.at) { w.yes(); return false; } return true; });
-      share();
-      /* Done: both lanes are let through to their last frame, then the clock stops for good. */
-      if (state === 'running' && vt >= Math.max(TH, TA) + 300) { state = 'done'; share(); label(); }
-      else if (state === 'done' && open <= 0) clearInterval(timer);
-    }
-    function start() { reset(); const id = run; state = 'running'; last = performance.now(); hand.classList.add('go'); ask.classList.add('go'); label();
-      open = 2; const end = () => { if (id === run) open--; };
-      timer = setInterval(pump, 40); byHand(id).then(end, end); justAsk(id).then(end, end); }
-    ctl.addEventListener('click', () => {
-      if (state === 'done' || state === 'idle') start();
-      else if (state === 'running') { state = 'paused'; label(); }
-      else { state = 'running'; last = performance.now(); label(); }
-    });
-    reset();
-    return { check(vh) { const r = sec.getBoundingClientRect();
-      /* Starts while the scene before it is still on screen; once started it runs to the end wherever you scroll. */
-      if (state === 'idle' && r.top < vh * 0.85 && r.bottom > vh * 0.15) start();
-      /* Two scenes away it resets, so coming back plays it again. */
-      else if (state !== 'idle' && (r.top > vh + r.height * 2 || r.bottom < -r.height * 2)) reset(); } };
+    function start() { const id = ++run; reset(); t0 = performance.now(); tStop = 0; hand.classList.add('go'); ask.classList.add('go');
+      timer = setInterval(clocks, 250); byHand(id).catch(() => {}); justAsk(id).catch(() => {}); }
+    function stop() { run++; clearInterval(timer); reset(); }
+    return { check(vh) { const r = sec.getBoundingClientRect(), now = r.top < vh * 0.3 && r.bottom > vh * 0.75;
+      if (now === on) return; on = now; now ? start() : stop(); } };
   });
   let queued = false;
   const check = () => { queued = false; all.forEach(a => a.check(innerHeight)); };
   const ask = () => { if (!queued) { queued = true; requestAnimationFrame(check); } };
   addEventListener('scroll', ask, { passive: true }); addEventListener('resize', ask);
   ask();
-  /* If the 3D cannot start, the still orbit stands in for it. */
-  setTimeout(() => { const w = document.querySelector('.world'); if (w && !w.classList.contains('gl-on')) w.classList.add('gl-off'); }, 6000);
 })();
 </script>
 
@@ -1169,7 +1313,7 @@ function setStill(beat) {
 const isSmall = Math.min(innerWidth, innerHeight) < 700;
 let renderer;
 try { renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance' }); }
-catch (e) { stage.classList.add('gl-off'); throw new Error('WebGL unavailable'); }
+catch (e) { throw new Error('WebGL unavailable'); }
 let dprMax = Math.min(devicePixelRatio || 1, 2), dpr = dprMax;
 renderer.setPixelRatio(dpr);
 renderer.setClearColor(C.bg, 1);
@@ -1233,10 +1377,10 @@ const grid = new THREE.Mesh(new THREE.PlaneGeometry(48, 48, isSmall ? 150 : 240,
   fragmentShader: `uniform vec3 uB[3]; uniform vec3 uLine,uWarm; uniform float uCell,uAlpha,uChaos; varying vec3 vW; varying float vPot; varying float vRing;
     float gl(vec2 c,float w){ vec2 f=fwidth(c); vec2 g=abs(fract(c-.5)-.5)/f; return (1.-min(min(g.x,g.y)/w,1.))*(1.-smoothstep(.22,.55,max(f.x,f.y))); }
     void main(){ vec2 c=vW.xz/uCell; float minor=gl(c,1.), major=gl(c/4.,1.3);
-      float well=smoothstep(.75,2.4,vPot); float fade=(1.-smoothstep(14.,23.,length(vW.xz)))*(1.-smoothstep(12.,34.,distance(vW,cameraPosition))); /* depth: the grid fades into the dark with distance from the eye */
+      float well=smoothstep(.75,2.4,vPot); float fade=1.-smoothstep(14.,23.,length(vW.xz));
       float glow=0.; for(int i=0;i<3;i++){ vec2 d=vW.xz-uB[i].xz; glow+=exp(-dot(d,d)*.45); }
       vec3 col=mix(uLine,uWarm*1.25,well);
-      float a=(minor*.18+major*.55)*(.4+1.9*well)*fade; /* calmer: fewer fine lines */
+      float a=(minor*.32+major*.6)*(.4+1.9*well)*fade;
       gl_FragColor=vec4((col*a*(1.+vRing*2.5)+uWarm*glow*.035*fade+uWarm*vRing*.12*fade)*uAlpha,1.); }` }));
 grid.frustumCulled = false; grid.renderOrder = 1; scene.add(grid);
 function gridY(x, z) { let s = 0; for (const b of bodyU.value) { const dx = x - b.x, dz = z - b.z; s += 1 / Math.sqrt(dx * dx + dz * dz + 0.8); } return gridU.uBase.value - gridU.uDepth.value * s; }
@@ -1381,73 +1525,6 @@ const worldTags = [...document.querySelectorAll('.world-tag')];
 const place = (e, v, al, dy) => { if (al < 0.01) { if (e.style.opacity !== '0') e.style.opacity = 0; return; } proj.copy(v).project(camera);
   e.style.opacity = al.toFixed(3); e.style.transform = `translate3d(${((proj.x + 1) / 2 * W).toFixed(1)}px, ${((1 - proj.y) / 2 * H + dy).toFixed(1)}px, 0) translate(-50%, -50%)`; };
 let pingT = -99, pingSeen = 0, stn = -1, stnBusy = false;
-/* ── Inside each tool's world: the bodies the job is about, and the time gap drawn as two light trails on one
-   minutes axis. The race script shares its live minutes. Time is only ever a length here, never a size. ── */
-const RS = S.rs || [], RC = S.races || [], ITEM_N = 6, AXIS_MIN = 20;
-/* A trail is lit along its whole length, brightest at the head, so both read from the same origin. */
-const TRAIL_FRAG = `uniform vec3 uCol,uHot; uniform float uAlpha; varying float vT,vS;
-  void main(){ float edge=1.-abs(vS); edge=edge*edge*(3.-2.*edge); float core=pow(edge,6.);
-    float a=(.4+.6*pow(vT,1.6))*uAlpha; vec3 c=mix(uCol,uHot,core*.5)*(edge*.6+core*.85)*(1.+1.4*pow(vT,14.)); gl_FragColor=vec4(c*a,1.); }`;
-const trailH = ribbon(24, WHITE.clone().multiplyScalar(0.5), 0.085, TRAIL_FRAG, false), trailA = ribbon(24, C.sun1.clone(), 0.085, TRAIL_FRAG, false), axisR = ribbon(16, C.ring.clone(), 0.014, ARC_FRAG, false);
-[trailH, trailA, axisR].forEach(r => { r.mesh.visible = false; });
-const items = WPOS.map((p, i) => Array.from({ length: ITEM_N }, (_, j) => { const m = new THREE.Mesh(quad, sunMat((j % 2 ? C.sun2 : C.sun1).clone(), 71 + i * 7 + j * 3.1, 0.45, 0.2)); m.material.uniforms.uFlare.value = 0.1; m.frustumCulled = false; m.renderOrder = 6; m.visible = false; m.userData.g = 0.2; scene.add(m); return m; }));
-const itemOff = (form, j) => {
-  /* An arc round the far side of the world, clear of the time axis in front of it. */
-  if (form === 'ring') { const a = -1.55 + j * 0.62; return [-Math.cos(a) * 1.3 + 0.1, Math.sin(a) * 1.3]; }
-  if (form === 'row') return [-0.2 - j * 0.6, -1.15];
-  if (form === 'grid') return [-0.5 - Math.floor(j / 3) * 0.62, 0.95 + (j % 3) * 0.58];
-  const a = -0.45 + j * 0.4; return [-Math.sin(a) * 1.55 - 0.15, Math.cos(a) * 1.55];
-};
-const sceneUi = document.querySelector('.scene-ui');
-const mkTag = (cls, html) => { const e = document.createElement('div'); e.className = cls; e.innerHTML = html || ''; sceneUi.append(e); return e; };
-const tagH = mkTag('trail-tag hand', '<span>By hand</span><b></b>'), tagA = mkTag('trail-tag ask', '<span>Asked</span><b></b>');
-const tickTags = [5, 10, 15, 20].map(m => { const e = mkTag('tick-tag', m === 20 ? '20 min' : String(m)); e._m = m; return e; });
-const itemTags = Array.from({ length: 3 }, () => mkTag('item-tag'));
-const vR = new THREE.Vector3(), vB = new THREE.Vector3(), vO = new THREE.Vector3(), vA = new THREE.Vector3(), vE = new THREE.Vector3(), vU = new THREE.Vector3(), vV = new THREE.Vector3(), vP = new THREE.Vector3();
-let itemShow = 0;
-function raceWorld(fl, wsel, dtReal) {
-  const wi = Math.max(0, Math.min(WN - 1, Math.round(wsel))), near = fl * Math.max(0, 1 - Math.abs(wsel - wi) * 2.2), rs = RS[wi], rc = RC[wi], on = near > 0.02 && rs && rc;
-  trailH.mesh.visible = trailA.mesh.visible = axisR.mesh.visible = !!on;
-  items.forEach((row, i) => row.forEach(m => { m.visible = !!on && i === wi; }));
-  if (!on) { itemShow = 0; return null; }
-  const Wp = WPOS[wi];
-  /* The axis lies on the ground in front of the world, left to right as you look at it. */
-  vR.setFromMatrixColumn(camera.matrixWorld, 0); vR.y = 0; vR.normalize(); vB.setFromMatrixColumn(camera.matrixWorld, 2); vB.y = 0; vB.normalize();
-  vO.copy(Wp).addScaledVector(vB, 1.55); vO.y = 0.06;
-  const L = Math.min(2 * camera.position.distanceTo(vO) * Math.tan(D2R(camera.fov / 2)) * camera.aspect * 0.78, 5.6), unit = L / AXIS_MIN;
-  vO.addScaledVector(vR, -L / 2);
-  layArc(axisR, vO, vE.copy(vO).addScaledVector(vR, L), 0); axisR.mesh.material.uniforms.uAlpha.value = near * 0.55;
-  const hLen = Math.max(0.02, rs.h * unit), aLen = Math.max(0.02, rs.a * unit);
-  vA.copy(vO).addScaledVector(vB, -0.14); layArc(trailH, vA, vE.copy(vA).addScaledVector(vR, hLen), 0); trailH.mesh.material.uniforms.uAlpha.value = near * (rs.on ? 1 : 0);
-  const headH = vE.clone();
-  vA.copy(vO).addScaledVector(vB, 0.14); layArc(trailA, vA, vE.copy(vA).addScaledVector(vR, aLen), 0); trailA.mesh.material.uniforms.uAlpha.value = near * (rs.on ? 1.25 : 0);
-  const headA = vE.clone();
-  /* The bodies: quiet until the answer lands, then the ones that matter light and the rest go dark. */
-  vU.set(Wp.x, 0, Wp.z).normalize(); vV.set(-vU.z, 0, vU.x);
-  itemShow = lerp(itemShow, rs.aDone ? 1 : 0, 1 - Math.exp(-dtReal * 5));
-  const hot = [];
-  items[wi].forEach((m, j) => { const o = itemOff(rc.form, j), isHot = rc.items[j][1];
-    m.position.copy(Wp).addScaledVector(vU, o[0]).addScaledVector(vV, o[1]);
-    const u = m.material.uniforms; u.uGain.value = near * lerp(0.2, isHot ? 0.95 : 0.05, itemShow); u.uSize.value = lerp(0.42, isHot ? 0.66 : 0.36, itemShow);
-    if (isHot && rc.items[j][0]) hot.push([m.position, rc.items[j][0]]); });
-  return { near, rs, unit, L, headH, headA, hot, o: vO.clone() };
-}
-function raceTags(rw) {
-  if (!rw) { [tagH, tagA, ...tickTags, ...itemTags].forEach(e => { if (e.style.opacity !== '0') e.style.opacity = 0; }); return; }
-  const { near, rs } = rw, small = W < 700;
-  tagH.lastChild.textContent = Math.floor(rs.h) + ' min'; tagA.lastChild.textContent = Math.floor(rs.a) + ' min';
-  tagH.classList.toggle('stop', rs.hDone); tagA.classList.toggle('stop', rs.aDone);
-  placeL(tagH, rw.headH, near * (rs.on ? 1 : 0), -28); placeL(tagA, rw.headA, near * (rs.on ? 1 : 0), 28);
-  tickTags.forEach(e => place(e, vP.copy(rw.o).addScaledVector(vR, e._m * rw.unit).addScaledVector(vB, 0.5), near * 0.9, 0));
-  itemTags.forEach((e, k) => { const h = rw.hot[k]; if (!h) { e.style.opacity = 0; return; } if (e.textContent !== h[1]) e.textContent = h[1]; place(e, h[0], near * itemShow, 26); });
-}
-/* A trail's clock sits at its head, kept inside the screen. */
-const placeL = (e, v, al, dy) => { if (al < 0.01) { if (e.style.opacity !== '0') e.style.opacity = 0; return; } proj.copy(v).project(camera);
-  let x = (proj.x + 1) / 2 * W + 16, y = (1 - proj.y) / 2 * H; const w = e.offsetWidth || 150;
-  /* Beside the head; at the edge of the screen it steps above or below its own trail instead. */
-  if (x + w > W - 12) { x = W - 12 - w; y += dy; }
-  e.style.opacity = al.toFixed(3); e.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) translate(0, -50%)`; };
-
 
 /* ── Post ── */
 const composer = new EffectComposer(renderer);
@@ -1519,14 +1596,14 @@ function frame(dtReal, still) {
   /* One continuous camera move, eased so a fast flick still glides. */
   /* Reduced motion: one fixed, calm viewpoint. No flying, zooming or spinning; the framing only drifts slowly sideways. */
   const calmDist = portrait ? Math.max(14 * 1.3, 3.1 / (Math.tan(D2R(fov0 / 2)) * camera.aspect)) : 14;
-  const dist0 = R ? (stn > 0 ? Math.min(calmDist, portrait ? 12.5 : 8.6) : calmDist * lerp(1, 0.8, sc.agent)) : portrait ? Math.max(sc.dist * 1.3, 3.1 * (1 - 0.45 * sc.fly) / (Math.tan(D2R(fov0 / 2)) * camera.aspect)) : sc.dist;
-  shown.el = R ? (stn > 0 ? 24 : lerp(58, 32, sc.agent)) : lerp(shown.el, sc.el, a); shown.az = R ? (stn > 0 ? WAZ(stn - 1) + 30 : 0) : lerp(shown.az, sc.az, a); shown.dist = R ? dist0 : lerp(shown.dist, dist0, a);
+  const dist0 = R ? (stn > 0 ? Math.min(calmDist, portrait ? 12.5 : 9.5) : calmDist) : portrait ? Math.max(sc.dist * 1.3, 3.1 * (1 - 0.45 * sc.fly) / (Math.tan(D2R(fov0 / 2)) * camera.aspect)) : sc.dist;
+  shown.el = R ? (stn > 0 ? 24 : 58) : lerp(shown.el, sc.el, a); shown.az = R ? (stn > 0 ? WAZ(stn - 1) + 30 : 0) : lerp(shown.az, sc.az, a); shown.dist = R ? dist0 : lerp(shown.dist, dist0, a);
   /* Reduced motion: no flight between worlds. The camera holds one station per scene and cuts to the next under a dip. */
   if (R) { const want = sc.fly > 0.5 ? 1 + Math.max(0, Math.min(WN - 1, Math.round(sc.wsel))) : 0;
     if (want !== stn && !stnBusy) { stnBusy = true; canvas.classList.add('dip'); setTimeout(() => { stn = want; canvas.classList.remove('dip'); stnBusy = false; }, 210); }
     shown.tx = stn > 0 ? WPOS[stn - 1].x : 0; shown.tz = stn > 0 ? WPOS[stn - 1].z : 0;
   } else { stn = -1; shown.tx = lerp(shown.tx, sc.tx, a); shown.tz = lerp(shown.tz, sc.tz, a); }
-  shown.ox = lerp(shown.ox, portrait ? 0 : sc.ox, a); shown.oy = lerp(shown.oy, portrait ? sc.poy : sc.oy, a);
+  shown.ox = lerp(shown.ox, portrait ? 0.3 * sc.fly : sc.ox, a); shown.oy = lerp(shown.oy, portrait ? sc.poy : sc.oy, a);
   if (!R) { mouse.x += (mouse.tx - mouse.x) * 0.04; mouse.y += (mouse.ty - mouse.y) * 0.04; } else { mouse.x = mouse.y = 0; }
   const el = D2R(shown.el + mouse.y * 3 * (1 - sc.calm * 0.5));
   const az = D2R(shown.az) + (R ? 0 : Math.sin(clockT * 0.045) * 0.1 * (1 - sc.calm)) + mouse.x * 0.05;
@@ -1611,10 +1688,8 @@ function frame(dtReal, still) {
     m.material.uniforms.uGain.value = fl * (0.3 + 0.28 * near); m.material.uniforms.uSize.value = 1.5 + 0.5 * near;
     layArc(warcs[i], HUB, m.position, 2.2); warcs[i].mesh.material.uniforms.uAlpha.value = fl * (0.1 + 0.85 * near); });
 
-  const rw = raceWorld(fl, wsel, dtReal);
   timeU.value = clockT; finalPass.uniforms.uTime.value = clockT;
   composer.render();
-  raceTags(rw);
 
   /* Each world wears its own mark, shown only while you are beside it. */
   worldTags.forEach((e, i) => place(e, WPOS[i], (portrait ? 0 : 1) * fl * Math.max(0, 1 - Math.abs(wsel - i) * 1.6), 0));
@@ -1636,7 +1711,7 @@ function frame(dtReal, still) {
   S.stops.forEach((e, k) => {
     if (sc.stops < 0.01) { e.style.opacity = 0; return; }
     curve(STOP_U[k], tmp2); proj.set(tmp2[0] * SC, SUN_Y, tmp2[1] * SC).project(camera);
-    const sx = (proj.x + 1) / 2 * W, sy = (1 - proj.y) / 2 * H, lit = S.jCur >= k || locked || sc.agent > 0.98;
+    const sx = (proj.x + 1) / 2 * W, sy = (1 - proj.y) / 2 * H, lit = sc.ink >= (k + 0.5) / 5 - 0.02;
     e.style.opacity = (lit ? sc.stops : 0).toFixed(3); e.style.transform = `translate3d(${sx.toFixed(1)}px, ${sy.toFixed(1)}px, 0)`;
     e.classList.toggle('lit', lit); e.classList.toggle('cur', k === S.jCur && !(locked || sc.agent > 0.98)); e.classList.toggle('flip', sx > W - 240);
   });
@@ -1675,7 +1750,7 @@ addEventListener('solenix:motion', sync);
 addEventListener('resize', resize);
 resize();
 frame(0.016, false);
-stage.classList.remove('gl-off'); stage.classList.add('gl-on');
+stage.classList.add('gl-on');
 sync();
 </script>
 </body>
