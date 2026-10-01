@@ -144,5 +144,6 @@ Pace: about 2–5 points a pass, roughly 40 min each. The judges are a proxy; th
 | owner's things on stage | 16–4 | 16–3 | 15–4 | costs: brevity 1–12; Stripe "$0" read as nothing earned |
 | polish | 6–6 | 5–7 | 5–6 | better: Stripe $920 Paid, Meta order, readability 11–0; worse: cuts removed outcome words |
 | outcome words back | 4–0 | 4–0 | 4–0 | costs: readability and brevity (tiny mono labels) |
+| readable outcome labels | 10–1 | 6–0 | 4–0 | readability 9–2; same words, larger, body face |
 
 Rule learned: cut words, but never the outcome words.
