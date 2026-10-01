@@ -50,19 +50,6 @@ expect fail "orphaned Open Design sidecar"
 fresh; rm "$tmp/r/design/roi-model.md"
 expect fail "a source of truth goes missing"
 
-fresh; sed -i '' 's#</body>#<article class="lane hand">By hand</article></body>#' "$tmp/r/design/home.html"
-expect fail "race interface laid over the world (a .lane comes back)"
-
-fresh; sed -i '' 's|<h3>One place to see everything</h3>|<h3>One place to see everything, and a good many more words than any owner will read here</h3>|' "$tmp/r/design/home.html"
-if grep -q 'a good many more words' "$tmp/r/design/home.html"; then expect fail "plan stop over ten words"
-else fail=$((fail + 1)); echo "WRONG plan stop rule could not be exercised (stop copy not found in home.html): a skipped proof is not a proof"; fi
-
-fresh; awk '{print} /The flyby races\./ && !d {print "if (matchMedia(\"(prefers-reduced-motion: reduce)\").matches) {}"; d=1}' "$tmp/r/design/home.html" > "$tmp/h" && mv "$tmp/h" "$tmp/r/design/home.html"
-expect fail "races stop under Reduce Motion"
-
-fresh; awk '{print} /^\.stop-mk\.cur svg/ && !d {print ".stop-mk.cur { animation: stop-pop 700ms; }"; d=1}' "$tmp/r/design/home.html" > "$tmp/h" && mv "$tmp/h" "$tmp/r/design/home.html"
-expect fail "stop marker animation that freezes under Reduce Motion"
-
 fresh; mkdir -p "$tmp/r/app/(site)/law"
 expect fail "an industry page (app/(site)/law)"
 

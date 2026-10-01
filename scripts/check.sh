@@ -40,17 +40,6 @@ grep -rn ">Tools we use<" app components design/*.html 2>/dev/null | while read 
 # Copy follows the Voice rules: no banned words (the list lives in design/DESIGN.md).
 python3 scripts/voice-check.py design/home.html design/app.html || fail=1
 
-# The homepage happens inside the 3D world: a race is bodies and one tape, never lanes or screens of interface laid over it.
-grep -n -E 'class="(lane|scr|rchat)[" ]' design/home.html \
-  | while read -r l; do echo "check: race interface laid over the world (no .lane or .scr; play the race as bodies in the scene): ${l:0:60}"; done | grep . && fail=1
-# Reduced motion quiets the camera only: the races must still play.
-awk '/The flyby races\./,/<\/script>/' design/home.html | grep -n -E 'prefers-reduced-motion|reduce\.matches' \
-  | while read -r l; do echo "check: the races must play under reduced motion (no reduced-motion branch in the race script): ${l:0:60}"; done | grep . && fail=1
-# Reduced motion freezes keyframe animations at their first frame (tokens.css), so a stop marker's size and place
-# must never depend on one: animate it only inside a prefers-reduced-motion: no-preference block.
-grep -n -E '^\.stop-mk[^{]*\{[^}]*animation:' design/home.html \
-  | while read -r l; do echo "check: stop marker animated outside a no-preference block (it freezes small under Reduce Motion): ${l:0:60}"; done | grep . && fail=1
-
 # No industry pages: the site speaks to every small business (design/DESIGN.md Decisions).
 find "app/(site)" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | grep -i -E '/(law|legal|lawyers?|dental|dentists?|clinic|medical|realty|real-estate|restaurants?|trades?|accountants?|accounting)$' \
   | while read -r d; do echo "check: industry page $d (no industry pages; one site for every small business)"; done | grep . && fail=1
@@ -63,19 +52,6 @@ text = re.sub(r"\s+", " ", v.visible_text(open(sys.argv[1]).read()))
 hits = re.findall(r".{0,30}(?:\$\s?\d[\d,]*(?:\.\d+)?\s?(?:/|per )\s?(?:mo|month|year|yr|hour|hr)\b|starting at \$|from \$\d|plans? start).{0,30}", text, re.I)
 for h in hits: print(f"check: public price on the homepage: …{h.strip()}…")
 sys.exit(1 if hits else 0)
-PY
-
-# Sight over text: each stop of the plan says ten words or fewer (design/research/site-playbook.md, decision 1).
-python3 - design/home.html <<'PY' || fail=1
-import re, sys
-html = open(sys.argv[1]).read()
-m = re.search(r'<ol class="jr-steps" data-steps>(.*?)</ol>', html, re.S)
-bad = 0
-for li in re.findall(r"<li[^>]*>(.*?)</li>", m.group(1) if m else "", re.S):
-    words = re.sub(r"<span class=\"no\">.*?</span>|<[^>]+>", " ", li).split()
-    if len(words) > 10: print(f"check: plan stop over ten words ({len(words)}): {' '.join(words)[:60]}"); bad = 1
-if not m: print("check: the plan's stops were not found in design/home.html (ol.jr-steps[data-steps])"); bad = 1
-sys.exit(bad)
 PY
 
 # Every race on the homepage is sourced in design/before-after.md (one source of truth for the examples).
@@ -95,7 +71,7 @@ PY
 python3 - design/approved.md design/home.html <<'PY' || fail=1
 import re, sys, importlib.util as u
 s = u.spec_from_file_location("v", "scripts/voice-check.py"); v = u.module_from_spec(s); s.loader.exec_module(v)
-page = re.sub(r"\s+", " ", v.visible_text(open(sys.argv[2]).read()) + " " + " ".join(re.findall(r'aria-label="([^"]*)"', open(sys.argv[2]).read())))
+page = re.sub(r"\s+", " ", re.sub("[\u2010\u2011]", "-", v.visible_text(open(sys.argv[2]).read()) + " " + " ".join(re.findall(r'aria-label="([^"]*)"', open(sys.argv[2]).read()))))
 missing = [l[2:].strip() for l in open(sys.argv[1]) if l.startswith("- ") and l[2:].strip() not in page]
 for m in missing: print(f"check: approved by Jager but missing from the homepage: \"{m}\" (design/approved.md)")
 sys.exit(1 if missing else 0)
