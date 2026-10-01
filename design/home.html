@@ -543,6 +543,33 @@ html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%
 .fx { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity var(--dur-slow) var(--ease-out); background: radial-gradient(22rem circle at var(--mx, 50%) var(--my, 50%), color-mix(in oklch, var(--accent) 13%, transparent), transparent 62%); }
 .fx-host:hover > .fx { opacity: 1; }
 .btn:active { scale: 0.97; }
+/* What a business runs on: six bodies around the AI. Pick one, pick a tool, see what you can just ask. */
+.tools { display: grid; gap: var(--space-6); padding: clamp(var(--space-5), 3vw, var(--space-7)); background: color-mix(in oklch, var(--bg) 88%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid var(--line); border-radius: var(--radius-2xl); box-shadow: var(--shadow-md), var(--glass-inset); }
+@media (min-width: 900px) { .tools { grid-template-columns: minmax(0, 26rem) minmax(0, 1fr); gap: var(--space-8); align-items: center; } }
+.tools-orbit { position: relative; aspect-ratio: 1; width: min(100%, 26rem); margin-inline: auto; }
+.tools-ring { position: absolute; inset: 9% 20%; border: 1px solid color-mix(in oklch, var(--ring) 32%, transparent); border-radius: 50%; }
+.tools-spokes { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.tools-spokes line { stroke: var(--line-strong); stroke-width: 1; vector-effect: non-scaling-stroke; transition: stroke var(--dur-slow); }
+.tools-spokes line.on { stroke: var(--ring); }
+.tools-ai { position: absolute; left: 50%; top: 50%; translate: -50% -50%; display: grid; justify-items: center; gap: 6px; }
+.tools-ai svg { width: clamp(52px, 16vw, 72px); height: auto; filter: drop-shadow(0 0 22px color-mix(in srgb, var(--sun2) 55%, transparent)); }
+.tools-ai b { font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: var(--track-label); color: var(--accent-text); padding: 4px 9px; border-radius: var(--radius-pill); border: 1px solid color-mix(in oklch, var(--accent) 60%, transparent); background: var(--bg); }
+.tools-g { position: absolute; translate: -50% -50%; max-width: 7.5rem; min-height: var(--tap-min); padding: 8px 14px; border-radius: var(--radius-pill); border: 1px solid var(--line-strong); background: var(--bg); color: var(--text); font: var(--fw-semibold) var(--fs-sm)/1.2 var(--font-text); text-align: center; cursor: pointer; transition: border-color var(--dur-fast), background-color var(--dur-fast), box-shadow var(--dur-base); }
+.tools-g:hover { background: color-mix(in oklch, var(--text) 8%, var(--bg)); }
+.tools-g[aria-selected="true"] { border-color: var(--accent); background: color-mix(in oklch, var(--accent) 14%, var(--bg)); box-shadow: 0 0 24px color-mix(in srgb, var(--ring) 35%, transparent); }
+.tools-g:focus-visible, .tools-chip:focus-visible { outline: var(--focus-width) solid var(--focus-color); outline-offset: 3px; }
+.tools-panel { display: grid; gap: var(--space-4); align-content: start; min-width: 0; }
+.tools-t { font: var(--fw-bold) var(--fs-h2)/1.2 var(--font-display); letter-spacing: var(--track-heading); }
+.tools-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.tools-chip { min-height: var(--tap-min); padding: 0 var(--space-4); border-radius: var(--radius-pill); border: 1px solid var(--line-strong); background: transparent; color: var(--text); font: var(--fw-medium) var(--fs-sm)/1.2 var(--font-text); cursor: pointer; transition: border-color var(--dur-fast), background-color var(--dur-fast); }
+.tools-chip:hover { background: color-mix(in oklch, var(--text) 8%, transparent); }
+.tools-chip[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-quiet); }
+.tools-asks { display: grid; gap: var(--space-2); padding-top: var(--space-4); border-top: 1px solid var(--line); min-height: 11rem; align-content: start; }
+.tools-asks ul { list-style: none; margin: 0; padding: 0; display: grid; }
+.tools-asks li { padding-block: var(--space-3); }
+.tools-asks li + li { border-top: 1px solid var(--line); }
+.tools-asks q { font: var(--fw-semibold) var(--fs-h3)/1.3 var(--font-display); letter-spacing: var(--track-heading); quotes: "\201C" "\201D"; text-wrap: balance; }
+.tools-foot { font-size: var(--fs-sm); color: var(--muted); }
 </style>
 </head>
 <body>
@@ -718,11 +745,24 @@ html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%
         <h3 class="say-h">Stop learning ten tools. <em>Talk to one.</em></h3>
         <p class="lede">You bring what you want and the final say. The AI, connected to your tools, brings the know-how. It drafts and prepares; you check and approve.</p>
       </div>
-      <ul class="say-list">
-        <li data-od-id="say-sheets"><s>Excel wizard</s><q>Which products made me money last month?</q><small>It reads your sales and answers in plain words.</small></li>
-        <li data-od-id="say-shop"><s>Shopify expert</s><q>Put the fall menu on the shop.</q><small>It drafts the changes. You approve them.</small></li>
-        <li data-od-id="say-ads"><s>Ad designer</s><q>Make an ad for Saturday's market.</q><small>It drafts the ad. You pick and post.</small></li>
-      </ul>
+      <div class="tools" data-tools data-od-id="tool-map">
+        <div class="tools-orbit" role="tablist" aria-label="What a small business runs on" data-tg-orbit>
+          <svg class="tools-spokes" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" data-tg-spokes></svg>
+          <span class="tools-ring" aria-hidden="true"></span>
+          <span class="tools-ai" aria-hidden="true"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/><circle cx="16" cy="16" r="8" fill="url(#mk)"/><circle cx="27" cy="9" r="2.2" fill="var(--ring)"/></svg><b>AI</b></span>
+        </div>
+        <div class="tools-panel" role="tabpanel" data-od-id="tool-panel">
+          <p class="label" data-tg-no></p>
+          <p class="tools-t" data-tg-title></p>
+          <div class="tools-chips" data-tg-tools></div>
+          <div class="tools-asks" aria-live="polite">
+            <p class="label">In <span data-tt-name></span>, just ask</p>
+            <ul data-tt-asks></ul>
+          </div>
+          <p class="tools-foot">It drafts and prepares. You check and approve.</p>
+        </div>
+      </div>
+      <p class="say-src" data-od-id="tool-fact">87% of people use Google to find local businesses. Only about 35% of small businesses actively look after their Google Business Profile.</p>
       <p class="say-src">Studies point the same way. In a <a href="https://www.science.org/doi/10.1126/science.adh2586" rel="noopener">study in Science</a> of 444 professionals, an AI assistant cut writing time by about 40%, and the people who started weakest gained most. In a <a href="https://www.nber.org/papers/w31161" rel="noopener">study of 5,172 support staff</a>, newer staff gained 34% against 15% on average. Both studied office work at larger organisations, not small shops.</p>
     </div>
   </div>
@@ -1110,6 +1150,30 @@ html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%
     f.addEventListener('input', calc); f.addEventListener('change', calc); calc();
     new IntersectionObserver((es, o) => es.forEach(en => { if (en.isIntersecting) { o.disconnect(); seen = true; if (S.motion) { now.fill(0); res.setAttribute('aria-busy', 'true'); if (!rr) rr = requestAnimationFrame(roll); } } }), { threshold: 0.4 }).observe(res); }
 
+
+  /* ── What a business runs on. Six groups around the AI; each tool shows what you can just ask. ── */
+  { const T = $('[data-tools]');
+    const G = [
+      ['Get found', 'So people can find you', [['Website', 'Change our hours for the long weekend', 'Add the new service to the site'], ['Google Business Profile', "Reply to this week's reviews", 'Post our holiday hours'], ['Reviews', 'Which complaints keep coming up?', 'Draft a thank-you to everyone who left five stars']]],
+      ['Get customers', 'So they hear from you', [['Facebook', "Write a post about Saturday's sale"], ['Instagram', 'Draft three posts from our new menu'], ['TikTok', 'Give me five short video ideas for this week'], ['LinkedIn', 'Turn the job we just finished into a post'], ['Meta and Google ads', 'Which ad brought in the most calls last month?', 'Draft an ad for the spring special'], ['Email marketing', "Write this month's newsletter from what sold best"]]],
+      ['Serve them', 'So nobody is left waiting', [['CRM', "Who haven't we heard from in six months?"], ['Bookings', "Who's booked tomorrow, and who hasn't confirmed?"], ['Phone and messages', 'Draft replies to the messages I missed today']]],
+      ['Get paid', 'So the money comes in', [['Square, Stripe or Shopify', 'What sold best last week?'], ['QuickBooks or Xero', 'Who still owes us?', 'Draft reminders for the overdue invoices'], ['Payroll', "Get Friday's payroll ready for me to check"]]],
+      ['Run the place', 'So the day runs itself', [['Google Workspace or Microsoft 365', "Find the email with the landlord's new terms"], ['Files', "Find last year's insurance renewal"], ['Calendar', 'Find an hour for the whole team this week']]],
+      ["Know what's working", 'So you spend where it pays', [['Analytics', 'What brought people to the site this month?', 'What changed since last month?']]]
+    ];
+    const POS = [[50, 9], [80, 30], [80, 70], [50, 91], [20, 70], [20, 30]], orbit = $('[data-tg-orbit]', T), spokes = $('[data-tg-spokes]', T);
+    spokes.innerHTML = POS.map(p => `<line x1="50" y1="50" x2="${p[0]}" y2="${p[1]}"/>`).join('');
+    const gBtns = G.map((g, k) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'tools-g'; b.setAttribute('role', 'tab'); b.textContent = g[0]; b.style.left = POS[k][0] + '%'; b.style.top = POS[k][1] + '%'; b.dataset.odId = 'tool-group-' + (k + 1); b.addEventListener('click', () => pick(k, 0)); orbit.append(b); return b; });
+    const lines = $$('line', spokes), chips = $('[data-tg-tools]', T), asks = $('[data-tt-asks]', T);
+    function pick(g, t) {
+      gBtns.forEach((b, k) => { b.setAttribute('aria-selected', String(k === g)); lines[k].classList.toggle('on', k === g); });
+      $('[data-tg-no]', T).textContent = '0' + (g + 1) + ' of 06'; $('[data-tg-title]', T).textContent = G[g][0] + '. ' + G[g][1] + '.';
+      chips.innerHTML = '';
+      G[g][2].forEach((tool, k) => { const c = document.createElement('button'); c.type = 'button'; c.className = 'tools-chip'; c.textContent = tool[0]; c.setAttribute('aria-pressed', String(k === t)); c.addEventListener('click', () => pick(g, k)); chips.append(c); });
+      const tool = G[g][2][t]; $('[data-tt-name]', T).textContent = tool[0];
+      asks.innerHTML = ''; tool.slice(1).forEach(a => { const li = document.createElement('li'), q = document.createElement('q'); q.textContent = a; li.append(q); asks.append(li); });
+    }
+    pick(0, 1); }
 
   /* Section headlines build word by word, once, as their section arrives. */
   { const hio = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('play'); hio.unobserve(e.target); } }), { threshold: 0.6 });

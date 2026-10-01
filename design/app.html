@@ -424,6 +424,51 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
 .screen { animation: in var(--dur-slow) var(--ease-out); }
 @keyframes in { from { opacity: 0; transform: translateY(6px); } }
 @media (prefers-reduced-motion: reduce) { .screen, .sk i, .draw .o-lit, .suns-in .sunset { animation: none; } .orb .o-lit { transition: none; } }
+/* Sign in: one tap first, the email link as the fallback. */
+.auth-btns { display: grid; gap: var(--space-3); }
+.auth-card .hint { font-size: var(--fs-xs); color: var(--muted); text-align: center; }
+.auth-btns .hint { margin-top: calc(var(--space-2) * -1); }
+.auth-card .plain { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); font-size: var(--fs-sm); color: var(--muted); }
+.auth-card .plain li { padding-left: var(--space-4); border-left: 1px solid var(--line-strong); }
+.proto-menu { max-height: min(78vh, 44rem); overflow-y: auto; }
+/* Solenix's own site, in miniature. */
+.sxs { position: relative; background: var(--bg); padding: 14px 16px 22px; display: grid; gap: 10px; overflow: hidden; min-height: 190px; align-content: start; }
+.sxs-nav { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--muted); }
+.sxs-nav b { display: flex; gap: 6px; align-items: center; font: var(--fw-semibold) 13px/1 var(--font-display); color: var(--text); }
+.sxs-nav svg { width: 16px; height: 16px; }
+.sxs-h { font: var(--fw-bold) clamp(18px, 2.6vw, 30px)/1.02 var(--font-display); letter-spacing: -.04em; max-width: 11ch; position: relative; z-index: 1; margin-top: 14px; }
+.sxs-h em { font-style: normal; background: var(--grad-headline); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.sxs p:not(.sxs-h) { font-size: 11px; color: var(--muted); max-width: 26ch; position: relative; z-index: 1; }
+.sxs .ms-btn { justify-self: start; background: var(--accent); color: var(--accent-ink); margin-top: 2px; position: relative; z-index: 1; }
+.sxs .orb { position: absolute; right: -4%; top: 22%; width: 58%; }
+@media (max-width: 520px) { .sxs .orb { width: 46%; top: 46%; right: -6%; } }
+.spark { width: 100%; height: 34px; margin-top: 4px; overflow: visible; display: block; }
+.spark .l { fill: none; stroke: var(--accent); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+.spark .a { fill: color-mix(in oklch, var(--accent) 14%, transparent); }
+/* Results on the Overview, and baseline → predicted → measured on each initiative. */
+.ov > .res { grid-area: route; }
+.res { display: grid; gap: var(--space-3); }
+.res-list { list-style: none; margin: 0; padding: 0; display: grid; }
+.res-list li { border-top: 1px solid var(--line); }
+.res-list button { appearance: none; border: 0; background: transparent; color: inherit; font: inherit; text-align: left; width: 100%; min-height: var(--tap-min); display: grid; grid-template-columns: 1fr auto; gap: 4px var(--space-3); padding: var(--space-3) 0; cursor: pointer; align-items: center; border-radius: var(--radius-xs); }
+.res-list button:hover b { color: var(--accent-text); }
+.res-list button:focus-visible { outline: var(--focus-width) solid var(--focus-color); outline-offset: 2px; }
+.res-list b { font: var(--fw-semibold) var(--fs-body)/1.3 var(--font-display); transition: color var(--dur-fast); }
+.res-list .m { grid-column: 1 / -1; font-size: var(--fs-sm); color: var(--muted); }
+.sx-list { display: grid; gap: var(--space-5); }
+@media (min-width: 900px) { .sx-list { grid-template-columns: 1fr 1fr; } .sx-list > :first-child { grid-column: 1 / -1; } }
+.sx-head { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-3); align-items: center; font-size: var(--fs-sm); }
+.bpm { list-style: none; margin: 0; padding: 0; display: grid; }
+.bpm-cols, .bpm-r { display: grid; grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr)); gap: var(--space-4); }
+.bpm-cols { padding-bottom: var(--space-3); }
+.bpm-r { padding-block: var(--space-4); border-top: 1px solid var(--line); align-items: start; }
+.bpm-t b { display: block; font: var(--fw-semibold) var(--fs-body)/1.3 var(--font-display); }
+.bpm-t small { color: var(--muted); font-size: var(--fs-xs); line-height: 1.5; display: block; margin-top: 4px; }
+.bpm-c { display: grid; gap: 6px; font-size: var(--fs-sm); justify-items: start; align-content: start; }
+.bpm-c strong { font: var(--fw-bold) var(--fs-h3)/1.1 var(--font-display); font-variant-numeric: tabular-nums; }
+.bpm-c small { color: var(--muted); font-size: var(--fs-xs); }
+.bpm-m { display: none; }
+@media (max-width: 760px) { .bpm-cols { display: none; } .bpm-r { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3); } .bpm-t { grid-column: 1 / -1; } .bpm-m { display: block; } }
 </style>
 </head>
 <body>
@@ -459,7 +504,7 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
         <div class="email-in">
           <h2>Hi Anna. Maple &amp; Rye has its own place with us now.</h2>
           <p>Your new website, the plan for it, and your bills. One place, nothing to chase.</p>
-          <button class="btn btn-primary" type="button" data-go="signin" data-od-id="invite-open">Open your portal <svg aria-hidden="true"><use href="#i-arrow"/></svg></button>
+          <button class="btn btn-primary" type="button" data-go="confirm" data-od-id="invite-open">Open your portal <svg aria-hidden="true"><use href="#i-arrow"/></svg></button>
           <span class="small muted">The link signs you in. No password to remember.</span>
         </div>
         <div class="email-foot">Solenix · St. John's, Newfoundland and Labrador · You're getting this because we're building your website.</div>
@@ -479,19 +524,68 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
   </div>
   <div class="auth-side">
     <div class="auth-card">
+      <div style="display: grid; gap: var(--space-2);"><p class="eyebrow">Client portal</p><h1>Sign in</h1><p class="muted">One tap. No password to remember.</p></div>
+      <div class="auth-btns">
+        <button class="btn btn-primary btn-block" type="button" data-passkey data-od-id="signin-passkey"><svg class="g-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.6"/><path d="M2.8 20c0-3.4 2.8-6.2 6.2-6.2 1 0 1.9.2 2.7.6"/><circle cx="17.2" cy="12.4" r="2.6"/><path d="M17.2 15v6l1.6-1.5M17.2 18.4l1.4-1.2"/></svg><span data-passkey-t>Sign in with a passkey</span></button>
+        <p class="hint">Face ID, Touch ID or your screen lock</p>
+        <button class="btn btn-ghost btn-block" type="button" data-google data-od-id="signin-google"><svg class="g-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.3Z" opacity=".9"/><path fill="currentColor" d="M12 22c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22Z" opacity=".7"/><path fill="currentColor" d="M6.4 14c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.4H3.1a10 10 0 0 0 0 9.2L6.4 14Z" opacity=".5"/><path fill="currentColor" d="M12 6c1.5 0 2.8.5 3.8 1.5l2.9-2.9A10 10 0 0 0 3.1 7.4L6.4 10C7.2 7.7 9.4 6 12 6Z" opacity=".8"/></svg>Continue with Google</button>
+        <button class="btn btn-ghost btn-block" type="button" data-apple data-od-id="signin-apple"><svg class="g-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>Continue with Apple</button>
+      </div>
+      <div class="or">or get a link by email</div>
       <form novalidate data-signin>
-        <div style="display: grid; gap: var(--space-2);"><p class="eyebrow">Client portal</p><h1>Sign in</h1><p class="muted">We'll email you a link. Tap it and you're in.</p></div>
         <div class="field">
           <label for="email">Email</label>
-          <input class="input" id="email" type="email" autocomplete="email" value="anna@mapleandrye.ca" aria-describedby="email-err">
+          <input class="input" id="email" type="email" autocomplete="email webauthn" value="jager@solenix.dev" aria-describedby="email-err">
           <p class="err" id="email-err" hidden role="alert">That email needs an @ and a domain, like you@yourshop.ca.</p>
         </div>
-        <button class="btn btn-primary btn-block" type="submit" data-od-id="signin-magic">Email me a sign-in link</button>
-        <div class="or">or</div>
-        <button class="btn btn-ghost btn-block" type="button" data-google data-od-id="signin-google"><svg class="g-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.3Z" opacity=".9"/><path fill="currentColor" d="M12 22c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22Z" opacity=".7"/><path fill="currentColor" d="M6.4 14c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.4H3.1a10 10 0 0 0 0 9.2L6.4 14Z" opacity=".5"/><path fill="currentColor" d="M12 6c1.5 0 2.8.5 3.8 1.5l2.9-2.9A10 10 0 0 0 3.1 7.4L6.4 10C7.2 7.7 9.4 6 12 6Z" opacity=".8"/></svg>Continue with Google</button>
+        <button class="btn btn-ghost btn-block" type="submit" data-od-id="signin-magic">Email me a sign-in link</button>
+        <p class="hint">Always works, on any phone or computer.</p>
       </form>
-      <p class="foot-note">Only people we've invited can sign in. New here? <a class="link" href="/">Book a call</a> first.</p>
+      <p class="foot-note">This portal is by invitation. New here? <a class="link" href="/">Book a call</a> first.</p>
     </div>
+  </div>
+</section>
+
+<!-- B2 · The emailed link lands here: one tap to finish, so a mail scanner opening the link cannot use it up. -->
+<section class="screen auth" data-screen="confirm" data-od-id="screen-continue" hidden>
+  <div class="auth-sky">
+    <div class="skyfx" aria-hidden="true"></div>
+    <span class="brand"><svg aria-hidden="true"><use href="#mark"/></svg>Solenix</span>
+    <div data-orb="auth"></div>
+    <div><h2>Your business, <span class="grad">in one stable orbit.</span></h2><p>Your website, your initiatives and your bills. All in one place.</p></div>
+  </div>
+  <div class="auth-side">
+    <div class="auth-card"><div class="stack">
+      <p class="eyebrow">Almost there</p>
+      <h1>Continue to your portal</h1>
+      <p class="muted">You're signing in as <strong style="color: var(--text);" data-bind="email">jager@solenix.dev</strong>.</p>
+      <button class="btn btn-primary btn-block" type="button" data-confirm data-od-id="continue-button">Continue</button>
+      <p class="hint">Why the extra tap? Some email apps open links to check them. This way only you can finish signing in.</p>
+      <p class="small muted">Not you? <button class="textbtn link" type="button" data-go="signin">Use a different account</button>.</p>
+    </div></div>
+  </div>
+</section>
+
+<!-- B3 · Not invited -->
+<section class="screen auth" data-screen="noinvite" data-od-id="screen-not-invited" hidden>
+  <div class="auth-sky">
+    <div class="skyfx" aria-hidden="true"></div>
+    <span class="brand"><svg aria-hidden="true"><use href="#mark"/></svg>Solenix</span>
+    <div data-orb="auth"></div>
+    <div><h2>Your business, <span class="grad">in one stable orbit.</span></h2><p>Your website, your initiatives and your bills. All in one place.</p></div>
+  </div>
+  <div class="auth-side">
+    <div class="auth-card"><div class="stack">
+      <p class="eyebrow">By invitation</p>
+      <h1>We don't have an invite for that account yet.</h1>
+      <p class="muted">You tried <strong style="color: var(--text);" data-bind="tried">someone@example.com</strong>. The portal is only open to people we've invited, so nothing is wrong on your end.</p>
+      <ul class="plain">
+        <li>Already working with us? Try the email address we write to you at.</li>
+        <li>Still stuck? Write to <a class="link" href="mailto:hello@solenix.dev?subject=Portal%20access">hello@solenix.dev</a> and we'll sort it out.</li>
+      </ul>
+      <button class="btn btn-ghost btn-block" type="button" data-go="signin" data-od-id="not-invited-back">Try another account</button>
+      <p class="foot-note">New here? <a class="link" href="/">Book a call</a> and we'll set you up.</p>
+    </div></div>
   </div>
 </section>
 
@@ -507,8 +601,8 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
     <div class="auth-card"><div class="stack">
       <span class="env" aria-hidden="true"><svg><use href="#i-mail"/></svg></span>
       <h1>Check your email</h1>
-      <p class="muted">We sent a sign-in link to <strong style="color: var(--text);" data-bind="email">anna@mapleandrye.ca</strong>. It works for one hour.</p>
-      <button class="btn btn-ghost btn-block" type="button" data-go="onb1" data-od-id="check-open-link">Open the link <span class="opens">prototype</span></button>
+      <p class="muted">We sent a sign-in link to <strong style="color: var(--text);" data-bind="email">jager@solenix.dev</strong>. It works for one hour, on any device.</p>
+      <button class="btn btn-ghost btn-block" type="button" data-go="confirm" data-od-id="check-open-link">Open the link <span class="opens">prototype</span></button>
       <p class="small muted">Nothing there? <button class="textbtn link" type="button" data-resend>Send it again</button> or <button class="textbtn link" type="button" data-go="signin">use a different email</button>.</p>
     </div></div>
   </div>
@@ -564,7 +658,7 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
         <li><a href="#initiatives" data-tab="initiatives">Initiatives<span class="dotn" data-dot="initiatives" hidden></span></a></li>
         <li><a href="#billing" data-tab="billing">Billing<span class="dotn" data-dot="billing" hidden></span></a></li>
       </ul></nav>
-      <div class="acct"><button class="acct-btn" type="button" aria-label="Account: Anna Whelan" data-toast="Account settings are coming to the prototype"><span class="avatar" data-bind="initials">AW</span></button></div>
+      <div class="acct"><button class="acct-btn" type="button" aria-label="Account" data-acct><span class="avatar" data-bind="initials">AW</span></button></div>
     </div>
   </header>
   <main class="app" id="main" tabindex="-1"></main>
@@ -593,6 +687,12 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
   <p class="small muted">It goes straight onto our list for this initiative. We'll reply here.</p>
   <button class="btn btn-primary" type="submit">Send to Solenix</button>
 </form></dialog>
+
+<dialog class="bottom-sheet" data-dlg="acct" aria-labelledby="ac-t"><div class="sheet">
+  <div class="sheet-h"><div><p class="label">Signed in</p><h2 id="ac-t" data-bind="name">Jager Cooper</h2></div><button class="x" type="button" data-close aria-label="Close"><svg><use href="#i-x"/></svg></button></div>
+  <div class="cost"><div class="ln"><span>Account</span><span class="small" data-bind="email">jager@solenix.dev</span></div><div class="ln"><span>This device</span><span class="badge ok">Stays signed in</span></div><div class="ln"><span>Signed in with</span><span class="small" data-bind="method">Passkey</span></div></div>
+  <div class="site-act"><button class="btn btn-ghost btn-sm" type="button" data-toast="Passkey saved on this device">Add a passkey on this device</button><button class="btn btn-quiet btn-sm" type="button" data-signout data-od-id="sign-out">Sign out</button></div>
+</div></dialog>
 
 <dialog data-dlg="checkout" aria-labelledby="co-t"><div class="co">
   <div class="co-sum">
@@ -625,15 +725,23 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
 <div class="proto" data-proto>
   <button type="button" aria-expanded="false" data-proto-btn>Prototype</button>
   <div class="proto-menu" hidden data-proto-menu>
-    <span class="label lbl">Jump to</span>
-    <button type="button" data-jump="email">1 · Invite email</button>
-    <button type="button" data-jump="signin">2 · Sign in</button>
-    <button type="button" data-jump="onb1">3 · Onboarding</button>
-    <button type="button" data-jump="overview">4 · Overview</button>
-    <button type="button" data-jump="initiative">5 · First initiative</button>
-    <button type="button" data-jump="billing">6 · Billing</button>
-    <button type="button" data-jump="live">7 · Three months after launch</button>
+    <span class="label lbl">Solenix, client #1</span>
+    <button type="button" data-jump="signin">Sign in</button>
+    <button type="button" data-jump="confirm">Email link: Continue page</button>
+    <button type="button" data-jump="noinvite">Not invited</button>
+    <button type="button" data-jump="sx-overview">Overview</button>
+    <button type="button" data-jump="sx-initiatives">Initiatives</button>
+    <button type="button" data-jump="sx-billing">Billing: nothing to pay</button>
     <hr>
+    <span class="label lbl">A new client's first visit</span>
+    <button type="button" data-jump="email">Invite email</button>
+    <button type="button" data-jump="onb1">Onboarding</button>
+    <button type="button" data-jump="overview">Overview</button>
+    <button type="button" data-jump="initiative">First initiative</button>
+    <button type="button" data-jump="billing">Billing</button>
+    <button type="button" data-jump="live">Three months after launch</button>
+    <hr>
+    <button type="button" data-signout>Sign out</button>
     <button type="button" data-reset>Start over</button>
   </div>
 </div>
@@ -644,11 +752,20 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* ── State. Persisted so a refresh keeps your place in the prototype. ── */
-  const KEY = 'solenix-portal-v4';
-  const fresh = () => ({ screen: 'email', tab: 'overview', view: 'list', email: 'anna@mapleandrye.ca', name: 'Anna Whelan', biz: 'Maple & Rye', site: 'mapleandrye.ca',
+  const KEY = 'solenix-portal-v5';
+  /* Two invited accounts. Solenix is client #1: it runs its own business here before any client does. */
+  const CLIENTS = {
+    solenix: { email: 'jager@solenix.dev', name: 'Jager Cooper', biz: 'Solenix', site: 'solenix.dev' },
+    maple: { email: 'anna@mapleandrye.ca', name: 'Anna Whelan', biz: 'Maple & Rye', site: 'mapleandrye.ca' }
+  };
+  const fresh = () => ({ screen: 'signin', tab: 'overview', view: 'list', client: 'solenix', signedIn: false, method: 'Passkey', tried: '', ini: 'launch', ...CLIENTS.solenix,
     street: '214 Water Street', city: "St. John's", post: 'A1C 1A9', prov: 'Newfoundland and Labrador', onb: 1,
     detailsDone: false, seenSite: false, approved: false, option: null, paid: false, live: false, changes: [], loaded: {} });
   let S; try { S = Object.assign(fresh(), JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) { S = fresh(); }
+  /* Same device, already signed in: straight to the Overview. */
+  if (S.signedIn) { S.screen = 'app'; S.tab = 'overview'; S.view = 'list'; }
+  const sx = () => S.client === 'solenix';
+  const setClient = c => { S.client = c; Object.assign(S, CLIENTS[c]); };
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
   const first = () => S.name.trim().split(/\s+/)[0] || 'there';
   const initials = () => S.name.trim().split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase();
@@ -738,6 +855,10 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
     $$('[data-screen]').forEach(el => { el.hidden = el.dataset.screen !== S.screen; });
     document.body.dataset.scr = S.screen;
     $$('[data-bind="email"]').forEach(el => el.textContent = S.email);
+    $$('[data-bind="name"]').forEach(el => el.textContent = S.name);
+    $$('[data-bind="method"]').forEach(el => el.textContent = S.method);
+    $$('[data-bind="tried"]').forEach(el => el.textContent = S.tried || 'that account');
+    if (S.screen === 'signin') $('#email').value = S.email;
     $$('[data-bind="first"]').forEach(el => el.textContent = first());
     $$('[data-bind="biz"]').forEach(el => el.textContent = S.biz);
     $$('[data-bind="site"]').forEach(el => el.textContent = S.site);
@@ -753,9 +874,18 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
     const inp = $('#email'), ok = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(inp.value.trim());
     inp.setAttribute('aria-invalid', String(!ok)); $('#email-err').hidden = ok;
     if (!ok) return inp.focus();
-    S.email = inp.value.trim(); go('check');
+    const em = inp.value.trim().toLowerCase(), who = Object.keys(CLIENTS).find(c => CLIENTS[c].email === em);
+    if (!who) return go('noinvite', { tried: em });
+    setClient(who); go('check');
   });
-  $('[data-google]').addEventListener('click', () => go('onb1'));
+  /* One tap in. Solenix lands on its Overview; a brand-new client answers three short questions first. */
+  function signIn(method) { S.signedIn = true; S.method = method; if (sx() || S.detailsDone) go('app', { tab: 'overview', view: 'list' }); else go('onb1'); }
+  $('[data-passkey]').addEventListener('click', e => { const b = e.currentTarget, t = $('[data-passkey-t]'); b.disabled = true; t.textContent = 'Waiting for Face ID…'; setTimeout(() => { b.disabled = false; t.textContent = 'Sign in with a passkey'; signIn('Passkey'); }, reduce ? 0 : 900); });
+  $('[data-google]').addEventListener('click', () => signIn('Google'));
+  $('[data-apple]').addEventListener('click', () => signIn('Apple'));
+  $('[data-confirm]').addEventListener('click', () => signIn('Email link'));
+  $('[data-acct]').addEventListener('click', () => openDlg('acct'));
+  $$('[data-signout]').forEach(b => b.addEventListener('click', () => { closeDlg(); S.signedIn = false; go('signin'); toast('Signed out on this device'); }));
   $('[data-resend]').addEventListener('click', () => toast('New link sent to ' + S.email));
 
   /* ── Onboarding: one question per step. ── */
@@ -786,7 +916,7 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
   const main = $('main.app');
   function renderApp() {
     $$('[data-tab]').forEach(a => { if (a.dataset.tab === S.tab) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
-    const n = nextStep();
+    const n = sx() ? null : nextStep();
     $$('[data-dot="initiatives"]').forEach(d => d.hidden = !(n && n.id === 'approve'));
     $$('[data-dot="billing"]').forEach(d => d.hidden = !(n && n.id === 'pay'));
     const key = S.tab + (S.tab === 'initiatives' ? S.view : '');
@@ -796,7 +926,8 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
     } else paint();
   }
   function paint() {
-    main.innerHTML = S.tab === 'overview' ? overview() : S.tab === 'billing' ? billing() : S.view === 'detail' ? detail() : initiatives();
+    main.innerHTML = sx() ? (S.tab === 'overview' ? sxOverview() : S.tab === 'billing' ? sxBilling() : S.view === 'detail' ? sxDetail() : sxInitiatives())
+      : S.tab === 'overview' ? overview() : S.tab === 'billing' ? billing() : S.view === 'detail' ? detail() : initiatives();
     main.firstElementChild && main.firstElementChild.classList.add('screen');
     const inline = $('[data-site-inline]', main); if (inline) inline.innerHTML = siteMarkup();
   }
@@ -804,7 +935,13 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
   $$('[data-tab]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); go('app', { tab: a.dataset.tab, view: 'list' }); }));
 
   /* The client's own site, as it will look. */
-  const siteMarkup = () => `<div class="b-bar" aria-hidden="true"><i></i><i></i><i></i><span class="b-url">preview.${esc(S.site)}</span></div>
+  const siteMarkup = () => sx() ? `<div class="b-bar" aria-hidden="true"><i></i><i></i><i></i><span class="b-url">solenix.dev</span></div>
+    <div class="sxs" aria-label="The new solenix.dev homepage">
+      <div class="sxs-nav"><b><svg aria-hidden="true"><use href="#mark"/></svg>Solenix</b><span>How it settles · Portal · Pricing</span></div>
+      ${orb({ lit: 1 })}
+      <p class="sxs-h">Your business is a <em>three-body problem.</em></p>
+      <p>We put one AI at the centre. You ask, it gets done.</p><span class="ms-btn">Book a call</span>
+    </div>` : `<div class="b-bar" aria-hidden="true"><i></i><i></i><i></i><span class="b-url">preview.${esc(S.site)}</span></div>
     <div class="ms" aria-label="Preview of the new ${esc(S.biz)} website">
       <div class="ms-nav"><b>${esc(S.biz)}</b><span>Bread · Pastry · Visit</span></div>
       <div class="ms-hero"><div><p class="ms-h">Bread worth the walk down Water Street.</p><p>Sourdough, rye and pastry, baked every morning.</p><span class="ms-btn">Order for pickup</span></div>
@@ -846,6 +983,96 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
       </section>
       ${route()}</div></div>`;
   }
+  /* ── Solenix, client #1. Its own site, its own initiatives, and nothing to pay.
+     Anything not yet measured is marked, never guessed. ── */
+  const TBD = t => `<span class="tbd">${t || 'to confirm'}</span>`;
+  const SX = [
+    { id: 'launch', title: 'Launch solenix.dev', status: ['warn', 'Building'], stage: 2, head: 'New homepage ready for your OK',
+      purpose: 'An owner finds Solenix, gets it in a minute, and books a call.', value: 'Booked calls that come from the site, not from chasing.', impact: 'Booked calls and visitors, counted from launch day and shown here.',
+      rows: [
+        { t: 'Booked calls a month', how: 'Counted from the booking link on the site.', b: TBD(), p: TBD(), m: '', mn: 'Counted from launch day' },
+        { t: 'Visitors a month', how: 'People who open solenix.dev. From PostHog.', b: TBD('from PostHog'), p: TBD(), m: '', mn: 'Counted from launch day' }],
+      updates: [{ date: 'Sep 30', note: 'Homepage is in its final passes. The calculator runs on researched numbers, and the type holds up on big screens.' }, { date: 'Sep 28', note: "Site rebuilt around the owner's problem: too many tools, and nobody who knows them all." }] },
+    { id: 'portal', title: 'Client portal v1', status: ['warn', 'Building'], stage: 2, head: 'Solenix is using it first',
+      purpose: 'Every client sees their site, their initiatives and their bills in one place.', value: 'Fewer update emails and calls, for them and for us.', impact: 'Businesses using it, and the hours a week spent on updates.',
+      rows: [
+        { t: 'Businesses using it', how: 'Counted from sign-ins. Solenix is the first.', b: '<strong>0</strong>', p: '<strong>5</strong>', m: '<strong>1</strong>', mn: 'Solenix, since Sep 30' },
+        { t: 'Hours a week on updates', how: 'Time spent on status emails and "where is it at?" calls.', b: TBD(), p: TBD(), m: '', mn: 'Starts with the first client' }],
+      updates: [{ date: 'Sep 30', note: 'Sign-in designed: passkey, Google and Apple, with the email link as the fallback. Solenix set up as the first business in the portal.' }] },
+    { id: 'five', title: 'First five clients', status: ['quiet', 'Planning'], stage: 1, head: '0 of 5 so far',
+      purpose: 'Five small businesses in Newfoundland and Labrador, each with one AI at the centre.', value: 'Proof, in their own numbers, that it saves time and money.', impact: 'Paying clients, and what each one measured.',
+      rows: [
+        { t: 'Paying clients', how: 'Counted from Billing.', b: '<strong>0</strong>', p: '<strong>5</strong>', m: '<strong>0</strong>', mn: 'As of Sep 30' },
+        { t: 'Money made a month', how: 'Setups and care plans, from Stripe.', b: '<strong>$0</strong>', p: TBD(), m: '<strong>$0</strong>', mn: 'As of Sep 30' }],
+      updates: [{ date: 'Sep 30', note: 'Law firms first, then bakeries, clinics and trades. The offer and the pricing model are set.' }] }
+  ];
+  const VIS = [9, 12, 8, 14, 11, 7, 6, 13, 15, 12, 16, 14, 9, 8, 15, 18, 14, 17, 19, 12, 10, 18, 21, 17, 20, 22, 15, 13, 21, 24];   /* Example series, 30 days */
+  const spark = v => { const mx = Math.max(...v), pts = v.map((y, k) => `${(k / (v.length - 1) * 100).toFixed(1)} ${(30 - y / mx * 28).toFixed(1)}`); return `<svg class="spark" viewBox="0 0 100 30" preserveAspectRatio="none" role="img" aria-label="Visitors a day over 30 days, example data"><path class="a" d="M0 30 L${pts.join(' L')} L100 30Z"/><path class="l" d="M${pts.join(' L')}"/></svg>`; };
+  const bpm = I => `<div class="bpm-cols" aria-hidden="true"><span></span><span class="label">Baseline</span><span class="label">Predicted</span><span class="label">Measured</span></div>
+    <ul class="bpm">${I.rows.map(r => `<li class="bpm-r"><div class="bpm-t"><b>${r.t}</b><small>${r.how}</small></div>
+      <div class="bpm-c"><span class="label bpm-m">Baseline</span>${r.b}</div><div class="bpm-c"><span class="label bpm-m">Predicted</span>${r.p}</div>
+      <div class="bpm-c"><span class="label bpm-m">Measured</span>${r.m || '<span class="badge quiet">Not yet</span>'}<small>${r.mn}</small></div></li>`).join('')}</ul>`;
+  function sxOverview() {
+    const hr = new Date().getHours(), hi = hr < 12 ? 'Good morning' : hr < 18 ? 'Good afternoon' : 'Good evening', total = VIS.reduce((a, b) => a + b, 0);
+    const next = S.seenSite
+      ? `<section class="card next lit" data-od-id="waiting-on-you"><span class="label">Your one next action</span><h2>Nothing needs you.</h2><p>Three initiatives are moving. Results show up below as they are measured.</p></section>`
+      : `<section class="card next lit" data-od-id="waiting-on-you"><span class="label">Your one next action</span><h2>Look at the new homepage.</h2><p>It is ready for your OK before it replaces the live site.</p><button class="btn btn-primary" type="button" data-preview>Open the preview<svg aria-hidden="true"><use href="#i-arrow"/></svg></button></section>`;
+    return `<div><div class="page-h"><p class="eyebrow">${esc(S.biz)} · your portal</p><h1>${hi}, <span class="grad">${esc(first())}.</span></h1><p>Everything in one place. Nothing to chase.</p></div>
+    <div class="ov">${next}
+      <section class="card site lit" data-od-id="website-hero">
+        <div class="site-h"><div style="display:grid;gap:6px;"><span class="label">Your website</span><span class="dom">${esc(S.site)}</span></div><span class="badge ok">Live</span></div>
+        <div class="browser" data-site-inline></div>
+        <div class="site-f">
+          <div><span class="label">Status</span><strong>Live</strong><span class="small muted">Up and answering</span></div>
+          <div><span class="label">Last update</span><strong>Sep 30</strong><span class="small muted">New homepage in preview</span></div>
+          <div><span class="label">Visitors · 30 days</span><strong>${total} <span class="tag">Example</span></strong>${spark(VIS)}</div>
+        </div>
+        <div style="padding: 0 var(--space-5) var(--space-5);" class="site-act"><button class="btn btn-ghost btn-sm" type="button" data-preview>Open the preview</button><span class="small muted">Status from Vercel. Visitors from PostHog.</span></div>
+      </section>
+      <section class="card res" data-od-id="your-results"><div class="card-h" style="margin:0"><h2>Your results</h2><span class="label">3 initiatives</span></div>
+        <ul class="res-list">${SX.map(I => `<li><button type="button" data-open-sx="${I.id}"><b>${I.title}</b><span class="badge ${I.status[0]}">${I.status[1]}</span><span class="m">${I.head}</span></button></li>`).join('')}</ul>
+        <p class="small muted">Each one shows its baseline, what we predict, and what was measured.</p></section></div></div>`;
+  }
+  const sxRail = stage => `<ol class="rail" style="--done:${stage}" aria-label="Stages">${INITIATIVE.stages.map((s, k) => `<li class="${k < stage ? 'done' : k === stage ? 'now' : ''}"${k === stage ? ' aria-current="step"' : ''}><span class="n">${k < stage ? '' : k + 1}</span><b>${s.name}</b></li>`).join('')}</ol>`;
+  function sxInitiatives() {
+    return `<div><div class="page-h"><p class="eyebrow">Initiatives</p><h1>What we're working on.</h1><p>Each one shows where it is, what's next, and what it's worth.</p></div>
+    <div class="sx-list">${SX.map((I, k) => `<a class="card ini-card${k ? '' : ' lit'}" href="#initiative" data-open-sx="${I.id}" data-od-id="initiative-card-${I.id}">
+        <div class="ini-top"><h2>${I.title}</h2><span class="badge ${I.status[0]}">${I.status[1]}</span></div>
+        ${sxRail(I.stage)}
+        <p class="sx-head"><span class="label">Right now</span><strong>${I.head}</strong></p>
+        <p class="upd"><strong style="color:var(--text)">${I.updates[0].date}:</strong> ${I.updates[0].note}</p></a>`).join('')}</div></div>`;
+  }
+  function sxDetail() {
+    const I = SX.find(x => x.id === S.ini) || SX[0];
+    return `<div><button class="btn btn-quiet back" type="button" data-back><svg aria-hidden="true"><use href="#i-back"/></svg>Initiatives</button>
+    <div class="detail-h"><div class="t"><h1>${I.title}</h1><span class="badge ${I.status[0]}">${I.status[1]}</span></div>
+      <section class="card lit" data-od-id="initiative-stages"><div class="card-h"><h2>Stages</h2><span class="label">Now: ${INITIATIVE.stages[I.stage].name}</span></div>${sxRail(I.stage)}</section></div>
+    <div class="detail"><div class="detail-main">
+      <section class="card roi-card lit" data-od-id="initiative-results"><div class="roi-h"><div style="display:grid;gap:6px"><span class="label">What it's worth</span><h2>Baseline, predicted, measured</h2></div></div>${bpm(I)}
+        <p class="small muted">A number shows only once it has been counted. Until then it is marked, not guessed.</p></section>
+      <section class="card" data-od-id="initiative-pvi"><div class="card-h"><h2>Why we're doing this</h2></div><div class="pvi">
+        <div><span class="label">Purpose</span><p>${I.purpose}</p></div><div><span class="label">Value</span><p>${I.value}</p></div><div><span class="label">Impact</span><p>${I.impact}</p></div></div></section>
+      <section class="card" data-od-id="initiative-updates"><div class="card-h"><h2>Latest updates</h2></div>${I.updates.map(u => `<div class="upd-item"><div class="upd-h"><span class="mono small muted">${u.date}</span><span class="badge ok">On track</span></div><p class="small">${u.note}</p></div>`).join('')}</section>
+    </div><div class="detail-side">
+      <section class="card cost" data-od-id="initiative-cost"><div class="card-h" style="margin:0"><h2>What it costs</h2></div>
+        <div class="ln"><span>Solenix's own project</span><span class="badge ok">Nothing to pay</span></div>
+        ${I.id === 'launch' ? '<button class="btn btn-ghost btn-sm" type="button" data-preview style="justify-self:start">Open the preview</button>' : ''}
+        <button class="btn btn-quiet btn-sm" type="button" data-to-billing style="justify-self:start">See it in Billing <svg aria-hidden="true"><use href="#i-arrow"/></svg></button></section>
+    </div></div></div>`;
+  }
+  function sxBilling() {
+    return `<div><div class="page-h"><p class="eyebrow">Billing</p><h1>One bill, not seven.</h1><p>What it costs, what you've paid, and what's next.</p></div>
+      <div class="bill"><section class="card plan lit" data-od-id="billing-plan"><div class="card-h" style="margin:0"><div style="display:grid;gap:6px;"><span class="label">Your plan</span><h2>Nothing to pay.</h2></div><span class="badge ok">All clear</span></div>
+          <p class="muted small">Solenix runs its own business here, so there is no plan to bill. When a plan starts, its two numbers sit in these two places.</p>
+          <div class="plan-cols">
+            <div class="plan-col">${RING_ONCE}<span class="label">Setup · one time</span><div class="amt"><strong class="mono">$0</strong><span class="small muted">due</span></div><p class="small muted">The agreed option for an initiative shows here once it is chosen.</p></div>
+            <div class="plan-col">${RING_MONTH}<span class="label">Care plan · monthly</span><div class="amt"><strong class="mono">$0</strong><span class="small muted">/month</span></div><p class="small muted">No plan running. Next bill: none.</p></div>
+          </div>
+          <p class="small muted">When there is something to pay, you pay on Stripe's secure page.</p></section>
+        <section class="card" data-od-id="billing-invoices"><div class="card-h"><h2>Invoices</h2><span class="label">0</span></div>
+          <div class="empty"><p class="small muted">No invoices yet. When there are, they look like this:</p><div class="ghost-row" aria-hidden="true"><span>Setup · SLNX-0001</span><span>Paid</span></div><div class="ghost-row" aria-hidden="true"><span>Care plan · first month</span><span>Upcoming</span></div></div></section></div></div>`;
+  }
+
   const rail = (stage, compact) => `<ol class="rail" style="--done:${stage}" aria-label="Stages">${INITIATIVE.stages.map((s, k) => `<li class="${k < stage ? 'done' : k === stage ? 'now' : ''}"${k === stage ? ' aria-current="step"' : ''}><span class="n">${k < stage ? '' : k + 1}</span><b>${s.name}</b>${compact ? '' : `<small>${k === stage ? 'Now' : k < stage && s.when === 'date to confirm' ? 'Done' : s.when === 'date to confirm' ? '<span class="tbd">to confirm</span>' : s.when}</small>`}</li>`).join('')}</ol>`;
   function initiatives() {
     const I = INITIATIVE, st = I.status(), u = I.updates()[0], stage = S.live ? 4 : S.approved ? 2 : 1;
@@ -958,6 +1185,7 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
     if (t.matches('[data-next]')) nextStep().go();
     else if (t.matches('[data-step-go]')) STEPS().find(s => s.id === t.dataset.stepGo).go();
     else if (t.matches('[data-preview]')) openPreview();
+    else if (t.matches('[data-open-sx]')) { e.preventDefault(); go('app', { tab: 'initiatives', view: 'detail', ini: t.dataset.openSx }); }
     else if (t.matches('[data-open-ini]')) { e.preventDefault(); go('app', { tab: 'initiatives', view: 'detail' }); }
     else if (t.matches('[data-back]')) go('app', { tab: 'initiatives', view: 'list' });
     else if (t.matches('[data-choose]')) { S.option = t.dataset.choose; S.approved = true; save(); renderApp(); fillCheckout(); openDlg('checkout'); }
@@ -1036,14 +1264,18 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
   document.addEventListener('click', e => { if (!e.target.closest('[data-proto]')) { pMenu.hidden = true; pBtn.setAttribute('aria-expanded', 'false'); } });
   $$('[data-jump]').forEach(b => b.addEventListener('click', () => {
     const j = b.dataset.jump; pMenu.hidden = true;
-    if (['overview', 'initiative', 'billing'].includes(j)) S.detailsDone = true;
+    if (j === 'noinvite') return go('noinvite', { tried: 'sam@harbourcafe.ca' });
+    if (j.startsWith('sx-') || j === 'signin' || j === 'confirm') setClient('solenix'); else setClient('maple');
+    if (j === 'signin') { S.signedIn = false; return go('signin'); }
+    if (j.startsWith('sx-')) { S.signedIn = true; return go('app', { tab: j === 'sx-overview' ? 'overview' : j === 'sx-billing' ? 'billing' : 'initiatives', view: 'list' }); }
+    if (['overview', 'initiative', 'billing', 'live'].includes(j)) { S.detailsDone = true; S.signedIn = true; }
     if (j === 'overview') go('app', { tab: 'overview', view: 'list' });
     else if (j === 'initiative') go('app', { tab: 'initiatives', view: 'detail' });
     else if (j === 'live') { Object.assign(S, { seenSite: true, approved: true, option: S.option || 'site', paid: true, live: true }); go('app', { tab: 'initiatives', view: 'detail' }); }
     else if (j === 'billing') { S.seenSite = true; S.approved = true; S.option = S.option || 'site'; go('app', { tab: 'billing' }); }
     else go(j);
   }));
-  $('[data-reset]').addEventListener('click', () => { S = fresh(); save(); pMenu.hidden = true; go('email'); });
+  $('[data-reset]').addEventListener('click', () => { S = fresh(); save(); pMenu.hidden = true; go('signin'); });
 
   render();
 })();
