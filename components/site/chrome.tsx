@@ -50,7 +50,7 @@ export function SiteFooter() {
           </a>
           <nav aria-label="Footer" className="flex flex-wrap gap-x-6 gap-y-3 text-sm">
             <a href="/app" className="inline-flex min-h-6 items-center text-muted-foreground no-underline hover:text-foreground">Client sign in</a>
-            <a href="/agents" className="inline-flex min-h-6 items-center text-muted-foreground no-underline hover:text-foreground">Tools we use</a>
+            <a href="/agents" className="inline-flex min-h-6 items-center text-muted-foreground no-underline hover:text-foreground">Agents Marketplace</a>
           </nav>
           <p className="text-xs text-faint">© {new Date().getFullYear()} Solenix</p>
         </div>
