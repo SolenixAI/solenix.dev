@@ -581,7 +581,7 @@ html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%
 .race-ctl[data-state="running"] .i-pause, .race-ctl[data-state="paused"] .i-play, .race-ctl[data-state="done"] .i-again { display: block; }
 /* In the world: the clock rides the head of each light trail and ticks mark the minutes. The ask is written beside
    the tool while it travels; the result carries its name and your one click. */
-.trail-tag, .tick-tag, .ask-tag, .res-tag { position: absolute; left: 0; top: 0; opacity: 0; white-space: nowrap; will-change: transform, opacity; text-shadow: 0 0 12px var(--bg), 0 0 5px var(--bg), 0 1px 2px var(--bg); }
+.trail-tag, .tick-tag, .ask-tag { position: absolute; left: 0; top: 0; opacity: 0; white-space: nowrap; will-change: transform, opacity; text-shadow: 0 0 12px var(--bg), 0 0 5px var(--bg), 0 1px 2px var(--bg); }
 .trail-tag { display: flex; align-items: baseline; gap: var(--space-2); font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--muted); }
 .trail-tag b { font: var(--fw-bold) var(--fs-h1)/1 var(--font-display); letter-spacing: var(--track-heading); text-transform: none; font-variant-numeric: tabular-nums; color: var(--text); }
 .trail-tag.ask, .trail-tag.ask b { color: var(--accent-text); }
@@ -589,17 +589,22 @@ html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%
 .trail-tag.back, .trail-tag.back b { color: var(--ok); }
 .tick-tag { font: var(--fw-medium) var(--fs-2xs)/1 var(--font-mono); color: var(--faint); }
 .ask-tag { max-width: min(19rem, 38vw); white-space: normal; text-align: right; font: var(--fw-semibold) var(--fs-h3)/1.3 var(--font-display); letter-spacing: var(--track-heading); color: var(--text); text-wrap: balance; }
-.res-tag { display: flex; align-items: center; gap: var(--space-3); font: var(--fw-bold) var(--fs-h3)/1.2 var(--font-display); letter-spacing: var(--track-heading); color: var(--text); }
-.res-tag i { font: var(--fw-semibold) var(--fs-sm)/1 var(--font-text); font-style: normal; letter-spacing: 0; padding: 8px 14px; border-radius: var(--radius-pill); border: 1px solid var(--line-strong); text-shadow: none; transition: scale 140ms, color var(--dur-base), border-color var(--dur-base), box-shadow var(--dur-base); }
-.res-tag.press i { scale: .92; border-color: var(--text); }
-.res-tag.ok i { color: var(--ok); border-color: var(--ok); box-shadow: 0 0 22px color-mix(in srgb, var(--ok) 30%, transparent); }
+/* The payoff is the scene: one huge number, what it counts, and your one click. */
+.pay-tag { position: absolute; left: 0; top: 0; opacity: 0; will-change: transform, opacity; display: flex; align-items: center; gap: var(--space-5); white-space: nowrap; text-shadow: 0 0 18px var(--bg), 0 0 8px var(--bg), 0 2px 3px var(--bg); }
+.pay-tag b { font: 800 clamp(3.25rem, 2rem + 5vw, 5rem)/1 var(--font-display); letter-spacing: -0.045em; font-variant-numeric: tabular-nums; color: var(--accent-text); transition: color var(--dur-base); }
+.pay-tag span { display: grid; gap: var(--space-2); justify-items: start; }
+.pay-tag em { font: var(--fw-semibold) var(--fs-h3)/1.2 var(--font-display); font-style: normal; letter-spacing: var(--track-heading); color: var(--text); }
+.pay-tag i { font: var(--fw-semibold) var(--fs-sm)/1 var(--font-text); font-style: normal; padding: 8px 14px; border-radius: var(--radius-pill); border: 1px solid var(--line-strong); color: var(--text); text-shadow: none; transition: scale 140ms, color var(--dur-base), border-color var(--dur-base), box-shadow var(--dur-base); }
+.pay-tag.press i { scale: .92; border-color: var(--text); }
+.pay-tag.ok b { color: var(--ok); }
+.pay-tag.ok i { color: var(--ok); border-color: var(--ok); box-shadow: 0 0 22px color-mix(in srgb, var(--ok) 30%, transparent); }
 @media (max-width: 699px) {
   .race-in { padding-top: calc(var(--nav-height) + var(--space-3)); padding-bottom: var(--space-3); }
   .race-foot { grid-template-columns: auto auto; justify-content: space-between; row-gap: var(--space-2); }
   .race-note { grid-column: 1 / -1; grid-row: 2; }
   .trail-tag b { font-size: var(--fs-h3); }
   .ask-tag { font-size: var(--fs-body); max-width: 44vw; }
-  .res-tag { font-size: var(--fs-body); flex-direction: column; align-items: flex-start; gap: var(--space-2); max-width: 46vw; white-space: normal; }
+  .pay-tag { gap: var(--space-3); } .pay-tag em { font-size: var(--fs-body); white-space: normal; max-width: 40vw; }
 }
 html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relative; height: auto; } html:not(.js) .sr-race { position: static; width: auto; height: auto; clip-path: none; white-space: normal; }
 .world-tag { width: 52px; height: 52px; background: color-mix(in oklch, var(--bg) 88%, transparent); border-color: color-mix(in oklch, var(--accent) 55%, transparent); box-shadow: 0 0 24px color-mix(in srgb, var(--ring) 40%, transparent); }
@@ -627,6 +632,9 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
 .jr-dots { display: none; }
 /* The close: the headline, the action, and who you are dealing with. */
 .close-ctas .textlink { display: none; }
+/* The first screen's words stand on calm dark: the sky deepens behind them and the world keeps to the upper right. */
+.hero-copy { isolation: isolate; }
+.hero-copy::before { content: ""; position: absolute; z-index: -1; left: 0; bottom: -8rem; width: min(100%, 52rem); height: calc(100% + 16rem); background: radial-gradient(ellipse 70% 60% at 30% 52%, color-mix(in oklch, var(--bg) 92%, transparent) 35%, transparent 100%); pointer-events: none; }
 </style>
 </head>
 <body>
@@ -712,7 +720,7 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
       </header>
       <div class="race-foot">
         <a class="btn btn-primary race-cta" href="/book" data-od-id="race-stripe-cta">Book a call</a>
-        <p class="race-note">Example. A second here is a minute of work, estimated. <a href="https://docs.stripe.com/mcp" rel="noopener" data-od-id="race-stripe-verify">Source</a></p>
+        <p class="race-note">Example. Typical times, sped up. <a href="https://docs.stripe.com/mcp" rel="noopener" data-od-id="race-stripe-verify">Source</a></p>
         <button class="race-ctl" type="button" aria-label="Pause" data-od-id="race-stripe-replay"><svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12M15 6v12"/></svg><svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10-6.5z"/></svg><svg class="i-again" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12a7 7 0 1 1-2.4-5.3M19 4v4h-4"/></svg></button>
       </div>
     </div>
@@ -728,7 +736,7 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
       </header>
       <div class="race-foot">
         <a class="btn btn-primary race-cta" href="/book" data-od-id="race-shopify-cta">Book a call</a>
-        <p class="race-note">Example. A second here is a minute of work, estimated. <a href="https://help.shopify.com/en/manual/ai-powered-tools/connecting-ai-tools/shopify-connector-for-claude" rel="noopener" data-od-id="race-shopify-verify">Source</a></p>
+        <p class="race-note">Example. Typical times, sped up. <a href="https://help.shopify.com/en/manual/ai-powered-tools/connecting-ai-tools/shopify-connector-for-claude" rel="noopener" data-od-id="race-shopify-verify">Source</a></p>
         <button class="race-ctl" type="button" aria-label="Pause" data-od-id="race-shopify-replay"><svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12M15 6v12"/></svg><svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10-6.5z"/></svg><svg class="i-again" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12a7 7 0 1 1-2.4-5.3M19 4v4h-4"/></svg></button>
       </div>
     </div>
@@ -744,7 +752,7 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
       </header>
       <div class="race-foot">
         <a class="btn btn-primary race-cta" href="/book" data-od-id="race-hubspot-cta">Book a call</a>
-        <p class="race-note">Example. A second here is a minute of work, estimated. <a href="https://developers.hubspot.com/changelog/remote-hubspot-mcp-server-is-now-generally-available" rel="noopener" data-od-id="race-hubspot-verify">Source</a></p>
+        <p class="race-note">Example. Typical times, sped up. <a href="https://developers.hubspot.com/changelog/remote-hubspot-mcp-server-is-now-generally-available" rel="noopener" data-od-id="race-hubspot-verify">Source</a></p>
         <button class="race-ctl" type="button" aria-label="Pause" data-od-id="race-hubspot-replay"><svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12M15 6v12"/></svg><svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10-6.5z"/></svg><svg class="i-again" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12a7 7 0 1 1-2.4-5.3M19 4v4h-4"/></svg></button>
       </div>
     </div>
@@ -760,7 +768,7 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
       </header>
       <div class="race-foot">
         <a class="btn btn-primary race-cta" href="/book" data-od-id="race-meta-cta">Book a call</a>
-        <p class="race-note">Example. A second here is a minute of work, estimated. <a href="https://developers.facebook.com/documentation/ads-commerce/ads-ai-connectors/ads-mcp-server/ads-mcp-server-tools-ad-creation-and-management" rel="noopener" data-od-id="race-meta-verify">Source</a></p>
+        <p class="race-note">Example. Typical times, sped up. <a href="https://developers.facebook.com/documentation/ads-commerce/ads-ai-connectors/ads-mcp-server/ads-mcp-server-tools-ad-creation-and-management" rel="noopener" data-od-id="race-meta-verify">Source</a></p>
         <button class="race-ctl" type="button" aria-label="Pause" data-od-id="race-meta-replay"><svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12M15 6v12"/></svg><svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10-6.5z"/></svg><svg class="i-again" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12a7 7 0 1 1-2.4-5.3M19 4v4h-4"/></svg></button>
       </div>
     </div>
@@ -776,7 +784,7 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
       </header>
       <div class="race-foot">
         <a class="btn btn-primary race-cta" href="/book" data-od-id="race-microsoftexcel-cta">Book a call</a>
-        <p class="race-note">Example. A second here is a minute of work, estimated. <a href="https://claude.com/docs/office-agents/excel" rel="noopener" data-od-id="race-microsoftexcel-verify">Source</a></p>
+        <p class="race-note">Example. Typical times, sped up. <a href="https://claude.com/docs/office-agents/excel" rel="noopener" data-od-id="race-microsoftexcel-verify">Source</a></p>
         <button class="race-ctl" type="button" aria-label="Pause" data-od-id="race-microsoftexcel-replay"><svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12M15 6v12"/></svg><svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10-6.5z"/></svg><svg class="i-again" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12a7 7 0 1 1-2.4-5.3M19 4v4h-4"/></svg></button>
       </div>
     </div>
@@ -792,7 +800,7 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
       </header>
       <div class="race-foot">
         <a class="btn btn-primary race-cta" href="/book" data-od-id="race-gmail-cta">Book a call</a>
-        <p class="race-note">Example. A second here is a minute of work, estimated. <a href="https://support.claude.com/en/articles/10166901-use-google-workspace-connectors" rel="noopener" data-od-id="race-gmail-verify">Source</a></p>
+        <p class="race-note">Example. Typical times, sped up. <a href="https://support.claude.com/en/articles/10166901-use-google-workspace-connectors" rel="noopener" data-od-id="race-gmail-verify">Source</a></p>
         <button class="race-ctl" type="button" aria-label="Pause" data-od-id="race-gmail-replay"><svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12M15 6v12"/></svg><svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10-6.5z"/></svg><svg class="i-again" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12a7 7 0 1 1-2.4-5.3M19 4v4h-4"/></svg></button>
       </div>
     </div>
@@ -893,22 +901,22 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
      Values not given carry over from the keyframe before. ── */
   const KEYS = [
     /* 1 · Chaos */
-    { sel: '.sky', f: 0, pin: 1, k: 0, free: 0, order: 0, ink: 0, third: 0, el: 22, az: 0, dist: 18.5, ox: 0.2, oy: 0.12, poy: 0.22, calm: 0, dim: 0, labels: 0, conn: 1, agent: 0, stops: 0, tx: 0, tz: 0, fly: 0, wsel: 0, tools: 1 },
+    { sel: '.sky', f: 0, pin: 1, k: 0, free: 0, order: 0, ink: 0, third: 0, el: 22, az: 0, dist: 19.5, ox: 0.22, oy: 0.24, poy: 0.24, calm: 0, dim: 0, labels: 0, conn: 1, agent: 0, stops: 0, tx: 0, tz: 0, fly: 0, wsel: 0, tools: 1 },
     { sel: '.sky', f: 0.55, pin: 1, labels: 1, el: 27, az: -10, dist: 16.5, ox: 0.22, oy: 0.1 },
     { sel: '.sky', f: 1, pin: 1, labels: 0, el: 33, az: -22, dist: 17 },
     /* 2 and 3 · The guide and the flybys: the AI is lit at the centre and the first race is already running. Out past six tool worlds, all the way round. */
     { sel: '#fly-stripe', f: 0.15, pin: 1, wsel: 0, tx: 7.71, tz: 9.19, az: 70, conn: 1, tools: 0, k: 0.3, free: 0.4, fly: 1, dim: 1, el: 24, dist: 8.6, ox: 0, oy: 0, poy: 0.12 },
-    { sel: '#fly-stripe', f: 0.8, pin: 1, az: 80 },
+    { sel: '#fly-stripe', f: 0.94, pin: 1, az: 80 },
     { sel: '#fly-shopify', f: 0.15, pin: 1, wsel: 1, tx: 11.82, tz: -2.08, az: 130 },
-    { sel: '#fly-shopify', f: 0.8, pin: 1, az: 140 },
+    { sel: '#fly-shopify', f: 0.94, pin: 1, az: 140 },
     { sel: '#fly-hubspot', f: 0.15, pin: 1, wsel: 2, tx: 4.10, tz: -11.28, az: 190 },
-    { sel: '#fly-hubspot', f: 0.8, pin: 1, az: 200 },
+    { sel: '#fly-hubspot', f: 0.94, pin: 1, az: 200 },
     { sel: '#fly-meta', f: 0.15, pin: 1, wsel: 3, tx: -7.71, tz: -9.19, az: 250 },
-    { sel: '#fly-meta', f: 0.8, pin: 1, az: 260 },
+    { sel: '#fly-meta', f: 0.94, pin: 1, az: 260 },
     { sel: '#fly-microsoftexcel', f: 0.15, pin: 1, wsel: 4, tx: -11.82, tz: 2.08, az: 310 },
-    { sel: '#fly-microsoftexcel', f: 0.8, pin: 1, az: 320 },
+    { sel: '#fly-microsoftexcel', f: 0.94, pin: 1, az: 320 },
     { sel: '#fly-gmail', f: 0.15, pin: 1, wsel: 5, tx: -4.10, tz: 11.28, az: 370 },
-    { sel: '#fly-gmail', f: 0.8, pin: 1, az: 380 },
+    { sel: '#fly-gmail', f: 0.94, pin: 1, az: 380 },
     /* 4 · The plan: back to the centre, and the orbit is drawn in. */
     { sel: '#after', f: 0, pin: 1, fly: 0, tx: 0, tz: 0, k: 0.9, free: 0.6, dim: 0, stops: 1, el: 60, az: 394, dist: 11.2, ox: 0.25, oy: 0.03, poy: 0.02, calm: 0.35, conn: 1 },
     { sel: '#after', f: 0.1852, pin: 1, k: 1, free: 1, ink: 0.2, third: 0.44, az: 396, poy: -0.02 },
@@ -1030,17 +1038,19 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
 
 <script>
 /* The flyby races. Each one starts as its world comes into view, plays to Done on its own clock and keeps its last
-   frame; the round control pauses it or plays it again. It is a time-lapse: one second on screen is one minute of
-   work, and each side stops at its typical time. Nothing is drawn here: this script only keeps the clock and shares
+   frame; the round control pauses it or plays it again. It is a time-lapse: both sides run at the same sped-up rate,
+   and each stops at its typical time. Nothing is drawn here: this script only keeps the clock and shares
    it with the 3D scene, which plays the ask, the work and the result as bodies in the tool's world.
    Reduced motion does not stop them: the setting quiets the camera, and the demonstration still has to be seen. */
 (() => {
-  const RACES = {"stripe":{"name":"Stripe","prompt":"Who owes us? Send Harbour Dental their invoice.","out":["Invoice sent to Harbour Dental","Sent"],"hand":10,"ask":5,"hot":[0,1,1,0,0,0]},"shopify":{"name":"Shopify","prompt":"What will run out this month? Draft the reorder.","out":["Stock reordered in time","Sent"],"hand":15,"ask":5,"hot":[1,0,1,0,0,0]},"hubspot":{"name":"HubSpot","prompt":"Which deals went quiet? Draft a note for each.","out":["3 quiet deals followed up","Logged"],"hand":20,"ask":18,"hot":[1,0,1,0,1,0]},"meta":{"name":"Meta Ads","prompt":"Which ad brings no buyers? Pause it.","out":["The ad wasting your money","Paused"],"hand":15,"ask":5,"hot":[0,1,0,0,0,0]},"microsoftexcel":{"name":"Excel","prompt":"Check my totals. What if prices rise 5%?","out":["The wrong total in your sales sheet","Fixed"],"hand":15,"ask":5,"hot":[0,0,0,0,0,1]},"gmail":{"name":"Gmail and Calendar","prompt":"What needs a reply today? Book Harbour Dental.","out":["Today's inbox answered, meeting set","Booked"],"hand":20,"ask":5,"hot":[1,0,1,0,1,0]}};
-  const S = window.solenix, MIN = 1000, clamp01 = v => Math.max(0, Math.min(1, v));
+  const RACES = {"stripe":{"name":"Stripe","prompt":"Who owes us? Send Harbour Dental their invoice.","out":["Invoice sent to Harbour Dental","Sent"],"hand":10,"ask":5,"hot":[0,1,1,0,0,0],"pay":["$",1840,"left to chase"]},"shopify":{"name":"Shopify","prompt":"What will run out this month? Draft the reorder.","out":["Stock reordered in time","Sent"],"hand":15,"ask":5,"hot":[1,0,1,0,0,0],"pay":["",2,"best sellers about to run out"]},"hubspot":{"name":"HubSpot","prompt":"Which deals went quiet? Draft a note for each.","out":["3 quiet deals followed up","Logged"],"hand":20,"ask":18,"hot":[1,0,1,0,1,0],"pay":["",3,"deals gone quiet"]},"meta":{"name":"Meta Ads","prompt":"Which ad brings no buyers? Pause it.","out":["The ad wasting your money","Paused"],"hand":15,"ask":5,"hot":[0,1,0,0,0,0],"pay":["$",38,"a day going to a dead ad"]},"microsoftexcel":{"name":"Excel","prompt":"Check my totals. What if prices rise 5%?","out":["The wrong total in your sales sheet","Fixed"],"hand":15,"ask":5,"hot":[0,0,0,0,0,1],"pay":["",1,"wrong total in your sales sheet"]},"gmail":{"name":"Gmail and Calendar","prompt":"What needs a reply today? Book Harbour Dental.","out":["Today's inbox answered, meeting set","Booked"],"hand":20,"ask":5,"hot":[1,0,1,0,1,0],"pay":["",29,"emails waiting on you"]}};
+  const S = window.solenix, clamp01 = v => Math.max(0, Math.min(1, v));
   S.races = Object.keys(RACES).map(id => RACES[id]);
-  S.rs = S.races.map(() => ({ h: 0, a: 0, p: 0, q: 0, ask: '', hDone: false, aDone: false, on: false }));
+  S.rs = S.races.map(() => ({ h: 0, a: 0, p: 0, q: 0, ask: '', hDone: false, aDone: false, on: false, vis: 0 }));
   const all = [...document.querySelectorAll('[data-race]')].map((sec, idx) => {
-    const R = RACES[sec.dataset.race], st = S.rs[idx], ctl = sec.querySelector('.race-ctl'), TH = R.hand * MIN, TA = R.ask * MIN;
+    const R = RACES[sec.dataset.race], st = S.rs[idx], ctl = sec.querySelector('.race-ctl');
+    /* Sped up so every ask lands in five seconds; by hand keeps the same proportion and is still crawling after it. */
+    const MIN = 5000 / R.ask, TH = R.hand * MIN, TA = R.ask * MIN;
     let state = 'idle', vt = 0, last = 0, timer = 0;
     /* p and q are how far the ask and the by-hand path have got, 0 to 1; the ask is typed over its first third. */
     const share = () => { st.h = Math.min(vt, TH) / MIN; st.a = Math.min(vt, TA) / MIN; st.p = clamp01(vt / TA); st.q = clamp01(vt / TH);
@@ -1058,6 +1068,9 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
     });
     reset();
     return { check(vh) { const r = sec.getBoundingClientRect();
+      /* The result and the tape belong to this scene only: they are in view while it holds the screen, and gone
+         before the next headline arrives. */
+      st.vis = clamp01(1 - r.top / (vh * 0.3)) * clamp01((r.bottom - vh * 0.74) / (vh * 0.18));
       /* Starts while the scene before it is still on screen; once started it runs to the end wherever you scroll. */
       if (state === 'idle' && r.top < vh * 0.85 && r.bottom > vh * 0.15) start();
       /* Two scenes away it resets, so coming back plays it again. */
@@ -1402,7 +1415,7 @@ const mkTag = (cls, html) => { const e = document.createElement('div'); e.classN
 const tagH = mkTag('trail-tag hand', '<span>By hand</span><b></b>'), tagA = mkTag('trail-tag ask', '<span>Asked</span><b></b>');
 const tickTags = [5, 10, 15, 20].map(m => { const e = mkTag('tick-tag', m === 20 ? '20 min' : String(m)); e._m = m; return e; });
 const tagBack = mkTag('trail-tag back', '<b></b><span>back</span>');
-const askTag = mkTag('ask-tag'), resTag = mkTag('res-tag', '<b></b><i></i>');
+const askTag = mkTag('ask-tag'), payTag = mkTag('pay-tag', '<b></b><span><em></em><i></i></span>');
 const vR = new THREE.Vector3(), vB = new THREE.Vector3(), vO = new THREE.Vector3(), vA = new THREE.Vector3(), vE = new THREE.Vector3(), vP = new THREE.Vector3(), vS0 = new THREE.Vector3(), vDock = new THREE.Vector3(), vAsk = new THREE.Vector3();
 const itemP = Array.from({ length: ITEM_N }, () => new THREE.Vector3());
 const ease = t => t * t * (3 - 2 * t), c01 = v => Math.max(0, Math.min(1, v));
@@ -1440,32 +1453,37 @@ function raceWorld(fl, wsel) {
     askB.material.uniforms.uGain.value = near * live * (p > 0 && p < 0.4 ? 1 : 0);
     if (p > 0.4 && p < 0.8) worlds[wi].material.uniforms.uGain.value += near * 0.3 * (0.5 + 0.5 * Math.sin(clockT * 9)); }
   /* The result comes out of the world toward you and waits for your one click; approved, it turns green. */
-  vDock.copy(Wp).addScaledVector(vB, 1.55).addScaledVector(vR, -0.55);
+  /* The payoff holds the middle of the screen, between the tool and the tape: its body, then the number. */
+  vDock.copy(Wp).addScaledVector(vB, 1.75);
+  vDock.addScaledVector(vR, -((payTag.offsetWidth || 320) / 2 + 30) * 2 * camera.position.distanceTo(vDock) * Math.tan(D2R(camera.fov / 2)) / H);
   { const t = ease(c01((p - 0.8) / 0.1)), g = near * live * c01((p - 0.8) / 0.03);
     resB.position.copy(Wp).lerp(vDock, t); okB.position.copy(resB.position);
     resB.material.uniforms.uGain.value = g * (rs.aDone ? 0 : 0.95); okB.material.uniforms.uGain.value = g * (rs.aDone ? 1 : 0);
     resB.material.uniforms.uSize.value = okB.material.uniforms.uSize.value = 0.6; }
   return { near, rs, rc, unit, headH, headA, back, o: vO.clone(), wp: Wp, resAt: t01(p) };
 }
-const t01 = p => c01((p - 0.86) / 0.06);
+const t01 = p => c01((p - 0.8) / 0.05);
 function raceTags(rw) {
-  if (!rw) { [tagH, tagA, tagBack, askTag, resTag, ...tickTags].forEach(e => { if (e.style.opacity !== '0') e.style.opacity = 0; }); return; }
-  const { near, rs, rc } = rw, live = rs.on ? 1 : 0;
+  if (!rw) { [tagH, tagA, tagBack, askTag, payTag, ...tickTags].forEach(e => { if (e.style.opacity !== '0') e.style.opacity = 0; }); return; }
+  const { near, rs, rc } = rw, vis = rs.vis === undefined ? 1 : rs.vis, live = (rs.on ? 1 : 0) * vis;
   tagH.lastChild.textContent = Math.floor(rs.h) + ' min'; tagA.lastChild.textContent = Math.floor(rs.a) + ' min';
   tagH.classList.toggle('stop', rs.hDone); tagA.classList.toggle('stop', rs.aDone);
   placeL(tagH, rw.headH, near * live, -30);
   /* Under the tape: the ask's clock ends at its head, and the minutes you get back start there. */
   const mins = Math.floor(rw.back + 0.001); if (tagBack.firstChild.textContent !== mins + ' min') tagBack.firstChild.textContent = mins + ' min';
   placeUnder(tagA, rw.headA, near * live, -1); placeUnder(tagBack, rw.headA, near * live * (mins >= 1 ? 1 : 0), 1);
-  tickTags.forEach(e => place(e, vP.copy(rw.o).addScaledVector(vR, e._m * rw.unit).addScaledVector(vB, 1.0), near * 0.9, 0));
+  tickTags.forEach(e => place(e, vP.copy(rw.o).addScaledVector(vR, e._m * rw.unit).addScaledVector(vB, 1.0), near * 0.9 * vis, 0));
   /* The ask is written beside the world while it travels, and clears once the work is done. */
   const quote = rs.ask ? '“' + rs.ask + (rs.p >= 0.33 ? '”' : '') : '';
   if (askTag.textContent !== quote) askTag.textContent = quote;
   placeSide(askTag, vP.copy(rw.wp).addScaledVector(vR, -1.3), near * live * (1 - c01((rs.p - 0.72) / 0.08)), -1);
-  if (resTag.firstChild.textContent !== rc.out[0]) resTag.firstChild.textContent = rc.out[0];
-  const word = rs.aDone ? rc.out[1] : 'Approve'; if (resTag.lastChild.textContent !== word) resTag.lastChild.textContent = word;
-  resTag.classList.toggle('ok', rs.aDone); resTag.classList.toggle('press', rs.p > 0.97 && !rs.aDone);
-  placeSide(resTag, vDock, near * live * rw.resAt, 1);
+  /* The payoff: the thing that was costing you, counted down to zero the moment you approve. */
+  const left = Math.round(rc.pay[1] * (1 - c01((rs.p - 0.9) / 0.1))), num = rc.pay[0] + left.toLocaleString('en-CA');
+  if (payTag.firstChild.textContent !== num) payTag.firstChild.textContent = num;
+  const cap = payTag.lastChild.firstChild, pill = payTag.lastChild.lastChild, word = rs.aDone ? rc.out[1] : 'Approve';
+  if (cap.textContent !== rc.pay[2]) cap.textContent = rc.pay[2]; if (pill.textContent !== word) pill.textContent = word;
+  payTag.classList.toggle('ok', rs.aDone); payTag.classList.toggle('press', rs.p > 0.88 && rs.p < 0.92);
+  placeSide(payTag, vDock, near * live * rw.resAt, 1);
 }
 /* A trail's clock sits at its head; at the edge of the screen it steps above or below its own trail instead. */
 const placeL = (e, v, al, dy) => { if (al < 0.01) { if (e.style.opacity !== '0') e.style.opacity = 0; return; } proj.copy(v).project(camera);
@@ -1554,7 +1572,7 @@ function frame(dtReal, still) {
   /* One continuous camera move, eased so a fast flick still glides. */
   /* Reduced motion: one fixed, calm viewpoint. No flying, zooming or spinning; the framing only drifts slowly sideways. */
   const calmDist = portrait ? Math.max(14 * 1.3, 3.1 / (Math.tan(D2R(fov0 / 2)) * camera.aspect)) : 14;
-  const dist0 = R ? (stn > 0 ? Math.min(calmDist, portrait ? 12.5 : 8.6) : lerp(calmDist * lerp(1, 0.8, sc.agent), portrait ? calmDist : 18.5, sc.tools)) : portrait ? Math.max(sc.dist * 1.3, 3.1 * (1 - 0.45 * sc.fly) / (Math.tan(D2R(fov0 / 2)) * camera.aspect)) : sc.dist;
+  const dist0 = R ? (stn > 0 ? Math.min(calmDist, portrait ? 12.5 : 8.6) : lerp(calmDist * lerp(1, 0.8, sc.agent), portrait ? calmDist : 19.5, sc.tools)) : portrait ? Math.max(sc.dist * 1.3, 3.1 * (1 - 0.45 * sc.fly) / (Math.tan(D2R(fov0 / 2)) * camera.aspect)) : sc.dist;
   shown.el = R ? (stn > 0 ? 24 : lerp(lerp(58, 32, sc.agent), 22, sc.tools)) : lerp(shown.el, sc.el, a); shown.az = R ? (stn > 0 ? WAZ(stn - 1) + 30 : 0) : lerp(shown.az, sc.az, a); shown.dist = R ? dist0 : lerp(shown.dist, dist0, a);
   /* Reduced motion: no flight between worlds. The camera holds one station per scene and cuts to the next under a dip. */
   if (R) { const want = sc.fly > 0.5 ? 1 + Math.max(0, Math.min(WN - 1, Math.round(sc.wsel))) : 0;
@@ -1643,7 +1661,7 @@ function frame(dtReal, still) {
   const fl = R ? (stn > 0 ? 1 : 0) : sc.fly, wsel = R ? stn - 1 : sc.wsel; gridU.uP.value.set(shown.tx, shown.tz, fl * 0.9);
   /* On the first screen the tools sit close round the AI, wired in: what we do, before a word is read.
      As the flybys begin they move out to their own places and the camera goes to meet them. */
-  const tl = sc.tools * (1 - fl), ws = R && stn > 0 ? 1 : lerp(0.3, 1, smooth(0, 1, sc.fly));
+  const tl = sc.tools * (1 - fl), ws = R && stn > 0 ? 1 : lerp(0.25, 1, smooth(0, 1, sc.fly));
   worlds.forEach((m, i) => { WPOS[i].set(WBASE[i].x * ws, SUN_Y, WBASE[i].z * ws); m.position.copy(WPOS[i]);
     const on = fl > 0.01 || tl > 0.01; m.visible = warcs[i].mesh.visible = on; if (!on) return;
     const near = Math.max(0, 1 - Math.abs(wsel - i));
@@ -1667,7 +1685,7 @@ function frame(dtReal, still) {
   const pos = [0, 1, 2].map(i => { proj.copy(B[i]).project(camera); return { i, x: (proj.x + 1) / 2 * W, y: (1 - proj.y) / 2 * H + off }; }).sort((p0, p1) => p0.y - p1.y);
   for (let n = 1; n < 3; n++) for (let m = 0; m < n; m++) if (Math.abs(pos[n].x - pos[m].x) < 92 && pos[n].y - pos[m].y < 24) pos[n].y = pos[m].y + 24;
   pos.forEach(pp => { const e = tags[pp.i], hw = tagW[pp.i] / 2 + 10, x = Math.min(Math.max(pp.x, hw), W - hw);
-    e.style.opacity = la.toFixed(3); e.style.transform = `translate3d(${x.toFixed(1)}px, ${pp.y.toFixed(1)}px, 0) translateX(-50%)`; e.classList.toggle('in', bd[pp.i] < 0.05); });
+    e.style.opacity = (la * (1 - sc.tools)).toFixed(3); e.style.transform = `translate3d(${x.toFixed(1)}px, ${pp.y.toFixed(1)}px, 0) translateX(-50%)`; e.classList.toggle('in', bd[pp.i] < 0.05); });
   { const al = la * Math.max(sc.conn, sc.free * 0.75) * (1 - fl); tagAi.style.opacity = al.toFixed(3);
     if (al > 0.001) { proj.copy(HUB).project(camera); tagAi.style.transform = `translate3d(${((proj.x + 1) / 2 * W).toFixed(1)}px, ${((1 - proj.y) / 2 * H - 30).toFixed(1)}px, 0) translateX(-50%)`; } }
 
