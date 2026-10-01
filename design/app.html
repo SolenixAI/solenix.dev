@@ -469,6 +469,48 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
 .bpm-c small { color: var(--muted); font-size: var(--fs-xs); }
 .bpm-m { display: none; }
 @media (max-width: 760px) { .bpm-cols { display: none; } .bpm-r { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3); } .bpm-t { grid-column: 1 / -1; } .bpm-m { display: block; } }
+/* Overview: two columns on wide screens; on phones the next action comes first. */
+.ov2 { display: grid; gap: var(--space-5); }
+.ov-col { display: contents; }
+.ov2 .next { order: 1; } .ov2 .site { order: 2; } .ov2 .ai { order: 3; } .ov2 .route { order: 4; } .ov2 .res { order: 5; }
+@media (min-width: 1000px) { .ov2 { grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); align-items: start; } .ov-col { display: grid; gap: var(--space-5); min-width: 0; } }
+/* Your AI: one assistant, the tools it reaches, and what you can just ask. */
+.ai { display: grid; gap: var(--space-4); }
+.ai:focus-visible { outline: var(--focus-width) solid var(--focus-color); outline-offset: 3px; }
+.ai-top { display: flex; flex-wrap: wrap; gap: var(--space-3) var(--space-4); align-items: center; }
+.ai-top > div { flex: 1 1 12rem; }
+.ai-top > svg { width: 44px; height: 44px; flex: none; filter: drop-shadow(0 0 16px color-mix(in srgb, var(--sun2) 55%, transparent)); }
+.ai-top > div { display: grid; gap: 4px; margin-right: auto; min-width: 0; }
+.ai-top h2 { font-size: var(--fs-h2); font-weight: var(--fw-bold); letter-spacing: var(--track-heading); line-height: var(--lh-heading); }
+.ai-tools { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.ai-tool { min-height: var(--tap-min); padding: 6px var(--space-4); border-radius: var(--radius-pill); border: 1px solid var(--line-strong); background: transparent; color: var(--text); font: inherit; font-size: var(--fs-sm); font-weight: var(--fw-semibold); display: inline-flex; gap: 8px; align-items: center; cursor: pointer; transition: background-color var(--dur-fast), border-color var(--dur-fast); }
+.ai-tool i { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 8px var(--ok); flex: none; }
+.ai-tool.off i { background: transparent; border: 1px solid var(--muted); box-shadow: none; }
+.ai-tool small { color: var(--muted); font-weight: var(--fw-regular); font-size: var(--fs-xs); }
+.ai-tool:hover { background: color-mix(in oklch, var(--text) 8%, transparent); }
+.ai-tool[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-quiet); }
+.ai-tool:focus-visible, .ai-ask:focus-visible { outline: var(--focus-width) solid var(--focus-color); outline-offset: 3px; }
+.ai-asks { border-top: 1px solid var(--line); padding-top: var(--space-4); display: grid; gap: var(--space-2); min-height: 9.5rem; align-content: start; }
+.ai-ask { appearance: none; border: 0; border-top: 1px solid var(--line); background: transparent; color: var(--text); text-align: left; width: 100%; min-height: 52px; padding: var(--space-3) 0; display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); cursor: pointer; border-radius: var(--radius-xs); }
+.ai-ask:first-of-type { border-top: 0; }
+.ai-ask q { font: var(--fw-semibold) var(--fs-h4)/1.3 var(--font-display); quotes: "\201C" "\201D"; }
+.ai-ask .cp { font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--muted); border: 1px solid var(--line-strong); padding: 6px 9px; border-radius: var(--radius-pill); flex: none; transition: color var(--dur-fast), border-color var(--dur-fast); }
+.ai-ask:hover .cp { color: var(--accent-text); border-color: var(--accent); }
+.res-v { font: var(--fw-bold) var(--fs-body)/1.2 var(--font-display); color: var(--text); font-variant-numeric: tabular-nums; }
+.res-v.ok { color: var(--ok); }
+/* Admin */
+.tabs .adm { margin-left: 6px; padding-left: 8px; border-left: 1px solid var(--line-strong); }
+.adm-t { font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--accent-text); }
+.adm-note { font: var(--fw-medium) var(--fs-2xs)/1.4 var(--font-mono); letter-spacing: .04em; color: var(--muted); border: 1px dashed var(--line-strong); padding: 5px 8px; border-radius: var(--radius-xs); }
+.cl { list-style: none; margin: 0; padding: 0; display: grid; }
+.cl li { display: grid; grid-template-columns: 1fr auto; gap: var(--space-3); align-items: center; padding-block: var(--space-4); border-top: 1px solid var(--line); }
+.cl li:first-child { border-top: 0; padding-top: 0; }
+.cl b { font: var(--fw-semibold) var(--fs-h3)/1.2 var(--font-display); display: block; }
+.cl small { color: var(--muted); font-size: var(--fs-sm); display: block; margin-top: 2px; overflow-wrap: anywhere; }
+.cl .meta { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3); }
+.ln2 { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); font-size: var(--fs-sm); font-weight: var(--fw-semibold); padding-block: var(--space-2); border-top: 1px solid var(--line); }
+.ln2 small { display: block; color: var(--muted); font-weight: var(--fw-regular); font-size: var(--fs-xs); }
+@media (max-width: 859px) { .bottom { grid-template-columns: repeat(4, 1fr); } }
 </style>
 </head>
 <body>
@@ -493,7 +535,7 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
   <div class="mail-chrome">
     <div class="mail-head">
       <h1 class="subj">Your Solenix portal is ready</h1>
-      <span class="from"><span><strong style="color: var(--text);">Solenix</strong> &lt;hello@solenix.dev&gt;</span><span>to <span data-bind="email">anna@mapleandrye.ca</span></span></span>
+      <span class="from"><span><strong style="color: var(--text);">Solenix</strong> &lt;hello@solenix.dev&gt;</span><span>to <span data-bind="inv-email">sam@harbourlaw.ca</span></span></span>
     </div>
     <div class="mail-body">
       <article class="email" data-od-id="invite-email">
@@ -502,16 +544,16 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
           <div data-orb="email"></div>
         </div>
         <div class="email-in">
-          <h2>Hi Anna. Maple &amp; Rye has its own place with us now.</h2>
-          <p>Your new website, the plan for it, and your bills. One place, nothing to chase.</p>
-          <button class="btn btn-primary" type="button" data-go="confirm" data-od-id="invite-open">Open your portal <svg aria-hidden="true"><use href="#i-arrow"/></svg></button>
+          <h2>Hi <span data-bind="inv-first">Sam</span>. <span data-bind="inv-biz">Harbour Law</span> has its own place with us now.</h2>
+          <p>Your website, what we are working on, and your bills. One place, nothing to chase.</p>
+          <button class="btn btn-primary" type="button" data-invite-open data-od-id="invite-open">Open your portal <svg aria-hidden="true"><use href="#i-arrow"/></svg></button>
           <span class="small muted">The link signs you in. No password to remember.</span>
         </div>
-        <div class="email-foot">Solenix · St. John's, Newfoundland and Labrador · You're getting this because we're building your website.</div>
+        <div class="email-foot">Solenix · St. John's, Newfoundland and Labrador · You're getting this because we spoke on a call.</div>
       </article>
     </div>
   </div>
-  <p class="proto-note">Prototype: the invite as it lands in the client's inbox, a few days after the call.</p>
+  <p class="proto-note">Prototype: the invite as it lands in a client's inbox, with example names until you invite someone. <button class="textbtn link" type="button" data-jump-back>Back to Clients</button></p>
 </section>
 
 <!-- B · Sign in -->
@@ -608,57 +650,19 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
   </div>
 </section>
 
-<!-- D · Onboarding -->
-<section class="screen onb" data-screen="onb" data-od-id="screen-onboarding" hidden>
-  <div class="skyfx" aria-hidden="true"></div>
-  <div class="onb-top">
-    <svg aria-hidden="true"><use href="#mark"/></svg>
-    <div class="steps" aria-hidden="true"><i></i><i></i><i></i></div>
-    <span class="label" data-step-label>1 of 3</span>
-  </div>
-  <form class="onb-body" novalidate data-onb>
-    <div data-step="1" style="display: grid; gap: var(--space-6);">
-      <div style="display: grid; gap: var(--space-3);"><p class="onb-q">Question 1</p><h1>First, what should we call you?</h1><p class="muted">So your updates sound like they're for you.</p></div>
-      <div class="field"><label for="f-name">Your name</label><input class="input" id="f-name" autocomplete="name" value="Anna Whelan"></div>
-    </div>
-    <div data-step="2" hidden style="display: grid; gap: var(--space-6);">
-      <div style="display: grid; gap: var(--space-3);"><p class="onb-q">Question 2</p><h1>Is this your business?</h1><p class="muted">We filled in what we know. Fix anything that's off.</p></div>
-      <div class="field"><label for="f-biz">Business name</label><input class="input" id="f-biz" autocomplete="organization" value="Maple &amp; Rye"></div>
-      <div class="field"><label for="f-site">Website address</label><input class="input" id="f-site" value="mapleandrye.ca" aria-describedby="site-hint"><p class="hint" id="site-hint">Your new site goes live here. You keep the address.</p></div>
-    </div>
-    <div data-step="3" hidden style="display: grid; gap: var(--space-6);">
-      <div style="display: grid; gap: var(--space-3);"><p class="onb-q">Question 3</p><h1>Where should bills go?</h1><p class="muted">This goes on your invoices. You can change it any time.</p></div>
-      <div class="field"><label for="f-street">Street address</label><input class="input" id="f-street" autocomplete="street-address" value="214 Water Street"></div>
-      <div class="row2">
-        <div class="field"><label for="f-city">City</label><input class="input" id="f-city" autocomplete="address-level2" value="St. John's"></div>
-        <div class="field"><label for="f-post">Postal code</label><input class="input" id="f-post" autocomplete="postal-code" value="A1C 1A9" aria-describedby="post-err"><p class="err" id="post-err" hidden role="alert">Postal codes look like A1C 1A9.</p></div>
-      </div>
-      <div class="field"><label for="f-prov">Province</label><select class="input" id="f-prov" autocomplete="address-level1"><option>Newfoundland and Labrador</option><option>Nova Scotia</option><option>New Brunswick</option><option>Prince Edward Island</option><option>Quebec</option><option>Ontario</option></select></div>
-    </div>
-    <div data-step="4" hidden class="welcome-done" style="display: grid; gap: var(--space-5);">
-      <div data-orb="done"></div>
-      <h1>You're in, <span class="grad" data-bind="first">Anna</span>.</h1>
-      <p class="muted">Your site is already taking shape. Let's have a look.</p>
-    </div>
-    <div class="onb-actions">
-      <button class="btn btn-quiet" type="button" data-onb-back>Back</button>
-      <button class="btn btn-primary" type="submit" data-onb-next data-od-id="onb-next">Continue</button>
-    </div>
-  </form>
-</section>
-
 <!-- E · The app -->
 <div class="shell" data-screen="app" hidden>
   <div class="skyfx" aria-hidden="true"></div>
   <header class="top" data-od-id="app-top">
     <div class="top-in">
-      <div class="biz"><svg aria-hidden="true"><use href="#mark"/></svg><div><strong data-bind="biz">Maple &amp; Rye</strong><small>Solenix portal</small></div></div>
+      <div class="biz"><svg aria-hidden="true"><use href="#mark"/></svg><div><strong data-bind="biz">Solenix</strong><small>Solenix portal</small></div></div>
       <nav aria-label="Portal"><ul class="tabs">
         <li><a href="#overview" data-tab="overview">Overview</a></li>
         <li><a href="#initiatives" data-tab="initiatives">Initiatives<span class="dotn" data-dot="initiatives" hidden></span></a></li>
         <li><a href="#billing" data-tab="billing">Billing<span class="dotn" data-dot="billing" hidden></span></a></li>
+        <li class="adm"><a href="#clients" data-tab="clients" data-od-id="tab-admin">Clients<span class="adm-t">Admin</span></a></li>
       </ul></nav>
-      <div class="acct"><button class="acct-btn" type="button" aria-label="Account" data-acct><span class="avatar" data-bind="initials">AW</span></button></div>
+      <div class="acct"><button class="acct-btn" type="button" aria-label="Account" data-acct><span class="avatar" data-bind="initials">JC</span></button></div>
     </div>
   </header>
   <main class="app" id="main" tabindex="-1"></main>
@@ -666,14 +670,15 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
     <li><a href="#overview" data-tab="overview"><svg aria-hidden="true"><use href="#i-home"/></svg>Overview</a></li>
     <li><a href="#initiatives" data-tab="initiatives"><svg aria-hidden="true"><use href="#i-ini"/></svg>Initiatives<span class="dotn" data-dot="initiatives" hidden></span></a></li>
     <li><a href="#billing" data-tab="billing"><svg aria-hidden="true"><use href="#i-bill"/></svg>Billing<span class="dotn" data-dot="billing" hidden></span></a></li>
+    <li><a href="#clients" data-tab="clients"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="9" cy="9" r="3.2"/><path d="M3 19c0-3 2.7-5 6-5s6 2 6 5"/><circle cx="17" cy="10" r="2.4"/><path d="M16.5 14.2c2.6.2 4.5 2 4.5 4.3"/></svg>Clients</a></li>
   </ul></nav>
 </div>
 
 <!-- Dialogs -->
 <dialog data-dlg="preview" aria-labelledby="pv-t"><div class="sheet wide">
-  <div class="sheet-h"><div><p class="label">Preview · not live yet</p><h2 id="pv-t" data-bind="site">mapleandrye.ca</h2></div><button class="x" type="button" data-close aria-label="Close"><svg><use href="#i-x"/></svg></button></div>
+  <div class="sheet-h"><div><p class="label">Preview · not live yet</p><h2 id="pv-t" data-bind="site">solenix.dev</h2></div><button class="x" type="button" data-close aria-label="Close"><svg><use href="#i-x"/></svg></button></div>
   <div class="browser" style="margin: 0; border-radius: var(--radius-lg);" data-site-frame></div>
-  <p class="small muted">This is the site we're building for you. It goes live when you say so.</p>
+  <p class="small muted">This is the new homepage. It replaces the live site when you say so.</p>
 </div></dialog>
 
 <dialog class="bottom-sheet" data-dlg="deliv" aria-labelledby="dv-t"><div class="sheet">
@@ -683,8 +688,8 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
 
 <dialog class="bottom-sheet" data-dlg="change" aria-labelledby="ch-t"><form class="sheet" novalidate data-change>
   <div class="sheet-h"><h2 id="ch-t">What should change?</h2><button class="x" type="button" data-close aria-label="Close"><svg><use href="#i-x"/></svg></button></div>
-  <div class="field"><label for="ch-text">Tell us in your own words</label><textarea class="input" id="ch-text" placeholder="The menu page should list today's bread first." aria-describedby="ch-err"></textarea><p class="err" id="ch-err" hidden role="alert">Write a sentence or two so we know what to change.</p></div>
-  <p class="small muted">It goes straight onto our list for this initiative. We'll reply here.</p>
+  <div class="field"><label for="ch-text">Tell us in your own words</label><textarea class="input" id="ch-text" placeholder="The homepage should say who we work with first." aria-describedby="ch-err"></textarea><p class="err" id="ch-err" hidden role="alert">Write a sentence or two so we know what to change.</p></div>
+  <p class="small muted">It goes straight onto our list for this initiative, and shows under Your requests.</p>
   <button class="btn btn-primary" type="submit">Send to Solenix</button>
 </form></dialog>
 
@@ -694,21 +699,30 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
   <div class="site-act"><button class="btn btn-ghost btn-sm" type="button" data-toast="Passkey saved on this device">Add a passkey on this device</button><button class="btn btn-quiet btn-sm" type="button" data-signout data-od-id="sign-out">Sign out</button></div>
 </div></dialog>
 
+<dialog class="bottom-sheet" data-dlg="invite" aria-labelledby="in-t"><form class="sheet" novalidate data-invite-form>
+  <div class="sheet-h"><div><p class="label">Admin</p><h2 id="in-t">Invite a client</h2></div><button class="x" type="button" data-close aria-label="Close"><svg><use href="#i-x"/></svg></button></div>
+  <div class="field"><label for="iv-biz">Business name</label><input class="input" id="iv-biz" autocomplete="off" aria-describedby="iv-biz-err"><p class="err" id="iv-biz-err" hidden role="alert">Add the business name.</p></div>
+  <div class="field"><label for="iv-name">Their name</label><input class="input" id="iv-name" autocomplete="off" aria-describedby="iv-name-err"><p class="err" id="iv-name-err" hidden role="alert">Add the person's name.</p></div>
+  <div class="field"><label for="iv-email">Their email</label><input class="input" id="iv-email" type="email" autocomplete="off" aria-describedby="iv-email-err"><p class="err" id="iv-email-err" hidden role="alert">That email needs an @ and a domain.</p></div>
+  <p class="small muted">They get one email with one button. No password to set.</p>
+  <button class="btn btn-primary" type="submit" data-od-id="invite-send">Send the invite</button>
+</form></dialog>
+
 <dialog data-dlg="checkout" aria-labelledby="co-t"><div class="co">
   <div class="co-sum">
     <button class="btn btn-quiet" type="button" data-close style="justify-self: start;"><svg aria-hidden="true"><use href="#i-back"/></svg>Back to your portal</button>
-    <div style="display: grid; gap: var(--space-2);"><span class="label">Pay Solenix</span><h2 id="co-t" style="font-size: var(--fs-h2); letter-spacing: var(--track-heading);">Website plan</h2></div>
+    <div style="display: grid; gap: var(--space-2);"><span class="label">Pay Solenix</span><h2 id="co-t" style="font-size: var(--fs-h2); letter-spacing: var(--track-heading);">Your plan</h2></div>
     <div>
-      <div class="co-line"><span data-co-opt>New website · your option</span><span class="tbd">amount to confirm</span></div>
+      <div data-co-lines></div>
       <div class="co-line"><span>Care plan, monthly</span><span class="tbd">amount to confirm</span></div>
       <div class="co-line"><strong>Due today</strong><span class="tbd">amount to confirm</span></div>
     </div>
     <p class="co-proto">Prototype: this stands in for Stripe Checkout, Stripe's own payment page. Card details are only ever entered there.</p>
   </div>
   <form class="co-pay" novalidate data-pay>
-    <div class="field"><label for="co-email">Email</label><input class="input" id="co-email" type="email" value="anna@mapleandrye.ca"></div>
+    <div class="field"><label for="co-email">Email</label><input class="input" id="co-email" type="email" value="jager@solenix.dev"></div>
     <div class="field"><span class="flabel">Card</span><div class="card-mock" aria-label="Card fields (prototype)"><input class="input" placeholder="1234 1234 1234 1234" aria-label="Card number" inputmode="numeric"><input class="input" placeholder="MM / YY" aria-label="Expiry"><input class="input" placeholder="CVC" aria-label="CVC" inputmode="numeric"></div></div>
-    <div class="field"><label for="co-name">Name on card</label><input class="input" id="co-name" value="Anna Whelan"></div>
+    <div class="field"><label for="co-name">Name on card</label><input class="input" id="co-name" value="Jager Cooper"></div>
     <button class="btn btn-primary btn-block" type="submit" data-od-id="checkout-pay">Pay and start my plan</button>
     <p class="by">Payments by Stripe · Cancel the monthly plan any month</p>
   </form>
@@ -725,21 +739,21 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
 <div class="proto" data-proto>
   <button type="button" aria-expanded="false" data-proto-btn>Prototype</button>
   <div class="proto-menu" hidden data-proto-menu>
-    <span class="label lbl">Solenix, client #1</span>
+    <span class="label lbl">Signing in</span>
     <button type="button" data-jump="signin">Sign in</button>
     <button type="button" data-jump="confirm">Email link: Continue page</button>
     <button type="button" data-jump="noinvite">Not invited</button>
-    <button type="button" data-jump="sx-overview">Overview</button>
-    <button type="button" data-jump="sx-initiatives">Initiatives</button>
-    <button type="button" data-jump="sx-billing">Billing: nothing to pay</button>
     <hr>
-    <span class="label lbl">A new client's first visit</span>
-    <button type="button" data-jump="email">Invite email</button>
-    <button type="button" data-jump="onb1">Onboarding</button>
+    <span class="label lbl">Solenix, client #1</span>
     <button type="button" data-jump="overview">Overview</button>
-    <button type="button" data-jump="initiative">First initiative</button>
+    <button type="button" data-jump="initiatives">Initiatives</button>
+    <button type="button" data-jump="initiative">Launch solenix.dev</button>
     <button type="button" data-jump="billing">Billing</button>
     <button type="button" data-jump="live">Three months after launch</button>
+    <hr>
+    <span class="label lbl">Admin</span>
+    <button type="button" data-jump="clients">Clients</button>
+    <button type="button" data-jump="email">The invite email</button>
     <hr>
     <button type="button" data-signout>Sign out</button>
     <button type="button" data-reset>Start over</button>
@@ -751,274 +765,221 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* ── State. Persisted so a refresh keeps your place in the prototype. ── */
-  const KEY = 'solenix-portal-v5';
-  /* Two invited accounts. Solenix is client #1: it runs its own business here before any client does. */
-  const CLIENTS = {
-    solenix: { email: 'jager@solenix.dev', name: 'Jager Cooper', biz: 'Solenix', site: 'solenix.dev' },
-    maple: { email: 'anna@mapleandrye.ca', name: 'Anna Whelan', biz: 'Maple & Rye', site: 'mapleandrye.ca' }
-  };
-  const fresh = () => ({ screen: 'signin', tab: 'overview', view: 'list', client: 'solenix', signedIn: false, method: 'Passkey', tried: '', ini: 'launch', ...CLIENTS.solenix,
-    street: '214 Water Street', city: "St. John's", post: 'A1C 1A9', prov: 'Newfoundland and Labrador', onb: 1,
-    detailsDone: false, seenSite: false, approved: false, option: null, paid: false, live: false, changes: [], loaded: {} });
+  /* ── State. Kept on this device, so a returning visitor is already signed in. ── */
+  const KEY = 'solenix-portal-v6';
+  const fresh = () => ({ screen: 'signin', tab: 'overview', view: 'list', ini: 'launch', signedIn: false, method: 'Passkey', tried: '', as: '',
+    email: 'jager@solenix.dev', name: 'Jager Cooper', biz: 'Solenix', site: 'solenix.dev',
+    seenSite: false, asked: false, tool: 'pay', opt: {}, paid: false, live: false, requests: [], invited: [], inv: null, loaded: {} });
   let S; try { S = Object.assign(fresh(), JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) { S = fresh(); }
-  /* Same device, already signed in: straight to the Overview. */
   if (S.signedIn) { S.screen = 'app'; S.tab = 'overview'; S.view = 'list'; }
-  const sx = () => S.client === 'solenix';
-  const setClient = c => { S.client = c; Object.assign(S, CLIENTS[c]); };
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
   const first = () => S.name.trim().split(/\s+/)[0] || 'there';
   const initials = () => S.name.trim().split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase();
+  const TBD = t => `<span class="tbd">${t || 'to confirm'}</span>`;
+  const cad = n => '$' + (n >= 1000 ? Math.round(n / 100) * 100 : Math.round(n / 10) * 10).toLocaleString('en-CA');
+  const span = v => v[0] === v[1] ? cad(v[0]) : cad(v[0]) + '–' + cad(v[1]);
 
-  /* ── The orbit. The same figure-eight path as the homepage, measured once.
-     The three suns sit where the Chenciner–Montgomery orbit puts them at t = 0. ── */
+  /* ── The orbit: the same figure-eight path as the homepage, measured once. ── */
   const e8 = $('#e8m'), E8 = e8.getAttribute('d'), E8LEN = e8.getTotalLength();
   const at = f => e8.getPointAtLength(((f % 1) + 1) % 1 * E8LEN);
   const SUNS = [[38.5, 44.5], [300, 110], [561.5, 175.5]];
-  const STOPS = [0.02, 0.19, 0.375, 0.56, 0.8];            /* same five stops as the homepage route */
-  function orb({ lit = 1, stops = null, cur = -1, done = 0, suns = true, agent = null, draw = false, sunsIn = false, big = false } = {}) {
+  const STOPS = [0.02, 0.19, 0.375, 0.56, 0.8];
+  function orb({ lit = 1, stops = null, cur = -1, done = 0, suns = true, draw = false, sunsIn = false, big = false } = {}) {
     const r = big ? 21 : 15, fs = big ? 21 : 15;
     return `<svg class="orb${draw ? ' draw' : ''}${sunsIn ? ' suns-in' : ''}" viewBox="-24 -28 648 276" aria-hidden="true">
       <path class="o-base" d="${E8}"/>
       ${lit > 0 ? `<path class="o-lit" d="${E8}" pathLength="1000" stroke-dasharray="1000" stroke-dashoffset="${Math.round(1000 - lit * 1000)}"/>` : ''}
       ${suns ? SUNS.map(([x, y], k) => `<g class="sunset" style="--k:${k}"><circle class="halo" cx="${x}" cy="${y}" r="64"/><circle class="sun" cx="${x}" cy="${y}" r="17"/></g>`).join('') : ''}
       ${stops ? stops.map((f, k) => { const p = at(f); return `<g class="stop ${k < done ? 'done' : k === cur ? 'cur' : ''}" transform="translate(${p.x.toFixed(1)} ${p.y.toFixed(1)})">${k === cur ? `<circle class="ring2" r="${r + 5}"/>` : ''}<circle r="${r}"/><text style="font-size:${fs}px">${String(k + 1).padStart(2, '0')}</text></g>`; }).join('') : ''}
-      ${agent != null ? (p => `<circle class="agent" r="${big ? 8 : 6}" cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}"/>`)(at(agent)) : ''}
     </svg>`;
   }
-  const ORBS = {
-    auth: () => orb({ lit: 1 }),
-    email: () => orb({ lit: 1 }),
-    done: () => orb({ lit: 1, draw: !reduce, sunsIn: !reduce })
-  };
-  const paintOrbs = (root = document) => $$('[data-orb]', root).forEach(el => { el.innerHTML = ORBS[el.dataset.orb](); });
+  const paintOrbs = (root = document) => $$('[data-orb]', root).forEach(el => { el.innerHTML = orb({ lit: 1 }); });
 
-  /* ── Data, shaped like its sources. Initiative = a Linear project; billing = Stripe. ── */
-  const INITIATIVE = {
-    id: 'website', title: 'New website', status: () => S.live ? ['ok', 'Live'] : S.approved ? ['warn', 'Building'] : ['warn', 'Plan ready'],
-    progress: () => S.live ? 100 : S.approved ? 40 : 25, target: 'date to confirm',
-    purpose: "Customers find you, see today's bread and order ahead.",
-    value: 'More orders without more phone calls, and a site you never have to touch.',
-    impact: "Hours back from fewer phone calls, a cheaper site, and orders made online. Measured from launch day, and shown here.",
-    stages: [
-      { name: 'Look', sub: 'We mapped every tool, login and bill', when: 'Sep 22' },
-      { name: 'Plan', sub: 'Pages, wording and what to keep', when: 'Sep 29' },
-      { name: 'Build', sub: 'We build it; you see previews as we go', when: 'date to confirm' },
-      { name: 'Launch', sub: 'Goes live on your address', when: 'date to confirm' },
-      { name: 'Look after', sub: 'Hosting, updates and fixes, monthly', when: 'ongoing' }
-    ],
-    updates: () => [
-      ...(S.live ? [{ date: 'Jan 6', health: ['ok', 'On track'], note: 'Three months live. Orders ahead are averaging 18 a week, and calls about hours and stock are down to a few a week.' }] : []),
-      ...(S.approved ? [{ date: S.live ? 'Sep 30' : 'Today', health: ['ok', 'On track'], note: "Thanks for the OK. We've started the build. Your first preview of the menu page comes next." }] : []),
-      { date: 'Sep 29', health: ['ok', 'On track'], note: 'We mapped your tools: a Square till, Instagram, a Wix site and a Google profile. The plan keeps Square and Instagram and replaces the Wix site.' },
-      { date: 'Sep 22', health: ['ok', 'On track'], note: 'Kick-off call done. We have your logins and the photos you sent.' }
-    ],
-    deliverables: () => [
-      { id: 'map', t: 'Tool map', s: 'What you have, what it costs, what we keep', state: ['ok', 'Ready'] },
-      { id: 'plan', t: 'Site plan', s: 'Pages and wording for your review', state: S.approved ? ['ok', 'Approved'] : ['warn', 'Needs you'] },
-      { id: 'home', t: 'Homepage preview', s: 'The live preview of your new site', state: ['quiet', S.approved ? 'In progress' : 'Next'] }
-    ]
-  };
-  const INVOICES = () => S.paid ? [
-    { no: 'SLNX-0001', t: 'New website · your option', date: 'Today', status: ['ok', 'Paid'] },
-    { no: 'SLNX-0002', t: 'Care plan · first month', date: 'Next month', status: ['quiet', 'Upcoming'] }
-  ] : [];
-
-  /* ── Pricing, per initiative. Value first: what the result is worth to you, in your own number
-     from the call. Then three options, highest first. Amounts stay marked until Solenix sets them. ── */
-  const WORTH = { note: 'Your number from our call, Sep 22', basis: 'More orders online, and fewer calls about hours and stock.' };
-  const OPTIONS = [
-    { id: 'full', name: 'Website, ordering and AI', gist: 'The whole job, done once.', incl: ['The new website, written with you', 'Order ahead for pickup, from Square', 'An assistant that drafts your supplier orders', 'Training for you and your team'] },
-    { id: 'site', name: 'Website and ordering', gist: 'The site, and customers ordering from it.', incl: ['The new website, written with you', 'Order ahead for pickup, from Square', 'Training for you'] },
-    { id: 'lite', name: 'Website', gist: 'A clean new site on your own address.', incl: ['The new website, written with you', 'Hours, menu and map kept current'] }
+  /* ── Data, shaped like its sources. An initiative is a Linear project: its description holds purpose, value
+     and impact; milestones are stages; project updates are the dated notes; issues are deliverables.
+     Money is Stripe. Anything not yet set or counted is marked, never guessed. ── */
+  const STAGES = [['Look', 'We map what you have'], ['Plan', 'What we will do, and three options'], ['Build', 'We build; you see it as we go'], ['Launch', 'It goes live'], ['Look after', 'Kept running, measured monthly']];
+  const WAGE = 32.35, WK = 4.33;   /* average hourly wage, Newfoundland and Labrador; weeks in a month */
+  const INIS = [
+    { id: 'launch', title: 'Launch solenix.dev',
+      purpose: 'An owner finds Solenix, gets it in a minute, and books a call.', value: 'Booked calls that come from the site, not from chasing.', impact: 'Hours back, bills cut and calls booked, counted from launch day and shown here.',
+      updates: [{ date: 'Sep 30', note: 'Homepage is in its final passes. The calculator runs on researched numbers, and the type holds up on big screens.' }, { date: 'Sep 28', note: "Site rebuilt around the owner's problem: too many tools, and nobody who knows them all." }],
+      deliv: [
+        { id: 'home', t: 'New homepage', s: 'The preview, ready for your OK', st: () => S.seenSite ? ['ok', 'Seen'] : ['warn', 'Needs you'], d: '' },
+        { id: 'calc', t: 'What it could be worth', s: 'The calculator on the homepage', st: () => ['ok', 'Ready'], d: 'Six questions, a low-to-high yearly range, and a source behind every rate. It sits on the homepage above the pricing section.' },
+        { id: 'move', t: 'Move to the new build', s: 'Every page kept, nothing lost', st: () => ['quiet', S.opt.launch ? 'In progress' : 'Next'], d: 'The live site moves onto the new build with every page unchanged. You see it here before it goes live.' }],
+      options: [
+        { id: 'full', name: 'Site, booking and AI', gist: 'The whole job, done once.', incl: ['The new homepage and calculator, live', 'A booking link in place of the email button', 'An assistant that drafts replies to enquiries', 'Visitors and booked calls counted here'] },
+        { id: 'mid', name: 'Site and booking', gist: 'The site, and calls booked from it.', incl: ['The new homepage and calculator, live', 'A booking link in place of the email button', 'Visitors and booked calls counted here'] },
+        { id: 'lite', name: 'Site', gist: 'The new site on your own address.', incl: ['The new homepage and calculator, live', 'Visitors counted here'] }],
+      roi: [
+        { k: 'time', t: 'Time saved', how: `Site edits and answering enquiries by hand. An hour is valued at $${WAGE}, the average wage in Newfoundland and Labrador.`, before: '6 h a week', pred: '0.5–1.5 h back a week', now: '1.2 h back a week', v: [0.48 * WAGE * WK, 1.5 * WAGE * WK], vNow: 1.2 * WAGE * WK, calc: 'hours × 8–25% × $32.35 × 4.33 weeks' },
+        { k: 'saved', t: 'Money saved', how: 'Software bills that overlap once everything runs on one setup.', before: '$180 a month', pred: '$18–$50 less a month', now: '$30 less a month', v: [18, 50], vNow: 30, calc: 'monthly software × 10–28%' },
+        { k: 'made', t: 'Money made', how: 'Enquiries answered sooner through the booking link. A typical setup is $5,000.', before: '8 enquiries a month', pred: '3–10% more become clients', now: '1 extra client in 3 months', v: [8 * 0.03 * 5000, 8 * 0.10 * 5000], vNow: 5000 / 3, calc: 'enquiries × 3–10% × $5,000' }] },
+    { id: 'portal', title: 'Client portal v1',
+      purpose: 'Every client sees their site, their initiatives and their bills in one place.', value: 'Fewer update emails and calls, for them and for us.', impact: 'Hours a week no longer spent on updates.',
+      updates: [{ date: 'Sep 30', note: 'Sign-in is one tap: passkey, Google or Apple, with the email link as the fallback. Solenix is set up as the first business in the portal.' }],
+      deliv: [
+        { id: 'signin', t: 'One-tap sign-in', s: 'Passkey, Google, Apple, email link', st: () => ['ok', 'Ready'], d: 'Invite only. A returning visitor on the same device is already signed in.' },
+        { id: 'tabs', t: 'Overview, Initiatives, Billing', s: 'The three places a client looks', st: () => ['quiet', 'In progress'], d: 'Your website and next action, what we are working on and what it is worth, and what it costs.' },
+        { id: 'stripe', t: 'Pay from the portal', s: 'Stripe Checkout and invoices', st: () => ['quiet', 'Next'], d: 'Choosing an option opens Stripe Checkout. Invoices and receipts stay on Stripe.' }],
+      options: [
+        { id: 'full', name: 'Portal, payments and your AI', gist: 'Everything a client needs, in one place.', incl: ['Overview, Initiatives and Billing', 'One-tap sign-in, invite only', 'Pay on Stripe from the portal', 'Your AI and its tools on the Overview'] },
+        { id: 'mid', name: 'Portal and payments', gist: 'See it and pay for it.', incl: ['Overview, Initiatives and Billing', 'One-tap sign-in, invite only', 'Pay on Stripe from the portal'] },
+        { id: 'lite', name: 'Portal', gist: 'See where everything is at.', incl: ['Overview, Initiatives and Billing', 'One-tap sign-in, invite only'] }],
+      roi: [
+        { k: 'time', t: 'Time saved', how: 'Status emails and "where is it at?" calls, once clients are in the portal.', before: '4 h a week', pred: '0.3–1 h back a week', v: [0.32 * WAGE * WK, 1 * WAGE * WK], calc: 'hours × 8–25% × $32.35 × 4.33 weeks' },
+        { k: 'saved', t: 'Money saved', none: 'No software is replaced by this one.' },
+        { k: 'made', t: 'Money made', none: 'Counted under First five clients.' }] },
+    { id: 'five', title: 'First five clients', stage: 1,
+      purpose: 'Five small businesses in Newfoundland and Labrador, each with one AI at the centre.', value: 'Proof, in their own numbers, that it saves time and money.', impact: 'Paying clients, and what each one measured.',
+      updates: [{ date: 'Sep 30', note: 'Law firms first, then bakeries, clinics and trades. The offer and the pricing model are set.' }],
+      deliv: [
+        { id: 'offer', t: 'The offer for law firms', s: 'What we set up, and what it is worth', st: () => ['ok', 'Ready'], d: "The firm's AI set up and connected to its documents, with every lawyer and paralegal taught to use it. Fixed price, agreed in writing." },
+        { id: 'list', t: 'Who to call first', s: 'A short list of firms', st: () => ['quiet', 'Next'], d: 'A short list of local firms, with what each one runs on today.' }],
+      roi: [
+        { k: 'time', t: 'Time saved', none: 'Not part of this one.' },
+        { k: 'saved', t: 'Money saved', none: 'Not part of this one.' },
+        { k: 'made', t: 'Money made', how: 'Setups and care plans from the first five clients. Counted from Stripe.', before: '$0 a month', predHtml: TBD('set with the plan'), calc: 'paid invoices, from Stripe' }] }
   ];
-  const CARE = { incl: ['Hosting, backups and updates', 'Changes when you ask, fixes in plain words', 'Your portal, and a person who answers'] };
-  const chosen = () => OPTIONS.find(o => o.id === S.option) || (S.approved ? OPTIONS[1] : null);
+  const ini = id => INIS.find(I => I.id === id) || INIS[0];
+  const chosen = I => I.options && I.options.find(o => o.id === S.opt[I.id]);
+  const isLive = I => I.id === 'launch' && S.live;
+  const stageOf = I => isLive(I) ? 4 : I.options ? (chosen(I) ? 2 : 1) : I.stage;
+  const statusOf = I => isLive(I) ? ['ok', 'Live'] : chosen(I) ? ['warn', 'Building'] : I.options ? ['warn', 'Plan ready'] : ['quiet', 'Planning'];
+  const worth = I => { const r = I.roi.filter(x => x.v); if (!r.length) return null; return isLive(I) ? r.reduce((a, x) => a + (x.vNow || 0), 0) : [r.reduce((a, x) => a + x.v[0], 0), r.reduce((a, x) => a + x.v[1], 0)]; };
+  const CARE = ['Hosting, backups and updates', 'Changes when you ask, fixes in plain words', 'Your portal, and a person who answers'];
 
-  /* ── Your route: the homepage's five stops, completing themselves from what has happened. ── */
+  /* ── Your AI: one assistant, and the tools it can reach. This is the heart of what we set up. ── */
+  const TOOLS = [
+    { id: 'pay', cat: 'Payments', name: 'Stripe', asks: ['Who still owes us?', 'What came in this month?'] },
+    { id: 'mail', cat: 'Email', name: 'Google Workspace', asks: ['Which emails still need an answer?', 'Draft a reply to the newest enquiry'] },
+    { id: 'files', cat: 'Files', name: 'Google Drive', asks: ['Find the proposal we sent last week'] },
+    { id: 'cal', cat: 'Calendar', name: 'Google Calendar', asks: ['Find an hour for a client call this week'] },
+    { id: 'site', cat: 'Website', name: 'Vercel', asks: ['Is the site up right now?', 'What changed on the site this week?'] },
+    { id: 'stats', cat: 'Visitors', name: 'PostHog', asks: ['What brought people to the site this month?'] },
+    { id: 'work', cat: 'Projects', name: 'Linear', asks: ["What's left before launch?"] },
+    { id: 'books', cat: 'Books', next: 'Connect your books and you can ask who owes you and what you spent, without opening a spreadsheet. Saves the hour you spend on it each week.' },
+    { id: 'ads', cat: 'Ads', next: 'Connect your ads and you can ask which one brought in calls before you spend another dollar.' }
+  ];
+
+  /* ── Start here: five steps at most, quick wins first. Each ticks itself off from what you actually did. ── */
   const STEPS = () => [
-    { id: 'call', t: 'A clear picture', done: true, note: 'Sep 22' },
-    { id: 'details', t: 'Your own portal', done: S.detailsDone, note: 'Done' },
-    { id: 'site', t: 'See your new site', done: S.seenSite, act: 'Open the preview', go: () => openPreview() },
-    { id: 'approve', t: 'Choose your option', done: S.approved, act: 'See the options', go: () => go('app', { tab: 'initiatives', view: 'detail' }) },
-    { id: 'pay', t: 'Looked after', done: S.paid, act: 'Finish payment', go: () => openDlg('checkout') }
+    { id: 'in', t: 'Sign in with one tap', done: true, note: S.method },
+    { id: 'site', t: 'See your new homepage', done: S.seenSite, go: () => openPreview() },
+    { id: 'ask', t: 'Ask your AI one thing', done: S.asked, go: () => focusAi() },
+    { id: 'choose', t: 'Choose your option', done: !!S.opt.launch, go: () => go('app', { tab: 'initiatives', view: 'detail', ini: 'launch' }) },
+    { id: 'pay', t: 'Start your plan', done: S.paid, go: () => { fillCheckout(); openDlg('checkout'); } }
   ];
   const nextStep = () => STEPS().find(s => !s.done);
 
   /* ── Router. No hash writes: the preview may refuse them. ── */
-  function go(screen, opts = {}) {
-    if (screen === 'onb1') { screen = 'onb'; S.onb = 1; }
-    S.screen = screen; Object.assign(S, opts); save(); render();
-    window.scrollTo(0, 0);
-  }
+  function go(screen, opts = {}) { S.screen = screen; Object.assign(S, opts); save(); render(); window.scrollTo(0, 0); }
   function render() {
     $$('[data-screen]').forEach(el => { el.hidden = el.dataset.screen !== S.screen; });
     document.body.dataset.scr = S.screen;
-    $$('[data-bind="email"]').forEach(el => el.textContent = S.email);
-    $$('[data-bind="name"]').forEach(el => el.textContent = S.name);
-    $$('[data-bind="method"]').forEach(el => el.textContent = S.method);
-    $$('[data-bind="tried"]').forEach(el => el.textContent = S.tried || 'that account');
+    const inv = S.inv || { name: 'Sam Power', biz: 'Harbour Law', email: 'sam@harbourlaw.ca' };
+    const B = { email: S.as || S.email, name: S.name, biz: S.biz, site: S.site, initials: initials(), method: S.method, tried: S.tried || 'that account',
+      'inv-email': inv.email, 'inv-first': inv.name.trim().split(/\s+/)[0], 'inv-biz': inv.biz };
+    Object.keys(B).forEach(k => $$(`[data-bind="${k}"]`).forEach(el => el.textContent = B[k]));
     if (S.screen === 'signin') $('#email').value = S.email;
-    $$('[data-bind="first"]').forEach(el => el.textContent = first());
-    $$('[data-bind="biz"]').forEach(el => el.textContent = S.biz);
-    $$('[data-bind="site"]').forEach(el => el.textContent = S.site);
-    $$('[data-bind="initials"]').forEach(el => el.textContent = initials());
     const scr = $(`[data-screen="${S.screen}"]`); if (scr) paintOrbs(scr);
-    if (S.screen === 'onb') renderOnb();
     if (S.screen === 'app') renderApp();
   }
 
-  /* ── Sign in ── */
+  /* ── Sign in: one tap first, the emailed link as the fallback. Invite only. ── */
+  const invitedEmails = () => [S.email, ...S.invited.map(c => c.email)];
   $('[data-signin]').addEventListener('submit', e => {
     e.preventDefault();
     const inp = $('#email'), ok = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(inp.value.trim());
     inp.setAttribute('aria-invalid', String(!ok)); $('#email-err').hidden = ok;
     if (!ok) return inp.focus();
-    const em = inp.value.trim().toLowerCase(), who = Object.keys(CLIENTS).find(c => CLIENTS[c].email === em);
-    if (!who) return go('noinvite', { tried: em });
-    setClient(who); go('check');
+    const em = inp.value.trim().toLowerCase();
+    if (!invitedEmails().includes(em)) return go('noinvite', { tried: em });
+    go('check', { as: em === S.email ? '' : em });
   });
-  /* One tap in. Solenix lands on its Overview; a brand-new client answers three short questions first. */
-  function signIn(method) { S.signedIn = true; S.method = method; if (sx() || S.detailsDone) go('app', { tab: 'overview', view: 'list' }); else go('onb1'); }
+  function signIn(method) { S.signedIn = true; S.method = method; S.as = ''; go('app', { tab: 'overview', view: 'list' }); }
   $('[data-passkey]').addEventListener('click', e => { const b = e.currentTarget, t = $('[data-passkey-t]'); b.disabled = true; t.textContent = 'Waiting for Face ID…'; setTimeout(() => { b.disabled = false; t.textContent = 'Sign in with a passkey'; signIn('Passkey'); }, reduce ? 0 : 900); });
   $('[data-google]').addEventListener('click', () => signIn('Google'));
   $('[data-apple]').addEventListener('click', () => signIn('Apple'));
-  $('[data-confirm]').addEventListener('click', () => signIn('Email link'));
+  $('[data-confirm]').addEventListener('click', () => {
+    if (S.as) { S.as = ''; if (S.signedIn) { go('app', { tab: 'clients' }); toast('That is what your client sees. Their portal starts empty.'); } else { go('signin'); toast('In the prototype, only your own account opens the portal.'); } return; }
+    signIn('Email link');
+  });
+  $('[data-resend]').addEventListener('click', () => toast('New link sent to ' + (S.as || S.email)));
   $('[data-acct]').addEventListener('click', () => openDlg('acct'));
   $$('[data-signout]').forEach(b => b.addEventListener('click', () => { closeDlg(); S.signedIn = false; go('signin'); toast('Signed out on this device'); }));
-  $('[data-resend]').addEventListener('click', () => toast('New link sent to ' + S.email));
-
-  /* ── Onboarding: one question per step. ── */
-  function renderOnb() {
-    $$('[data-step]').forEach(el => el.hidden = +el.dataset.step !== S.onb);
-    $$('.steps i').forEach((i, k) => i.classList.toggle('on', k < Math.min(S.onb, 3)));
-    $('[data-step-label]').textContent = S.onb > 3 ? 'Done' : S.onb + ' of 3';
-    $('[data-onb-back]').style.visibility = S.onb === 1 ? 'hidden' : 'visible';
-    $('.onb-actions').classList.toggle('solo', S.onb > 3);
-    $('[data-onb-next]').textContent = S.onb === 3 ? 'Finish' : S.onb > 3 ? 'See my Overview' : 'Continue';
-    const f = $(`[data-step="${S.onb}"] .input`); if (f) setTimeout(() => f.focus({ preventScroll: true }), 50);
-  }
-  $('[data-onb]').addEventListener('submit', e => {
-    e.preventDefault();
-    if (S.onb === 1) S.name = $('#f-name').value.trim() || S.name;
-    if (S.onb === 2) { S.biz = $('#f-biz').value.trim() || S.biz; S.site = $('#f-site').value.trim() || S.site; }
-    if (S.onb === 3) {
-      const pc = $('#f-post'), ok = /^[A-Za-z]\d[A-Za-z]\s?\d[A-Za-z]\d$/.test(pc.value.trim());
-      pc.setAttribute('aria-invalid', String(!ok)); $('#post-err').hidden = ok; if (!ok) return pc.focus();
-      Object.assign(S, { street: $('#f-street').value, city: $('#f-city').value, post: pc.value.toUpperCase(), prov: $('#f-prov').value, detailsDone: true });
-    }
-    if (S.onb > 3) return go('app', { tab: 'overview', view: 'list' });
-    S.onb++; save(); render();
-  });
-  $('[data-onb-back]').addEventListener('click', () => { S.onb = Math.max(1, S.onb - 1); save(); render(); });
+  $$('[data-go]').forEach(b => b.addEventListener('click', () => go(b.dataset.go, b.dataset.go === 'signin' ? { as: '' } : {})));
 
   /* ── App shell ── */
   const main = $('main.app');
   function renderApp() {
     $$('[data-tab]').forEach(a => { if (a.dataset.tab === S.tab) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
-    const n = sx() ? null : nextStep();
-    $$('[data-dot="initiatives"]').forEach(d => d.hidden = !(n && n.id === 'approve'));
+    const n = nextStep();
+    $$('[data-dot="initiatives"]').forEach(d => d.hidden = !(n && n.id === 'choose'));
     $$('[data-dot="billing"]').forEach(d => d.hidden = !(n && n.id === 'pay'));
     const key = S.tab + (S.tab === 'initiatives' ? S.view : '');
     if (!S.loaded[key]) {
-      main.innerHTML = skeleton(); S.loaded[key] = true;
+      main.innerHTML = `<div class="sk" aria-busy="true" aria-label="Loading"><i style="height:56px;width:46%"></i><i style="height:18px;width:60%"></i><i style="height:320px"></i><i style="height:220px"></i></div>`; S.loaded[key] = true;
       clearTimeout(renderApp.t); renderApp.t = setTimeout(() => { if (S.screen === 'app') paint(); }, 380);
     } else paint();
   }
   function paint() {
-    main.innerHTML = sx() ? (S.tab === 'overview' ? sxOverview() : S.tab === 'billing' ? sxBilling() : S.view === 'detail' ? sxDetail() : sxInitiatives())
-      : S.tab === 'overview' ? overview() : S.tab === 'billing' ? billing() : S.view === 'detail' ? detail() : initiatives();
+    main.innerHTML = S.tab === 'overview' ? overview() : S.tab === 'billing' ? billing() : S.tab === 'clients' ? clients() : S.view === 'detail' ? detail() : initiatives();
     main.firstElementChild && main.firstElementChild.classList.add('screen');
     const inline = $('[data-site-inline]', main); if (inline) inline.innerHTML = siteMarkup();
   }
-  const skeleton = () => `<div class="sk" aria-busy="true" aria-label="Loading"><i style="height:56px;width:46%"></i><i style="height:18px;width:60%"></i><i style="height:320px"></i><i style="height:220px"></i></div>`;
   $$('[data-tab]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); go('app', { tab: a.dataset.tab, view: 'list' }); }));
 
-  /* The client's own site, as it will look. */
-  const siteMarkup = () => sx() ? `<div class="b-bar" aria-hidden="true"><i></i><i></i><i></i><span class="b-url">solenix.dev</span></div>
-    <div class="sxs" aria-label="The new solenix.dev homepage">
+  /* ── Overview: the website, the one next action, your AI, results, and Start here. ── */
+  const siteMarkup = () => `<div class="b-bar" aria-hidden="true"><i></i><i></i><i></i><span class="b-url">preview.${esc(S.site)}</span></div>
+    <div class="sxs" aria-label="The new ${esc(S.site)} homepage">
       <div class="sxs-nav"><b><svg aria-hidden="true"><use href="#mark"/></svg>Solenix</b><span>How it settles · Portal · Pricing</span></div>
       ${orb({ lit: 1 })}
       <p class="sxs-h">Your business is a <em>three-body problem.</em></p>
       <p>We put one AI at the centre. You ask, it gets done.</p><span class="ms-btn">Book a call</span>
-    </div>` : `<div class="b-bar" aria-hidden="true"><i></i><i></i><i></i><span class="b-url">preview.${esc(S.site)}</span></div>
-    <div class="ms" aria-label="Preview of the new ${esc(S.biz)} website">
-      <div class="ms-nav"><b>${esc(S.biz)}</b><span>Bread · Pastry · Visit</span></div>
-      <div class="ms-hero"><div><p class="ms-h">Bread worth the walk down Water Street.</p><p>Sourdough, rye and pastry, baked every morning.</p><span class="ms-btn">Order for pickup</span></div>
-      <img src="assets/portal/maple-bread.jpg" width="1100" height="731" alt="Loaves of fresh bread on a wooden board"></div>
     </div>`;
   function openPreview() { $('[data-site-frame]').innerHTML = siteMarkup(); openDlg('preview'); if (!S.seenSite) { S.seenSite = true; save(); } }
-
-  function nextCard() {
-    const n = nextStep();
-    if (!n) return `<section class="card next lit" data-od-id="waiting-on-you"><span class="label">Waiting on you</span><h2>Nothing needs you.</h2><p>Your plan is running and we're building. We'll post here when there's something to see.</p></section>`;
-    const copy = {
-      site: ['Take a look at your new site.', "It's a private preview. Nobody else can see it yet."],
-      approve: ['Your three options are ready.', 'Each one is weighed against what the result is worth to you. Pick the one that fits.'],
-      pay: ['One step left: payment.', 'Your chosen option plus your monthly care plan, on one secure page.']
-    }[n.id];
-    return `<section class="card next lit" data-od-id="waiting-on-you"><span class="label">Waiting on you</span><h2>${copy[0]}</h2><p>${copy[1]}</p><button class="btn btn-primary" type="button" data-next>${n.act}<svg aria-hidden="true"><use href="#i-arrow"/></svg></button></section>`;
-  }
-  function route() {
-    const st = STEPS(), done = st.filter(s => s.done).length, n = nextStep(), cur = n ? st.indexOf(n) : -1;
-    const lit = done >= st.length ? 1 : STOPS[done - 1];
-    return `<section class="card route" data-od-id="start-here"><div class="card-h" style="margin:0"><h2>Your route</h2><span class="label">${done} of ${st.length}</span></div>
-      ${orb({ lit, stops: STOPS, cur, done, suns: done >= st.length, agent: null, draw: !reduce, big: true })}
-      <p class="sr-only">${done} of ${st.length} steps done.</p>
-      <ol class="check">${st.map((s, k) => `<li class="${s.done ? 'done' : n && n.id === s.id ? 'cur' : ''}"><span class="no">${String(k + 1).padStart(2, '0')}</span><span class="t">${s.t}<span class="sr-only">${s.done ? ', done' : ''}</span></span>${s.done ? `<span class="ok">${s.note || 'Done'}</span>` : s.act ? `<button class="btn btn-quiet btn-sm" type="button" data-step-go="${s.id}">Go</button>` : ''}</li>`).join('')}</ol></section>`;
-  }
-  function overview() {
-    const hr = new Date().getHours(), hi = hr < 12 ? 'Good morning' : hr < 18 ? 'Good afternoon' : 'Good evening';
-    return `<div><div class="page-h"><p class="eyebrow">${esc(S.biz)} · your portal</p><h1>${hi}, <span class="grad">${esc(first())}.</span></h1><p>Everything in one place. Nothing to chase.</p></div>
-    <div class="ov">${nextCard()}
-      <section class="card site lit" data-od-id="website-hero">
-        <div class="site-h"><div style="display:grid;gap:6px;"><span class="label">Your website</span><span class="dom">${esc(S.site)}</span></div><span class="badge warn">Building</span></div>
-        <div class="browser" data-site-inline></div>
-        <div class="site-f">
-          <div><span class="label">Status</span><strong>Preview ready</strong><span class="small muted">Not public yet</span></div>
-          <div><span class="label">Last update</span><strong>${S.approved ? 'Today' : 'Sep 29'}</strong><span class="small muted">${S.approved ? 'Build started' : 'Homepage draft'}</span></div>
-          <div><span class="label">Visitors · 30 days</span><strong>Not live yet</strong><span class="flat" aria-hidden="true"></span></div>
-        </div>
-        <div style="padding: 0 var(--space-5) var(--space-5);" class="site-act"><button class="btn btn-ghost btn-sm" type="button" data-preview>Open the preview</button><span class="small muted">Deploys from Vercel. Visitors from PostHog, once you're live.</span></div>
-      </section>
-      ${route()}</div></div>`;
-  }
-  /* ── Solenix, client #1. Its own site, its own initiatives, and nothing to pay.
-     Anything not yet measured is marked, never guessed. ── */
-  const TBD = t => `<span class="tbd">${t || 'to confirm'}</span>`;
-  const SX = [
-    { id: 'launch', title: 'Launch solenix.dev', status: ['warn', 'Building'], stage: 2, head: 'New homepage ready for your OK',
-      purpose: 'An owner finds Solenix, gets it in a minute, and books a call.', value: 'Booked calls that come from the site, not from chasing.', impact: 'Booked calls and visitors, counted from launch day and shown here.',
-      rows: [
-        { t: 'Booked calls a month', how: 'Counted from the booking link on the site.', b: TBD(), p: TBD(), m: '', mn: 'Counted from launch day' },
-        { t: 'Visitors a month', how: 'People who open solenix.dev. From PostHog.', b: TBD('from PostHog'), p: TBD(), m: '', mn: 'Counted from launch day' }],
-      updates: [{ date: 'Sep 30', note: 'Homepage is in its final passes. The calculator runs on researched numbers, and the type holds up on big screens.' }, { date: 'Sep 28', note: "Site rebuilt around the owner's problem: too many tools, and nobody who knows them all." }] },
-    { id: 'portal', title: 'Client portal v1', status: ['warn', 'Building'], stage: 2, head: 'Solenix is using it first',
-      purpose: 'Every client sees their site, their initiatives and their bills in one place.', value: 'Fewer update emails and calls, for them and for us.', impact: 'Businesses using it, and the hours a week spent on updates.',
-      rows: [
-        { t: 'Businesses using it', how: 'Counted from sign-ins. Solenix is the first.', b: '<strong>0</strong>', p: '<strong>5</strong>', m: '<strong>1</strong>', mn: 'Solenix, since Sep 30' },
-        { t: 'Hours a week on updates', how: 'Time spent on status emails and "where is it at?" calls.', b: TBD(), p: TBD(), m: '', mn: 'Starts with the first client' }],
-      updates: [{ date: 'Sep 30', note: 'Sign-in designed: passkey, Google and Apple, with the email link as the fallback. Solenix set up as the first business in the portal.' }] },
-    { id: 'five', title: 'First five clients', status: ['quiet', 'Planning'], stage: 1, head: '0 of 5 so far',
-      purpose: 'Five small businesses in Newfoundland and Labrador, each with one AI at the centre.', value: 'Proof, in their own numbers, that it saves time and money.', impact: 'Paying clients, and what each one measured.',
-      rows: [
-        { t: 'Paying clients', how: 'Counted from Billing.', b: '<strong>0</strong>', p: '<strong>5</strong>', m: '<strong>0</strong>', mn: 'As of Sep 30' },
-        { t: 'Money made a month', how: 'Setups and care plans, from Stripe.', b: '<strong>$0</strong>', p: TBD(), m: '<strong>$0</strong>', mn: 'As of Sep 30' }],
-      updates: [{ date: 'Sep 30', note: 'Law firms first, then bakeries, clinics and trades. The offer and the pricing model are set.' }] }
-  ];
+  function focusAi() { if (S.tab !== 'overview' || S.screen !== 'app') { go('app', { tab: 'overview' }); S.loaded.overview = true; paint(); } const el = $('[data-ai]', main); if (el) { window.scrollTo(0, el.getBoundingClientRect().top + scrollY - 84); el.focus({ preventScroll: true }); } toast('Pick a question under Your AI'); }
   const VIS = [9, 12, 8, 14, 11, 7, 6, 13, 15, 12, 16, 14, 9, 8, 15, 18, 14, 17, 19, 12, 10, 18, 21, 17, 20, 22, 15, 13, 21, 24];   /* Example series, 30 days */
   const spark = v => { const mx = Math.max(...v), pts = v.map((y, k) => `${(k / (v.length - 1) * 100).toFixed(1)} ${(30 - y / mx * 28).toFixed(1)}`); return `<svg class="spark" viewBox="0 0 100 30" preserveAspectRatio="none" role="img" aria-label="Visitors a day over 30 days, example data"><path class="a" d="M0 30 L${pts.join(' L')} L100 30Z"/><path class="l" d="M${pts.join(' L')}"/></svg>`; };
-  const bpm = I => `<div class="bpm-cols" aria-hidden="true"><span></span><span class="label">Baseline</span><span class="label">Predicted</span><span class="label">Measured</span></div>
-    <ul class="bpm">${I.rows.map(r => `<li class="bpm-r"><div class="bpm-t"><b>${r.t}</b><small>${r.how}</small></div>
-      <div class="bpm-c"><span class="label bpm-m">Baseline</span>${r.b}</div><div class="bpm-c"><span class="label bpm-m">Predicted</span>${r.p}</div>
-      <div class="bpm-c"><span class="label bpm-m">Measured</span>${r.m || '<span class="badge quiet">Not yet</span>'}<small>${r.mn}</small></div></li>`).join('')}</ul>`;
-  function sxOverview() {
+  function nextCard() {
+    const n = nextStep();
+    if (!n) return `<section class="card next lit" data-od-id="next-action"><span class="label">Your one next action</span><h2>Nothing needs you.</h2><p>Your plan is running. New results show up below as they are counted.</p></section>`;
+    const c = { site: ['Look at your new homepage.', 'It takes a minute. It is ready for your OK before it replaces the live site.', 'Open the preview'],
+      ask: ['Ask your AI one thing.', 'Pick a question below. It answers from your own tools, in plain words.', 'Show me what to ask'],
+      choose: ['Your three options are ready.', 'Each one is weighed against what the result is worth to you. Pick the one that fits.', 'See the options'],
+      pay: ['One step left: start your plan.', 'Your chosen option and your monthly care plan, on one secure page.', 'Finish payment'] }[n.id];
+    return `<section class="card next lit" data-od-id="next-action"><span class="label">Your one next action</span><h2>${c[0]}</h2><p>${c[1]}</p><button class="btn btn-primary" type="button" data-next>${c[2]}<svg aria-hidden="true"><use href="#i-arrow"/></svg></button></section>`;
+  }
+  function aiCard() {
+    const on = TOOLS.filter(t => t.asks), t = TOOLS.find(x => x.id === S.tool) || TOOLS[0];
+    return `<section class="card ai" data-ai tabindex="-1" data-od-id="your-ai">
+      <div class="ai-top"><svg aria-hidden="true"><use href="#mark"/></svg><div><span class="label">Your AI</span><h2>Claude, set up for ${esc(S.biz)}</h2></div><span class="badge ok">${on.length} connected</span></div>
+      <p class="muted small">One assistant that can reach your tools. Ask it in plain words. It drafts and prepares; you check and approve.</p>
+      <div class="ai-tools" role="group" aria-label="Tools your AI can reach">${TOOLS.map(x => `<button class="ai-tool${x.asks ? '' : ' off'}" type="button" data-tool="${x.id}" aria-pressed="${x.id === t.id}"><i aria-hidden="true"></i>${x.cat}<small>${x.asks ? x.name : 'Next'}</small></button>`).join('')}</div>
+      <div class="ai-asks" aria-live="polite">${t.asks
+        ? `<span class="label">${t.cat} is connected. Just ask</span>${t.asks.map(a => `<button class="ai-ask" type="button" data-ask="${esc(a)}"><q>${esc(a)}</q><span class="cp">Copy</span></button>`).join('')}`
+        : `<span class="label">${t.cat}: next to connect</span><p class="small">${t.next}</p><button class="btn btn-ghost btn-sm" type="button" data-connect="${t.cat}" style="justify-self:start">Ask us to connect it</button>`}</div>
+      <div class="site-act"><button class="btn btn-ghost btn-sm" type="button" data-toast="Opening Claude">Open Claude <span class="opens">opens Claude</span></button><span class="small muted">Connected tools are an example until yours are checked.</span></div>
+    </section>`;
+  }
+  function startCard() {
+    const st = STEPS(), done = st.filter(s => s.done).length, n = nextStep(), cur = n ? st.indexOf(n) : -1;
+    return `<section class="card route" data-od-id="start-here"><div class="card-h" style="margin:0"><h2>Start here</h2><span class="label">${done} of ${st.length}</span></div>
+      ${orb({ lit: done >= st.length ? 1 : STOPS[done - 1], stops: STOPS, cur, done, suns: done >= st.length, draw: !reduce, big: true })}
+      <ol class="check">${st.map((s, k) => `<li class="${s.done ? 'done' : n && n.id === s.id ? 'cur' : ''}"><span class="no">${String(k + 1).padStart(2, '0')}</span><span class="t">${s.t}<span class="sr-only">${s.done ? ', done' : ''}</span></span>${s.done ? `<span class="ok">${s.note || 'Done'}</span>` : `<button class="btn btn-quiet btn-sm" type="button" data-step-go="${s.id}">Go</button>`}</li>`).join('')}</ol>
+      <p class="small muted">Each step ticks itself off when you do it.</p></section>`;
+  }
+  function resultsCard() {
+    return `<section class="card res" data-od-id="your-results"><div class="card-h" style="margin:0"><h2>Your results so far</h2><span class="tag">Example</span></div>
+      <ul class="res-list">${INIS.map(I => { const w = worth(I), st = statusOf(I); return `<li><button type="button" data-open-ini="${I.id}"><b>${I.title}</b><span class="badge ${st[0]}">${st[1]}</span><span class="m">${!w ? 'Worth: set with the plan' : isLive(I) ? `<strong class="res-v ok">${cad(w)} a month</strong> measured` : `<strong class="res-v">${span(w)} a month</strong> predicted`}</span></button></li>`; }).join('')}</ul>
+      <p class="small muted">Time saved, money saved and money made, added up per initiative.</p></section>`;
+  }
+  function overview() {
     const hr = new Date().getHours(), hi = hr < 12 ? 'Good morning' : hr < 18 ? 'Good afternoon' : 'Good evening', total = VIS.reduce((a, b) => a + b, 0);
-    const next = S.seenSite
-      ? `<section class="card next lit" data-od-id="waiting-on-you"><span class="label">Your one next action</span><h2>Nothing needs you.</h2><p>Three initiatives are moving. Results show up below as they are measured.</p></section>`
-      : `<section class="card next lit" data-od-id="waiting-on-you"><span class="label">Your one next action</span><h2>Look at the new homepage.</h2><p>It is ready for your OK before it replaces the live site.</p><button class="btn btn-primary" type="button" data-preview>Open the preview<svg aria-hidden="true"><use href="#i-arrow"/></svg></button></section>`;
     return `<div><div class="page-h"><p class="eyebrow">${esc(S.biz)} · your portal</p><h1>${hi}, <span class="grad">${esc(first())}.</span></h1><p>Everything in one place. Nothing to chase.</p></div>
-    <div class="ov">${next}
+    <div class="ov2"><div class="ov-col">
       <section class="card site lit" data-od-id="website-hero">
         <div class="site-h"><div style="display:grid;gap:6px;"><span class="label">Your website</span><span class="dom">${esc(S.site)}</span></div><span class="badge ok">Live</span></div>
         <div class="browser" data-site-inline></div>
@@ -1028,204 +989,175 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
           <div><span class="label">Visitors · 30 days</span><strong>${total} <span class="tag">Example</span></strong>${spark(VIS)}</div>
         </div>
         <div style="padding: 0 var(--space-5) var(--space-5);" class="site-act"><button class="btn btn-ghost btn-sm" type="button" data-preview>Open the preview</button><span class="small muted">Status from Vercel. Visitors from PostHog.</span></div>
-      </section>
-      <section class="card res" data-od-id="your-results"><div class="card-h" style="margin:0"><h2>Your results</h2><span class="label">3 initiatives</span></div>
-        <ul class="res-list">${SX.map(I => `<li><button type="button" data-open-sx="${I.id}"><b>${I.title}</b><span class="badge ${I.status[0]}">${I.status[1]}</span><span class="m">${I.head}</span></button></li>`).join('')}</ul>
-        <p class="small muted">Each one shows its baseline, what we predict, and what was measured.</p></section></div></div>`;
-  }
-  const sxRail = stage => `<ol class="rail" style="--done:${stage}" aria-label="Stages">${INITIATIVE.stages.map((s, k) => `<li class="${k < stage ? 'done' : k === stage ? 'now' : ''}"${k === stage ? ' aria-current="step"' : ''}><span class="n">${k < stage ? '' : k + 1}</span><b>${s.name}</b></li>`).join('')}</ol>`;
-  function sxInitiatives() {
-    return `<div><div class="page-h"><p class="eyebrow">Initiatives</p><h1>What we're working on.</h1><p>Each one shows where it is, what's next, and what it's worth.</p></div>
-    <div class="sx-list">${SX.map((I, k) => `<a class="card ini-card${k ? '' : ' lit'}" href="#initiative" data-open-sx="${I.id}" data-od-id="initiative-card-${I.id}">
-        <div class="ini-top"><h2>${I.title}</h2><span class="badge ${I.status[0]}">${I.status[1]}</span></div>
-        ${sxRail(I.stage)}
-        <p class="sx-head"><span class="label">Right now</span><strong>${I.head}</strong></p>
-        <p class="upd"><strong style="color:var(--text)">${I.updates[0].date}:</strong> ${I.updates[0].note}</p></a>`).join('')}</div></div>`;
-  }
-  function sxDetail() {
-    const I = SX.find(x => x.id === S.ini) || SX[0];
-    return `<div><button class="btn btn-quiet back" type="button" data-back><svg aria-hidden="true"><use href="#i-back"/></svg>Initiatives</button>
-    <div class="detail-h"><div class="t"><h1>${I.title}</h1><span class="badge ${I.status[0]}">${I.status[1]}</span></div>
-      <section class="card lit" data-od-id="initiative-stages"><div class="card-h"><h2>Stages</h2><span class="label">Now: ${INITIATIVE.stages[I.stage].name}</span></div>${sxRail(I.stage)}</section></div>
-    <div class="detail"><div class="detail-main">
-      <section class="card roi-card lit" data-od-id="initiative-results"><div class="roi-h"><div style="display:grid;gap:6px"><span class="label">What it's worth</span><h2>Baseline, predicted, measured</h2></div></div>${bpm(I)}
-        <p class="small muted">A number shows only once it has been counted. Until then it is marked, not guessed.</p></section>
-      <section class="card" data-od-id="initiative-pvi"><div class="card-h"><h2>Why we're doing this</h2></div><div class="pvi">
-        <div><span class="label">Purpose</span><p>${I.purpose}</p></div><div><span class="label">Value</span><p>${I.value}</p></div><div><span class="label">Impact</span><p>${I.impact}</p></div></div></section>
-      <section class="card" data-od-id="initiative-updates"><div class="card-h"><h2>Latest updates</h2></div>${I.updates.map(u => `<div class="upd-item"><div class="upd-h"><span class="mono small muted">${u.date}</span><span class="badge ok">On track</span></div><p class="small">${u.note}</p></div>`).join('')}</section>
-    </div><div class="detail-side">
-      <section class="card cost" data-od-id="initiative-cost"><div class="card-h" style="margin:0"><h2>What it costs</h2></div>
-        <div class="ln"><span>Solenix's own project</span><span class="badge ok">Nothing to pay</span></div>
-        ${I.id === 'launch' ? '<button class="btn btn-ghost btn-sm" type="button" data-preview style="justify-self:start">Open the preview</button>' : ''}
-        <button class="btn btn-quiet btn-sm" type="button" data-to-billing style="justify-self:start">See it in Billing <svg aria-hidden="true"><use href="#i-arrow"/></svg></button></section>
-    </div></div></div>`;
-  }
-  function sxBilling() {
-    return `<div><div class="page-h"><p class="eyebrow">Billing</p><h1>One bill, not seven.</h1><p>What it costs, what you've paid, and what's next.</p></div>
-      <div class="bill"><section class="card plan lit" data-od-id="billing-plan"><div class="card-h" style="margin:0"><div style="display:grid;gap:6px;"><span class="label">Your plan</span><h2>Nothing to pay.</h2></div><span class="badge ok">All clear</span></div>
-          <p class="muted small">Solenix runs its own business here, so there is no plan to bill. When a plan starts, its two numbers sit in these two places.</p>
-          <div class="plan-cols">
-            <div class="plan-col">${RING_ONCE}<span class="label">Setup · one time</span><div class="amt"><strong class="mono">$0</strong><span class="small muted">due</span></div><p class="small muted">The agreed option for an initiative shows here once it is chosen.</p></div>
-            <div class="plan-col">${RING_MONTH}<span class="label">Care plan · monthly</span><div class="amt"><strong class="mono">$0</strong><span class="small muted">/month</span></div><p class="small muted">No plan running. Next bill: none.</p></div>
-          </div>
-          <p class="small muted">When there is something to pay, you pay on Stripe's secure page.</p></section>
-        <section class="card" data-od-id="billing-invoices"><div class="card-h"><h2>Invoices</h2><span class="label">0</span></div>
-          <div class="empty"><p class="small muted">No invoices yet. When there are, they look like this:</p><div class="ghost-row" aria-hidden="true"><span>Setup · SLNX-0001</span><span>Paid</span></div><div class="ghost-row" aria-hidden="true"><span>Care plan · first month</span><span>Upcoming</span></div></div></section></div></div>`;
+      </section>${aiCard()}</div>
+      <div class="ov-col">${nextCard()}${startCard()}${resultsCard()}</div></div></div>`;
   }
 
-  const rail = (stage, compact) => `<ol class="rail" style="--done:${stage}" aria-label="Stages">${INITIATIVE.stages.map((s, k) => `<li class="${k < stage ? 'done' : k === stage ? 'now' : ''}"${k === stage ? ' aria-current="step"' : ''}><span class="n">${k < stage ? '' : k + 1}</span><b>${s.name}</b>${compact ? '' : `<small>${k === stage ? 'Now' : k < stage && s.when === 'date to confirm' ? 'Done' : s.when === 'date to confirm' ? '<span class="tbd">to confirm</span>' : s.when}</small>`}</li>`).join('')}</ol>`;
+  /* ── Initiatives ── */
+  const rail = (stage, compact) => `<ol class="rail" style="--done:${stage}" aria-label="Stages">${STAGES.map((s, k) => `<li class="${k < stage ? 'done' : k === stage ? 'now' : ''}"${k === stage ? ' aria-current="step"' : ''}><span class="n">${k < stage ? '' : k + 1}</span><b>${s[0]}</b>${compact ? '' : `<small>${k === stage ? 'Now' : k < stage ? 'Done' : '<span class="tbd">date to confirm</span>'}</small>`}</li>`).join('')}</ol>`;
   function initiatives() {
-    const I = INITIATIVE, st = I.status(), u = I.updates()[0], stage = S.live ? 4 : S.approved ? 2 : 1;
     return `<div><div class="page-h"><p class="eyebrow">Initiatives</p><h1>What we're working on.</h1><p>Each one shows where it is, what's next, and what it's worth to you.</p></div>
-    <div class="ini-list">
-      <a class="card ini-card lit" href="#initiative" data-open-ini data-od-id="initiative-card-website">
+    <div class="sx-list">${INIS.map((I, k) => { const st = statusOf(I), w = worth(I); return `<a class="card ini-card${k ? '' : ' lit'}" href="#initiative" data-open-ini="${I.id}" data-od-id="initiative-card-${I.id}">
         <div class="ini-top"><h2>${I.title}</h2><span class="badge ${st[0]}">${st[1]}</span></div>
-        ${rail(stage, true)}
-        <div class="ini-meta"><div><span class="label">Progress</span><strong class="mono">${I.progress()}%</strong></div><div><span class="label">Stage</span><strong>${I.stages[stage].name}</strong></div><div><span class="label">${S.live ? 'Launched' : 'Target'}</span>${S.live ? '<strong>Oct 7</strong>' : `<span class="tbd" style="justify-self:start">${I.target}</span>`}</div></div>
-        ${S.live ? `<p class="worth-line"><span class="label">Worth so far</span><strong>${cad(roiTotal())} a month</strong><span class="badge ok">Measured</span><span class="tag">Example</span></p>` : ''}
-        <p class="upd"><strong style="color:var(--text)">${u.date}:</strong> ${u.note}</p>
-      </a>
-      <div class="card ghost-card" data-od-id="initiative-next-placeholder"><span class="label">What comes next</span><h2 style="font-size:var(--fs-h3)">Your next initiative</h2><p class="small muted">Once your site is live, we'll suggest the next thing worth doing, like an AI that drafts your supplier orders from Square so you stop over-ordering. It shows up here with what it's worth, and you say yes or no.</p></div>
-    </div></div>`;
+        ${rail(stageOf(I), true)}
+        <p class="sx-head"><span class="label">${isLive(I) ? 'Worth so far' : 'Worth'}</span>${!w ? TBD('set with the plan') : isLive(I) ? `<strong class="res-v ok">${cad(w)} a month</strong><span class="badge ok">Measured</span>` : `<strong class="res-v">${span(w)} a month</strong><span class="badge quiet">Predicted</span>`}${w ? '<span class="tag">Example</span>' : ''}</p>
+        <p class="upd"><strong style="color:var(--text)">${I.updates[0].date}:</strong> ${I.updates[0].note}</p></a>`; }).join('')}</div></div>`;
   }
-  function detail() {
-    const I = INITIATIVE, st = I.status(), stage = S.live ? 4 : S.approved ? 2 : 1;
-    return `<div><button class="btn btn-quiet back" type="button" data-back><svg aria-hidden="true"><use href="#i-back"/></svg>Initiatives</button>
-    <div class="detail-h"><div class="t"><h1>${I.title}</h1><span class="badge ${st[0]}">${st[1]}</span></div>
-      <section class="card lit" data-od-id="initiative-stages"><div class="card-h"><h2>Stages</h2><span class="label">Now: ${I.stages[stage].name}</span></div>${rail(stage, false)}</section></div>
-    <div class="detail"><div class="detail-main">
-      ${S.live ? roiCard() + optionsCard() : optionsCard() + roiCard()}
-      <section class="card" data-od-id="initiative-pvi"><div class="card-h"><h2>Why we're doing this</h2></div><div class="pvi">
-        <div><span class="label">Purpose</span><p>${I.purpose}</p></div><div><span class="label">Value</span><p>${I.value}</p></div><div><span class="label">Impact</span><p>${I.impact}</p></div></div></section>
-      <section class="card" data-od-id="initiative-updates"><div class="card-h"><h2>Latest updates</h2></div>${I.updates().map(u => `<div class="upd-item"><div class="upd-h"><span class="mono small muted">${u.date}</span><span class="badge ${u.health[0]}">${u.health[1]}</span></div><p class="small">${u.note}</p></div>`).join('')}</section>
-    </div><div class="detail-side">
-      ${S.approved ? `<section class="card" data-od-id="initiative-approved"><div class="approved"><span class="badge ok">Approved</span><span class="small muted">You chose ${esc(chosen().name)}. ${S.live ? 'Live, and we look after it.' : S.paid ? "We're building." : 'Payment is the last step.'}</span></div>${S.changes.length ? `<p class="small muted" style="margin-top:var(--space-3)">${S.changes.length} change request${S.changes.length > 1 ? 's' : ''} on our list.</p>` : ''}</section>` : ''}
-      <section class="card" data-od-id="initiative-deliverables"><div class="card-h"><h2>What you'll get</h2></div><ul class="dl">${I.deliverables().map(d => `<li><span class="t">${d.t}<small>${d.s}</small></span><span style="display:flex;gap:var(--space-2);align-items:center;"><span class="badge ${d.state[0]}">${d.state[1]}</span>${d.id !== 'home' || S.seenSite ? `<button class="btn btn-quiet btn-sm" type="button" data-deliv="${d.id}">Open</button>` : ''}</span></li>`).join('')}</ul></section>
-      <section class="card cost" data-od-id="initiative-cost"><div class="card-h" style="margin:0"><h2>What it costs</h2></div>
-        <div class="ln"><span>${chosen() ? esc(chosen().name) : 'Your option'}</span><span class="tbd">${chosen() ? 'amount to confirm' : 'choose one first'}</span></div>
-        <div class="ln"><span>Care plan, monthly</span><span class="tbd">amount to confirm</span></div>
-        <button class="btn btn-quiet btn-sm" type="button" data-to-billing style="justify-self:start">See it in Billing <svg aria-hidden="true"><use href="#i-arrow"/></svg></button></section>
-    </div></div></div>`;
-  }
-  /* ── What it's worth: the baseline from the first call, the prediction, and once live the measured result.
-     Every figure is built from the client's own numbers; the method is shown on each row. ── */
-  const cad = n => '$' + Math.round(n).toLocaleString('en-CA'), WK = 4.33;
-  const ROI = [
-    { k: 'time', t: 'Time saved', how: 'Anna and one staff member answering calls about hours, stock and orders. Her hour costs $28.',
-      before: '7 h a week', pred: '3–4 h back a week', now: '4.5 h back a week', vPred: [3 * 28 * WK, 4 * 28 * WK], vNow: 4.5 * 28 * WK, calc: 'hours back × $28 × 4.33 weeks' },
-    { k: 'saved', t: 'Money saved', how: 'Her Wix plan and a forms add-on, replaced by the new site.',
-      before: '$64 a month', pred: '$64 a month saved', now: '$64 a month saved', vPred: [64, 64], vNow: 64, calc: 'old monthly bills, cancelled' },
-    { k: 'made', t: 'Money made', how: 'Orders ahead for pickup, from Square. Average order $22 and 30% margin, her figures.',
-      before: '0 orders a week', pred: '10–20 orders a week', now: '18 orders a week', vPred: [10 * 22 * 0.3 * WK, 20 * 22 * 0.3 * WK], vNow: 18 * 22 * 0.3 * WK, calc: 'orders × $22 × 30% × 4.33 weeks' }
-  ];
-  const roiTotal = () => ROI.reduce((a, r) => a + r.vNow, 0);
-  function roiCard() {
-    const live = S.live, lo = ROI.reduce((a, r) => a + r.vPred[0], 0), hi = ROI.reduce((a, r) => a + r.vPred[1], 0);
+  function roiCard(I) {
+    const live = isLive(I), w = worth(I), o = chosen(I);
     return `<section class="card roi-card${live ? ' lit' : ''}" data-od-id="initiative-roi">
-      <div class="roi-h"><div style="display:grid;gap:6px"><span class="label">What it's worth to you</span><h2>${live ? 'Measured, three months live' : 'Predicted, measured from launch day'}</h2></div><span class="tag">Example</span></div>
-      <div class="roi-cols" aria-hidden="true"><span></span><span class="label">Before · from our call</span><span class="label">${live ? 'Now · measured' : 'Predicted'}</span><span class="label">Worth a month</span></div>
-      <ul class="roi-rows">${ROI.map(r => `<li class="roi-r" data-od-id="roi-${r.k}">
+      <div class="roi-h"><div style="display:grid;gap:6px"><span class="label">Return on this initiative</span><h2>${live ? 'Measured, three months live' : 'Predicted now, measured from launch day'}</h2></div><span class="tag">Example inputs</span></div>
+      <div class="roi-cols" aria-hidden="true"><span></span><span class="label">Before · from our call</span><span class="label">${live ? 'Now · measured' : 'Now · predicted'}</span><span class="label">Worth a month</span></div>
+      <ul class="roi-rows">${I.roi.map(r => r.none ? `<li class="roi-r" data-od-id="roi-${r.k}"><div class="roi-t"><b>${r.t}</b><small>${r.none}</small></div><div class="roi-c"><span class="label roi-m">Before</span><span class="muted">—</span></div><div class="roi-c"><span class="label roi-m">Now</span><span class="muted">—</span></div><div class="roi-c roi-v"><span class="label roi-m">Worth a month</span><span class="muted">—</span></div></li>`
+        : `<li class="roi-r" data-od-id="roi-${r.k}">
         <div class="roi-t"><b>${r.t}</b><small>${r.how}</small></div>
         <div class="roi-c"><span class="label roi-m">Before · from our call</span><span>${r.before}</span></div>
-        <div class="roi-c"><span class="label roi-m">${live ? 'Now · measured' : 'Predicted'}</span><span>${live ? r.now : r.pred}</span></div>
-        <div class="roi-c roi-v"><span class="label roi-m">Worth a month</span><strong>${live ? cad(r.vNow) : r.vPred[0] === r.vPred[1] ? cad(r.vPred[0]) : cad(r.vPred[0]) + '–' + cad(r.vPred[1])}</strong><small>${r.calc}</small></div>
+        <div class="roi-c"><span class="label roi-m">${live ? 'Now · measured' : 'Now · predicted'}</span><span>${r.predHtml || (live && r.now ? r.now : r.pred)}</span></div>
+        <div class="roi-c roi-v"><span class="label roi-m">Worth a month</span>${r.v ? `<strong>${live ? cad(r.vNow) : span(r.v)}</strong>` : TBD()}<small>${r.calc}</small></div>
       </li>`).join('')}</ul>
       <div class="roi-sum">
-        <div><span class="label">${live ? 'Total, measured' : 'Total, predicted'}</span><strong class="roi-big">${live ? cad(roiTotal()) : cad(lo) + '–' + cad(hi)}<small> a month</small></strong></div>
-        <div><span class="label">Months to pay back</span><span class="payback"><span class="tbd">${S.option ? 'price to confirm' : 'choose an option'}</span> ÷ ${live ? cad(roiTotal()) : cad(lo) + '–' + cad(hi)} a month</span></div>
+        <div><span class="label">${live ? 'Total, measured' : 'Total, predicted'}</span>${w ? `<strong class="roi-big">${live ? cad(w) : span(w)}<small> a month</small></strong>` : TBD('set with the plan')}</div>
+        <div><span class="label">Months to pay back</span><span class="payback">${TBD(o ? 'price to confirm' : I.options ? 'choose an option' : 'price to confirm')} ÷ ${w ? (live ? cad(w) : span(w)) + ' a month' : 'worth a month'}</span></div>
         <span class="badge ${live ? 'ok' : 'quiet'}">${live ? 'Measured' : 'Estimated'}</span>
       </div>
-      <p class="small muted">${live ? 'Hours from your own call log, orders from Square, bills from your statements.' : 'Built from the numbers you gave us on the call. From launch day we measure the real result and replace these.'}</p>
+      <p class="small muted">${live ? 'Hours from your own log, bills from your statements, clients from Stripe.' : 'The "before" figures are examples until you give us yours on the call. The rates are the cautious end of published research. From launch day we count the real result and replace these.'}</p>
     </section>`;
   }
-
-  /* Value first, then three options, highest first. Choosing one approves the initiative and opens checkout. */
-  function optionsCard() {
-    const picked = S.option;
+  function optionsCard(I) {
+    if (!I.options) return `<section class="card" data-od-id="initiative-options"><div class="card-h"><h2>Your options</h2><span class="badge quiet">With the plan</span></div><p class="small muted">Once the plan is ready, three options show up here, highest first, each weighed against what the result is worth to you.</p></section>`;
+    const p = S.opt[I.id];
     return `<section class="card opts lit" data-od-id="initiative-options">
-      <div class="worth"><span class="label">What this is worth to you</span><span class="tbd worth-v">value to confirm</span><p class="small muted">${WORTH.note}. ${WORTH.basis}</p></div>
-      <div class="opts-h"><h2>${picked ? 'Your choice' : 'Choose your option'}</h2><span class="label">Three options, highest first</span></div>
-      <ol class="opt-list">${OPTIONS.map((o, k) => `<li class="opt${picked === o.id ? ' on' : ''}${picked && picked !== o.id ? ' off' : ''}" data-od-id="option-${o.id}">
+      <div class="worth"><span class="label">What this is worth to you</span><span class="tbd worth-v">value to confirm</span><p class="small muted">Your own number, from our first call. It goes here in your words.</p></div>
+      <div class="opts-h"><h2>${p ? 'Your choice' : 'Choose your option'}</h2><span class="label">Three options, highest first</span></div>
+      <ol class="opt-list">${I.options.map((o, k) => `<li class="opt${p === o.id ? ' on' : ''}${p && p !== o.id ? ' off' : ''}" data-od-id="option-${o.id}">
         <div class="opt-top"><span class="opt-no mono">0${k + 1}</span><div class="opt-t"><h3>${o.name}</h3><p class="small muted">${o.gist}</p></div><span class="tbd">amount to confirm</span></div>
         <ul class="incl">${o.incl.map(i => `<li>${i}</li>`).join('')}</ul>
-        ${picked === o.id ? `<div class="opt-act"><span class="badge ok">Chosen</span>${S.paid ? '' : '<button class="btn btn-ghost btn-sm" type="button" data-checkout>Finish payment <span class="opens">opens Stripe</span></button>'}</div>`
-          : picked ? '' : `<div class="opt-act"><button class="btn ${k === 0 ? 'btn-primary' : 'btn-ghost'}" type="button" data-choose="${o.id}">Choose this option</button></div>`}
+        ${p === o.id ? `<div class="opt-act"><span class="badge ok">Chosen</span>${S.paid ? '' : '<button class="btn btn-ghost btn-sm" type="button" data-checkout>Finish payment <span class="opens">opens Stripe</span></button>'}</div>`
+          : p ? '' : `<div class="opt-act"><button class="btn ${k === 0 ? 'btn-primary' : 'btn-ghost'}" type="button" data-choose="${o.id}">Choose this option</button></div>`}
       </li>`).join('')}</ol>
-      ${picked ? '' : `<p class="small muted">Choosing approves this initiative and takes you to Stripe to pay. Not sure? <button class="textbtn link" type="button" data-ask>Ask for a change</button>.</p>`}
+      ${p ? '' : `<p class="small muted">Choosing approves this initiative and takes you to Stripe to pay. Not sure? <button class="textbtn link" type="button" data-ask-change>Ask for a change</button>.</p>`}
     </section>`;
   }
+  function detail() {
+    const I = ini(S.ini), st = statusOf(I), stage = stageOf(I), o = chosen(I), reqs = S.requests.filter(r => r.ini === I.id);
+    return `<div><button class="btn btn-quiet back" type="button" data-back><svg aria-hidden="true"><use href="#i-back"/></svg>Initiatives</button>
+    <div class="detail-h"><div class="t"><h1>${I.title}</h1><span class="badge ${st[0]}">${st[1]}</span></div>
+      <section class="card lit" data-od-id="initiative-stages"><div class="card-h"><h2>Stages</h2><span class="label">Now: ${STAGES[stage][0]} · ${STAGES[stage][1]}</span></div>${rail(stage, false)}</section></div>
+    <div class="detail"><div class="detail-main">
+      ${isLive(I) ? roiCard(I) + optionsCard(I) : optionsCard(I) + roiCard(I)}
+      <section class="card" data-od-id="initiative-pvi"><div class="card-h"><h2>Why we're doing this</h2></div><div class="pvi">
+        <div><span class="label">Purpose</span><p>${I.purpose}</p></div><div><span class="label">Value</span><p>${I.value}</p></div><div><span class="label">Impact</span><p>${I.impact}</p></div></div></section>
+      <section class="card" data-od-id="initiative-updates"><div class="card-h"><h2>Latest updates</h2></div>${(isLive(I) ? [{ date: 'Jan 6', note: 'Three months live. The numbers above are now counted, not predicted.' }] : []).concat(I.updates).map(u => `<div class="upd-item"><div class="upd-h"><span class="mono small muted">${u.date}</span><span class="badge ok">On track</span></div><p class="small">${u.note}</p></div>`).join('')}</section>
+    </div><div class="detail-side">
+      ${o ? `<section class="card" data-od-id="initiative-approved"><div class="approved"><span class="badge ok">Approved</span><span class="small muted">You chose ${esc(o.name)}. ${isLive(I) ? 'Live, and we look after it.' : S.paid ? "We're building." : 'Payment is the last step.'}</span></div></section>` : ''}
+      <section class="card" data-od-id="initiative-deliverables"><div class="card-h"><h2>What you'll get</h2></div><ul class="dl">${I.deliv.map(d => { const s = d.st(); return `<li><span class="t">${d.t}<small>${d.s}</small></span><span style="display:flex;gap:var(--space-2);align-items:center;"><span class="badge ${s[0]}">${s[1]}</span><button class="btn btn-quiet btn-sm" type="button" data-deliv="${d.id}">Open</button></span></li>`; }).join('')}</ul></section>
+      <section class="card" data-od-id="initiative-requests"><div class="card-h"><h2>Your requests</h2><span class="label">${reqs.length}</span></div>
+        ${reqs.length ? `<ul class="dl">${reqs.map(r => `<li><span class="t">${esc(r.text)}<small>Sent ${r.date}</small></span><span class="badge quiet">On our list</span></li>`).join('')}</ul>` : '<p class="small muted">Want something different? Say it in your own words. It goes straight onto our list for this initiative.</p>'}
+        <div class="site-act" style="margin-top:var(--space-3)"><button class="btn btn-ghost btn-sm" type="button" data-ask-change>Ask for a change</button><span class="adm-note">Admin: each request becomes a Linear issue</span></div></section>
+      <section class="card cost" data-od-id="initiative-cost"><div class="card-h" style="margin:0"><h2>What it costs</h2></div>
+        <div class="ln"><span>${o ? esc(o.name) : 'Your option'}</span><span class="tbd">${o ? 'amount to confirm' : I.options ? 'choose one first' : 'comes with the plan'}</span></div>
+        <div class="ln"><span>Care plan, monthly · one per business</span><span class="tbd">amount to confirm</span></div>
+        <button class="btn btn-quiet btn-sm" type="button" data-to-billing style="justify-self:start">See it in Billing <svg aria-hidden="true"><use href="#i-arrow"/></svg></button></section>
+    </div></div></div>`;
+  }
 
+  /* ── Billing: works with nothing to pay, with a choice waiting, and with a plan running. ── */
   const RING_ONCE = `<svg class="ring" viewBox="0 0 64 64" aria-hidden="true"><circle class="r" cx="32" cy="32" r="25"/><circle class="s" cx="32" cy="32" r="10"/></svg>`;
   const RING_MONTH = `<svg class="ring" viewBox="0 0 64 64" aria-hidden="true"><circle class="r" cx="32" cy="32" r="25"/><circle class="s" cx="32" cy="32" r="10"/><circle class="ag" cx="49.7" cy="14.3" r="3.5"/></svg>`;
+  const picks = () => INIS.filter(chosen).map(I => ({ I, o: chosen(I) }));
+  const INVOICES = () => S.paid ? picks().map((p, k) => ({ no: 'SLNX-000' + (k + 1), t: p.I.title + ' · ' + p.o.name, date: 'Today', status: ['ok', 'Paid'] })).concat([{ no: 'SLNX-000' + (picks().length + 1), t: 'Care plan · first month', date: 'Next month', status: ['quiet', 'Upcoming'] }]) : [];
   function billing() {
-    const inv = INVOICES();
-    const o = chosen();
-    const careCol = `<div class="plan-col">${RING_MONTH}<span class="label">Care plan, monthly</span><div class="amt"><span class="tbd">amount to confirm</span><span class="small muted">/month</span></div><p class="small muted">Set for ${esc(S.biz)}, not a public price.</p><ul class="incl">${CARE.incl.map(i => `<li>${i}</li>`).join('')}</ul></div>`;
-    const plan = S.paid
-      ? `<section class="card plan lit" data-od-id="billing-plan"><div class="card-h" style="margin:0"><div style="display:grid;gap:6px;"><span class="label">Your plan</span><h2>${esc(o.name)}</h2></div><span class="badge ok">Active</span></div>
-          <div class="plan-cols"><div class="plan-col">${RING_ONCE}<span class="label">New website · your option</span><div class="amt"><span class="tbd">amount to confirm</span><span class="badge ok">Paid</span></div></div>${careCol.replace('</div><p', '</div><span class="small muted">Next bill: <span class="tbd">date to confirm</span></span><p')}</div>
-          <div class="site-act"><button class="btn btn-ghost btn-sm" type="button" data-toast="Opening your billing settings on Stripe">Manage billing <span class="opens">opens Stripe</span></button></div></section>`
-      : `<section class="card plan lit" data-od-id="billing-plan"><div style="display:grid;gap:var(--space-2);"><span class="label">Your plan</span><h2>${o ? esc(o.name) : 'New website'}</h2><p class="muted small">${o ? 'Your chosen option, plus your monthly care plan. Both agreed in writing.' : 'Your price comes from the option you choose in your initiative, plus a monthly care plan set for you.'}</p></div>
-          <div class="plan-cols">
-            <div class="plan-col">${RING_ONCE}<span class="label">New website · ${o ? 'your option' : 'not chosen yet'}</span><div class="amt"><span class="tbd">${o ? 'amount to confirm' : 'choose an option'}</span></div>${o ? `<ul class="incl">${o.incl.map(i => `<li>${i}</li>`).join('')}</ul>` : '<p class="small muted">Three options, weighed against what the result is worth to you.</p>'}</div>
-            ${careCol}
-          </div>
-          ${o ? `<button class="btn btn-primary" type="button" data-checkout data-od-id="billing-start-plan" style="justify-self:start">Finish payment<svg aria-hidden="true"><use href="#i-arrow"/></svg></button>` : `<button class="btn btn-primary" type="button" data-to-options data-od-id="billing-see-options" style="justify-self:start">See your options<svg aria-hidden="true"><use href="#i-arrow"/></svg></button>`}
-          <p class="small muted">You pay on Stripe's secure page. Cancel the care plan any month and keep everything.</p></section>`;
-    const list = inv.length
-      ? `<ul class="inv">${inv.map((v, k) => `<li><button type="button" data-inv="${k}"><span class="t">${v.t}<small class="mono">${v.no} · ${v.date}</small></span><span class="r"><span class="badge ${v.status[0]}">${v.status[1]}</span></span></button></li>`).join('')}</ul>`
-      : `<div class="empty"><p class="small muted">Invoices show up here once your plan starts. They'll look like this:</p><div class="ghost-row" aria-hidden="true"><span>New website · SLNX-0001</span><span>Paid</span></div><div class="ghost-row" aria-hidden="true"><span>Care plan · first month</span><span>Upcoming</span></div></div>`;
+    const P = picks(), inv = INVOICES();
+    const care = `<div class="plan-col">${RING_MONTH}<span class="label">Care plan · monthly</span><div class="amt"><span class="tbd">amount to confirm</span><span class="small muted">/month</span></div><p class="small muted">One plan for ${esc(S.biz)}, set for you. Not a public price.</p><ul class="incl">${CARE.map(i => `<li>${i}</li>`).join('')}</ul></div>`;
+    const setup = `<div class="plan-col">${RING_ONCE}<span class="label">Your options · one time</span>${P.length ? P.map(p => `<div class="ln2"><span>${p.I.title}<small>${esc(p.o.name)}</small></span>${S.paid ? '<span class="badge ok">Paid</span>' : '<span class="tbd">amount to confirm</span>'}</div>`).join('') : '<div class="amt"><strong class="mono">$0</strong><span class="small muted">due</span></div><p class="small muted">Nothing chosen yet. Each initiative has three options, weighed against what the result is worth to you.</p>'}</div>`;
+    const head = S.paid ? ['Your plan is running.', '<span class="badge ok">Active</span>', 'Your options are paid. The care plan bills monthly; cancel it any month and keep everything.']
+      : P.length ? ['One step left.', '<span class="badge warn">Ready to pay</span>', 'Your chosen option and your monthly care plan, both agreed in writing.']
+      : ['Nothing to pay yet.', '<span class="badge ok">All clear</span>', 'Your price comes from the option you choose in each initiative, plus one monthly care plan for your business.'];
+    const act = S.paid ? `<div class="site-act"><button class="btn btn-ghost btn-sm" type="button" data-toast="Opening your billing settings on Stripe">Manage billing <span class="opens">opens Stripe</span></button></div>`
+      : P.length ? `<button class="btn btn-primary" type="button" data-checkout data-od-id="billing-start-plan" style="justify-self:start">Finish payment<svg aria-hidden="true"><use href="#i-arrow"/></svg></button>`
+      : `<button class="btn btn-primary" type="button" data-to-options data-od-id="billing-see-options" style="justify-self:start">See your options<svg aria-hidden="true"><use href="#i-arrow"/></svg></button>`;
+    const list = inv.length ? `<ul class="inv">${inv.map((v, k) => `<li><button type="button" data-inv="${k}"><span class="t">${esc(v.t)}<small class="mono">${v.no} · ${v.date}</small></span><span class="r"><span class="badge ${v.status[0]}">${v.status[1]}</span></span></button></li>`).join('')}</ul>`
+      : `<div class="empty"><p class="small muted">No invoices yet. When your plan starts, they look like this:</p><div class="ghost-row" aria-hidden="true"><span>Your option · SLNX-0001</span><span>Paid</span></div><div class="ghost-row" aria-hidden="true"><span>Care plan · first month</span><span>Upcoming</span></div></div>`;
     return `<div><div class="page-h"><p class="eyebrow">Billing</p><h1>One bill, not seven.</h1><p>What it costs, what you've paid, and what's next.</p></div>
-      <div class="bill">${plan}<section class="card" data-od-id="billing-invoices"><div class="card-h"><h2>Invoices</h2></div>${list}</section></div></div>`;
+      <div class="bill"><section class="card plan lit" data-od-id="billing-plan"><div class="card-h" style="margin:0"><div style="display:grid;gap:6px;"><span class="label">Your plan</span><h2>${head[0]}</h2></div>${head[1]}</div>
+        <p class="muted small">${head[2]}</p><div class="plan-cols">${setup}${care}</div>${act}
+        <p class="small muted">You pay on Stripe's secure page. Amounts stay marked until we set them with you.</p></section>
+      <section class="card" data-od-id="billing-invoices"><div class="card-h"><h2>Invoices</h2><span class="label">${inv.length}</span></div>${list}</section></div></div>`;
+  }
+
+  /* ── Admin: who is in the portal. Only Solenix sees this. ── */
+  function clients() {
+    const P = picks();
+    return `<div><div class="page-h"><p class="eyebrow">Admin · only you see this</p><h1>Clients.</h1><p>Who is in the portal, and what is waiting on whom.</p></div>
+      <div class="bill"><section class="card lit" data-od-id="admin-clients"><div class="card-h"><h2>In the portal</h2><span class="label">${1 + S.invited.length}</span></div>
+        <ul class="cl">
+          <li data-od-id="client-solenix"><div><b>Solenix</b><small>Client #1 · you · ${esc(S.site)}</small><div class="meta"><span class="badge ok">Live</span><span class="badge quiet">${INIS.length} initiatives</span><span class="badge ${S.paid ? 'ok' : P.length ? 'warn' : 'quiet'}">${S.paid ? 'Plan active' : P.length ? 'Ready to pay' : 'Nothing due'}</span></div></div><button class="btn btn-ghost btn-sm" type="button" data-open-client>Open</button></li>
+          ${S.invited.map((c, k) => `<li><div><b>${esc(c.biz)}</b><small>${esc(c.name)} · ${esc(c.email)}</small><div class="meta"><span class="badge quiet">Invited</span><span class="badge quiet">Not signed in yet</span></div></div><button class="btn btn-ghost btn-sm" type="button" data-see-invite="${k}">See the invite</button></li>`).join('')}
+        </ul>
+        <button class="btn btn-primary" type="button" data-invite data-od-id="admin-invite" style="justify-self:start;margin-top:var(--space-4)">Invite a client</button>
+        <p class="small muted" style="margin-top:var(--space-3)">Only invited people can sign in. An invite is one email with one button.</p></section>
+      <section class="card" data-od-id="admin-linear"><div class="card-h"><h2>Where it comes from</h2><span class="badge ok">Synced with Linear</span></div>
+        <ul class="map"><li><span>A client<small>One Linear initiative</small></span></li><li><span>An initiative here<small>One Linear project: purpose, stages, updates</small></span></li><li><span>What they'll get<small>Linear issues</small></span></li><li><span>Ask for a change<small>Opens a new Linear issue</small></span></li><li><span>Money<small>Stripe Checkout and invoices</small></span></li><li><span>Website status and visitors<small>Vercel and PostHog</small></span></li></ul>
+        <p class="small muted" style="margin-top:var(--space-3)">Clients never see these names. They see plain words.</p></section></div></div>`;
   }
 
   /* ── Interactions inside the app (delegated, so re-renders need no rebinding). ── */
   main.addEventListener('click', e => {
     const t = e.target.closest('button, a'); if (!t) return;
+    const d = t.dataset;
     if (t.matches('[data-next]')) nextStep().go();
-    else if (t.matches('[data-step-go]')) STEPS().find(s => s.id === t.dataset.stepGo).go();
+    else if (t.matches('[data-step-go]')) STEPS().find(s => s.id === d.stepGo).go();
     else if (t.matches('[data-preview]')) openPreview();
-    else if (t.matches('[data-open-sx]')) { e.preventDefault(); go('app', { tab: 'initiatives', view: 'detail', ini: t.dataset.openSx }); }
-    else if (t.matches('[data-open-ini]')) { e.preventDefault(); go('app', { tab: 'initiatives', view: 'detail' }); }
+    else if (t.matches('[data-tool]')) { S.tool = d.tool; save(); const y = scrollY; paint(); window.scrollTo(0, y); const b = $(`[data-tool="${d.tool}"]`, main); if (b) b.focus({ preventScroll: true }); }
+    else if (t.matches('[data-ask]')) { try { navigator.clipboard && navigator.clipboard.writeText(d.ask).catch(() => {}); } catch (err) {} const was = S.asked; S.asked = true; save(); toast('Copied. Paste it into Claude.'); if (!was) { const y = scrollY; paint(); window.scrollTo(0, y); } }
+    else if (t.matches('[data-connect]')) { S.requests.push({ ini: 'launch', text: 'Connect our ' + d.connect.toLowerCase() + ' to the AI', date: 'today' }); save(); toast("Sent. It's on our list."); }
+    else if (t.matches('[data-open-ini]')) { e.preventDefault(); go('app', { tab: 'initiatives', view: 'detail', ini: d.openIni }); }
     else if (t.matches('[data-back]')) go('app', { tab: 'initiatives', view: 'list' });
-    else if (t.matches('[data-choose]')) { S.option = t.dataset.choose; S.approved = true; save(); renderApp(); fillCheckout(); openDlg('checkout'); }
-    else if (t.matches('[data-to-options]')) go('app', { tab: 'initiatives', view: 'detail' });
-    else if (t.matches('[data-ask]')) { $('#ch-text').value = ''; $('#ch-err').hidden = true; openDlg('change'); }
-    else if (t.matches('[data-deliv]')) openDeliv(t.dataset.deliv);
+    else if (t.matches('[data-choose]')) { S.opt[S.ini] = d.choose; S.paid = false; save(); renderApp(); fillCheckout(); openDlg('checkout'); }
+    else if (t.matches('[data-to-options]')) go('app', { tab: 'initiatives', view: 'detail', ini: 'launch' });
+    else if (t.matches('[data-ask-change]')) { $('#ch-text').value = ''; $('#ch-err').hidden = true; openDlg('change'); }
+    else if (t.matches('[data-deliv]')) openDeliv(d.deliv);
     else if (t.matches('[data-to-billing]')) go('app', { tab: 'billing' });
     else if (t.matches('[data-checkout]')) { fillCheckout(); openDlg('checkout'); }
-    else if (t.matches('[data-inv]')) openInvoice(+t.dataset.inv);
+    else if (t.matches('[data-inv]')) openInvoice(+d.inv);
+    else if (t.matches('[data-open-client]')) go('app', { tab: 'overview' });
+    else if (t.matches('[data-invite]')) { $('[data-invite-form]').reset(); $$('[data-invite-form] .err').forEach(x => x.hidden = true); openDlg('invite'); }
+    else if (t.matches('[data-see-invite]')) go('email', { inv: S.invited[+d.seeInvite] });
   });
-  $$('[data-go]').forEach(b => b.addEventListener('click', () => go(b.dataset.go)));
 
   function openDeliv(id) {
-    const titles = { map: 'Tool map', plan: 'Site plan', home: 'Homepage preview' };
-    $('[data-dv-title]').textContent = titles[id];
-    const body = $('[data-dv-body]');
-    if (id === 'map') body.innerHTML = `<p class="small muted" style="margin-bottom:var(--space-3)">Everything ${esc(S.biz)} uses today, and what happens to it. <span class="tag">Example</span></p><ul class="map">
-      <li><span>Square till<small>Payments and in-store orders</small></span><span class="badge ok">Keep</span></li>
-      <li><span>Instagram<small>Photos of the day's bake</small></span><span class="badge ok">Keep</span></li>
-      <li><span>Google Business Profile<small>Hours are out of date</small></span><span class="badge warn">Update</span></li>
-      <li><span>Wix website<small>Hard to change, no ordering</small></span><span class="badge quiet">Replace</span></li></ul>`;
-    else if (id === 'plan') body.innerHTML = `<ul class="map"><li><span>Home<small>Today's bread, hours, order for pickup</small></span><span class="mono small muted">1</span></li><li><span>Menu<small>Bread and pastry, updated from Square</small></span><span class="mono small muted">2</span></li><li><span>Visit<small>Map, parking, accessibility</small></span><span class="mono small muted">3</span></li><li><span>Wholesale<small>For cafés and restaurants</small></span><span class="mono small muted">4</span></li></ul><p class="small muted" style="margin-top:var(--space-3)">Wording is drafted from what you told us. You approve every word before it goes live.</p>`;
-    else { closeDlg(); return openPreview(); }
+    const I = ini(S.ini), dv = I.deliv.find(x => x.id === id);
+    if (id === 'home') return openPreview();
+    $('[data-dv-title]').textContent = dv.t; const s = dv.st();
+    $('[data-dv-body]').innerHTML = `<div class="cost"><div class="ln"><span>Status</span><span class="badge ${s[0]}">${s[1]}</span></div><div class="ln"><span>Part of</span><span class="small">${I.title}</span></div></div><p class="small" style="margin-top:var(--space-4)">${dv.d}</p>`;
     openDlg('deliv');
   }
   function openInvoice(k) {
     const v = INVOICES()[k];
     $('[data-iv-no]').textContent = v.no; $('[data-iv-title]').textContent = v.t;
-    $('[data-iv-body]').innerHTML = `<div class="cost"><div class="ln"><span>Status</span><span class="badge ${v.status[0]}">${v.status[1]}</span></div><div class="ln"><span>Date</span><span class="mono">${v.date}</span></div><div class="ln"><span>Amount</span><span class="tbd">amount to confirm</span></div><div class="ln"><span>Billed to</span><span class="small" style="text-align:right">${esc(S.biz)}<br>${esc(S.street)}, ${esc(S.city)}</span></div></div>`;
+    $('[data-iv-body]').innerHTML = `<div class="cost"><div class="ln"><span>Status</span><span class="badge ${v.status[0]}">${v.status[1]}</span></div><div class="ln"><span>Date</span><span class="mono">${v.date}</span></div><div class="ln"><span>Amount</span><span class="tbd">amount to confirm</span></div><div class="ln"><span>Billed to</span><span class="small" style="text-align:right">${esc(S.biz)}<br>St. John's, NL</span></div></div>`;
     openDlg('invoice');
   }
 
-  /* Change request → becomes an issue on our side; the client just sees it's on the list. */
+  /* Ask for a change → a Linear issue on our side; the client sees it is on the list. */
   $('[data-change]').addEventListener('submit', e => {
     e.preventDefault(); const v = $('#ch-text').value.trim();
     $('#ch-err').hidden = v.length > 3; $('#ch-text').setAttribute('aria-invalid', String(v.length <= 3)); if (v.length <= 3) return;
-    S.changes.push(v); save(); closeDlg(); toast("Sent. It's on our list for this initiative.");
+    S.requests.push({ ini: S.ini, text: v, date: 'today' }); save(); closeDlg(); if (S.screen === 'app') paint(); toast("Sent. It's on our list for this initiative.");
+  });
+
+  /* Invite a client (admin). */
+  $('[data-invite-form]').addEventListener('submit', e => {
+    e.preventDefault(); const f = e.currentTarget, biz = $('#iv-biz').value.trim(), name = $('#iv-name').value.trim(), em = $('#iv-email').value.trim().toLowerCase();
+    const okB = biz.length > 1, okN = name.length > 1, okE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em);
+    $('#iv-biz-err').hidden = okB; $('#iv-name-err').hidden = okN; $('#iv-email-err').hidden = okE;
+    $('#iv-biz').setAttribute('aria-invalid', String(!okB)); $('#iv-name').setAttribute('aria-invalid', String(!okN)); $('#iv-email').setAttribute('aria-invalid', String(!okE));
+    if (!okB) return $('#iv-biz').focus(); if (!okN) return $('#iv-name').focus(); if (!okE) return $('#iv-email').focus();
+    S.invited.push({ biz, name, email: em }); save(); closeDlg(); paint(); toast('Invite sent to ' + em);
   });
 
   /* Checkout stand-in → calm success: the three suns settle into their orbit. */
+  function fillCheckout() { const P = picks(); $('[data-co-lines]').innerHTML = P.map(p => `<div class="co-line"><span>${p.I.title} · ${esc(p.o.name)}</span><span class="tbd">amount to confirm</span></div>`).join(''); $('#co-email').value = S.email; $('#co-name').value = S.name; }
   $('[data-pay]').addEventListener('submit', e => {
     e.preventDefault();
     const btn = $('[data-pay] button[type=submit]'); btn.disabled = true; btn.textContent = 'Processing…';
@@ -1239,10 +1171,8 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
         <p class="muted">Your plan has started. Your receipt is in your email, and your invoices live in Billing.</p>
         <button class="btn btn-primary" type="button" data-done>Back to my Overview</button></section>`;
       $('[data-done]', main).addEventListener('click', () => go('app', { tab: 'overview' }));
-    }, 1100);
+    }, reduce ? 0 : 1100);
   });
-
-  function fillCheckout() { const o = chosen(); $('[data-co-opt]').textContent = o ? o.name : 'New website · your option'; $('#co-t').textContent = 'New website'; }
 
   /* ── Dialogs ── */
   let lastFocus = null;
@@ -1250,7 +1180,7 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
   function closeDlg() { $$('dialog[open]').forEach(d => d.close()); }
   $$('dialog').forEach(d => {
     d.addEventListener('click', e => { if (e.target === d) d.close(); });
-    d.addEventListener('close', () => { if (S.screen === 'app' && S.tab === 'overview') renderApp(); if (lastFocus && lastFocus.isConnected) lastFocus.focus(); });
+    d.addEventListener('close', () => { if (d.dataset.dlg === 'preview' && S.screen === 'app' && !$('[data-od-id="payment-success"]', main)) { const y = scrollY; paint(); window.scrollTo(0, y); } if (lastFocus && lastFocus.isConnected) lastFocus.focus(); });
   });
   document.addEventListener('click', e => { if (e.target.closest('[data-close]')) closeDlg(); const t = e.target.closest('[data-toast]'); if (t) toast(t.dataset.toast); });
 
@@ -1263,19 +1193,20 @@ dialog::backdrop { background: color-mix(in oklch, var(--bg) 62%, transparent); 
   pBtn.addEventListener('click', () => { const o = pMenu.hidden; pMenu.hidden = !o; pBtn.setAttribute('aria-expanded', String(o)); });
   document.addEventListener('click', e => { if (!e.target.closest('[data-proto]')) { pMenu.hidden = true; pBtn.setAttribute('aria-expanded', 'false'); } });
   $$('[data-jump]').forEach(b => b.addEventListener('click', () => {
-    const j = b.dataset.jump; pMenu.hidden = true;
-    if (j === 'noinvite') return go('noinvite', { tried: 'sam@harbourcafe.ca' });
-    if (j.startsWith('sx-') || j === 'signin' || j === 'confirm') setClient('solenix'); else setClient('maple');
+    const j = b.dataset.jump; pMenu.hidden = true; S.as = '';
     if (j === 'signin') { S.signedIn = false; return go('signin'); }
-    if (j.startsWith('sx-')) { S.signedIn = true; return go('app', { tab: j === 'sx-overview' ? 'overview' : j === 'sx-billing' ? 'billing' : 'initiatives', view: 'list' }); }
-    if (['overview', 'initiative', 'billing', 'live'].includes(j)) { S.detailsDone = true; S.signedIn = true; }
-    if (j === 'overview') go('app', { tab: 'overview', view: 'list' });
-    else if (j === 'initiative') go('app', { tab: 'initiatives', view: 'detail' });
-    else if (j === 'live') { Object.assign(S, { seenSite: true, approved: true, option: S.option || 'site', paid: true, live: true }); go('app', { tab: 'initiatives', view: 'detail' }); }
-    else if (j === 'billing') { S.seenSite = true; S.approved = true; S.option = S.option || 'site'; go('app', { tab: 'billing' }); }
-    else go(j);
+    if (j === 'confirm') return go('confirm');
+    if (j === 'noinvite') return go('noinvite', { tried: 'sam@harbourcafe.ca' });
+    if (j === 'email') return go('email');
+    S.signedIn = true;
+    if (j === 'live') { Object.assign(S, { seenSite: true, asked: true, paid: true, live: true }); S.opt.launch = S.opt.launch || 'mid'; return go('app', { tab: 'initiatives', view: 'detail', ini: 'launch' }); }
+    if (j === 'initiative') return go('app', { tab: 'initiatives', view: 'detail', ini: 'launch' });
+    go('app', { tab: j, view: 'list' });
   }));
   $('[data-reset]').addEventListener('click', () => { S = fresh(); save(); pMenu.hidden = true; go('signin'); });
+
+  $('[data-invite-open]').addEventListener('click', () => go('confirm', { as: (S.inv || { email: 'sam@harbourlaw.ca' }).email }));
+  $('[data-jump-back]').addEventListener('click', () => { if (S.signedIn) go('app', { tab: 'clients' }); else go('signin'); });
 
   render();
 })();
