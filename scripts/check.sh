@@ -24,8 +24,10 @@ grep -n -E 'motion-toggle|class="word">Motion<' design/*.html 2>/dev/null \
   | while read -r l; do echo "check: Motion switch (remove it; honour prefers-reduced-motion): ${l:0:80}"; done | grep . && fail=1
 
 # The portal is invite-only: self sign-up stays off.
-grep -n -E '^enable_signup = true' supabase/config.toml \
-  | while read -r l; do echo "check: self sign-up is on in supabase/config.toml (portal is invite-only): $l"; done | grep . && fail=1
+# ([auth] enable_signup must be false; [auth.email] enable_signup must stay true, or email sign-in is disabled.)
+awk '/^\[auth\]$/{s="auth"} /^\[auth\.email\]$/{s="email"} /^\[/{if($0!="[auth]"&&$0!="[auth.email]")s=""} /^enable_signup/{print s": "$0}' supabase/config.toml > /tmp/solenix-signup.txt
+grep -qx 'auth: enable_signup = false' /tmp/solenix-signup.txt || bad "self sign-up is on: [auth] enable_signup must be false (portal is invite-only)"
+grep -qx 'email: enable_signup = true' /tmp/solenix-signup.txt || bad "[auth.email] enable_signup must be true, or email sign-in is disabled"
 
 # The homepage is measured: analytics are injected where it is served.
 grep -q 'capture_pageleave' app/route.ts || bad "homepage has no analytics (app/route.ts)"
