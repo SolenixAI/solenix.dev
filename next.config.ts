@@ -7,6 +7,13 @@ const nextConfig: NextConfig = {
     return [
       { source: "/index.html", destination: "/", permanent: true },
       { source: "/agents.html", destination: "/agents", permanent: true },
+      // Book a call: Jager's booking page on the jager@solenix.dev calendar.
+      {
+        source: "/book",
+        destination:
+          "https://calendar.google.com/calendar/appointments/schedules/AcZssZ2-BiW6yOBaQKhP46VLsniVKUUgECDGJoa0Oy5wKbbnbUVr9AQw64WVwMf8osSPg8LbyhUg9IGz",
+        permanent: false,
+      },
     ];
   },
 };
