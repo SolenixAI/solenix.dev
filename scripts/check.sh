@@ -24,7 +24,7 @@ grep -n -E 'motion-toggle|class="word">Motion<' design/*.html 2>/dev/null \
   | while read -r l; do echo "check: Motion switch (remove it; honour prefers-reduced-motion): ${l:0:80}"; done | grep . && fail=1
 
 # Every source of truth named in AGENTS.md exists.
-for f in design/DESIGN.md design/tokens.css design/home.html design/app.html supabase/config.toml; do
+for f in design/DESIGN.md design/tokens.css design/home.html design/app.html design/roi-model.md supabase/config.toml; do
   [ -f "$f" ] || bad "missing source of truth: $f"
 done
 
