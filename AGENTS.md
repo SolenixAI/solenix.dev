@@ -19,11 +19,7 @@ Solenix's website and client portal. Next.js on Vercel · Supabase · Stripe · 
 ## Rules
 
 - One version of everything. No copies, and no version names (`-v2`, `v3`) in files, headings or comments. History lives in git.
-- Change a design in Open Design first, then the app. Don't hand-edit `design/*.html`.
+- Edit `design/*.html` directly. Open Design runs are no longer used (Jager, 2026-10-01).
 - The site is dark. The portal follows the device (light or dark) and has a manual choice.
 - Latest stable versions. No secrets in code or output.
 - `npm run check` enforces these rules, and `npm run check:test` proves each one by breaking it on purpose. The git pre-commit hook and Claude Code's hooks (`.claude/settings.json`) run it. When you find a new failure mode, add a check for it.
-
-## Open Design
-
-`design/` is the Open Design project "solenix.dev". Start design runs from its Studio with the "Solenix" design system selected in the composer. Keep the app window open during runs, because headless mode can't render, so it can't check its own work. Brief it with Jager's verdict and the intent only: 150 words max, no feature lists (a hook blocks longer briefs). It designs the answer.
