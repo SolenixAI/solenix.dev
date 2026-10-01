@@ -9,7 +9,7 @@ Solenix's website and client portal. Next.js on Vercel · Supabase · Stripe · 
 - Homepage: `design/home.html` (served as-is at `/`)
 - Before/after examples (real tasks, real connectors, sourced times): `design/before-after.md`
 - ROI model and every constant behind it, with sources: `design/roi-model.md`
-- Homepage quality, scored 0–100 per section after every change: `design/scorecard.md`
+- Homepage quality, scored 0–100 per section after every change: `design/scorecard.md`. Only the independent screenshot review counts (`npm run shots`, then the saved workflow `scene-review`). The designer's self-score doesn't: on 2026-10-01 Open Design gave itself 86 and independent judges gave 46.
 - Research behind design decisions (sourced, skeptic-checked): `design/research/` (`site-playbook.md` for homepage decisions and the six examples, `demos.md` for demo techniques)
 - Portal design: `design/app.html` (the app under `app/(portal)` is built to match it)
 - Supabase config and schema: `supabase/config.toml`, `supabase/migrations/`

@@ -72,3 +72,18 @@ Follows `research/site-playbook.md`. Checked at 872 by 837 with reduced motion o
 | 2026-10-01 | **Page** | 90 | 87 | 83 | 81 | 84 | 87 | **86** |
 
 Not yet done from the playbook: measured ask times (decision 6), a full text budget in `check.sh` (7), a real founder photo (9), a poster frame and vitals budget (10), PostHog events (11).
+
+### Independent review: the "sight over text" pass (2026-10-01, 872×837, motion on and off)
+
+Ten judges, one per scene, scored screenshots. A skeptic then tried to refute every failure they claimed (0 blockers and 0 majors survived), and the averages fall far short of the bar. The self-score above (86) didn't hold up.
+
+| Section | 3D world | Clarity | Wow | Pull | Read | Brevity |
+| --- | --- | --- | --- | --- | --- | --- |
+| Hero | 74 | 42 | 66 | 52 | 58 | 78 |
+| Races (6, average) | 43 | 34 | 42 | 28 | 42 | 37 |
+| Plan (5 stops) | 62 | 28 | 55 | 30 | 60 | 82 |
+| Promises | 62 | 35 | 55 | 40 | 62 | 78 |
+| Close | 72 | 66 | 63 | 68 | 71 | 72 |
+| **Page** | **53** | **37** | **49** | **36** | **50** | **53** |
+
+Cause: the races are still flat interface over the world; scenes don't read in one look; nothing leads to Book a call.
