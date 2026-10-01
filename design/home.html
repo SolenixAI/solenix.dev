@@ -259,6 +259,12 @@ html[data-motion="on"] .pulse::after { animation: pulse 2.4s var(--ease-out) inf
 /* ── After you book: a pinned stretch where the eight forms in the scene itself.
    The five stops sit on the real orbit; the card shows what you get at each one. ── */
 .jr { position: relative; height: 380vh; height: 380svh; }
+/* The guide: you don't need to be an expert (restored from version 19) */
+.guide-say { align-self: end; display: grid; gap: var(--space-4); max-width: 30rem; text-shadow: 0 0 26px var(--bg), 0 0 10px var(--bg), 0 1px 2px var(--bg); }
+.w-big { font: var(--fw-bold) var(--fs-h1)/1.12 var(--font-display); letter-spacing: var(--track-heading); text-wrap: balance; }
+#guide { height: 210vh; height: 210svh; }
+#guide .jr-head { text-shadow: 0 0 26px var(--bg), 0 0 10px var(--bg), 0 1px 2px var(--bg); }
+
 .jr-pin { position: sticky; top: 0; height: 100vh; height: 100svh; }
 .jr-in { height: 100%; display: grid; grid-template-rows: auto 1fr auto; padding-top: calc(var(--nav-height) + clamp(1.5rem, 6vh, 4rem)); padding-bottom: clamp(2rem, 9vh, 6rem); }
 .jr-head { display: grid; gap: var(--space-4); max-width: 30rem; }
@@ -730,7 +736,7 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
         <div class="wrap">
           <p class="eyebrow">Solenix · St. John's, NL</p>
           <h1 class="h1" data-od-id="hero-headline"><span class="w" style="--i:0"><span>Your</span></span> <span class="w" style="--i:1"><span>business</span></span> <span class="w" style="--i:2"><span>is</span></span> <span class="w" style="--i:3"><span>a</span></span> <span class="w g" style="--i:4"><span>three&#8209;body</span></span> <span class="w g" style="--i:5"><span>problem.</span></span></h1>
-          <p class="hero-sub">We set up AI inside the tools your business already uses, so the busywork gets done for you. You don't need to be an expert.</p>
+          <p class="hero-sub">We set up AI inside the tools your business already uses, so the busywork gets done for you.</p>
           <div class="hero-ctas">
             <a class="btn btn-primary" href="/book" data-od-id="hero-cta">Book a call</a>
           </div>
@@ -741,6 +747,21 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
         <article class="beat" data-od-id="beat-look"><p class="beat-no bl">01 · Look</p><h2 class="beat-h">Every tool pulling <em>its own way.</em></h2><p class="bl">Each one eats hours you don't get paid for. That is where this starts.</p></article>
       </div>
       <p class="scroll-cue" aria-hidden="true">Scroll · it settles as you go</p>
+  </div>
+</section>
+
+<section class="jr" id="guide" data-od-id="guide" data-scene="guide">
+  <div class="jr-pin">
+    <div class="wrap jr-in">
+      <div class="jr-head">
+        <p class="eyebrow">One AI at the centre</p>
+        <h2 class="h2">You don't need to be an expert <em>anymore.</em></h2>
+      </div>
+      <div class="guide-say rv" data-od-id="guide-say">
+        <p class="w-big">Stop learning ten tools. Talk to one.</p>
+        <p class="lede">We set up Claude or ChatGPT for your team and connect it to the tools you already use. You say what you want in plain words, and it gets done in those tools.</p>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -841,6 +862,8 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
     { sel: '.sky', f: 1, pin: 1, labels: 0, el: 33, az: -22, dist: 17 },
     /* 2 and 3 · The guide and the flybys: the AI is lit at the centre and the first race is already running. Out past six tool worlds, all the way round. */
     /* 4 · The plan: back to the centre, and the orbit is drawn in. */
+    { sel: '#guide', f: 0.25, pin: 1, conn: 1, k: 0.15, free: 0.3, el: 38, az: 6, dist: 9.2, ox: 0.16, oy: 0.02, poy: 0.02 },
+    { sel: '#guide', f: 0.9, pin: 1, k: 0.3, free: 0.4, el: 32, az: 26, dist: 10 },
     { sel: '#after', f: 0, pin: 1, fly: 0, tx: 0, tz: 0, k: 0.9, free: 0.6, dim: 0, stops: 1, el: 60, az: 394, dist: 9.6, ox: 0.21, oy: 0.02, poy: 0.02, calm: 0.35, conn: 1 },
     { sel: '#after', f: 0.1852, pin: 1, k: 1, free: 1, ink: 0.2, third: 0.44, az: 396, poy: -0.02 },
     { sel: '#after', f: 0.3704, pin: 1, k: 1, free: 1, ink: 0.4, third: 0.58, az: 398 },
@@ -1210,10 +1233,10 @@ const grid = new THREE.Mesh(new THREE.PlaneGeometry(48, 48, isSmall ? 150 : 240,
   fragmentShader: `uniform vec3 uB[3]; uniform vec3 uLine,uWarm; uniform float uCell,uAlpha,uChaos; varying vec3 vW; varying float vPot; varying float vRing;
     float gl(vec2 c,float w){ vec2 f=fwidth(c); vec2 g=abs(fract(c-.5)-.5)/f; return (1.-min(min(g.x,g.y)/w,1.))*(1.-smoothstep(.22,.55,max(f.x,f.y))); }
     void main(){ vec2 c=vW.xz/uCell; float minor=gl(c,1.), major=gl(c/4.,1.3);
-      float well=smoothstep(.75,2.4,vPot); float fade=1.-smoothstep(14.,23.,length(vW.xz));
+      float well=smoothstep(.75,2.4,vPot); float fade=(1.-smoothstep(14.,23.,length(vW.xz)))*(1.-smoothstep(12.,34.,distance(vW,cameraPosition))); /* depth: the grid fades into the dark with distance from the eye */
       float glow=0.; for(int i=0;i<3;i++){ vec2 d=vW.xz-uB[i].xz; glow+=exp(-dot(d,d)*.45); }
       vec3 col=mix(uLine,uWarm*1.25,well);
-      float a=(minor*.32+major*.6)*(.4+1.9*well)*fade;
+      float a=(minor*.18+major*.55)*(.4+1.9*well)*fade; /* calmer: fewer fine lines */
       gl_FragColor=vec4((col*a*(1.+vRing*2.5)+uWarm*glow*.035*fade+uWarm*vRing*.12*fade)*uAlpha,1.); }` }));
 grid.frustumCulled = false; grid.renderOrder = 1; scene.add(grid);
 function gridY(x, z) { let s = 0; for (const b of bodyU.value) { const dx = x - b.x, dz = z - b.z; s += 1 / Math.sqrt(dx * dx + dz * dz + 0.8); } return gridU.uBase.value - gridU.uDepth.value * s; }
