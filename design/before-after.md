@@ -126,7 +126,7 @@ After: "Show every deal with no activity in 14 days and draft a follow-up for ea
 
 ## Example data shown in the homepage races
 
-Every name and amount below is made up for the demonstration and is tagged "Example" on the page. None is a client, a result or a price. On the page each thing carries one label, its name; the big figure and one state word carry the rest.
+Every name and amount below is made up for the demonstration and is tagged "Example" on the page. None is a client, a result or a price. On the page each thing carries its name and, where it has one, its outcome words; cut other words, never the outcome words.
 
 | Race | The owner's things | Before | After the ask lands | What the connector documents |
 |---|---|---|---|---|
@@ -134,7 +134,7 @@ Every name and amount below is made up for the demonstration and is tagged "Exam
 | Shopify | Sea salt caramels, Wool mitts | 14 caramels, running out | After one Approve: 120, reordered | Reads orders and stock; the reorder email is drafted in Gmail and sent with approval. |
 | HubSpot | Harbour Dental, Cove Road Cafe, East End Yoga | 3 quiet deals, gone quiet | Picked back up | Writes tasks, notes and activities. It never sends the email. |
 | Meta Ads | Local awareness ad | On, no buyers, $0 kept this week | Off, $210 kept this week | Reads spend and results; changes are asked for before they happen. |
-| Excel | Row 14 · $550 | Sales total $11,930, wrong | $12,480, fixed | Explains cells and edits formulas. No macros. |
-| Gmail and Calendar | Harbour Dental, Cove Road Cafe, East End Yoga | 3 emails waiting, unanswered | 0 waiting, replies drafted | Drafts replies, sends with approval, creates events. |
+| Excel | Row 14 · $550 | Sales total $11,930, wrong | $12,480, fixed (was $11,930, one row was missed); row 14 now counted | Explains cells and edits formulas. No macros. |
+| Gmail and Calendar | Harbour Dental, Cove Road Cafe, East End Yoga | 3 emails waiting, unanswered | 0 waiting, replies drafted: Harbour Dental booked Tue 10:30, Cove Road Cafe and East End Yoga reply drafted | Drafts replies, sends with approval, creates events. |
 
 The first screen shows one Stripe example on its own: the Harbour Dental invoice, $450, Unpaid to Paid.

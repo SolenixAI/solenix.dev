@@ -134,3 +134,15 @@ Review #7 changed two things at once: the design, and the screenshots, which are
 | #8 | restore pass (A/B winner, 7–1), GPU baseline | 63 | 46 | 53 | 48 | 64 | 77 |
 
 Pace: about 2–5 points a pass, roughly 40 min each. The judges are a proxy; the real measure (owners booking calls) needs the site published with a booking link.
+
+### Blind A/B log (design-ab, GPU screenshots, 2 judges per scene in opposite orders)
+
+| Pass | Overall | Clarity | Pull | Notes |
+| --- | --- | --- | --- | --- |
+| #7 vs #6 | 16–4 | 15–5 | 15–3 | the absolute-score drop in #7 was the camera, not the design |
+| restore vs #7 | 7–1 | 6–0 | 5–0 | Excel before→after and tool logos back |
+| owner's things on stage | 16–4 | 16–3 | 15–4 | costs: brevity 1–12; Stripe "$0" read as nothing earned |
+| polish | 6–6 | 5–7 | 5–6 | better: Stripe $920 Paid, Meta order, readability 11–0; worse: cuts removed outcome words |
+| outcome words back | 4–0 | 4–0 | 4–0 | costs: readability and brevity (tiny mono labels) |
+
+Rule learned: cut words, but never the outcome words.
