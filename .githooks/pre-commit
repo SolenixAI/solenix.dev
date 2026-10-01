@@ -1,3 +1,8 @@
 #!/usr/bin/env bash
 # Refuse commits that break the rules in AGENTS.md.
-exec bash scripts/check.sh
+bash scripts/check.sh || exit 1
+# design/DESIGN.md is the export of the Open Design system "Solenix"; they must match.
+OD="$HOME/Library/Application Support/Open Design/namespaces/release-stable/data/design-systems/solenix-design-system-v3/DESIGN.md"
+if [ -f "$OD" ] && ! cmp -s "$OD" design/DESIGN.md; then
+  echo "check: design/DESIGN.md differs from the Open Design system \"Solenix\" — sync them before committing."; exit 1
+fi

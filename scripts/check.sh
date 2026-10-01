@@ -23,6 +23,13 @@ grep -rn -E 'data-theme="light"|prefers-color-scheme: *light' design/tokens.css 
 grep -n -E 'motion-toggle|class="word">Motion<' design/*.html 2>/dev/null \
   | while read -r l; do echo "check: Motion switch (remove it; honour prefers-reduced-motion): ${l:0:80}"; done | grep . && fail=1
 
+# The portal is invite-only: self sign-up stays off.
+grep -n -E '^enable_signup = true' supabase/config.toml \
+  | while read -r l; do echo "check: self sign-up is on in supabase/config.toml (portal is invite-only): $l"; done | grep . && fail=1
+
+# The homepage is measured: analytics are injected where it is served.
+grep -q 'capture_pageleave' app/route.ts || bad "homepage has no analytics (app/route.ts)"
+
 # Every source of truth named in AGENTS.md exists.
 for f in design/DESIGN.md design/tokens.css design/home.html design/app.html design/roi-model.md supabase/config.toml; do
   [ -f "$f" ] || bad "missing source of truth: $f"
