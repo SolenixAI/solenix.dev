@@ -146,8 +146,8 @@ footer { position: relative; z-index: 2; }
 .anchor { position: absolute; left: 0; top: 78svh; width: 1px; height: 1px; }
 
 /* The three bodies, named. Each tag rides with its sun through the whole story. */
-.body-tag { position: absolute; left: 0; top: 0; opacity: 0; will-change: transform, opacity; display: inline-flex; align-items: center; gap: 6px; padding: 4px 9px; border-radius: var(--radius-pill); background: color-mix(in oklch, var(--bg) 74%, transparent); border: 1px solid var(--line-strong); font: var(--fw-semibold) var(--fs-2xs)/1.2 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--text); white-space: nowrap; }
-.body-tag i { width: 6px; height: 6px; border-radius: 50%; background: var(--warn); box-shadow: 0 0 8px var(--warn); transition: background-color var(--dur-slow), box-shadow var(--dur-slow); }
+.body-tag { position: absolute; left: 0; top: 0; opacity: 0; will-change: transform, opacity; display: inline-flex; align-items: center; gap: 6px; padding: 2px 0; background: none; border: 0; text-shadow: 0 1px 10px var(--bg), 0 0 2px var(--bg); font: var(--fw-semibold) var(--fs-2xs)/1.2 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--text); white-space: nowrap; }
+.body-tag i { display: none; width: 6px; height: 6px; border-radius: 50%; background: var(--warn); box-shadow: 0 0 8px var(--warn); transition: background-color var(--dur-slow), box-shadow var(--dur-slow); }
 .body-tag.in i { background: var(--ok); box-shadow: 0 0 8px var(--ok); }
 .body-tag.ai { color: var(--accent-text); border-color: color-mix(in oklch, var(--accent) 60%, transparent); box-shadow: 0 0 14px color-mix(in srgb, var(--ring) 35%, transparent); }
 @media (min-width: 900px) { .scroll-cue { display: block; } }
@@ -762,7 +762,6 @@ html:not(.js) .hero-beats { display: block; } html:not(.js) .hero-b2 { opacity: 
   <div class="stage">
     <div class="hero-copy" data-od-id="hero-copy">
         <div class="wrap">
-          <p class="eyebrow">Solenix · St. John's, NL</p>
           <div class="hero-beats">
             <div class="hero-b1" data-od-id="hero-beat-problem"><h1 class="h1" data-od-id="hero-headline"><span class="w" style="--i:0"><span>Your</span></span> <span class="w" style="--i:1"><span>business</span></span> <span class="w" style="--i:2"><span>is</span></span> <span class="w" style="--i:3"><span>a</span></span> <span class="w g" style="--i:4"><span>three-body</span></span> <span class="w g" style="--i:5"><span>problem.</span></span></h1></div>
             <div class="hero-b2" data-od-id="hero-beat-solution"><h2 class="h1" data-od-id="hero-headline-solution">One AI at the centre of your business <span class="g"><span>is the solution.</span></span></h2>
@@ -972,7 +971,7 @@ html:not(.js) .hero-beats { display: block; } html:not(.js) .hero-b2 { opacity: 
   const KEYS = [
     /* 1 · Chaos */
     /* Beat one: Revenue, Costs and Time tumbling, named, nothing at the centre. */
-    { sel: '.sky', f: 0, pin: 1, k: 0, free: 0, order: 0, ink: 0, third: 0, el: 24, az: 0, dist: 15.5, ox: 0.2, oy: 0.2, poy: 0.24, calm: 0, dim: 0, labels: 1, conn: 0, agent: 0, stops: 0, tx: 0, tz: 0, fly: 0, wsel: 0, tools: 0 },
+    { sel: '.sky', f: 0, pin: 1, k: 0, free: 0, order: 0, ink: 0, third: 0, el: 40, az: 0, dist: 10, ox: 0.06, oy: 0.06, poy: 0.04, calm: 0, dim: 0, labels: 1, conn: 0, agent: 0, stops: 0, tx: 0, tz: 0, fly: 0, wsel: 0, tools: 0 },
     { sel: '.sky', f: 0.3, pin: 1, az: -6 },
     /* Beat two: the AI arrives at the centre, the tools fall into orbit round it, and the three are steered onto their orbit. */
     { sel: '.sky', f: 0.62, pin: 1, k: 1, free: 1, conn: 1, tools: 1, el: 22, az: -12, dist: 19.5, ox: 0.22, oy: 0.24 },
@@ -1629,7 +1628,7 @@ composer.addPass(new RenderPass(scene, camera));
 const bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.4, 0.42, 0.9);
 composer.addPass(bloom);
 composer.addPass(new OutputPass());
-const finalPass = new ShaderPass({ uniforms: { tDiffuse: { value: null }, uTime: { value: 0 }, uRes: { value: new THREE.Vector2(1, 1) }, uCA: { value: 0.008 }, uGrain: { value: 0.045 } },
+const finalPass = new ShaderPass({ uniforms: { tDiffuse: { value: null }, uTime: { value: 0 }, uRes: { value: new THREE.Vector2(1, 1) }, uCA: { value: 0 }, uGrain: { value: 0.045 } },
   vertexShader: `varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.); }`,
   fragmentShader: `uniform sampler2D tDiffuse; uniform float uTime,uCA,uGrain; uniform vec2 uRes; varying vec2 vUv;
     float h(vec2 p){ return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453); }
@@ -1687,7 +1686,7 @@ function frame(dtReal, still) {
   warp = R || still ? 0 : lerp(warp, Math.min(1, scrollVel / 3.5), 1 - Math.exp(-dtReal * 6));
   const fov = fov0 + 5 * warp - 1.5 * easeIn;
   if (Math.abs(fov - camera.fov) > 0.01) { camera.fov = fov; camera.updateProjectionMatrix(); }
-  finalPass.uniforms.uCA.value = 0.008 + 0.02 * warp + 0.012 * swell;
+  finalPass.uniforms.uCA.value = 0; // no colour fringe: it made everything look soft and low-res
   gridU.uChaos.value = 1 - sc.free; gridU.uDepth.value = lerp(0.95, 0.6, sc.calm);
 
   /* One continuous camera move, eased so a fast flick still glides. */
