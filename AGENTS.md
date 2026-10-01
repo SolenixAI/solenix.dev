@@ -9,8 +9,9 @@ Solenix's website and client portal. Next.js on Vercel · Supabase · Stripe · 
 - Homepage: `design/home.html` (served as-is at `/`)
 - Before/after examples (real tasks, real connectors, sourced times): `design/before-after.md`
 - ROI model and every constant behind it, with sources: `design/roi-model.md`
-- Homepage quality, scored 0–100 per section after every change: `design/scorecard.md`. Only the independent screenshot review counts (`npm run shots`, then the saved workflow `scene-review`). The designer's self-score doesn't: on 2026-10-01 Open Design gave itself 86 and independent judges gave 46.
-- Research behind design decisions (sourced, skeptic-checked): `design/research/` (`site-playbook.md` for homepage decisions and the six examples, `demos.md` for demo techniques)
+- What Jager has approved (must stay, word for word): `design/approved.md`
+- Review scores: `design/scorecard.md`. They're a guide; Jager's verdict is final.
+- Research behind design decisions: `design/research/`
 - Portal design: `design/app.html` (the app under `app/(portal)` is built to match it)
 - Supabase config and schema: `supabase/config.toml`, `supabase/migrations/`
 - Client projects: Linear. Billing: Stripe.
@@ -25,4 +26,4 @@ Solenix's website and client portal. Next.js on Vercel · Supabase · Stripe · 
 
 ## Open Design
 
-`design/` is the Open Design project "solenix.dev". Start design runs from its Studio with the "Solenix" design system selected in the composer. Keep the app window open during runs, because headless mode can't render, so it can't check its own work.
+`design/` is the Open Design project "solenix.dev". Start design runs from its Studio with the "Solenix" design system selected in the composer. Keep the app window open during runs, because headless mode can't render, so it can't check its own work. Brief it with Jager's verdict and the intent only: 150 words max, no feature lists (a hook blocks longer briefs). It designs the answer.

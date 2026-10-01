@@ -91,6 +91,16 @@ if not m: print("check: no RACES table found in design/home.html")
 sys.exit(1 if missing or not m else 0)
 PY
 
+# What Jager approved stays on the page, word for word (design/approved.md).
+python3 - design/approved.md design/home.html <<'PY' || fail=1
+import re, sys, importlib.util as u
+s = u.spec_from_file_location("v", "scripts/voice-check.py"); v = u.module_from_spec(s); s.loader.exec_module(v)
+page = re.sub(r"\s+", " ", v.visible_text(open(sys.argv[2]).read()) + " " + " ".join(re.findall(r'aria-label="([^"]*)"', open(sys.argv[2]).read())))
+missing = [l[2:].strip() for l in open(sys.argv[1]) if l.startswith("- ") and l[2:].strip() not in page]
+for m in missing: print(f"check: approved by Jager but missing from the homepage: \"{m}\" (design/approved.md)")
+sys.exit(1 if missing else 0)
+PY
+
 # Every source of truth named in AGENTS.md exists.
 for f in design/DESIGN.md design/tokens.css design/home.html design/app.html design/roi-model.md design/before-after.md supabase/config.toml; do
   [ -f "$f" ] || bad "missing source of truth: $f"

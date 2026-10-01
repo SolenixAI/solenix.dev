@@ -83,6 +83,9 @@ p = sys.argv[1]; s = open(p).read(); open(p, "w").write(re.sub(r"^## 3\. Stripe.
 PY
 expect fail "a race with no sourced section in before-after.md"
 
+fresh; python3 -c "import re,sys; p=sys.argv[1]; open(p,'w').write(re.sub(r'three.body', 'two-part', open(p).read()))" "$tmp/r/design/home.html"
+expect fail "an approved line (the three-body hero) is removed"
+
 # The Claude Code edit guard (.claude/hooks/guard.sh).
 hook() { jq -n --arg p "$1" '{tool_input:{file_path:$p}}' | bash "$root/.claude/hooks/guard.sh" >/dev/null 2>&1; echo $?; }
 hcheck() { if [ "$(hook "$2")" = "$1" ]; then pass=$((pass + 1)); echo "ok    $3"; else fail=$((fail + 1)); echo "WRONG $3"; fi; }

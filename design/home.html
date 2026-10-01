@@ -691,6 +691,13 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
 /* The first screen's words stand on calm dark: the sky deepens behind them and the world keeps to the upper right. */
 .hero-copy { isolation: isolate; }
 .hero-copy::before { content: ""; position: absolute; z-index: -1; left: 0; bottom: -8rem; width: min(100%, 52rem); height: calc(100% + 16rem); background: radial-gradient(ellipse 70% 60% at 30% 52%, color-mix(in oklch, var(--bg) 92%, transparent) 35%, transparent 100%); pointer-events: none; }
+/* The opening, in two beats on one pinned screen: the problem, then the solution. The words swap in place; the action stays put. */
+.sky { height: 230vh; height: 230svh; }
+.hero-beats { display: grid; align-items: end; }
+.hero-beats > * { grid-area: 1 / 1; }
+.hero-b2 { opacity: 0; visibility: hidden; }
+.hero-b2 .h1 { max-width: 14ch; }
+html:not(.js) .hero-beats { display: block; } html:not(.js) .hero-b2 { opacity: 1; visibility: visible; margin-top: var(--space-7); }
 </style>
 </head>
 <body>
@@ -750,14 +757,17 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
 </div>
 
 <main id="main">
-<section class="sky" id="top" data-od-id="hero-story" data-scene="hero" aria-label="One AI at the centre of your business">
+<section class="sky" id="top" data-od-id="hero-story" data-scene="hero" aria-label="Your business is a three-body problem. One AI at the centre is the solution.">
   <span class="anchor" id="settle" aria-hidden="true"></span>
   <div class="stage">
     <div class="hero-copy" data-od-id="hero-copy">
         <div class="wrap">
           <p class="eyebrow">Solenix · St. John's, NL</p>
-          <h1 class="h1" data-od-id="hero-headline"><span class="w" style="--i:0"><span>One</span></span> <span class="w" style="--i:1"><span>AI</span></span> <span class="w" style="--i:2"><span>at</span></span> <span class="w" style="--i:3"><span>the</span></span> <span class="w" style="--i:4"><span>centre</span></span> <span class="w" style="--i:5"><span>of</span></span> <span class="w g" style="--i:6"><span>your</span></span> <span class="w g" style="--i:7"><span>business.</span></span></h1>
-          <p class="hero-sub">Connected to the tools you already use. You don't need to be an expert anymore.</p>
+          <div class="hero-beats">
+            <div class="hero-b1" data-od-id="hero-beat-problem"><h1 class="h1" data-od-id="hero-headline"><span class="w" style="--i:0"><span>Your</span></span> <span class="w" style="--i:1"><span>business</span></span> <span class="w" style="--i:2"><span>is</span></span> <span class="w" style="--i:3"><span>a</span></span> <span class="w g" style="--i:4"><span>three-body</span></span> <span class="w g" style="--i:5"><span>problem.</span></span></h1></div>
+            <div class="hero-b2" data-od-id="hero-beat-solution"><h2 class="h1" data-od-id="hero-headline-solution">One AI at the centre of your business <span class="g"><span>is the solution.</span></span></h2>
+              <p class="hero-sub">Connected to the tools you already use. You don't need to be an expert anymore.</p></div>
+          </div>
           <div class="hero-ctas">
             <a class="btn btn-primary" href="/book" data-od-id="hero-cta">Book a call</a>
           </div>
@@ -961,8 +971,12 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
      Values not given carry over from the keyframe before. ── */
   const KEYS = [
     /* 1 · Chaos */
-    { sel: '.sky', f: 0, pin: 1, k: 0, free: 0, order: 0, ink: 0, third: 0, el: 22, az: 0, dist: 19.5, ox: 0.22, oy: 0.24, poy: 0.24, calm: 0, dim: 0, labels: 0, conn: 1, agent: 0, stops: 0, tx: 0, tz: 0, fly: 0, wsel: 0, tools: 1 },
-    { sel: '.sky', f: 0.55, pin: 1, labels: 1, el: 27, az: -10, dist: 16.5, ox: 0.22, oy: 0.1 },
+    /* Beat one: Revenue, Costs and Time tumbling, named, nothing at the centre. */
+    { sel: '.sky', f: 0, pin: 1, k: 0, free: 0, order: 0, ink: 0, third: 0, el: 24, az: 0, dist: 15.5, ox: 0.2, oy: 0.2, poy: 0.24, calm: 0, dim: 0, labels: 1, conn: 0, agent: 0, stops: 0, tx: 0, tz: 0, fly: 0, wsel: 0, tools: 0 },
+    { sel: '.sky', f: 0.3, pin: 1, az: -6 },
+    /* Beat two: the AI arrives at the centre, the tools fall into orbit round it, and the three are steered onto their orbit. */
+    { sel: '.sky', f: 0.62, pin: 1, k: 1, free: 1, conn: 1, tools: 1, el: 22, az: -12, dist: 19.5, ox: 0.22, oy: 0.24 },
+    { sel: '.sky', f: 0.9, pin: 1, az: -18 },
     { sel: '.sky', f: 1, pin: 1, labels: 0, el: 33, az: -22, dist: 17 },
     /* 2 and 3 · The guide and the flybys: the AI is lit at the centre and the first race is already running. Out past six tool worlds, all the way round. */
     { sel: '#fly-stripe', f: 0, pin: 1, wsel: 0, tx: 7.71, tz: 9.19, az: 70, conn: 1, tools: 0, k: 0.3, free: 0.4, fly: 1, dim: 1, el: 24, dist: 8.6, ox: 0, oy: 0, poy: 0.12 },
@@ -1030,8 +1044,9 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
     /* Hero and the Look beat, inside the pinned sky. */
     const r = sky.getBoundingClientRect(), p = clamp(-r.top / (r.height - vh));
     S.p = p;
-    const ho = 1 - smooth(0.06, 0.3, p);
-    hero.style.opacity = ho; hero.style.transform = m ? `translateY(${-p * 200}px)` : ''; hero.style.visibility = ho < 0.02 ? 'hidden' : '';
+    /* Two beats in place: the problem holds the first stretch, the solution takes over as the AI arrives. */
+    { const o1 = 1 - smooth(0.26, 0.4, p), o2 = smooth(0.46, 0.6, p), b1 = $('.hero-b1', hero), b2 = $('.hero-b2', hero);
+      b1.style.opacity = o1.toFixed(3); b1.style.visibility = o1 < 0.02 ? 'hidden' : 'visible'; b2.style.opacity = o2.toFixed(3); b2.style.visibility = o2 < 0.02 ? 'hidden' : 'visible'; }
     if (cue) cue.style.opacity = 1 - smooth(0, 0.08, p);
     let any = 0;
     /* Full motion: words rise in one by one. Reduced: the whole line fades in together, nothing moves. */
@@ -1656,7 +1671,7 @@ let fov0 = 34, warp = 0, tagShow = 1, tagW = [90, 90, 90];
 
 function frame(dtReal, still) {
   const R = !S.motion, sc = S.scene, a = still ? 1 : 1 - Math.exp(-dtReal * (R ? 1.4 : 5));
-  shownBlend = R ? smooth(0, 1, sc.order * 0.7 + sc.ink * 0.3 + sc.stops) : 0;
+  shownBlend = R ? smooth(0, 1, sc.order * 0.7 + sc.ink * 0.3 + sc.stops + sc.k * sc.tools) : 0;
   /* Physics comes straight from the scroll: how hard we steer, how free the suns are. */
   ctl.k = sc.k; ctl.soft = lerp(0.35, 0, sc.free); ctl.conf = 1 - sc.free;
   const dNow = offOrbit();
@@ -1767,7 +1782,7 @@ function frame(dtReal, still) {
   const fl = R ? (stn > 0 ? 1 : 0) : sc.fly, wsel = R ? stn - 1 : sc.wsel; gridU.uP.value.set(shown.tx, shown.tz, fl * 0.9);
   /* On the first screen the tools sit close round the AI, wired in: what we do, before a word is read.
      As the flybys begin they move out to their own places and the camera goes to meet them. */
-  const tl = sc.tools * (1 - fl), ws = R && stn > 0 ? 1 : lerp(0.25, 1, smooth(0, 1, sc.fly));
+  const tl = sc.tools * (1 - fl), ws = R && stn > 0 ? 1 : lerp(0.25, 1, smooth(0, 1, sc.fly)) * (1 + 1.6 * (1 - smooth(0.32, 0.62, S.p === undefined ? 1 : S.p)));
   worlds.forEach((m, i) => { WPOS[i].set(WBASE[i].x * ws, SUN_Y, WBASE[i].z * ws); m.position.copy(WPOS[i]);
     const on = fl > 0.01 || tl > 0.01; m.visible = warcs[i].mesh.visible = on; if (!on) return;
     const near = Math.max(0, 1 - Math.abs(wsel - i));
