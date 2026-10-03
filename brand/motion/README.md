@@ -12,4 +12,4 @@ A 20-second vertical video (1080×1920, 30 fps, with sound) for Reels, TikTok an
 - `logos.json`: the six tool logos, taken from `design/home.html`.
 - `make.sh`: builds `out/solenix-three-body.mp4` and its cover image. The `out/` folder is not committed. Requires node, python3 and ffmpeg.
 
-The finished video lives in the Solenix Google Drive, in the "Brand videos" folder. The link is in the agents' memory note `solenix-brand-video`.
+The finished video, its cover and its caption are in the Solenix Google Drive: [Brand videos](https://drive.google.com/drive/folders/1Ry7xEpzQiIeqGpEijozHgWkBt8PzKu9g).
