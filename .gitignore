@@ -9,3 +9,4 @@ next-env.d.ts
 *.tsbuildinfo
 shots/
 public/preview/
+design/research/3d-refs/

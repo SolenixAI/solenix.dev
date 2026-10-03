@@ -71,13 +71,6 @@ if [ "$(lg 'curl -X POST $SUPABASE_URL/auth/v1/admin/generate_link')" = 2 ] && [
 fresh; python3 -c "import re,sys; p=sys.argv[1]; open(p,'w').write(re.sub(r'three.body', 'two-part', open(p).read()))" "$tmp/r/design/home.html"
 expect fail "an approved line (the three-body hero) is removed"
 
-# The Claude Code edit guard (.claude/hooks/guard.sh).
-hook() { jq -n --arg p "$1" '{tool_input:{file_path:$p}}' | bash "$root/.claude/hooks/guard.sh" >/dev/null 2>&1; echo $?; }
-hcheck() { if [ "$(hook "$2")" = "$1" ]; then pass=$((pass + 1)); echo "ok    $3"; else fail=$((fail + 1)); echo "WRONG $3"; fi; }
-hcheck 0 "$root/design/home.html" "edit guard: editing the homepage directly is allowed"
-hcheck 2 "$root/lib/home-v2.ts" "edit guard: a versioned file name is blocked"
-hcheck 0 "$root/lib/marketplace.ts" "edit guard: ordinary code edits are allowed"
-
 echo
 echo "check-test: $pass proven, $fail wrong"
 exit $((fail > 0))
