@@ -6,6 +6,7 @@ import { Card, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ago, count } from "@/lib/format"
 import { getTools, MARKETPLACE_FILE, MARKETPLACE_REPO as REPO, type Tool } from "@/lib/marketplace"
+import { OG_IMAGE } from "@/lib/site-meta"
 import { Cmd } from "./tools"
 
 export const metadata: Metadata = {
@@ -16,6 +17,7 @@ export const metadata: Metadata = {
     title: "Agents Marketplace · Solenix",
     description: "Agents and tools that work with any AI. Add one marketplace, install any of them.",
     url: "https://solenix.dev/agents",
+    images: [OG_IMAGE],
   },
 }
 
