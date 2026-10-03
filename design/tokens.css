@@ -1,28 +1,22 @@
 /* ============================================================================
-   SolenixAI design tokens · v2
+   Solenix design tokens
    ----------------------------------------------------------------------------
    One source of truth for colour, light, type, space, radius, shadow, motion
    and data visualisation.
 
-   v1 compatibility
-     Every token name v1 and /assets/site.css use (--bg, --bg2, --surface,
-     --text, --muted, --faint, --line, --accent, --accent-ink, --sun1, --sun2,
-     --ring, --shadow …) still exists and still means the same thing. The
-     palette is unchanged. v2 adds light, not colour.
-
    Theming
-     Light is the default. Dark arrives via prefers-color-scheme.
-     [data-theme="dark"] / [data-theme="light"] on <html> always wins, because
-     the media query is scoped to :root:not([data-theme]).
+     The site is dark. The portal follows the device (light or dark) unless the
+     person picks one. Colours are light-dark(light, dark) pairs, written once.
 
    Structure
-     §1  theme-varying colour        — duplicated per theme
+     §1  theme-varying colour        — light-dark() pairs
      §2  derived colour and light    — written once, themes itself
      §3  type
      §4  space and layout
      §5  radius
      §6  motion
      §7  focus
+     §8  scene, night sections and page components
      Anything that can be derived with color-mix() from a §1 token lives in §2
      and is written exactly once.
 
@@ -31,177 +25,58 @@
      - Derive tones with color-mix(in oklch, …), not new numbered tokens.
      - Action ember (a solid accent fill) is one per screen. Light ember —
        glow, gradient, orbit, lit edge, chart series one — is unlimited.
-       See DESIGN.md §5.
+       See DESIGN.md.
    ========================================================================== */
 
 /* ── 1. Theme-varying colour ──────────────────────────────────────────────── */
 
-:root {
-  color-scheme: light;
+:root { color-scheme: dark; }
 
-  /* Surfaces */
-  --bg: #fbfaf8;                      /* page floor */
-  --bg2: #f3f1ed;                     /* ground, far corner */
-  --surface: rgba(255, 255, 255, 0.86); /* cards, nav, raised areas */
-  --surface-solid: #ffffff;           /* when translucency is not an option */
-  --surface-sunken: rgba(28, 25, 23, 0.05); /* code wells, inset rows */
+/* Every colour is light-dark(light, dark); color-scheme picks one. The block is
+   declared on themed elements too, because a browser resolves light-dark() where
+   the variable is declared, not where it is used. */
+:root, [data-portal], [data-theme] {
 
-  /* Ink */
-  --text: #1c1917;                    /* headings, body            16.8:1 */
-  --muted: #57534e;                   /* secondary prose            7.3:1 */
-  --faint: #736d67;                   /* captions, metadata         4.9:1 */
+  --bg: light-dark(#fbfaf8, #0b0d12);
+  --bg2: light-dark(#f3f1ed, #11141b);
+  --surface: light-dark(rgba(255, 255, 255, 0.86), rgba(20, 24, 32, 0.84));
+  --surface-solid: light-dark(#ffffff, #141820);
+  --surface-sunken: light-dark(rgba(28, 25, 23, 0.05), rgba(244, 242, 238, 0.05));
 
-  /* Lines */
-  --line: rgba(28, 25, 23, 0.1);      /* hairlines over a surface */
-  --line-solid: #e4e0d9;              /* hairlines in SVG exports */
-  --line-strong: rgba(28, 25, 23, 0.22);
+  --text: light-dark(#1c1917, #f4f2ee);
+  --muted: light-dark(#57534e, #a39e97);
+  --faint: light-dark(#736d67, #8f8983);
 
-  /* Accent — the ember. Solid fills stay rare; ember as light does not. */
-  --accent: #c2410c;                  /* on --bg                    5.0:1 */
-  --accent-hover: #9a3412;            /* darker: contrast goes up */
-  --accent-ink: #ffffff;              /* text on an --accent fill   5.2:1 */
-  --accent-text: #9a3412;             /* accent as small text on a tint 7.0:1 */
+  --line: light-dark(rgba(28, 25, 23, 0.1), rgba(244, 242, 238, 0.09));
+  --line-solid: light-dark(#e4e0d9, #1e222b);
+  --line-strong: light-dark(rgba(28, 25, 23, 0.22), rgba(244, 242, 238, 0.2));
 
-  /* Sun — the mark's gradient and the ambient light source.
-     Never a page background. --sun1 is never a text colour: 1.60:1 here. */
-  --sun1: #fbbf24;
-  --sun2: #ea580c;
-  --ring: #ea580c;
-
-  /* Status — semantic, and deliberately not the accent hue except "building",
-     which borrows the ember on purpose: work in progress is the sun rising. */
-  --ok: #065f46;                      /* live       7.4:1 on --bg */
-  --warn: #9a3412;                    /* building   7.0:1 on --bg */
-  --down: #b91c1c;                    /* down       6.2:1 on --bg */
-
-  /* Chart — five series, ember first. Each clears 4.5:1 on --bg AND on its own
-     tint, so a series colour may also be its own label. */
-  --chart-1: #c2410c;                 /* ember   5.0:1 · on tint 4.5:1 */
-  --chart-2: #0f766e;                 /* teal    5.3:1 · on tint 4.8:1 */
-  --chart-3: #4338ca;                 /* indigo  7.6:1 · on tint 6.8:1 */
-  --chart-4: #86198f;                 /* fuchsia 7.9:1 · on tint 7.1:1 */
-  --chart-5: #0369a1;                 /* sky     5.7:1 · on tint 5.2:1 */
-  --chart-tint-alpha: 8%;             /* the measured maximum for this theme */
-
-  /* Glass — the same alphas as --surface, plus blur and a lit top edge.
-     These are the measured minimum; lowering one breaks AA through the panel. */
-  --glass-bg: rgba(255, 255, 255, 0.86);
-  --glass-edge: rgba(255, 255, 255, 0.9);
-
-  /* Texture and light */
-  --grid-line: rgba(28, 25, 23, 0.055);
-  --star: rgba(28, 25, 23, 0.16);
-  --sweep-light: rgba(255, 255, 255, 0.55);
-
-  /* Display-text gradient. Not --sun1 → --sun2: that is 1.60:1 here.
-     #9a3412 → #ea580c is 7.0:1 → 3.4:1, both AA at large text. */
-  --grad-headline: linear-gradient(96deg, var(--accent-hover), var(--sun2));
-
-  /* Elevation */
-  --shadow-sm: 0 1px 2px rgba(28, 25, 23, 0.05);
-  --shadow-md: 0 1px 2px rgba(28, 25, 23, 0.04), 0 8px 24px rgba(28, 25, 23, 0.06);
-  --shadow-lg: 0 2px 4px rgba(28, 25, 23, 0.05), 0 20px 48px rgba(28, 25, 23, 0.1);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) {
-    color-scheme: dark;
-
-    --bg: #0b0d12;
-    --bg2: #11141b;
-    --surface: rgba(20, 24, 32, 0.84);
-    --surface-solid: #141820;
-    --surface-sunken: rgba(244, 242, 238, 0.05);
-
-    --text: #f4f2ee;                  /* 17.4:1 */
-    --muted: #a39e97;                 /*  7.3:1 */
-    --faint: #8f8983;                 /*  5.6:1 */
-
-    --line: rgba(244, 242, 238, 0.09);
-    --line-solid: #1e222b;
-    --line-strong: rgba(244, 242, 238, 0.2);
-
-    --accent: #f59e0b;                /*  9.1:1 */
-    --accent-hover: #fbbf24;          /* lighter: contrast goes up */
-    --accent-ink: #1a1206;            /*  8.6:1 on an --accent fill */
-    --accent-text: #fbbf24;           /* 11.6:1 */
-
-    --sun1: #fbbf24;
-    --sun2: #f97316;
-    --ring: #f59e0b;
-
-    --ok: #34d399;                    /* 10.1:1 */
-    --warn: #fbbf24;                  /* 11.6:1 */
-    --down: #fb7185;                  /*  7.2:1 */
-
-    --chart-1: #f59e0b;               /* ember   9.1:1 · on tint 6.6:1 */
-    --chart-2: #2dd4bf;               /* teal   10.4:1 · on tint 7.4:1 */
-    --chart-3: #818cf8;               /* indigo  6.5:1 · on tint 4.9:1 */
-    --chart-4: #e879f9;               /* fuchsia 7.9:1 · on tint 5.9:1 */
-    --chart-5: #38bdf8;               /* sky     9.1:1 · on tint 6.6:1 */
-    --chart-tint-alpha: 14%;
-
-    --glass-bg: rgba(20, 24, 32, 0.84);
-    --glass-edge: rgba(244, 242, 238, 0.16);
-
-    --grid-line: rgba(244, 242, 238, 0.05);
-    --star: rgba(244, 242, 238, 0.32);
-    --sweep-light: rgba(255, 255, 255, 0.4);
-
-    /* #fbbf24 → #f97316 is 11.6:1 → 6.9:1 on this ground. */
-    --grad-headline: linear-gradient(96deg, var(--sun1), var(--sun2));
-
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 32px rgba(0, 0, 0, 0.35);
-    --shadow-lg: 0 2px 4px rgba(0, 0, 0, 0.35), 0 24px 56px rgba(0, 0, 0, 0.45);
-  }
-}
-
-/* Explicit override. Same values as the media query above — duplicated rather
-   than shared because a [data-theme] selector must outrank it in the cascade. */
-[data-theme="dark"] {
-  color-scheme: dark;
-
-  --bg: #0b0d12;
-  --bg2: #11141b;
-  --surface: rgba(20, 24, 32, 0.84);
-  --surface-solid: #141820;
-  --surface-sunken: rgba(244, 242, 238, 0.05);
-
-  --text: #f4f2ee;
-  --muted: #a39e97;
-  --faint: #8f8983;
-
-  --line: rgba(244, 242, 238, 0.09);
-  --line-solid: #1e222b;
-  --line-strong: rgba(244, 242, 238, 0.2);
-
-  --accent: #f59e0b;
-  --accent-hover: #fbbf24;
-  --accent-ink: #1a1206;
-  --accent-text: #fbbf24;
+  --accent: light-dark(#c2410c, #f59e0b);
+  --accent-hover: light-dark(#9a3412, #fbbf24);
+  --accent-ink: light-dark(#ffffff, #1a1206);
+  --accent-text: light-dark(#9a3412, #fbbf24);
 
   --sun1: #fbbf24;
-  --sun2: #f97316;
-  --ring: #f59e0b;
+  --sun2: light-dark(#ea580c, #f97316);
+  --ring: light-dark(#ea580c, #f59e0b);
 
-  --ok: #34d399;
-  --warn: #fbbf24;
-  --down: #fb7185;
+  --ok: light-dark(#065f46, #34d399);
+  --warn: light-dark(#9a3412, #fbbf24);
+  --down: light-dark(#b91c1c, #fb7185);
 
-  --chart-1: #f59e0b;
-  --chart-2: #2dd4bf;
-  --chart-3: #818cf8;
-  --chart-4: #e879f9;
-  --chart-5: #38bdf8;
+  --chart-1: light-dark(#c2410c, #f59e0b);
+  --chart-2: light-dark(#0f766e, #2dd4bf);
+  --chart-3: light-dark(#4338ca, #818cf8);
+  --chart-4: light-dark(#86198f, #e879f9);
+  --chart-5: light-dark(#0369a1, #38bdf8);
   --chart-tint-alpha: 14%;
 
-  --glass-bg: rgba(20, 24, 32, 0.84);
-  --glass-edge: rgba(244, 242, 238, 0.16);
+  --glass-bg: light-dark(rgba(255, 255, 255, 0.86), rgba(20, 24, 32, 0.84));
+  --glass-edge: light-dark(rgba(255, 255, 255, 0.9), rgba(244, 242, 238, 0.16));
 
-  --grid-line: rgba(244, 242, 238, 0.05);
-  --star: rgba(244, 242, 238, 0.32);
-  --sweep-light: rgba(255, 255, 255, 0.4);
+  --grid-line: light-dark(rgba(28, 25, 23, 0.055), rgba(244, 242, 238, 0.05));
+  --star: light-dark(rgba(28, 25, 23, 0.16), rgba(244, 242, 238, 0.32));
+  --sweep-light: light-dark(rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.4));
 
   --grad-headline: linear-gradient(96deg, var(--sun1), var(--sun2));
 
@@ -210,61 +85,35 @@
   --shadow-lg: 0 2px 4px rgba(0, 0, 0, 0.35), 0 24px 56px rgba(0, 0, 0, 0.45);
 }
 
+/* Which theme applies. The public site is dark. The portal follows the
+   device's light or dark setting unless the person picked one (data-theme). */
+[data-theme="dark"] { color-scheme: dark; }
+[data-theme="light"] { color-scheme: light; }
+[data-portal]:not([data-theme]) { color-scheme: light dark; }
+
+/* The few non-colour values that differ in light. */
 [data-theme="light"] {
-  color-scheme: light;
-
-  --bg: #fbfaf8;
-  --bg2: #f3f1ed;
-  --surface: rgba(255, 255, 255, 0.86);
-  --surface-solid: #ffffff;
-  --surface-sunken: rgba(28, 25, 23, 0.05);
-
-  --text: #1c1917;
-  --muted: #57534e;
-  --faint: #736d67;
-
-  --line: rgba(28, 25, 23, 0.1);
-  --line-solid: #e4e0d9;
-  --line-strong: rgba(28, 25, 23, 0.22);
-
-  --accent: #c2410c;
-  --accent-hover: #9a3412;
-  --accent-ink: #ffffff;
-  --accent-text: #9a3412;
-
-  --sun1: #fbbf24;
-  --sun2: #ea580c;
-  --ring: #ea580c;
-
-  --ok: #065f46;
-  --warn: #9a3412;
-  --down: #b91c1c;
-
-  --chart-1: #c2410c;
-  --chart-2: #0f766e;
-  --chart-3: #4338ca;
-  --chart-4: #86198f;
-  --chart-5: #0369a1;
   --chart-tint-alpha: 8%;
-
-  --glass-bg: rgba(255, 255, 255, 0.86);
-  --glass-edge: rgba(255, 255, 255, 0.9);
-
-  --grid-line: rgba(28, 25, 23, 0.055);
-  --star: rgba(28, 25, 23, 0.16);
-  --sweep-light: rgba(255, 255, 255, 0.55);
-
   --grad-headline: linear-gradient(96deg, var(--accent-hover), var(--sun2));
-
   --shadow-sm: 0 1px 2px rgba(28, 25, 23, 0.05);
   --shadow-md: 0 1px 2px rgba(28, 25, 23, 0.04), 0 8px 24px rgba(28, 25, 23, 0.06);
   --shadow-lg: 0 2px 4px rgba(28, 25, 23, 0.05), 0 20px 48px rgba(28, 25, 23, 0.1);
 }
+@media (prefers-color-scheme: light) {
+  [data-portal]:not([data-theme]) {
+    --chart-tint-alpha: 8%;
+    --grad-headline: linear-gradient(96deg, var(--accent-hover), var(--sun2));
+    --shadow-sm: 0 1px 2px rgba(28, 25, 23, 0.05);
+    --shadow-md: 0 1px 2px rgba(28, 25, 23, 0.04), 0 8px 24px rgba(28, 25, 23, 0.06);
+    --shadow-lg: 0 2px 4px rgba(28, 25, 23, 0.05), 0 20px 48px rgba(28, 25, 23, 0.1);
+  }
+}
+
 
 /* ── 2. Derived colour and light ──────────────────────────────────────────── */
 /* Written once. Every value below derives from §1, so it themes itself. */
 
-:root {
+:root, [data-portal], [data-theme] {
   /* Soft accent and status fills */
   --accent-quiet: color-mix(in oklch, var(--accent) 12%, transparent);
   --ok-tint: color-mix(in oklch, var(--ok) 8%, transparent);
@@ -344,15 +193,16 @@
   --z-texture: 1;
   --z-content: 2;
   --z-nav: 20;
+  --z-sticky: 25;                     /* the one sticky CTA on phones */
   --z-skip: 30;
 }
 
 /* ── 3. Type ──────────────────────────────────────────────────────────────── */
 
-:root {
+:root, [data-portal], [data-theme] {
   /* Three roles, three faces. Sora carries display — a geometric grotesque
      whose bowls are the same circles as the mark, holding at 96px. Text and
-     mono are unchanged from v1; mono still does real work on every eyebrow,
+     mono still does real work on every eyebrow,
      label, number, table header and status.
      brand/build.py still needs the same display face — see DESIGN.md §2. */
   --font-display: "Sora", ui-sans-serif, -apple-system, BlinkMacSystemFont,
@@ -363,8 +213,12 @@
     monospace;
 
   /* Size. clamp() so 375px and 1920px both land without a media query. */
-  --fs-statement: clamp(2.75rem, 10vw, 6rem);   /* big statement, one per page */
-  --fs-display: clamp(2.4rem, 7.2vw, 4.5rem);   /* page-owning headline */
+  /* Display sizes grow 1.5–2× from phone to desktop and stop at 5rem (80px).
+     The fluid part is rem + vw, so nothing balloons at 1920 or 2560. */
+  --fs-beat: clamp(2.4rem, 1.7rem + 3.2vw, 5rem);      /* story beat word, scene only */
+  --fs-hero: clamp(2.6rem, 1.9rem + 3vw, 5rem);     /* scene headline, one per page */
+  --fs-statement: clamp(2.5rem, 1.85rem + 2.8vw, 4.75rem);   /* big statement, one per page */
+  --fs-display: clamp(2.2rem, 1.7rem + 2.2vw, 3.75rem);   /* page-owning headline */
   --fs-h1: clamp(1.9rem, 5vw, 2.6rem);
   --fs-h2: clamp(1.4rem, 3.4vw, 1.75rem);
   --fs-h3: 1.2rem;
@@ -385,6 +239,7 @@
   --fw-black: 800;
 
   /* Line height */
+  --lh-hero: 0.98;                    /* --fs-hero and --fs-beat */
   --lh-display: 1.04;
   --lh-heading: 1.2;
   --lh-body: 1.5;
@@ -392,6 +247,8 @@
 
   /* Tracking. Negative as type grows, positive as it shrinks into a label.
      Sora needs less negative tracking at size than the system stack did. */
+  --track-beat: -0.055em;             
+  --track-hero: -0.045em;             
   --track-statement: -0.04em;
   --track-display: -0.03em;
   --track-heading: -0.015em;
@@ -403,7 +260,7 @@
 
 /* ── 4. Space and layout ──────────────────────────────────────────────────── */
 
-:root {
+:root, [data-portal], [data-theme] {
   /* 4px base. Skip no steps; add none. */
   --space-1: 4px;
   --space-2: 8px;
@@ -436,7 +293,7 @@
 
 /* ── 5. Radius ────────────────────────────────────────────────────────────── */
 
-:root {
+:root, [data-portal], [data-theme] {
   --radius-xs: 8px;
   --radius-sm: 10px;
   --radius-md: 12px;                  /* icon chips, code wells, inputs */
@@ -448,7 +305,7 @@
 
 /* ── 6. Motion ────────────────────────────────────────────────────────────── */
 
-:root {
+:root, [data-portal], [data-theme] {
   --dur-fast: 120ms;                  /* colour, border */
   --dur-base: 180ms;                  /* lift, shadow, glow */
   --dur-slow: 320ms;                  /* panels, disclosure */
@@ -492,7 +349,7 @@
 
 /* ── 7. Focus ─────────────────────────────────────────────────────────────── */
 
-:root {
+:root, [data-portal], [data-theme] {
   --focus-width: 2px;
   --focus-offset: 3px;
   --focus-color: var(--accent);
@@ -502,4 +359,50 @@
 :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
   outline: var(--focus-width) solid var(--focus-color);
   outline-offset: var(--focus-offset);
+}
+
+/* ── 8. Scene, night sections and page components ───────────────────── */
+/* A night section is a scene section scoped with data-theme="dark", so it is
+   dark in both themes while the rest of the page follows the reader.
+   --page-bg is resolved here at :root, so inside a night section it still
+   holds the reader's page colour — use it for the hand-off at the bottom. */
+
+:root, [data-portal], [data-theme] {
+  --page-bg: var(--bg);
+
+  /* The three suns. CSS and SVG use these. WebGL reads --sun1, --sun2 and
+     --ring from computed style and derives the same mixes in script. */
+  --scene-sun-a: color-mix(in oklch, var(--sun1) 65%, var(--sun2));
+  --scene-sun-b: var(--sun2);
+  --scene-sun-c: color-mix(in oklch, var(--sun1) 80%, white);
+
+  /* Text over a scene always sits on the veil. Never on the bare canvas. */
+  --scene-veil:
+    linear-gradient(to top,
+      color-mix(in oklch, var(--bg) 92%, transparent) 0%,
+      color-mix(in oklch, var(--bg) 40%, transparent) 30%,
+      transparent 52%),
+    linear-gradient(100deg,
+      color-mix(in oklch, var(--bg) 70%, transparent) 0%,
+      transparent 48%);
+
+  /* Scene labels: reticle brackets on a body, a backed label beside it. */
+  --reticle: var(--ring);
+  --reticle-size: 84px;
+  --reticle-size-sm: 60px;
+  --label-bg: color-mix(in oklch, var(--bg) 72%, transparent);
+  --label-gap: 8px;                   /* minimum space between stacked labels */
+
+  /* Honest placeholders. A number we have not committed to is a chip. */
+  --tbd-fg: var(--warn);
+  --tbd-bg: var(--warn-tint);
+  --tbd-line: color-mix(in oklch, var(--warn) 55%, transparent);
+  --example-line: var(--line-strong);
+
+  /* Scene motion. Periods in seconds; the sim speed is read by script. */
+  --orbit-eight: 21s;                 /* one lap of a sun on the figure-eight */
+  --agent-lap: 9s;                    /* the agent dot laps faster than the suns */
+  --pulse-live: 2.4s;                 /* the Live dot's ring */
+  --sim-speed: 0.55;                  /* simulation time units per second */
+  --scene-dpr-max: 2;                 /* never render the scene above 2× */
 }

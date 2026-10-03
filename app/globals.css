@@ -1,0 +1,291 @@
+/* One stylesheet for the site and the portal.
+   design/tokens.css is the single source of truth for every colour, size,
+   radius, shadow and motion value. This file only points Tailwind and shadcn
+   at those tokens, and holds the few signature visuals (light, orbit, glass)
+   that DESIGN.md §4 defines and utilities cannot express. No hex below. */
+
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "../design/tokens.css";
+
+/* shadcn's dark: styles follow the same rule as the tokens: the site is dark;
+   the portal is dark when the person chose dark, or follows a dark device. */
+@custom-variant dark {
+  &:where([data-theme="dark"], [data-theme="dark"] *, :not([data-portal], [data-portal] *)) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where([data-portal]:not([data-theme]), [data-portal]:not([data-theme]) *) {
+      @slot;
+    }
+  }
+}
+
+@theme inline {
+  /* shadcn roles → tokens */
+  --color-background: var(--bg);
+  --color-foreground: var(--text);
+  --color-card: var(--surface);
+  --color-card-foreground: var(--text);
+  --color-popover: var(--surface-solid);
+  --color-popover-foreground: var(--text);
+  --color-primary: var(--accent);
+  --color-primary-foreground: var(--accent-ink);
+  --color-secondary: var(--surface-sunken);
+  --color-secondary-foreground: var(--text);
+  --color-muted: var(--surface-sunken);
+  --color-muted-foreground: var(--muted);
+  --color-accent: color-mix(in oklch, var(--text) 8%, transparent);
+  --color-accent-foreground: var(--text);
+  --color-destructive: var(--down);
+  --color-border: var(--line);
+  --color-input: var(--line-strong);
+  --color-ring: var(--accent);
+
+  /* Design-system names, for when a role name would hide the meaning */
+  --color-bg2: var(--bg2);
+  --color-surface: var(--surface);
+  --color-surface-solid: var(--surface-solid);
+  --color-sunken: var(--surface-sunken);
+  --color-faint: var(--faint);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ember: var(--accent);
+  --color-ember-hover: var(--accent-hover);
+  --color-ember-ink: var(--accent-ink);
+  --color-ember-text: var(--accent-text);
+  --color-ember-quiet: var(--accent-quiet);
+  --color-sun1: var(--sun1);
+  --color-sun2: var(--sun2);
+  --color-orbit: var(--ring);
+  --color-ok: var(--ok);
+  --color-ok-tint: var(--ok-tint);
+  --color-warn: var(--warn);
+  --color-warn-tint: var(--warn-tint);
+  --color-down: var(--down);
+  --color-down-tint: var(--down-tint);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-chart-track: var(--chart-track);
+
+  /* Type: three roles, three faces (DESIGN.md §2) */
+  --font-sans: var(--font-text);
+  --font-display: var(--font-display);
+  --font-mono: var(--font-mono);
+  --text-2xs: var(--fs-2xs);
+  --text-xs: var(--fs-xs);
+  --text-sm: var(--fs-sm);
+  --text-base: var(--fs-body);
+  --text-lede: var(--fs-lede);
+  --text-h4: var(--fs-h4);
+  --text-h3: var(--fs-h3);
+  --text-h2: var(--fs-h2);
+  --text-h1: var(--fs-h1);
+  --text-stat: var(--fs-stat);
+  --text-display: var(--fs-display);
+  --text-statement: var(--fs-statement);
+  --font-weight-brand: var(--fw-brand);
+  --tracking-eyebrow: var(--track-eyebrow);
+  --tracking-label: var(--track-label);
+  --tracking-heading: var(--track-heading);
+  --tracking-display: var(--track-display);
+  --tracking-statement: var(--track-statement);
+  --tracking-stat: var(--track-stat);
+  --leading-display: var(--lh-display);
+  --leading-heading: var(--lh-heading);
+
+  /* Shape: buttons are pills, cards are 20px (DESIGN.md §7) */
+  --radius-xs: var(--radius-xs);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-2xl: var(--radius-2xl);
+  --radius-pill: var(--radius-pill);
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-ember: var(--glow-ember);
+  --shadow-glow: var(--glow-hover);
+
+  /* Layout */
+  --container-site: var(--container);
+  --container-wide: var(--container-wide);
+  --container-measure: var(--measure);
+  --spacing-tap: var(--tap-min);
+  --spacing-nav: var(--nav-height);
+  --breakpoint-xs: 30rem;
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 45rem;
+  --breakpoint-lg: 56.25rem;
+  --breakpoint-xl: 64rem;
+  --ease-house: var(--ease-out);
+}
+
+/* ── Base ─────────────────────────────────────────────────────────────────── */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    background: var(--bg);
+    color: var(--text);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+  body {
+    font-family: var(--font-text);
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    line-height: var(--lh-heading);
+    letter-spacing: var(--track-heading);
+    text-wrap: balance;
+  }
+  p { text-wrap: pretty; }
+  ::selection { background: color-mix(in srgb, var(--accent) 30%, transparent); }
+  * { border-color: var(--line); }
+}
+
+/* ── Signature visuals (DESIGN.md §4, §9, §10) ────────────────────────────── */
+@layer components {
+  /* Type roles */
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: var(--space-2);
+    font-family: var(--font-mono); font-size: var(--fs-xs); font-weight: var(--fw-semibold);
+    letter-spacing: var(--track-eyebrow); text-transform: uppercase; color: var(--accent);
+  }
+  .eyebrow::before {
+    content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor;
+    box-shadow: 0 0 0 4px color-mix(in srgb, currentColor 18%, transparent);
+  }
+  .eyebrow-quiet { color: var(--faint); }
+  .eyebrow-quiet::before { display: none; }
+  .label {
+    font-family: var(--font-mono); font-size: var(--fs-xs); font-weight: var(--fw-semibold);
+    letter-spacing: var(--track-label); text-transform: uppercase; color: var(--faint);
+  }
+  /* --grad-headline is display-size only, one phrase per page. */
+  .lit-text {
+    background-image: var(--grad-headline); -webkit-background-clip: text; background-clip: text;
+    color: transparent; font-style: normal;
+  }
+  .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+  /* Light, ground, orbit. The light is scoped inside its section, never fixed. */
+  .lit { position: relative; isolation: isolate; overflow: hidden; }
+  .lit > .sky { position: absolute; inset: 0; z-index: var(--z-sky); pointer-events: none; }
+  .lit > .texture {
+    position: absolute; inset: 0; z-index: var(--z-texture); pointer-events: none;
+    background-image: var(--texture-grid); background-size: var(--grid-size) var(--grid-size);
+    mask-image: radial-gradient(120% 100% at var(--light-x, 78%) var(--light-y, -18%), black 0%, transparent 72%);
+  }
+  .lit > .content { position: relative; z-index: var(--z-content); }
+  .sky-light {
+    position: absolute; width: var(--light-size, 46rem); aspect-ratio: 1;
+    left: var(--light-x, 78%); top: var(--light-y, -18%); translate: -50% -50%;
+    background: var(--grad-sun); border-radius: 50%; filter: blur(1px);
+    opacity: var(--light-strength, 0.5); box-shadow: var(--glow-soft);
+  }
+  .sky-halo {
+    position: absolute; width: calc(var(--light-size, 46rem) * 2); aspect-ratio: 1;
+    left: var(--light-x, 78%); top: var(--light-y, -18%); translate: -50% -50%; border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in srgb, var(--sun2) 22%, transparent) 0%, transparent 62%);
+  }
+  .sky-stars { position: absolute; inset: 0; background-image: var(--texture-stars); background-size: 100% 100%; }
+  .sky-veil { position: absolute; inset: 0; background: var(--grad-veil); }
+  .sky-orbit {
+    position: absolute; width: var(--orbit-size, 74rem); aspect-ratio: 1;
+    left: var(--light-x, 78%); top: var(--light-y, -18%); translate: -50% -50%;
+  }
+  .ring-line { fill: none; stroke: var(--ring); stroke-opacity: 0.17; stroke-width: 1; vector-effect: non-scaling-stroke; }
+  .ring-faint { stroke-opacity: 0.1; }
+  .ring-arc { fill: none; stroke: var(--ring); stroke-opacity: 0.34; stroke-width: 1.5; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+  .ring-dot { fill: var(--ring); }
+  .orbit-track { transform-origin: 400px 400px; animation: orbit var(--orbit-1) var(--ease-orbit) infinite; }
+  .orbit-track.t2 { animation-duration: var(--orbit-2); animation-direction: reverse; }
+  .orbit-track.t3 { animation-duration: var(--orbit-3); }
+
+  /* A hero panel carrying its own small light (portal). */
+  .hero-panel {
+    position: relative; isolation: isolate; overflow: hidden;
+    background: var(--glass-bg); backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--line); border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-lg), var(--glass-inset);
+  }
+  .hero-panel > * { position: relative; z-index: var(--z-content); }
+  .hero-panel > .hero-light {
+    position: absolute; z-index: var(--z-sky); width: 22rem; aspect-ratio: 1; right: -6rem; top: -11rem;
+    border-radius: 50%; background: var(--grad-sun); opacity: 0.16; filter: blur(2px); pointer-events: none;
+  }
+  .hero-panel > .hero-grid {
+    position: absolute; inset: 0; z-index: var(--z-texture); pointer-events: none;
+    background-image: var(--texture-grid); background-size: var(--grid-size) var(--grid-size);
+    mask-image: radial-gradient(90% 90% at 100% 0%, black, transparent 70%);
+  }
+
+  /* Glass: --surface plus blur plus a lit top edge. */
+  .glass {
+    background: var(--glass-bg); backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--line); border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-lg), var(--glass-inset); overflow: hidden;
+  }
+
+  /* Scroll reveal: hidden only once script says motion is allowed. */
+  .js .reveal {
+    opacity: 0; translate: 0 var(--reveal-rise);
+    transition: opacity var(--dur-reveal) var(--ease-out), translate var(--dur-reveal) var(--ease-out);
+    transition-delay: calc(var(--i, 0) * var(--stagger));
+  }
+  .js .reveal.in { opacity: 1; translate: 0 0; }
+
+  /* The light sweep: once, never on a loop. */
+  .sweepable { position: relative; overflow: hidden; }
+  .sweepable::after {
+    content: ""; position: absolute; inset: 0; background: var(--grad-sweep);
+    translate: -110% 0; pointer-events: none;
+  }
+  .sweepable.sweeping::after { animation: sweep var(--dur-sweep) var(--ease-out) 1; }
+
+  /* Before and after */
+  .tangle path { fill: none; stroke: var(--line-strong); stroke-width: 1.2; stroke-linecap: round; }
+  .orbitsys .ring-line { stroke-opacity: 0.22; }
+  .orbitsys .spin { transform-origin: 200px 150px; animation: orbit var(--orbit-2) var(--ease-orbit) infinite; }
+  .orbitsys .spin-b { animation-duration: var(--orbit-3); animation-direction: reverse; }
+  .orbitsys .node { fill: var(--accent); }
+
+  /* Sparkline: the end point is a zero-length path, so it stays round. */
+  .spark { display: block; width: 100%; overflow: visible; }
+  .spark .line { fill: none; stroke: var(--spark-line); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+  .spark .area { fill: url(#sparkfill); }
+  .spark .last { fill: none; stroke: var(--spark-point); stroke-width: 7; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+  .spark-sm .line { stroke-width: 1.75; }
+  .spark-sm .last { stroke-width: 5; }
+
+  /* Things that breathe */
+  .pulse-dot { box-shadow: var(--glow-point); animation: pulse var(--pulse-period) var(--ease-in-out) infinite; }
+  .typing i { width: 6px; height: 6px; border-radius: 50%; background: var(--faint); animation: blink 1.2s var(--ease-in-out) infinite; }
+  .typing i:nth-child(2) { animation-delay: 0.15s; }
+  .typing i:nth-child(3) { animation-delay: 0.3s; }
+}
+
+@keyframes orbit { to { rotate: 360deg; } }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+@keyframes sweep { to { translate: 110% 0; } }
+@keyframes blink { 0%, 60%, 100% { opacity: 0.3; } 30% { opacity: 1; } }
+
+/* Reduced motion: every value is still on the screen; nothing moves. */
+@media (prefers-reduced-motion: reduce) {
+  .orbit-track, .orbitsys .spin, .pulse-dot, .typing i { animation: none; }
+  .js .reveal { opacity: 1; translate: 0 0; }
+  .sweepable::after { content: none; }
+}

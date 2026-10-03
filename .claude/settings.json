@@ -1,0 +1,18 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|mcp__plugin_supabase_supabase__execute_sql",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/sign-in-link-guard.sh\""
+          }
+        ]
+      }
+    ]
+  },
+  "enabledPlugins": {
+    "vercel@solenix": true
+  }
+}

@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# No secrets in commits (keys live in .env.local and Vercel, never in git).
+gitleaks git --pre-commit --staged --no-banner --redact --exit-code 1 >/dev/null 2>&1 || { echo "a secret is staged for commit (run: gitleaks git --pre-commit --staged --redact)"; exit 1; }
