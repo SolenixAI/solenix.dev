@@ -1,19 +1,16 @@
 import type { Metadata, Viewport } from "next";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
+import { ICONS, OG_IMAGE } from "@/lib/site-meta";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://solenix.dev"),
   title: { default: "Solenix · the tech person your business does not have", template: "%s · Solenix" },
   description:
     "One person who knows which of your tools already talk to each other, sets up AI on them, teaches your team, and keeps it all running. St. John's, Newfoundland.",
-  icons: {
-    icon: [
-      { url: "/brand/out/logo-dark.svg", type: "image/svg+xml", media: "(prefers-color-scheme: dark)" },
-      { url: "/brand/out/logo-light.svg", type: "image/svg+xml" },
-    ],
-    apple: "/brand/out/apple-touch-icon.png",
-  },
+  icons: ICONS,
+  openGraph: { type: "website", siteName: "Solenix", images: [OG_IMAGE] },
+  twitter: { card: "summary_large_image", images: [OG_IMAGE.url] },
 };
 
 export const viewport: Viewport = { colorScheme: "light dark" };

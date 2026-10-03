@@ -11,7 +11,8 @@
     "prepare": "git config core.hooksPath .githooks",
     "scenes": "node scripts/scene-check.mjs",
     "shots": "node scripts/shots.mjs",
-    "check:test": "bash scripts/check-test.sh"
+    "check:test": "bash scripts/check-test.sh",
+    "share-images": "node scripts/share-images.mjs"
   },
   "engines": {
     "node": ">=22"
