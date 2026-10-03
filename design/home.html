@@ -1648,6 +1648,7 @@ const scr = [[0, 0], [0, 0], [0, 0]];
 /* The five stops of "After you book" sit on the real orbit, in the order the ink reaches them. */
 const INK0 = 0.1, INK_SPAN = 0.9, STOP_U = [0, 1, 2, 3, 4].map(k => INK0 + (k + 0.5) / 5 * INK_SPAN);
 const jrEl = document.getElementById('after');
+const ZOOM = 2;
 const shown = { el: S.hero.el, az: 0, dist: S.hero.dist, ox: 0.1, oy: 0.05, tx: 0, tz: 0 };
 const ui = tags[0].parentElement;
 const heroBeat = document.querySelector('.sky .beat'), heroBeatH = heroBeat && heroBeat.querySelector('.beat-h'), heroBlocks = [...document.querySelectorAll('.hero-copy .wrap > *')], readBlocks = { '#guide': [...document.querySelectorAll('#guide .jr-head, #guide .guide-say')], '#close': [...document.querySelectorAll('#close .close-in > *')] }; let heroBox = [0, 0, 0, 0], readBox = {}, heroBoxDirty = true;
@@ -1741,7 +1742,8 @@ function frame(dtReal, still) {
   const el = D2R(shown.el + mouse.y * 3 * (1 - sc.calm * 0.5));
   const az = D2R(shown.az) + (R ? 0 : Math.sin(clockT * 0.045) * 0.1 * (1 - sc.calm)) + mouse.x * 0.05;
   tgt.set(shown.tx, lerp(-0.6, SUN_Y, smooth(22, 62, shown.el)), shown.tz);
-  const cd = shown.dist * (1 - (portrait ? 0.04 : 0.07) * easeIn);
+  /* Pulled back through the whole space: every station sits twice as far out, so the system reads at a glance with room round it. */
+  const cd = shown.dist * ZOOM * (1 - (portrait ? 0.04 : 0.07) * easeIn);
   camera.position.set(tgt.x + cd * Math.cos(el) * Math.sin(az), tgt.y + cd * Math.sin(el), tgt.z + cd * Math.cos(el) * Math.cos(az));
   camera.lookAt(tgt);
   if (!R) camera.rotateZ(Math.max(-0.09, Math.min(0.09, (sc.az - shown.az) * 0.004)));
@@ -1772,7 +1774,7 @@ function frame(dtReal, still) {
     const u = suns[b].material.uniforms;
     u.uSize.value = lerp(1.75, portrait ? 1.35 : 1.25, sc.calm) * lerp(1, open.size, open.k); u.uGain.value = (lerp(0.72, 0.62, sc.calm) + 0.3 * swell) * (1 - 0.45 * sc.fly); u.uFlare.value = lerp(0.45, 0.18, sc.calm);
     /* Lens strength for this sun, in screen units, shrinking with distance. */
-    proj.copy(v).project(camera); lensU.value[b].set(proj.x, proj.y, proj.z < 1 ? 0.05 * 11 / shown.dist : 0);
+    proj.copy(v).project(camera); lensU.value[b].set(proj.x, proj.y, proj.z < 1 ? 0.05 * 11 / (shown.dist * ZOOM) : 0);
   }
   bloom.strength = lerp(0.36, 0.24, sc.calm) + 0.5 * swell;
   gridU.uLock.value = still || R ? 99 : Math.min(sinceLock, clockT - pingT);
