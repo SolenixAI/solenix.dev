@@ -2,15 +2,6 @@
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Write|Edit|MultiEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard.sh\""
-          }
-        ]
-      },
-      {
         "matcher": "Bash|mcp__plugin_supabase_supabase__execute_sql",
         "hooks": [
           {
@@ -19,17 +10,9 @@
           }
         ]
       }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/stop-check.sh\"",
-            "timeout": 30
-          }
-        ]
-      }
     ]
+  },
+  "enabledPlugins": {
+    "vercel@solenix": true
   }
 }
