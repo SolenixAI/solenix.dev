@@ -1023,8 +1023,8 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
   /* ── The story, as keyframes on the page. Each one pins the scene at a point in the scroll:
      where the camera is, how hard the suns are steered, how far the orbit is drawn in.
      Values not given carry over from the keyframe before. ── */
-  /* The opening is seen from inside the space: low over the ground, close to the bodies, on a wider lens. */
-  const HERO = S.hero = { el: 13, dist: 7.6, lens: 12 };
+  /* The opening is seen from above and pulled back, so all three bodies read as one system pulling apart. */
+  const HERO = S.hero = { el: 30, dist: 11.5, lens: 4 };
   /* Six tool worlds. Each has its own camera height and distance, and its own place for the three bodies:
      a → b is where they roam (ahead of / beside the tool, in world units) as you scroll through the section. */
   const FLY = S.fly = [
@@ -1037,14 +1037,14 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
   ];
   const KEYS = [
     /* 1 · Chaos */
-    { sel: '.sky', f: 0, pin: 1, k: 0, free: 0, order: 0, ink: 0, third: 0, el: HERO.el, az: 0, dist: HERO.dist, ox: 0.1, oy: 0.05, poy: 0.13, calm: 0, dim: 0, labels: 0, conn: 0, agent: 0, stops: 0, tx: 0, tz: 0, fly: 0, wsel: 0, hero: 1, lens: HERO.lens, rf: 0, rs: 0, sp: 1, rw: 0, shl: 0 },
-    { sel: '.sky', f: 0.55, pin: 1, labels: 1, el: 15, az: -12, dist: 7.2, ox: 0.12, oy: 0.05 },
-    { sel: '.sky', f: 1, pin: 1, labels: 0, el: 18, az: -24, dist: 7.8 },
+    { sel: '.sky', f: 0, pin: 1, k: 0, free: 0, order: 0, ink: 0, third: 0, el: HERO.el, az: 0, dist: HERO.dist, ox: 0.25, oy: 0.05, poy: 0.2, calm: 0, dim: 0, labels: 0, conn: 0, agent: 0, stops: 0, tx: 0, tz: 0, fly: 0, wsel: 0, hero: 1, lens: HERO.lens, rf: 0, rs: 0, sp: 1, rw: 0, shl: 0 },
+    { sel: '.sky', f: 0.55, pin: 1, labels: 1, el: 33, az: -12, dist: 11.2, ox: 0.25, oy: 0.05 },
+    { sel: '.sky', f: 1, pin: 1, labels: 0, el: 36, az: -24, dist: 11.8 },
     /* From here to the plan nothing is steered. The three bodies stay wild and range across the world:
        rf / rs place them ahead of or beside where the camera looks, sp spreads them, rw lets each one wander. */
     /* 2 · The guide: the AI is lit at the centre; the bodies swing wide around it, unheld. */
-    { sel: '#guide', f: 0.25, pin: 1, hero: 0, lens: 0, conn: 1, k: 0, free: 0, el: 44, az: 10, dist: 12.5, ox: 0.22, oy: 0.02, poy: 0.02, rf: 0.8, rs: 1.6, sp: 1.35, rw: 1.5, shl: 1 },
-    { sel: '#guide', f: 0.9, pin: 1, el: 36, az: 34, dist: 11.5, rf: -0.4, rs: 2.2, sp: 1.5 },
+    { sel: '#guide', f: 0.25, pin: 1, hero: 0, lens: 0, conn: 1, k: 0, free: 0, el: 44, az: 10, dist: 12.5, ox: 0.26, oy: 0.02, poy: 0.02, rf: 0.8, rs: 2.6, sp: 1.3, rw: 1.1, shl: 1 },
+    { sel: '#guide', f: 0.9, pin: 1, el: 36, az: 34, dist: 11.5, rf: -0.4, rs: 3.2, sp: 1.4 },
     /* 3 · The flybys: six tool worlds, each its own place and its own view. The bodies come too, still wild. */
     ...FLY.flatMap((w, i) => [
       { sel: '#fly-' + w.id, f: 0.15, pin: 1, wsel: i, tx: w.tx, tz: w.tz, az: 70 + i * 60, conn: 0, k: 0, free: 0, fly: 1, dim: 1, shl: 0, el: w.el, dist: w.dist, ox: 0, oy: -0.1, poy: -0.08, rf: w.a[0], rs: w.a[1], sp: w.sp, rw: w.rw },
@@ -1057,8 +1057,8 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
     { sel: '#promises', f: 0.1, pin: 1, stops: 0, shl: 0, el: 17, az: 438, dist: 8.8, lens: 8, ox: 0.24, oy: 0.03, poy: -0.04 },
     { sel: '#promises', f: 1, pin: 1, el: 14, az: 510 },
     /* 5 · Stable orbit: steering lets go and it holds. Seen whole, from high above. */
-    { sel: '#close', f: 0.35, k: 0, agent: 1, lens: 0, el: 56, az: 532, dist: 12.5, ox: 0.24, oy: 0.08, poy: 0.24 },
-    { sel: '#close', f: 1, el: 60, az: 540, dist: 13.5 }
+    { sel: '#close', f: 0.35, k: 0, agent: 1, lens: 0, el: 56, az: 532, dist: 15, ox: 0.28, oy: 0.08, poy: 0.24, shl: 0.6 },
+    { sel: '#close', f: 1, el: 60, az: 540, dist: 16 }
   ];
   const PARAMS = Object.keys(KEYS[0]).filter(k => !['sel', 'f', 'pin', 'gap'].includes(k));
   for (let i = 1; i < KEYS.length; i++) PARAMS.forEach(k => { if (KEYS[i][k] === undefined) KEYS[i][k] = KEYS[i - 1][k]; });
@@ -1650,7 +1650,7 @@ const INK0 = 0.1, INK_SPAN = 0.9, STOP_U = [0, 1, 2, 3, 4].map(k => INK0 + (k + 
 const jrEl = document.getElementById('after');
 const shown = { el: S.hero.el, az: 0, dist: S.hero.dist, ox: 0.1, oy: 0.05, tx: 0, tz: 0 };
 const ui = tags[0].parentElement;
-const heroH1 = document.querySelector('.h1'), heroCta = document.querySelector('.hero-ctas'), heroBeat = document.querySelector('.sky .beat'), heroBeatH = heroBeat && heroBeat.querySelector('.beat-h'), guideBlocks = [...document.querySelectorAll('#guide .jr-head, #guide .guide-say')]; let heroBox = [0, 0, 0, 0], guideBox = [], heroBoxDirty = true;
+const heroBeat = document.querySelector('.sky .beat'), heroBeatH = heroBeat && heroBeat.querySelector('.beat-h'), heroBlocks = [...document.querySelectorAll('.hero-copy .wrap > *')], readBlocks = { '#guide': [...document.querySelectorAll('#guide .jr-head, #guide .guide-say')], '#close': [...document.querySelectorAll('#close .close-in > *')] }; let heroBox = [0, 0, 0, 0], readBox = {}, heroBoxDirty = true;
 addEventListener('scroll', () => { heroBoxDirty = true; }, { passive: true }); addEventListener('resize', () => { heroBoxDirty = true; });
 const ROAM_RATE = [2.1, 1.2, 0.75];
 /* Tool sections: the bodies keep to the open sky. The tallest band of the screen with no small text in it is
@@ -1832,8 +1832,11 @@ function frame(dtReal, still) {
      the scene is dimmed behind reading text, and step apart if two suns pass close together. */
   /* On the journey the step is the subject, so the tags step back until the orbit holds. */
   tagShow = lerp(tagShow, locked || sc.agent > 0.98 ? 1 : 0, still ? 1 : 1 - Math.exp(-dtReal * 4));
-  if (heroBoxDirty) { heroBoxDirty = false; const onBeat = heroBeat && heroBeat.style.visibility === 'visible', r0 = (onBeat ? heroBeatH : heroH1).getBoundingClientRect(), r1 = (onBeat ? heroBeat : heroCta).getBoundingClientRect(); heroBox = [r0.left - 14, r0.top - 10, Math.max(r0.right, onBeat ? r0.right : r1.right) + 14, r1.bottom + 10];
-    guideBox = guideBlocks.map(e => { const r = e.getBoundingClientRect(); return [r.left - 14, r.top - 10, r.right + 14, r.bottom + 10]; }); }
+  /* The hero box runs from the eyebrow to the button, as wide as the widest line, so no tag lands on any of it. */
+  const pad = e => { const r = e.getBoundingClientRect(); return [r.left - 14, r.top - 10, r.right + 14, r.bottom + 10]; };
+  if (heroBoxDirty) { heroBoxDirty = false; const onBeat = heroBeat && heroBeat.style.visibility === 'visible';
+    heroBox = (onBeat ? [heroBeatH, heroBeat] : heroBlocks).map(pad).reduce((u, b) => [Math.min(u[0], b[0]), Math.min(u[1], b[1]), Math.max(u[2], b[2]), Math.max(u[3], b[3])]);
+    for (const k in readBlocks) readBox[k] = readBlocks[k].map(pad); }
   const la = Math.max(0, Math.min(1, 1 - sc.dim / 0.4)) * lerp(1, tagShow, sc.stops), off = portrait ? 24 : 34, pxU = H / (2 * Math.tan(D2R(camera.fov / 2)));
   const bd = [0, 1, 2].map(i => Math.hypot(disp[i * 2] - eight.p[i * 2], disp[i * 2 + 1] - eight.p[i * 2 + 1]));
   const pos = [0, 1, 2].map(i => { proj.copy(B[i]).project(camera); const u = suns[i].material.uniforms, rad = u.uR.value * u.uSize.value * pxU / Math.max(1, camera.position.distanceTo(B[i]));
@@ -1841,8 +1844,8 @@ function frame(dtReal, still) {
   for (let n = 1; n < 3; n++) for (let m = 0; m < n; m++) if (Math.abs(pos[n].x - pos[m].x) < 92 && pos[n].y - pos[m].y < 24) pos[n].y = pos[m].y + 24;
   pos.forEach(pp => { const e = tags[pp.i], hw = tagW[pp.i] / 2 + 10, x = Math.min(Math.max(pp.x, hw), W - hw);
     const clear = bx => Math.max(bx[0] - (x + hw), (x - hw) - bx[2], bx[1] - (pp.y + 12), (pp.y - 12) - bx[3]);
-    const gap = S.sec === '#guide' ? Math.min(...guideBox.map(clear)) : clear(heroBox);
-    e.style.opacity = (la * pp.vis * lerp(1, smooth(0, 28, gap), S.sec === '#guide' ? 1 : heroAmt)).toFixed(3); e.style.transform = `translate3d(${x.toFixed(1)}px, ${pp.y.toFixed(1)}px, 0) translateX(-50%)`; e.classList.toggle('in', bd[pp.i] < 0.05); });
+    const rb = readBox[S.sec], gap = rb ? Math.min(...rb.map(clear)) : clear(heroBox);
+    e.style.opacity = (la * pp.vis * lerp(1, smooth(0, 28, gap), rb ? 1 : heroAmt)).toFixed(3); e.style.transform = `translate3d(${x.toFixed(1)}px, ${pp.y.toFixed(1)}px, 0) translateX(-50%)`; e.classList.toggle('in', bd[pp.i] < 0.05); });
   { const al = la * Math.max(sc.conn, sc.free * 0.75) * (1 - fl); tagAi.style.opacity = al.toFixed(3);
     if (al > 0.001) { proj.copy(HUB).project(camera); tagAi.style.transform = `translate3d(${((proj.x + 1) / 2 * W).toFixed(1)}px, ${((1 - proj.y) / 2 * H - 30).toFixed(1)}px, 0) translateX(-50%)`; } }
 
