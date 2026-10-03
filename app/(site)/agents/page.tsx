@@ -11,10 +11,10 @@ import { Cmd } from "./tools"
 export const metadata: Metadata = {
   title: "Agents Marketplace",
   description:
-    "Agent tools we use and trust, each the vendor's own plugin. Add the Solenix marketplace once, then install any of them.",
+    "Agents and tools that work with any AI, each the vendor's own plugin. Add the Solenix marketplace once, then install any of them.",
   openGraph: {
     title: "Agents Marketplace · Solenix",
-    description: "Agent tools we use and trust. Add one marketplace, install any of them.",
+    description: "Agents and tools that work with any AI. Add one marketplace, install any of them.",
     url: "https://solenix.dev/agents",
   },
 }
@@ -87,7 +87,7 @@ export default async function Agents() {
             Agent tools that install in <em className="lit-text">one line.</em>
           </h1>
           <p className="reveal max-w-measure text-lede text-muted-foreground" style={{ "--i": 2 } as React.CSSProperties}>
-            Agent tools we use and trust, from all over. Add our marketplace once, then install any of them with your
+            Agents and tools that work with any AI, from all over. Add our marketplace once, then install any of them with your
             agent&apos;s own plugin system. Each tool is its vendor&apos;s own plugin, maintained by the vendor.
           </p>
           <div className="reveal mt-8 flex flex-wrap gap-3" style={{ "--i": 3 } as React.CSSProperties}>
