@@ -1,0 +1,547 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1080, initial-scale=1">
+<title>Solenix · motion piece</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400..800&family=JetBrains+Mono:wght@500;700&display=block">
+<style>html,body{margin:0;background:#0b0d12;overflow:hidden}canvas{display:block}</style>
+</head>
+<body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<script>
+/* Solenix · "three-body problem" motion piece, 1080x1920. Every frame is a pure function of t (seconds).
+   window.renderFrame(t) draws one frame; window.ready resolves once fonts, logos, physics and camera are baked. */
+const W = 1080, H = 1920, FPS = 30, DUR = 20.0
+const out = document.getElementById('c'), ox = out.getContext('2d')
+const scene = document.createElement('canvas'); scene.width = W; scene.height = H
+const accum = document.createElement('canvas'); accum.width = W; accum.height = H
+const trailCv = document.createElement('canvas'); trailCv.width = W; trailCv.height = H
+const bloomA = Object.assign(document.createElement('canvas'), { width: 270, height: 480 })
+const bloomB = Object.assign(document.createElement('canvas'), { width: 135, height: 240 })
+let cx = scene.getContext('2d')
+const C = { night: '#0b0d12', paper: '#f4f2ee', ember: '#f59e0b', gold: '#fbbf24', sunE: '#f97316', green: '#34d399', ink: '#1a1206' }
+const BODY = [{ name: 'REVENUE', a: '#fde68a', b: '#fbbf24', rgb: '251,191,36' }, { name: 'COSTS', a: '#fdba74', b: '#f97316', rgb: '249,115,22' }, { name: 'TIME', a: '#ffffff', b: '#e8e4dc', rgb: '244,242,238' }]
+const TOOLS = ['shopify', 'quickbooks', 'microsoftexcel', 'meta', 'hubspot', 'gmail']
+const T = { TOOLS: 4.65, FREEZE: 8.4, BLACK: 8.62, IGNITE: 9.1, LOCK0: 9.3, LOCK: 11.6, TILT0: 12.6, TILT1: 14.2, LOGO: 16.2, LOGO1: 16.95, MARK: 17.2 }
+
+/* ---------- helpers ---------- */
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x))
+const lerp = (a, b, t) => a + (b - a) * t
+const seg = (t, a, b) => clamp((t - a) / (b - a))
+const sm = (x) => x * x * (3 - 2 * x)
+const eOutExpo = (x) => (x >= 1 ? 1 : 1 - Math.pow(2, -10 * x))
+const eInExpo = (x) => (x <= 0 ? 0 : Math.pow(2, 10 * x - 10))
+const eOutBack = (x, s = 1.9) => 1 + (s + 1) * Math.pow(x - 1, 3) + s * Math.pow(x - 1, 2)
+const eIO = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2)
+function rng(seed) { let s = seed >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296) }
+
+/* ---------- physics, baked ---------- */
+const SUB = 8, NF = Math.round(DUR * FPS) + 2, NS = NF * SUB
+const P = [new Float32Array(NS * 2), new Float32Array(NS * 2), new Float32Array(NS * 2)]
+// Six tools on a flat ellipse, vertices on the horizontal axis.
+const TOOLPOS = TOOLS.map((_, k) => { const a = k * Math.PI / 3; return [Math.cos(a) * 1.75, Math.sin(a) * 1.75 * 0.8] })
+const rate = (t) => (t < 2.4 ? 1.55 : t < T.TOOLS ? 1.25 : t < T.FREEZE ? lerp(1.3, 2.6, seg(t, 6.2, T.FREEZE)) : t < T.IGNITE ? 0 : 1.65)
+const F8T = 6.32591398, F8N = 4096, F8 = [new Float32Array(F8N * 2), new Float32Array(F8N * 2), new Float32Array(F8N * 2)], F8S = 1.45
+function accel(p, o) {
+  const a = [[0, 0], [0, 0], [0, 0]]
+  for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) if (i !== j) {
+    const dx = p[j][0] - p[i][0], dy = p[j][1] - p[i][1], r2 = dx * dx + dy * dy + o.eps, f = 1 / (r2 * Math.sqrt(r2))
+    a[i][0] += dx * f; a[i][1] += dy * f
+  }
+  if (o.tools) for (let i = 0; i < 3; i++) for (const [tx, ty] of TOOLPOS) {
+    const dx = tx - p[i][0], dy = ty - p[i][1], r2 = dx * dx + dy * dy + 0.09, f = o.tools / (r2 * Math.sqrt(r2))
+    a[i][0] += dx * f; a[i][1] += dy * f
+  }
+  if (o.k) for (let i = 0; i < 3; i++) { a[i][0] -= o.k * p[i][0]; a[i][1] -= o.k * p[i][1] * 0.8 }
+  return a
+}
+const f8at = (b, simT) => { const ph = ((simT % F8T) + F8T) % F8T / F8T * F8N, i0 = Math.floor(ph) % F8N, i1 = (i0 + 1) % F8N, fr = ph - Math.floor(ph); return [lerp(F8[b][i0 * 2], F8[b][i1 * 2], fr) * F8S, lerp(F8[b][i0 * 2 + 1], F8[b][i1 * 2 + 1], fr) * F8S] }
+function bake() {
+  { let p = [[0.97000436, -0.24308753], [-0.97000436, 0.24308753], [0, 0]], v = [[0.466203685, 0.43236573], [0.466203685, 0.43236573], [-0.93240737, -0.86473146]]
+    const steps = F8N * 16, dt = F8T / steps
+    for (let s = 0; s <= steps; s++) {
+      if (s % 16 === 0 && s / 16 < F8N) for (let b = 0; b < 3; b++) { F8[b][(s / 16) * 2] = p[b][0]; F8[b][(s / 16) * 2 + 1] = p[b][1] }
+      const a = accel(p, { eps: 0 }); for (let b = 0; b < 3; b++) { v[b][0] += a[b][0] * dt / 2; v[b][1] += a[b][1] * dt / 2; p[b][0] += v[b][0] * dt; p[b][1] += v[b][1] * dt }
+      const a2 = accel(p, { eps: 0 }); for (let b = 0; b < 3; b++) { v[b][0] += a2[b][0] * dt / 2; v[b][1] += a2[b][1] * dt / 2 }
+    } }
+  let p = [[-1.9, -1.5], [2.0, 1.2], [0.3, 2.1]], v = [[1.25, 1.0], [-1.15, -0.4], [-0.3, -1.35]]
+  let sp = null, sv = null
+  for (let f = 0; f < NF; f++) for (let s = 0; s < SUB; s++) {
+    const t = (f + s / SUB) / FPS, k = f * SUB + s, dtr = 1 / FPS / SUB
+    const dts = rate(t) * dtr, n = 6, dt = dts / n
+    const tools = t > T.TOOLS + 0.25 && t < T.FREEZE ? 0.9 * sm(seg(t, T.TOOLS + 0.25, T.TOOLS + 1.0)) : 0
+    const kk = lerp(0.42, 0.3, seg(t, T.TOOLS, 5.2))
+    for (let i = 0; i < n; i++) {
+      const a = accel(p, { eps: 0.05, tools, k: kk })
+      for (let b = 0; b < 3; b++) { v[b][0] += a[b][0] * dt; v[b][1] += a[b][1] * dt; v[b][0] *= 0.99985; v[b][1] *= 0.99985; p[b][0] += v[b][0] * dt; p[b][1] += v[b][1] * dt }
+    }
+    for (let b = 0; b < 3; b++) { P[b][k * 2] = p[b][0]; P[b][k * 2 + 1] = p[b][1] }
+    if (t >= T.LOCK0) {
+      // The AI steers: an underdamped spring pulls each body onto its slot on the figure-eight, overshoots, locks.
+      if (!sp) { sp = p.map((q) => [...q]); sv = v.map((q) => [q[0] * 1.65, q[1] * 1.65]) }
+      const simT = (t - T.LOCK0) * 1.65, w = lerp(3, 11, seg(t, T.LOCK0, T.LOCK)), z = 0.6
+      for (let b = 0; b < 3; b++) {
+        const [tx, ty] = f8at(b, simT)
+        const ax = (tx - sp[b][0]) * w * w - 2 * z * w * sv[b][0], ay = (ty - sp[b][1]) * w * w - 2 * z * w * sv[b][1]
+        sv[b][0] += ax * dtr; sv[b][1] += ay * dtr; sp[b][0] += sv[b][0] * dtr; sp[b][1] += sv[b][1] * dtr
+        const e = seg(t, T.LOCK - 0.25, T.LOCK)
+        P[b][k * 2] = lerp(sp[b][0], tx, e); P[b][k * 2 + 1] = lerp(sp[b][1], ty, e)
+      }
+    }
+  }
+  bakeCamera()
+}
+const pos = (b, t) => { const k = clamp(Math.round(t * FPS * SUB), 0, NS - 1); return [P[b][k * 2], P[b][k * 2 + 1]] }
+
+/* ---------- camera: baked auto-framing in the hook, authored after ---------- */
+const CAM = []
+function bakeCamera() {
+  let c = { x: 0, y: 0, zoom: 260 }, v = { x: 0, y: 0, zoom: 0 }, om = 5
+  for (let f = 0; f < NF; f++) {
+    const t = f / FPS
+    let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9
+    for (let b = 0; b < 3; b++) { const [x, y] = pos(b, t); x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y) }
+    const band = t < 2.4 ? 620 : 900
+    const tgt = { x: (x0 + x1) / 2, y: (y0 + y1) / 2, zoom: clamp(Math.min(0.74 * W / (x1 - x0 + 0.6), band / (y1 - y0 + 0.6)), 190, 300) }
+    if (f === 0) c = { ...tgt }
+    for (const k of ['x', 'y', 'zoom']) { const a = (tgt[k] - c[k]) * om * om - 2 * om * v[k]; v[k] += a / FPS; c[k] += v[k] / FPS }
+    CAM.push({ ...c })
+  }
+}
+const KICKS = [0, 0.37, 0.5, 2.0, 3.25, 3.5, 5.0, 5.5, 6.0, 8.4, 9.1, 9.2, 9.7, 11.6, 13.2, 17.2, ...TOOLS.map((_, i) => T.TOOLS + i * 0.12 + 0.3)]
+function kick(t) { let k = 0; for (const s of KICKS) { const d = t - s; if (d >= 0 && d < 0.25) k += (1 - d / 0.25) ** 2 } return k }
+function camAt(t) {
+  const f = clamp(Math.round(t * FPS), 0, NF - 1)
+  const toolsCam = (u) => ({ x: 0, y: 0.05, zoom: lerp(242, 226, seg(u, T.TOOLS, T.FREEZE)), rot: lerp(0, -0.05, seg(u, T.TOOLS, T.FREEZE)), pitch: 0, cy: 0.40, shake: 6 * seg(u, 6.4, T.FREEZE) })
+  if (t < 4.4) return { ...CAM[f], rot: lerp(-0.06, 0.02, seg(t, 0, 4.4)), pitch: 0, cy: 0.46, shake: 0 }
+  if (t < 5.1) { const a = { ...CAM[f], rot: 0.02, pitch: 0, cy: 0.46, shake: 0 }, b = toolsCam(t), e = eIO(seg(t, 4.4, 5.1)); const c = {}; for (const k in b) c[k] = lerp(a[k], b[k], e); return c }
+  if (t < T.IGNITE) return toolsCam(Math.min(t, T.FREEZE))
+  const ti = Math.min(t, T.LOGO), tilt = eIO(seg(ti, T.TILT0, T.TILT1))
+  return { x: 0, y: 0, zoom: lerp(330, 300, eOutExpo(seg(ti, T.IGNITE, 10.4))) * (1 + 0.24 * tilt), rot: lerp(0, -Math.PI / 2, tilt), pitch: lerp(0, 52 * Math.PI / 180, tilt), cy: lerp(0.47, 0.52, tilt), shake: 0 }
+}
+// World (x, y in the plane; z into the scene) -> screen. Returns [sx, sy, scale].
+const D = 8
+function toScreen(cam, x, y, t, z = 0) {
+  const ex = x - cam.x, ey = y - cam.y, cr = Math.cos(cam.rot), sr = Math.sin(cam.rot)
+  const xr = ex * cr - ey * sr, yr = ex * sr + ey * cr, th = cam.pitch || 0
+  const Y = yr * Math.cos(th) + z * Math.sin(th), Zd = D - yr * Math.sin(th) + z * Math.cos(th)
+  const f = D * cam.zoom, k = kick(t), r = rng(Math.floor(t * FPS) * 31 + 5), j = cam.shake + k * 14
+  return [W / 2 + xr * f / Zd + j * (r() - 0.5), H * cam.cy + Y * f / Zd + j * (r() - 0.5), D / Zd, Zd]
+}
+
+/* ---------- assets ---------- */
+let LOGO = {}, STARS = [], GRAIN = [], DUST = [], BOKEH = []
+async function loadAssets() {
+  const logos = await (await fetch('logos.json')).json()
+  for (const k of TOOLS) LOGO[k] = logos[k].paths.map((d) => new Path2D(d))
+  const r = rng(7)
+  for (let i = 0; i < 1300; i++) STARS.push({ x: r() * 2 - 1, y: r() * 2 - 1, z: 0.15 + r() * 0.85, s: r(), tw: r() * 6.28 })
+  for (let i = 0; i < 60; i++) DUST.push({ x: r() * 1.4 - 0.7, y: r() * 1.4 - 0.7, z: 1.6 + r() * 1.4, s: 2 + r() * 5 })
+  for (let i = 0; i < 25; i++) BOKEH.push({ x: r(), y: r(), r: 20 + r() * 40, p: r() * 6.28 })
+  for (let g = 0; g < 4; g++) { const c = document.createElement('canvas'); c.width = c.height = 256; const x = c.getContext('2d'), d = x.createImageData(256, 256); for (let i = 0; i < d.data.length; i += 4) { const v = r() * 255; d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 255 } x.putImageData(d, 0, 0); GRAIN.push(c) }
+  await document.fonts.load('800 200px Sora'); await document.fonts.load('650 120px Sora'); await document.fonts.load('600 52px Sora'); await document.fonts.load('700 40px "JetBrains Mono"')
+}
+
+/* ---------- world layers ---------- */
+function glow(x, y, r, color, a) {
+  if (r <= 0) return
+  const g = cx.createRadialGradient(x, y, 0, x, y, r)
+  g.addColorStop(0, color.replace('A', a)); g.addColorStop(1, color.replace('A', 0))
+  cx.fillStyle = g; cx.beginPath(); cx.arc(x, y, r, 0, 6.2832); cx.fill()
+}
+function drawBackground(t, cam) {
+  const g = cx.createRadialGradient(W * 0.5, H * 0.44, 0, W * 0.5, H * 0.44, H * 0.78)
+  g.addColorStop(0, '#161b27'); g.addColorStop(1, C.night)
+  cx.fillStyle = g; cx.fillRect(0, 0, W, H)
+  for (const s of STARS) {
+    const px = W / 2 + (s.x * 1.25 * W - cam.x * cam.zoom * s.z * 0.25 + Math.sin(cam.rot) * s.y * 200 * s.z), py = H / 2 + (s.y * 1.1 * H - cam.y * cam.zoom * s.z * 0.25)
+    const a = (0.22 + 0.55 * s.s) * (0.7 + 0.3 * Math.sin(t * 2.2 + s.tw)) * s.z, rr = 0.7 + s.z * 2 * s.s
+    cx.fillStyle = `rgba(244,242,238,${a.toFixed(3)})`; cx.fillRect(px, py, rr, rr)
+  }
+  cx.globalCompositeOperation = 'lighter'
+  for (const b of BOKEH) glow(b.x * W + Math.sin(t * 0.3 + b.p) * 30, b.y * H, b.r, 'rgba(251,191,36,A)', 0.06)
+  cx.globalCompositeOperation = 'source-over'
+}
+function wells(t) {
+  const w = []
+  for (let b = 0; b < 3; b++) { const [x, y] = pos(b, t); w.push([x, y, 0.36, 0.55]) }
+  const on = seg(t, T.TOOLS, T.TOOLS + 0.8)
+  if (on > 0 && t < T.LOGO) for (let i = 0; i < 6; i++) { const [x, y] = toolWorld(i, t); w.push([x, y, 0.42 * on, 0.5]) }
+  const sun = eOutExpo(seg(t, T.IGNITE, T.IGNITE + 0.6))
+  if (sun > 0) w.push([0, 0, 0.95 * sun, 1.0])
+  return w
+}
+function drawGrid(t, cam) {
+  const W8 = wells(t), N = 38, span = 6, step = span * 2 / N
+  const ring = t >= T.IGNITE ? (40 + eOutExpo(seg(t, T.IGNITE, T.IGNITE + 1.1)) * 1100) / cam.zoom : -9, ringOn = t >= T.IGNITE && t < T.IGNITE + 1.1
+  const lockFlash = Math.round((t - T.LOCK) * FPS) === 0 ? 2 : 1
+  const fadeG = 1 - sm(seg(t, 16.4, 17.3))
+  if (fadeG <= 0) return
+  const base = (t < T.FREEZE ? 0.2 : 0.22) * lockFlash * fadeG
+  cx.lineWidth = 1.8
+  const warp = (x, y) => {
+    let dx = 0, dy = 0, depth = 0
+    for (const [wx, wy, m, s] of W8) { const ex = x - wx, ey = y - wy, r2 = ex * ex + ey * ey, f = m * Math.exp(-r2 / (s * s)); dx -= ex * f * 0.55; dy -= ey * f * 0.55; depth += f }
+    if (ringOn) { const r = Math.hypot(x, y) + 1e-6, q = (r - ring) / 0.35, rip = 0.12 * Math.sin((r - ring) * 14) * Math.exp(-q * q); dx += (x / r) * rip; dy += (y / r) * rip }
+    return [x + dx, y + dy, depth]
+  }
+  for (let dir = 0; dir < 2; dir++) for (let i = 0; i <= N; i++) {
+    const c0 = -span + i * step
+    cx.beginPath(); let hot = 0, near = 0, started = false
+    for (let j = 0; j <= 110; j++) {
+      const u = -span + (j / 110) * span * 2, [x, y, d] = dir ? warp(c0, u) : warp(u, c0)
+      const [sx, sy, , Zd] = toScreen(cam, x, y, t, 0.6 * d)
+      if (Zd < 2) { started = false; continue }
+      hot = Math.max(hot, d); near = Math.max(near, clamp((13 - Zd) / 6))
+      if (started) cx.lineTo(sx, sy); else { cx.moveTo(sx, sy); started = true }
+    }
+    const h = clamp(hot * 1.6)
+    cx.strokeStyle = `rgba(${Math.round(lerp(150, 249, h))},${Math.round(lerp(160, 158, h))},${Math.round(lerp(190, 60, h))},${((base + h * 0.24 * fadeG) * near).toFixed(3)})`
+    cx.stroke()
+  }
+}
+function drawTrails(t, cam, len, clean) {
+  const tx = trailCv.getContext('2d'); tx.clearRect(0, 0, W, H); tx.lineCap = 'round'; tx.lineJoin = 'round'
+  for (let b = 0; b < 3; b++) {
+    const k1 = Math.round(t * FPS * SUB), k0 = Math.max(0, k1 - len), pts = []
+    for (let k = k0; k <= k1; k++) {
+      const [x, y] = toScreen(cam, P[b][k * 2], P[b][k * 2 + 1], t)
+      const last = pts[pts.length - 1]
+      if (!last || Math.hypot(x - last[0], y - last[1]) > 0.5 || k === k1) pts.push([x, y])
+    }
+    for (let i = 1; i < pts.length; i++) {
+      const u = i / (pts.length - 1)
+      tx.strokeStyle = `rgba(${BODY[b].rgb},${(u * u * (b === 2 ? 0.75 : 0.9)).toFixed(3)})`
+      tx.lineWidth = (clean ? 3 : 2) + u * (clean ? 9 : 15)
+      tx.beginPath(); tx.moveTo(pts[i - 1][0], pts[i - 1][1]); tx.lineTo(pts[i][0], pts[i][1]); tx.stroke()
+    }
+  }
+  cx.globalCompositeOperation = 'lighter'; cx.drawImage(trailCv, 0, 0); cx.globalCompositeOperation = 'source-over'
+}
+function drawBody(b, x, y, r) {
+  cx.globalCompositeOperation = 'lighter'
+  glow(x, y, r * 6, `rgba(${BODY[b].rgb},A)`, 0.2)
+  glow(x, y, r * 2.4, 'rgba(255,236,190,A)', 0.24)
+  cx.globalCompositeOperation = 'source-over'
+  const g = cx.createRadialGradient(x - r * 0.3, y - r * 0.35, r * 0.1, x, y, r)
+  g.addColorStop(0, BODY[b].a); g.addColorStop(1, BODY[b].b)
+  cx.fillStyle = g; cx.beginPath(); cx.arc(x, y, r, 0, 6.2832); cx.fill()
+}
+function drawSun(x, y, r, t, a = 1, brand = 0) {
+  if (r <= 0) return
+  cx.globalCompositeOperation = 'lighter'
+  glow(x, y, r * 5, 'rgba(249,115,22,A)', 0.22 * a)
+  glow(x, y, r * 2.2, 'rgba(255,240,200,A)', 0.3 * a)
+  // Corona rays, slowly turning.
+  cx.strokeStyle = `rgba(255,236,190,${(0.16 * a).toFixed(3)})`; cx.lineWidth = 3
+  for (let i = 0; i < 12; i++) { const ang = i * Math.PI / 6 + (t - T.IGNITE) * 0.25; cx.beginPath(); cx.moveTo(x + Math.cos(ang) * r * 1.15, y + Math.sin(ang) * r * 1.15); cx.lineTo(x + Math.cos(ang) * r * 2.4, y + Math.sin(ang) * r * 2.4); cx.stroke() }
+  cx.globalCompositeOperation = 'source-over'
+  const g = cx.createRadialGradient(x - r * 0.12, y - r * 0.18, r * 0.04, x, y, r)
+  if (brand > 0.5) { g.addColorStop(0, C.gold); g.addColorStop(1, C.sunE) } else { g.addColorStop(0, '#ffffff'); g.addColorStop(0.35, '#fff3c4'); g.addColorStop(1, C.sunE) }
+  cx.globalAlpha = a; cx.fillStyle = g; cx.beginPath(); cx.arc(x, y, r, 0, 6.2832); cx.fill(); cx.globalAlpha = 1
+}
+// Name tags: 36 px mono pills, measured first, kept on screen, pushed apart if they overlap.
+function pills(list, t) {
+  cx.font = '700 34px "JetBrains Mono"'; cx.letterSpacing = '4px'
+  const items = list.map((p) => { const w = cx.measureText(p.text).width + 78; return { ...p, w, h: 64, x: clamp(p.x, w / 2 + 48, W - w / 2 - 48) } }).sort((a, b) => a.y - b.y)
+  for (let i = 1; i < items.length; i++) for (let j = 0; j < i; j++) { const a = items[j], b = items[i]; if (Math.abs(a.x - b.x) < (a.w + b.w) / 2 && Math.abs(a.y - b.y) < b.h + 8) b.y = a.y + b.h + 8 }
+  for (const p of items) {
+    const s = eOutBack(seg(t, p.t0, p.t0 + 0.28)); if (s <= 0) continue
+    cx.save(); cx.translate(p.x, p.y); cx.scale(s, s)
+    cx.fillStyle = 'rgba(11,13,18,0.85)'; cx.strokeStyle = 'rgba(244,242,238,0.24)'; cx.lineWidth = 2
+    cx.beginPath(); cx.roundRect(-p.w / 2, -p.h / 2, p.w, p.h, 32); cx.fill(); cx.stroke()
+    cx.fillStyle = p.dot; cx.beginPath(); cx.arc(-p.w / 2 + 28, 0, 8, 0, 6.2832); cx.fill()
+    cx.fillStyle = C.paper; cx.textBaseline = 'middle'; cx.textAlign = 'left'; cx.fillText(p.text, -p.w / 2 + 48, 2)
+    cx.restore()
+  }
+  cx.letterSpacing = '0px'
+}
+
+/* ---------- tools ---------- */
+function toolWorld(i, t) {
+  const [bx, by] = TOOLPOS[i]
+  let s = 1
+  const t0 = T.TOOLS + i * 0.12, p = seg(t, t0, t0 + 0.32)
+  if (t < t0 + 0.32) s = 1 + 2.2 * (1 - eOutExpo(p))                       // fly in from outside
+  if (t >= T.IGNITE) s = lerp(1, 0.62, eOutBack(seg(t, T.IGNITE, 9.9), 1.4)) // drawn in around the AI
+  if (t >= T.TILT0) s = lerp(0.62, 1.0, eIO(seg(t, T.TILT0, T.TILT1)))       // make room for the upright eight
+  return [bx * s, by * s]
+}
+function drawTools(t, cam, sun) {
+  if (t < T.TOOLS || t >= T.LOGO + 0.75) return
+  const mLogo = sm(seg(t, T.LOGO, T.LOGO + 0.7))
+  TOOLS.forEach((k, i) => {
+    const t0 = T.TOOLS + i * 0.12, p = seg(t, t0, t0 + 0.32); if (t < t0) return
+    let [wx, wy] = toolWorld(i, t)
+    if (mLogo > 0) { const ang = Math.atan2(wy, wx) + 3 * mLogo, r = Math.hypot(wx, wy) * (1 - mLogo); wx = Math.cos(ang) * r; wy = Math.sin(ang) * r }
+    const [x, y, sc] = toScreen(cam, wx, wy, t)
+    let r = (t >= T.IGNITE ? lerp(70, 46, seg(t, T.IGNITE, 9.9)) : 70) * sc * (t < t0 + 0.32 ? 1 + 1.6 * (1 - eOutExpo(p)) : 1) * (1 - mLogo)
+    if (r < 1) return
+    // Landing flare.
+    const fl = seg(t, t0 + 0.28, t0 + 0.7)
+    if (fl > 0 && fl < 1) { cx.globalCompositeOperation = 'lighter'; glow(x, y, r * 4, 'rgba(255,220,150,A)', 0.5 * (1 - fl)); cx.globalCompositeOperation = 'source-over' }
+    // Before the AI: elastic cables yank the nearest body. After: steady lines feed the AI.
+    cx.globalCompositeOperation = 'lighter'
+    if (t > t0 + 0.3 && t < T.FREEZE + 0.22) {
+      let best = 0, bd = 1e9; for (let b = 0; b < 3; b++) { const [bx, by] = pos(b, t), d = (bx - wx) ** 2 + (by - wy) ** 2; if (d < bd) { bd = d; best = b } }
+      const [bx, by] = pos(best, t), [sx, sy] = toScreen(cam, bx, by, t), len = Math.hypot(sx - x, sy - y), rest = 240
+      const st = clamp((len - rest) / rest), dt = t - (t0 + 0.3), wob = 40 * Math.sin(18 * dt) * Math.exp(-3 * dt)
+      const mx = (x + sx) / 2 - (sy - y) / len * wob, my = (y + sy) / 2 + (sx - x) / len * wob
+      cx.strokeStyle = `rgba(245,158,11,${(0.45 + 0.4 * st).toFixed(3)})`; cx.lineWidth = lerp(3, 9, clamp((st - 0.6) / 0.4))
+      cx.beginPath(); cx.moveTo(x, y); cx.quadraticCurveTo(mx, my, sx, sy); cx.stroke()
+      if (st > 0.6) { cx.fillStyle = 'rgba(255,255,255,0.9)'; cx.beginPath(); cx.arc(sx, sy, 6, 0, 6.2832); cx.fill() }
+    }
+    if (t >= 9.5 && sun) {
+      const g = sm(seg(t, T.LOCK, 12.0)), a = (1 - mLogo) * sm(seg(t, 9.5, 9.9))
+      cx.strokeStyle = `rgba(${Math.round(lerp(245, 52, g))},${Math.round(lerp(158, 211, g))},${Math.round(lerp(11, 153, g))},${(0.5 * a).toFixed(3)})`; cx.lineWidth = 3
+      cx.beginPath(); cx.moveTo(x, y); cx.lineTo(sun[0], sun[1]); cx.stroke()
+      const u = ((t - 9.9) * 0.9 + i / 6) % 1
+      if (t > 9.9) { cx.fillStyle = `rgba(255,240,200,${(0.9 * a).toFixed(3)})`; cx.beginPath(); cx.arc(lerp(x, sun[0], u), lerp(y, sun[1], u), 7, 0, 6.2832); cx.fill() }
+    }
+    cx.globalCompositeOperation = 'source-over'
+    if (t < t0 + 0.32) cx.filter = `blur(${(14 * (1 - p)).toFixed(1)}px)`
+    glow(x, y, r * 2.4, 'rgba(245,158,11,A)', 0.2)
+    cx.fillStyle = '#141820'; cx.strokeStyle = 'rgba(245,158,11,0.6)'; cx.lineWidth = 3
+    cx.beginPath(); cx.arc(x, y, r, 0, 6.2832); cx.fill(); cx.stroke()
+    cx.save(); cx.translate(x - r * 0.52, y - r * 0.52); cx.scale(r * 1.04 / 24, r * 1.04 / 24); cx.fillStyle = C.paper
+    for (const p2 of LOGO[k]) cx.fill(p2)
+    cx.restore(); cx.filter = 'none'
+  })
+}
+
+/* ---------- type ---------- */
+// line(): slam (scale in, ghost copies, no blur, no fade), wipe (masked reveal), and a whip out with speed copies.
+function line(text, x, y, size, opt, t) {
+  const { t0, mode = 'slam', grad = false, out = null, outDx = 0, align = 'left', weight = 800, color = C.paper, font = 'Sora', fit = 0, track = null } = opt
+  if (t < t0) return
+  cx.save()
+  const fam = font === 'mono' ? '"JetBrains Mono"' : 'Sora'
+  cx.font = `${weight} 100px ${fam}`
+  if (fit) { cx.letterSpacing = `${-2.5}px`; cx.wordSpacing = '14px'; size = Math.min(size, 100 * fit / cx.measureText(text).width) }
+  const tr = track != null ? track : size >= 140 ? -0.025 : size < 120 ? -0.01 : -0.018
+  cx.font = `${weight} ${size}px ${fam}`; cx.letterSpacing = `${tr * size}px`; cx.wordSpacing = `${size * 0.14}px`
+  cx.textBaseline = 'alphabetic'; cx.textAlign = align
+  const w = cx.measureText(text).width, ax = align === 'center' ? x - w / 2 : x, cy0 = y - size * 0.35
+  let sc = 1, dy = 0, dx = 0, clip = 1, ghosts = 0
+  const p = seg(t, t0, t0 + (mode === 'slam' ? 0.2 : 0.42))
+  if (mode === 'slam') { const e = eOutExpo(p); sc = 1.32 - 0.32 * e; ghosts = 1 - seg(t, t0, t0 + 0.12) }
+  if (mode === 'wipe') { clip = eOutExpo(p); dy = (1 - eOutExpo(p)) * 24 }
+  let q = 0
+  if (out != null && t > out) { q = eInExpo(seg(t, out, out + 0.22)); if (q >= 1) { cx.restore(); return } dy -= q * 700; dx += outDx * q }
+  let fill = color
+  if (grad) { const g = cx.createLinearGradient(ax, 0, ax + w, 0); g.addColorStop(0, C.gold); g.addColorStop(1, C.sunE); fill = g }
+  const draw = (s, a, ddy) => {
+    cx.save(); cx.globalAlpha = a
+    cx.translate(ax + w / 2 + dx, cy0 + ddy); cx.scale(s, s); cx.translate(-(ax + w / 2), -cy0)
+    if (clip < 1) { cx.beginPath(); cx.rect(ax - 20, y - size * 1.2, (w + 40) * clip, size * 1.6); cx.clip() }
+    cx.fillStyle = fill; cx.fillText(text, x, y); cx.restore()
+  }
+  cx.shadowColor = 'rgba(11,13,18,0.7)'; cx.shadowBlur = 36
+  if (ghosts > 0) [[1.1, 0.22], [1.2, 0.12], [1.3, 0.06]].forEach(([g, a]) => draw(sc * g, a * ghosts, dy))
+  if (q > 0) [0.35, 0.22, 0.14, 0.08].forEach((a, n) => draw(sc, a, dy + (n + 1) * 0.12 * Math.abs(dy)))
+  draw(sc, 1, dy)
+  cx.restore(); cx.letterSpacing = '0px'; cx.wordSpacing = '0px'
+}
+
+/* ---------- the mark ---------- */
+const MARK = { x: W / 2, y: 620, s: 16 }
+let F8LOBE = null
+function lobeMap() {
+  // Body 3's path starts at the crossing and returns to it half a period later: each lobe maps to half the ring.
+  let half = 2038, best = 1e9
+  for (let i = 1800; i < 2300; i++) { const d = Math.hypot(F8[2][i * 2], F8[2][i * 2 + 1]); if (d < best) { best = d; half = i } }
+  let mx = 0; for (let i = 0; i < half; i++) mx += F8[2][i * 2]
+  F8LOBE = { half, firstRight: mx > 0 }
+}
+function ringAngle(idx) {
+  const { half, firstRight } = F8LOBE, inFirst = idx < half, u = inFirst ? idx / half : (idx - half) / (F8N - half)
+  const right = inFirst === firstRight
+  return right ? -Math.PI / 2 + Math.PI * u : Math.PI / 2 + Math.PI * u
+}
+function drawLogo(t, cam0) {
+  const m = eIO(seg(t, T.LOGO, T.LOGO1)), R = 14 * MARK.s, push = lerp(1, 1.035, seg(t, T.MARK, DUR))
+  cx.save(); cx.translate(MARK.x, MARK.y); cx.scale(push, push); cx.translate(-MARK.x, -MARK.y)
+  // Path: figure-eight -> ring.
+  cx.beginPath()
+  for (let i = 0; i <= 480; i++) {
+    const idx = Math.floor(i / 480 * (F8N - 1)), [ex, ey] = toScreen(cam0, F8[2][idx * 2] * F8S, F8[2][idx * 2 + 1] * F8S, T.LOGO)
+    const ang = ringAngle(idx), rx = MARK.x + Math.cos(ang) * R, ry = MARK.y + Math.sin(ang) * R
+    if (i) cx.lineTo(lerp(ex, rx, m), lerp(ey, ry, m)); else cx.moveTo(lerp(ex, rx, m), lerp(ey, ry, m))
+  }
+  cx.closePath(); cx.strokeStyle = `rgba(245,158,11,${lerp(0.9, 0.55, m).toFixed(3)})`; cx.lineWidth = lerp(5, 12, m)
+  cx.globalCompositeOperation = 'lighter'; cx.stroke(); cx.globalCompositeOperation = 'source-over'
+  // Ring pulse on the lock.
+  const rp = seg(t, T.MARK, T.MARK + 0.55)
+  if (rp > 0 && rp < 1) { cx.strokeStyle = `rgba(245,158,11,${(0.7 * (1 - rp)).toFixed(3)})`; cx.lineWidth = 8; cx.beginPath(); cx.arc(MARK.x, MARK.y, R * lerp(1, 1.9, eOutExpo(rp)), 0, 6.2832); cx.stroke() }
+  // Sun: the AI becomes the mark's sun.
+  const [s0x, s0y, s0s] = toScreen(cam0, 0, 0, T.LOGO)
+  const over = t > T.MARK ? lerp(1.12, 1, eOutBack(seg(t, T.MARK, T.MARK + 0.4))) : 1, breath = t > T.MARK ? 1 + 0.03 * Math.sin(2 * Math.PI * (t - T.MARK) / 2.4) : 1
+  const sx = lerp(s0x, MARK.x, m), sy = lerp(s0y, MARK.y, m)
+  drawSun(sx, sy, lerp(128 * s0s, 8 * MARK.s, m) * over * breath, t, lerp(1, 0.55, m), m)
+  // Costs and Time spiral into the sun; Revenue becomes the agent dot and circles once.
+  for (let b = 0; b < 3; b++) {
+    const [bx, by, bs] = toScreen(cam0, ...pos(b, T.LOGO), T.LOGO)
+    if (b === 0) {
+      const ang = t > T.MARK ? -0.567 + 2 * Math.PI * eIO(seg(t, T.MARK, 19.6)) : -0.567
+      const tx = MARK.x + Math.cos(ang) * R * 0.93, ty = MARK.y + Math.sin(ang) * R * 0.93, rr = lerp(36 * bs, 2.2 * MARK.s, m)
+      if (t > T.MARK && t < 19.9) { for (let n = 1; n <= 10; n++) { const a2 = -0.567 + 2 * Math.PI * eIO(seg(t - n * 0.035, T.MARK, 19.6)); cx.fillStyle = `rgba(245,158,11,${(0.35 * (1 - n / 10)).toFixed(3)})`; cx.beginPath(); cx.arc(MARK.x + Math.cos(a2) * R * 0.93, MARK.y + Math.sin(a2) * R * 0.93, rr * (1 - n / 14), 0, 6.2832); cx.fill() } }
+      if (m < 0.7) drawBody(0, lerp(bx, tx, m), lerp(by, ty, m), rr)
+      else { cx.globalCompositeOperation = 'lighter'; glow(tx, ty, rr * 3, 'rgba(245,158,11,A)', 0.4); cx.globalCompositeOperation = 'source-over'; cx.fillStyle = C.ember; cx.beginPath(); cx.arc(lerp(bx, tx, m), lerp(by, ty, m), rr, 0, 6.2832); cx.fill() }
+    } else if (m < 0.9) {
+      const a0 = Math.atan2(by - sy, bx - sx) + 6 * m, d0 = Math.hypot(bx - sx, by - sy) * (1 - m / 0.9)
+      drawBody(b, sx + Math.cos(a0) * d0, sy + Math.sin(a0) * d0, 36 * bs * (1 - m / 0.9) + 2)
+    } else { const pop = seg(m, 0.9, 1); if (pop < 1) { cx.globalCompositeOperation = 'lighter'; glow(sx, sy, 128 * 1.4, 'rgba(255,236,190,A)', 0.6 * (1 - pop)); cx.globalCompositeOperation = 'source-over' } }
+  }
+  cx.restore()
+}
+
+/* ---------- one complete frame of the scene (no post) ---------- */
+function drawScene(t) {
+  cx.setTransform(1, 0, 0, 1, 0, 0); cx.filter = 'none'; cx.globalAlpha = 1; cx.globalCompositeOperation = 'source-over'
+  const cam = camAt(t)
+  if (t >= T.BLACK && t < T.IGNITE) {
+    cx.fillStyle = '#050608'; cx.fillRect(0, 0, W, H)
+    const hb = Math.max(0, Math.sin((t - T.BLACK) * 13)) ** 3, inh = seg(t, T.BLACK, T.IGNITE - 0.06)
+    cx.globalCompositeOperation = 'lighter'; glow(W / 2, H * 0.47, 30 + hb * 40 + inh * 60, 'rgba(251,191,36,A)', 0.4 + hb * 0.4 + inh * 0.3); cx.globalCompositeOperation = 'source-over'
+    cx.fillStyle = C.gold; cx.beginPath(); cx.arc(W / 2, H * 0.47, 5 + hb * 3 + inh * 6, 0, 6.2832); cx.fill()
+    return
+  }
+  drawBackground(t, cam)
+  drawGrid(t, cam)
+  if (t >= T.LOGO) { drawLogo(t, camAt(T.LOGO - 0.001)); drawTools(t, camAt(T.LOGO - 0.001), null); return }
+  // Hook type sits in the world, behind the bodies.
+  hookType(t)
+  let sunXY = null
+  if (t >= T.IGNITE) {
+    const ig = eOutBack(seg(t, T.IGNITE, T.IGNITE + 0.5), 1.6), [sx, sy, ss] = toScreen(cam, 0, 0, t)
+    sunXY = [sx, sy]
+    for (let n = 0; n < 3; n++) {
+      const sw = seg(t, T.IGNITE + n * 0.08, T.IGNITE + n * 0.08 + 1.1)
+      if (sw > 0 && sw < 1) { cx.strokeStyle = `rgba(253,230,138,${(0.7 * (1 - sw)).toFixed(3)})`; cx.lineWidth = lerp(22, 2, sw); cx.beginPath(); cx.arc(sx, sy, 40 + eOutExpo(sw) * 1100, 0, 6.2832); cx.stroke() }
+    }
+    const st = seg(t, T.IGNITE, T.IGNITE + 0.4)
+    if (st < 1) { cx.globalCompositeOperation = 'lighter'; cx.fillStyle = `rgba(255,236,190,${(0.5 * (1 - st)).toFixed(3)})`; cx.beginPath(); cx.ellipse(sx, sy, 900, 6, 0, 0, 6.2832); cx.fill(); cx.globalCompositeOperation = 'source-over' }
+    // The eight, drawn by the sun as the bodies lock.
+    const n8 = Math.floor(sm(seg(t, 9.8, T.LOCK)) * 400)
+    if (n8 > 1) {
+      cx.beginPath(); let hx = 0, hy = 0
+      for (let i = 0; i <= n8; i++) { const idx = Math.floor(i / 400 * (F8N - 1)), [x, y] = toScreen(cam, F8[0][idx * 2] * F8S, F8[0][idx * 2 + 1] * F8S, t); if (i) cx.lineTo(x, y); else cx.moveTo(x, y); hx = x; hy = y }
+      cx.strokeStyle = `rgba(245,158,11,${t < T.LOCK ? 0.9 : 0.5})`; cx.lineWidth = 5; cx.globalCompositeOperation = 'lighter'; cx.stroke()
+      if (t < T.LOCK) glow(hx, hy, 60, 'rgba(255,236,190,A)', 0.7)
+      const hp = seg(t, T.LOCK, T.LOCK + 0.6)
+      if (hp > 0 && hp < 1) { const idx = Math.floor(hp * (F8N - 1)), [x, y] = toScreen(cam, F8[0][idx * 2] * F8S, F8[0][idx * 2 + 1] * F8S, t); glow(x, y, 120, 'rgba(255,255,255,A)', 0.8) }
+      cx.globalCompositeOperation = 'source-over'
+    }
+    drawTools(t, cam, sunXY)
+    const breath = 1 + 0.04 * Math.exp(-10 * (((t - 9.7) % 0.5 + 0.5) % 0.5))
+    drawSun(sx, sy, 128 * ss * ig * breath, t)
+  } else drawTools(t, cam, null)
+  const settled = seg(t, T.LOCK0, T.LOCK)
+  drawTrails(t, cam, t < T.FREEZE ? Math.round(lerp(300, 520, seg(t, 4.6, 8.4))) : 300, settled > 0.5)
+  const bodies = [0, 1, 2].map((b) => { const [x, y] = pos(b, t), [sx, sy, sc] = toScreen(cam, x, y, t); return [b, sx, sy, sc] })
+  const zr = cam.zoom / 300
+  for (const [b, sx, sy, sc] of bodies) {
+    const base = t < T.IGNITE ? 50 * Math.max(zr, 0.85) : lerp(50 * zr, 36 * zr, seg(t, T.IGNITE, 9.4))
+    drawBody(b, sx, sy, base * sc * (t < 0.4 ? 0.6 + 0.4 * eOutExpo(seg(t, 0, 0.35)) : 1))
+  }
+  const greenOn = t > T.LOCK, tagOn = (t > 2.5 && t < 8.4) || greenOn
+  if (tagOn) pills(bodies.map(([b, sx, sy, sc]) => ({ text: BODY[b].name, x: sx, y: sy + 92 * sc * zr, t0: greenOn ? T.LOCK + b * 0.1 : 2.55 + b * 0.15, dot: greenOn ? C.green : C.ember })), t)
+}
+function hookType(t) {
+  if (t > 3.0) return
+  const L = 72, F = 858
+  line('YOUR', L, 470, 300, { t0: 0, fit: F, out: 2.68, outDx: -140 }, t)
+  line('BUSINESS', L, 650, 300, { t0: 0.5, fit: F, out: 2.61, outDx: 140 }, t)
+  line('IS A', L, 1130, 110, { t0: 1.25, mode: 'wipe', out: 2.54, outDx: -140 }, t)
+  line('THREE-BODY', L, 1270, 300, { t0: 1.5, mode: 'wipe', grad: true, fit: F, out: 2.47, outDx: 140 }, t)
+  line('PROBLEM.', L, 1420, 300, { t0: 2.0, fit: F, out: 2.40, outDx: -140 }, t)
+}
+function storyType(t) {
+  // Pulled apart: the two words drift away from each other, inside the safe zone.
+  if (t > 3.25 && t < T.TOOLS) { const d = eOutExpo(seg(t, 3.25, 4.6)) * 36; line('PULLED', 72 - d * 0.6, 1250, 170, { t0: 3.25, out: 4.42, outDx: -140 }, t); line('APART.', 240 + d, 1400, 170, { t0: 3.5, grad: true, out: 4.47, outDx: 140 }, t) }
+  const X = 495
+  line('EVERY TOOL', X, 1200, 124, { t0: 5.0, align: 'center', out: 6.75, outDx: -140 }, t)
+  line('PULLS ITS', X, 1325, 124, { t0: 5.5, align: 'center', out: 6.68, outDx: 140 }, t)
+  line('OWN WAY.', X, 1450, 124, { t0: 6.0, align: 'center', grad: true, out: 6.61, outDx: -140 }, t)
+  line('Each one eats hours', X, 1320, 74, { t0: 6.95, mode: 'wipe', align: 'center', weight: 700, out: 8.3, outDx: 140 }, t)
+  line("you don't get paid for.", X, 1405, 74, { t0: 7.25, mode: 'wipe', align: 'center', weight: 700, out: 8.33, outDx: -140 }, t)
+  line('ONE AI', W / 2, 400, 200, { t0: 9.2, align: 'center', out: 12.5, outDx: -140 }, t)
+  line('AT THE CENTRE.', W / 2, 520, 112, { t0: 9.7, align: 'center', grad: true, out: 12.55, outDx: 140 }, t)
+  line('Stop learning ten tools.', W / 2, 610, 52, { t0: 10.4, mode: 'wipe', align: 'center', weight: 600, out: 12.45 }, t)
+  line('Talk to one.', W / 2, 676, 52, { t0: 10.75, mode: 'wipe', align: 'center', weight: 600, color: C.gold, out: 12.48 }, t)
+  line('SETTLED.', W / 2, 400, 190, { t0: 13.2, align: 'center', grad: true, out: 16.05, outDx: -140 }, t)
+  line('Hours back, every week.', W / 2, 500, 64, { t0: 13.7, mode: 'wipe', align: 'center', weight: 600, out: 16.1, outDx: 140 }, t)
+  line('Solenix', W / 2, 1020, 190, { t0: 17.2, align: 'center', weight: 650 }, t)
+  line('SOLENIX.DEV', W / 2, 1130, 64, { t0: 17.55, mode: 'wipe', align: 'center', font: 'mono', weight: 700, track: 0.1, color: C.gold }, t)
+  if (t > 18.3) {
+    const p = eOutBack(seg(t, 18.3, 18.62), 2.2)
+    cx.save(); cx.translate(W / 2, 1290); cx.scale(p, p)
+    cx.shadowColor = 'rgba(245,158,11,0.55)'; cx.shadowBlur = 60
+    cx.fillStyle = C.ember; cx.beginPath(); cx.roundRect(-240, -64, 480, 128, 64); cx.fill(); cx.shadowBlur = 0
+    cx.fillStyle = C.ink; cx.font = '650 54px Sora'; cx.letterSpacing = '-1px'; cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.fillText('Book a call', 0, 3)
+    cx.restore(); cx.letterSpacing = '0px'
+  }
+}
+
+/* ---------- post: bloom, dust, vignette, grain, impact hits ---------- */
+function bloom() {
+  const a = bloomA.getContext('2d'), b = bloomB.getContext('2d')
+  a.clearRect(0, 0, 270, 480); a.filter = 'blur(6px)'; a.drawImage(scene, 0, 0, 270, 480); a.filter = 'none'
+  b.clearRect(0, 0, 135, 240); b.filter = 'blur(8px)'; b.drawImage(scene, 0, 0, 135, 240); b.filter = 'none'
+  cx.globalCompositeOperation = 'lighter'; cx.globalAlpha = 0.24; cx.drawImage(bloomA, 0, 0, W, H); cx.globalAlpha = 0.14; cx.drawImage(bloomB, 0, 0, W, H)
+  cx.globalAlpha = 1; cx.globalCompositeOperation = 'source-over'
+}
+function dust(t, cam) {
+  cx.filter = 'blur(6px)'
+  for (const d of DUST) { const x = W / 2 + (d.x * W * 1.2 - cam.x * cam.zoom * d.z * 2.5 + Math.sin(t * 0.4 + d.y * 9) * 20), y = H / 2 + (d.y * H - cam.y * cam.zoom * d.z * 2.5 - t * 12 * d.z); const yy = ((y % H) + H) % H; cx.fillStyle = 'rgba(255,236,190,0.12)'; cx.beginPath(); cx.arc(x, yy, d.s * d.z, 0, 6.2832); cx.fill() }
+  cx.filter = 'none'
+}
+function finish(t) {
+  const v = cx.createRadialGradient(W / 2, H / 2, H * 0.3, W / 2, H / 2, H * 0.8)
+  v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(0,0,0,0.6)')
+  cx.fillStyle = v; cx.fillRect(0, 0, W, H)
+  cx.globalAlpha = 0.07; cx.globalCompositeOperation = 'overlay'
+  const gt = GRAIN[Math.floor(t * FPS) % 4], off = (Math.floor(t * FPS) * 37) % 256
+  for (let y = -off; y < H; y += 256) for (let x = -off; x < W; x += 256) cx.drawImage(gt, x, y)
+  cx.globalAlpha = 1; cx.globalCompositeOperation = 'source-over'
+  // Impact hits: one pure white frame, then an additive glow at the action (never a flat tint).
+  for (const s of [0.37, T.FREEZE, T.IGNITE]) {
+    const f = Math.round((t - s) * FPS)
+    if (f === 0) { cx.fillStyle = '#fff'; cx.fillRect(0, 0, W, H) }
+    else if (f > 0 && f < 4) {
+      let x = W / 2, y = H * 0.47
+      if (s < 1) { const c = camAt(t); let mx = 0, my = 0; for (let b = 0; b < 3; b++) { const [sx, sy] = toScreen(c, ...pos(b, t), t); mx += sx / 3; my += sy / 3 } x = mx; y = my }
+      cx.globalCompositeOperation = 'lighter'; glow(x, y, 900, 'rgba(255,240,215,A)', [0, 0.55, 0.25, 0.1][f]); cx.globalCompositeOperation = 'source-over'
+    }
+  }
+}
+function composite(t) {
+  const cam = camAt(t)
+  if (!(t >= T.BLACK && t < T.IGNITE)) { bloom(); dust(t, cam) }
+  if (t < T.LOGO || t >= T.LOGO) storyType(t)
+  finish(t)
+}
+
+/* ---------- the frame, with shutter blur on fast moments ---------- */
+function needsBlur(t) {
+  const f = Math.round(t * FPS)
+  for (const s of [0.37, T.FREEZE, T.IGNITE]) if (Math.abs(Math.round(s * FPS) - f) < 4) return false
+  return kick(t) > 0.3 || (t > 4.4 && t < 5.2) || (t > 16.1 && t < 17.2)
+}
+window.renderFrame = function (t) {
+  if (needsBlur(t)) {
+    const ac = accum.getContext('2d'); ac.globalAlpha = 1; ac.clearRect(0, 0, W, H)
+    for (let i = 0; i < 5; i++) { drawScene(t - (i / 4) / 60); ac.globalAlpha = 1 / (i + 1); ac.drawImage(scene, 0, 0) }
+    ac.globalAlpha = 1; cx.setTransform(1, 0, 0, 1, 0, 0); cx.globalCompositeOperation = 'source-over'; cx.drawImage(accum, 0, 0)
+  } else drawScene(t)
+  composite(t)
+  ox.drawImage(scene, 0, 0)
+}
+window.EVENTS = { DUR, FPS, T, KICKS }
+window.ready = loadAssets().then(() => { bake(); lobeMap(); window.renderFrame(0); return true })
+</script>
+</body>
+</html>
