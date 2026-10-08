@@ -9,20 +9,40 @@ const day = (iso: string) =>
   iso ? new Date(`${iso}T12:00:00Z`).toLocaleDateString("en-CA", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }) : ""
 
 
+// The card's picture is the article itself, live: a full-screen frame scaled into the card.
+// The cover image shows until the page inside has loaded. A click grows the live page to fill
+// the screen, then the browser opens the article, which paints the same pixels.
 function card(a: Article, feature = false) {
-  const cover = a.cover
+  const still = a.cover
     ? `<img src="${a.cover}" alt="" loading="${feature ? "eager" : "lazy"}" width="1200" height="630">`
     : `<div class="noimg" aria-hidden="true"></div>`
-  return `<a class="card${feature ? " feature" : ""}" href="${a.path}">
-  <div class="cover">${cover}</div>
+  return `<article class="card${feature ? " feature" : ""}">
+  <div class="cover live">${still}<iframe src="${a.path}" loading="lazy" tabindex="-1" aria-hidden="true" title=""></iframe></div>
   <div class="text">
     <span class="date">${esc(day(a.date))}${feature ? ` · <b>New</b>` : ""}</span>
-    <h2>${esc(a.title)}</h2>
+    <h2><a href="${a.path}">${esc(a.title)}</a></h2>
     <p>${esc(a.description)}</p>
-    <span class="go">Read the article →</span>
+    <span class="go" aria-hidden="true">Read the article →</span>
   </div>
-</a>`
+</article>`
 }
+
+// Runs on /articles. Every size and time is read live: the screen, the card, the tokens.
+const LIVE_JS = `(()=>{const css=getComputedStyle(document.documentElement),tok=n=>css.getPropertyValue(n).trim();
+const ms=v=>parseFloat(v)*(v.endsWith("ms")?1:1000);
+function fit(){document.querySelectorAll(".live").forEach(c=>{const r=c.getBoundingClientRect();c.style.setProperty("--s",Math.max(r.width/innerWidth,r.height/innerHeight))})}
+fit();addEventListener("resize",fit);new ResizeObserver(fit).observe(document.body);
+document.querySelectorAll(".live iframe").forEach(f=>{const on=()=>f.parentElement.classList.add("ready");f.addEventListener("load",on);try{if(f.contentDocument&&f.contentDocument.readyState=="complete"&&f.contentDocument.URL!="about:blank")on()}catch(e){}});
+document.addEventListener("click",e=>{const a=e.target.closest(".card a[href]");if(!a||e.defaultPrevented||e.button||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;
+ const card=a.closest(".card"),c=card.querySelector(".live.ready");if(!c)return;e.preventDefault();
+ const f=c.querySelector("iframe"),r=c.getBoundingClientRect(),s=Math.max(r.width/innerWidth,r.height/innerHeight),rad=parseFloat(getComputedStyle(card).borderTopLeftRadius)||0;
+ card.style.transition="none";card.style.transform="none";
+ f.style.cssText="position:fixed;left:0;top:0;width:100vw;height:100vh;z-index:calc(var(--z-nav) - 1);transform-origin:0 0";
+ const R=innerWidth-r.width/s,B=innerHeight-r.height/s;
+ f.animate([{transform:"translate("+r.left+"px,"+r.top+"px) scale("+s+")",clipPath:"inset(0 "+R+"px "+B+"px 0 round "+rad/s+"px)"},{transform:"none",clipPath:"inset(0 0 0 0 round 0px)"}],
+  {duration:ms(tok("--dur-slow")),easing:tok("--ease-out"),fill:"forwards"}).finished.then(()=>location.assign(a.href))});
+addEventListener("pageshow",e=>{if(!e.persisted)return;document.querySelectorAll(".live iframe").forEach(f=>{f.getAnimations().forEach(x=>x.cancel());f.style.cssText=""});document.querySelectorAll(".card").forEach(c=>c.style.cssText="");fit()});
+})()`
 
 export async function GET() {
   const [first, ...rest] = await listArticles()
@@ -48,9 +68,15 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background-im
 h1{font:700 clamp(2.6rem,1.9rem + 3vw,4.6rem)/.98 Sora,ui-sans-serif,sans-serif;letter-spacing:-.045em;margin:16px 0 14px;text-wrap:balance}
 h1 .grad{background:var(--grad-headline);-webkit-background-clip:text;background-clip:text;color:transparent}
 .lede{color:var(--muted);font-size:clamp(1.05rem,2.6vw,1.25rem);max-width:34rem;margin:0 0 44px}
-.card{display:grid;border-radius:28px;overflow:hidden;background:var(--glass-bg);border:1px solid var(--line);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-md);color:var(--text);text-decoration:none;transition:transform .25s,border-color .25s,box-shadow .25s}
+.card{position:relative;display:grid;border-radius:var(--radius-2xl);overflow:hidden;background:var(--glass-bg);border:1px solid var(--line);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-md);color:var(--text);text-decoration:none;transition:transform .25s,border-color .25s,box-shadow .25s}
 .card:hover{transform:translateY(-3px);border-color:color-mix(in oklch,var(--accent) 45%,transparent);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-lg),0 0 60px color-mix(in srgb,var(--sun2) 14%,transparent)}
-.cover{aspect-ratio:1200/630;overflow:hidden;background:var(--bg2)}
+.cover{position:relative;aspect-ratio:1200/630;overflow:hidden;background:var(--bg2)}
+.live iframe{position:absolute;left:0;top:0;width:100vw;height:100vh;border:0;transform-origin:0 0;transform:scale(var(--s,0));pointer-events:none;visibility:hidden;background:var(--bg)}
+.live.ready iframe{visibility:visible}
+.card h2 a{color:inherit;text-decoration:none}
+.card h2 a::after{content:"";position:absolute;inset:0;border-radius:inherit}
+.card:focus-within{outline:2px solid var(--accent);outline-offset:3px}
+.card h2 a:focus-visible{outline:none}
 .cover img{display:block;width:100%;height:100%;object-fit:cover;object-position:left top;transition:transform .6s}
 .card:hover .cover img{transform:scale(1.03)}
 .noimg{width:100%;height:100%;background:radial-gradient(circle at 30% 40%,color-mix(in srgb,var(--sun2) 30%,transparent),transparent 60%)}
@@ -77,6 +103,6 @@ footer p{margin:0;color:var(--muted);max-width:34rem}
 <p class="lede">${esc(description)}</p>
 ${list}
 <footer><p>Solenix sets up one AI at the centre of the tools your business already uses, cuts the ones you don't, and teaches your team. A fixed price, in writing.</p><a class="btn primary" href="/book">Book a call</a></footer>
-</div></body></html>`
+</div><script>${LIVE_JS}</script></body></html>`
   return servePage(html, { title, description, path: "/articles" })
 }
