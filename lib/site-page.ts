@@ -1,11 +1,13 @@
 import { POSTHOG_SNIPPET, SPEED_INSIGHTS_SNIPPET } from "@/lib/analytics"
 import { headTags } from "@/lib/site-meta"
+import { withHero } from "@/lib/site-hero.mjs"
 import { withSiteNav } from "@/lib/site-nav.mjs"
 
 // Every page served as raw HTML (the homepage, Articles, each article) goes out through here,
 // so each one gets the same things and no page has to remember them:
 //   dark from the first byte, the design tokens, "Title · Solenix" in the tab,
-//   tab icons and link-preview tags, measurement, and the site nav (lib/site-nav.mjs).
+//   tab icons and link-preview tags, measurement, the site nav (lib/site-nav.mjs) and, for a page
+//   that uses it, the hero frame (lib/site-hero.mjs).
 
 export type PageMeta = { title: string; description: string; path: string; cover?: string }
 
@@ -18,5 +20,5 @@ export function servePage(html: string, meta: PageMeta) {
     .replace(/<head>/i, `<head>${first}`)
     .replace(/<title>([^<]*)<\/title>/, (t, x: string) => (x.includes("Solenix") ? t : `<title>${x} · Solenix</title>`))
     .replace("</head>", `${headTags({ ...meta, image: meta.cover })}${POSTHOG_SNIPPET}${SPEED_INSIGHTS_SNIPPET}</head>`)
-  return new Response(withSiteNav(page), { headers: { "content-type": "text/html; charset=utf-8" } })
+  return new Response(withSiteNav(withHero(page)), { headers: { "content-type": "text/html; charset=utf-8" } })
 }

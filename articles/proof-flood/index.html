@@ -48,30 +48,14 @@ section{padding-top:var(--nav-height);display:grid;gap:22px}
 .acard,.step,.score div,.meters div,.pvi div{box-shadow:var(--edge)}
 
 /* hero */
-/* The hero is exactly one screen at any size. It sizes everything from its own box (container
-   units), picks one or two columns from its shape, and the grid script fits the squares into
-   whatever room is left. No breakpoints. */
-.hero{position:relative;box-sizing:border-box;height:100svh;width:100vw;margin-inline:calc(50% - 50vw);
-  --cue-gap:max(6px,1.6svh);padding:calc(var(--nav-height) + 1.5svh) max(16px,4vw) calc(var(--tap-min) + 2 * var(--cue-gap));container-type:size}
-.hero-in{height:100%;max-width:min(100%,max(230cqh,72ch));margin-inline:auto;display:grid;grid-template-rows:auto minmax(0,1fr);gap:3cqmin}
-@container (aspect-ratio > 1.15){.hero-in{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr);align-items:safe center}}
-.hero-in > div{position:relative;z-index:2;min-height:0}
-.hero-text{display:flex;flex-direction:column;justify-content:safe center;gap:clamp(.4rem,2.2cqh,1.4rem)}
-.hero .eyebrow{font-size:clamp(.62rem,1.7cqmin,1rem)}
-.hero h1{font-size:clamp(1.8rem,min(8cqh,13cqw),7rem);font-weight:700;letter-spacing:-.045em;line-height:.98}
-@container (aspect-ratio > 1.15){.hero h1{font-size:clamp(1.8rem,min(14cqh,8cqw),9rem)}}
-/* Very wide and short (a phone held sideways): text takes the wider column, so it wraps less. */
-@container (aspect-ratio > 1.8){.hero-in{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}.hero .sub{max-width:none}}
 .hero h1 .grad{background:linear-gradient(96deg,var(--sun1),var(--sun2));-webkit-background-clip:text;background-clip:text;color:transparent}
 #orbit{position:absolute;inset:-3cqmin 0;width:100%;height:calc(100% + 6cqmin);z-index:3;pointer-events:none;mix-blend-mode:screen}
 .hero h1 .tomb{color:var(--accent)}
-.hero .sub{font-size:clamp(.92rem,min(3cqh,4.4cqw),1.7rem);max-width:34ch;margin:0}
 .hero .btn{font-size:clamp(.9rem,2.2cqmin,1.2rem)}
 .hero-vis{display:flex;flex-direction:column;height:100%}
 .qwrap{flex:1;min-height:0;display:flex;flex-direction:column}
 .qbox{flex:1;min-height:0;display:grid;place-items:center}
-.cue{position:absolute;right:max(16px,4vw);bottom:var(--cue-gap);font:600 clamp(.7rem,1.6svh,.95rem)/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);text-decoration:none;min-height:var(--tap-min);display:inline-flex;align-items:center}
-.cue:hover{color:var(--ink)}
+
 .qed{display:grid;grid-template-columns:repeat(24,1fr);gap:3px;align-content:center;justify-content:center}
 .qed i{aspect-ratio:1;border-radius:18%;background:var(--accent);display:block}
 .qed{position:relative}
@@ -335,12 +319,12 @@ abbr.g{text-decoration:underline dotted var(--accent);text-underline-offset:3px;
 
 <div class="wrap">
 
-<header class="hero" id="top" data-hero>
- <div class="hero-in">
-  <div class="hero-text">
-    <div class="eyebrow">AI × mathematics · Updated 8 October 2026</div>
+<header class="hero sx-hero" id="top" data-hero>
+ <div class="sx-hero-in">
+  <div class="sx-hero-text">
+    <div class="sx-kicker">AI × mathematics · Updated 8 October 2026</div>
     <h1>The Proof <span class="grad">Flood</span></h1>
-    <p class="sub"><mark>372 open math problems.</mark> One AI. Every answer, in plain words. Which one touches your life?</p>
+    <p class="sx-sub"><mark>372 open math problems.</mark> One AI. Every answer, in plain words. Which one touches your life?</p>
     <div class="btns"><a class="btn primary" href="#atlas" style="text-decoration:none">Explore all 372 →</a></div>
   </div>
   <div class="hero-vis">
@@ -358,7 +342,7 @@ abbr.g{text-decoration:underline dotted var(--accent);text-underline-offset:3px;
     <div class="legend groups"><span><i class="gd" style="background:var(--g0)"></i>Numbers &amp; algebra</span><span><i class="gd" style="background:var(--g1)"></i>Shape &amp; space</span><span><i class="gd" style="background:var(--g2)"></i>Change &amp; motion</span><span><i class="gd" style="background:var(--g3)"></i>Chance &amp; physics</span><span><i class="gd" style="background:var(--g4)"></i>Computing &amp; patterns</span></div>
   </div>
  </div>
- <a class="cue" href="#flood">The numbers ↓</a>
+ <a class="sx-cue" href="#flood">The numbers ↓</a>
 </header>
 
 <!-- FLOOD -->

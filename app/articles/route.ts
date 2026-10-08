@@ -16,7 +16,7 @@ function card(a: Article, feature = false) {
   const still = a.cover
     ? `<img src="${a.cover}" alt="" loading="${feature ? "eager" : "lazy"}" width="1200" height="630">`
     : `<div class="noimg" aria-hidden="true"></div>`
-  return `<article class="card${feature ? " feature" : ""}">
+  return `<article class="card${feature ? " feature" : ""}" data-live-scope>
   <div class="cover live">${still}<iframe src="${a.path}" loading="lazy" tabindex="-1" aria-hidden="true" title=""></iframe></div>
   <div class="text">
     <span class="date">${esc(day(a.date))}${feature ? ` · <b>New</b>` : ""}</span>
@@ -31,26 +31,42 @@ function card(a: Article, feature = false) {
 const LIVE_JS = `(()=>{const css=getComputedStyle(document.documentElement),tok=n=>css.getPropertyValue(n).trim();
 const ms=v=>parseFloat(v)*(v.endsWith("ms")?1:1000);
 const box=c=>{const r=c.getBoundingClientRect(),s=Math.min(r.width/innerWidth,r.height/innerHeight);return{r,s,x:(r.width-innerWidth*s)/2,y:(r.height-innerHeight*s)/2}};
-function fit(){document.querySelectorAll(".live").forEach(c=>{const b=box(c);c.style.setProperty("--s",b.s);c.style.setProperty("--x",b.x+"px");c.style.setProperty("--y",b.y+"px")})}
+function fit(){document.documentElement.style.setProperty("--screen-ratio",innerWidth/innerHeight);document.querySelectorAll(".live").forEach(c=>{const b=box(c);c.style.setProperty("--s",b.s);c.style.setProperty("--x",b.x+"px");c.style.setProperty("--y",b.y+"px")})}
 fit();addEventListener("resize",fit);new ResizeObserver(fit).observe(document.body);
 document.querySelectorAll(".live iframe").forEach(f=>{const on=()=>f.parentElement.classList.add("ready");f.addEventListener("load",on);try{if(f.contentDocument&&f.contentDocument.readyState=="complete"&&f.contentDocument.URL!="about:blank")on()}catch(e){}});
-document.addEventListener("click",e=>{const a=e.target.closest(".card a[href]");if(!a||e.defaultPrevented||e.button||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;
- const card=a.closest(".card"),c=card.querySelector(".live.ready");if(!c)return;e.preventDefault();
+document.addEventListener("click",e=>{const a=e.target.closest("a[href]"),card=a&&a.closest("[data-live-scope]");if(!card||e.defaultPrevented||e.button||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;
+ const c=card.querySelector(".live.ready");if(!c)return;e.preventDefault();
  const f=c.querySelector("iframe"),b=box(c),rad=parseFloat(getComputedStyle(f).borderTopLeftRadius)||0;
  card.style.transition="none";card.style.transform="none";
  f.style.cssText="position:fixed;left:0;top:0;width:100vw;height:100vh;z-index:calc(var(--z-nav) - 1);transform-origin:0 0";
  f.animate([{transform:"translate("+(b.r.left+b.x)+"px,"+(b.r.top+b.y)+"px) scale("+b.s+")",borderRadius:rad/b.s+"px"},{transform:"none",borderRadius:"0px"}],
   {duration:ms(tok("--dur-slow")),easing:tok("--ease-out"),fill:"forwards"}).finished.then(()=>location.assign(a.href))});
-addEventListener("pageshow",e=>{if(!e.persisted)return;document.querySelectorAll(".live iframe").forEach(f=>{f.getAnimations().forEach(x=>x.cancel());f.style.cssText=""});document.querySelectorAll(".card").forEach(c=>c.style.cssText="");fit()});
+addEventListener("pageshow",e=>{if(!e.persisted)return;document.querySelectorAll(".live iframe").forEach(f=>{f.getAnimations().forEach(x=>x.cancel());f.style.cssText=""});document.querySelectorAll("[data-live-scope]").forEach(c=>c.style.cssText="");fit()});
 })()`
 
 export async function GET() {
   const [first, ...rest] = await listArticles()
   const title = "Articles"
   const description = "Explorable stories about what AI can do now. Each one is a page you can play with."
-  const list = first
-    ? card(first, true) + (rest.length ? `<div class="grid">${rest.map((a) => card(a)).join("")}</div>` : "")
-    : `<p class="lede">The first article is on its way.</p>`
+  const hero = first
+    ? `<header class="sx-hero" data-hero data-live-scope>
+ <div class="sx-hero-in">
+  <div class="sx-hero-text">
+   <div class="sx-kicker">Articles · newest ${esc(day(first.date))}</div>
+   <h1>What AI can do now, in pages you can <span class="grad">play with</span></h1>
+   <p class="sx-sub">Not posts to scroll past: each one is a page you can touch. Which will you try first?</p>
+   <div><a class="btn primary" href="${first.path}">Enter ${esc(first.title)} →</a></div>
+  </div>
+  <div class="hero-live">
+   <div class="cover live">${first.cover ? `<img src="${first.cover}" alt="" width="1200" height="630">` : `<div class="noimg" aria-hidden="true"></div>`}<iframe src="${first.path}" tabindex="-1" aria-hidden="true" title=""></iframe></div>
+   <a class="hero-live-hit" href="${first.path}" aria-label="Enter ${esc(first.title)}, shown live"></a>
+   <p class="hero-live-cap"><b>New</b> · ${esc(first.title)} · live</p>
+  </div>
+ </div>
+ <a class="sx-cue" href="#more">${rest.length ? "More articles" : "About Solenix"} ↓</a>
+</header>`
+    : `<header class="sx-hero" data-hero><div class="sx-hero-in"><div class="sx-hero-text"><div class="sx-kicker">Articles</div><h1>What AI can do now, in pages you can <span class="grad">play with</span></h1><p class="sx-sub">The first one is on its way.</p></div></div></header>`
+  const list = rest.length ? `<div class="grid">${rest.map((a) => card(a)).join("")}</div>` : ""
   const html = `<!doctype html>
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -63,11 +79,16 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background-im
 .btn{display:inline-flex;align-items:center;min-height:44px;padding:0 18px;border-radius:999px;font-weight:600;text-decoration:none;color:var(--text);border:1px solid var(--line-strong);font-size:.92rem;white-space:nowrap}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .btn.primary:hover{background:var(--accent-hover)}
-.wrap{position:relative;max-width:64rem;margin:0 auto;padding:120px 20px 96px}
-.eyebrow{font:600 .8rem/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
-h1{font:700 clamp(2.6rem,1.9rem + 3vw,4.6rem)/.98 Sora,ui-sans-serif,sans-serif;letter-spacing:-.045em;margin:16px 0 14px;text-wrap:balance}
-h1 .grad{background:var(--grad-headline);-webkit-background-clip:text;background-clip:text;color:transparent}
-.lede{color:var(--muted);font-size:clamp(1.05rem,2.6vw,1.25rem);max-width:34rem;margin:0 0 44px}
+.wrap{position:relative;max-width:var(--container);margin:0 auto;padding:24px 20px 96px}
+.grad{background:var(--grad-headline);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero-live{height:100%;display:flex;flex-direction:column;justify-content:safe center;align-items:center;gap:1.2cqmin;container-type:size}
+/* The live window has the screen's own shape (read live), as large as its column allows. */
+.hero-live .cover{flex:none;aspect-ratio:var(--screen-ratio,16/10);width:min(100%,calc((100cqh - 3em) * var(--screen-ratio,1.6)));border-radius:var(--radius-2xl);border:1px solid var(--line);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-lg),0 0 80px color-mix(in srgb,var(--sun2) 12%,transparent)}
+.hero-live-hit{position:absolute;inset:0;border-radius:var(--radius-2xl);z-index:3}
+.hero-live:hover .cover{border-color:color-mix(in oklch,var(--accent) 45%,transparent)}
+.hero-live-cap{margin:0;font:500 clamp(.68rem,1.6cqmin,.95rem)/1.3 var(--font-mono);letter-spacing:.06em;color:var(--faint)}
+.hero-live-cap b{color:var(--accent-text);font-weight:600}
+.hero-live-hit:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 .card{position:relative;display:grid;border-radius:var(--radius-2xl);overflow:hidden;background:var(--glass-bg);border:1px solid var(--line);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-md);color:var(--text);text-decoration:none;transition:transform .25s,border-color .25s,box-shadow .25s}
 .card:hover{transform:translateY(-3px);border-color:color-mix(in oklch,var(--accent) 45%,transparent);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-lg),0 0 60px color-mix(in srgb,var(--sun2) 14%,transparent)}
 .cover{position:relative;aspect-ratio:1200/630;overflow:hidden;background:var(--bg2)}
@@ -98,10 +119,8 @@ footer p{margin:0;color:var(--muted);max-width:34rem}
 @media (prefers-reduced-motion:reduce){.card,.cover img{transition:none}}
 </style>
 </head><body>
-<div class="wrap">
-<div class="eyebrow">Articles</div>
-<h1>What AI can do now, in pages you can <span class="grad">play with</span></h1>
-<p class="lede">${esc(description)}</p>
+${hero}
+<div class="wrap" id="more">
 ${list}
 <footer><p>Solenix sets up one AI at the centre of the tools your business already uses, cuts the ones you don't, and teaches your team. A fixed price, in writing.</p><a class="btn primary" href="/book">Book a call</a></footer>
 </div><script>${LIVE_JS}</script></body></html>`

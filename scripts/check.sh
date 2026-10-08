@@ -41,6 +41,10 @@ grep -rn ">Tools we use<" app components design/*.html 2>/dev/null | while read 
 node scripts/article-check.mjs || fail=1
 node scripts/sot-check.mjs || fail=1
 node scripts/journey-check.mjs || fail=1
+# The hero fit check opens pages in a browser, so it runs when something that shapes a first screen changes.
+if git diff --cached --name-only | grep -qE '^(articles/|design/(home\.html|tokens\.css|viewports\.json)|app/articles/|lib/site-(nav|hero|page)|scripts/hero-check)'; then
+  node scripts/hero-check.mjs || fail=1
+fi
 node scripts/brand-images.mjs --check || fail=1
 
 # Copy follows the Voice rules: no banned words (the list lives in design/DESIGN.md).
