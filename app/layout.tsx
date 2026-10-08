@@ -14,8 +14,8 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image", images: [OG_IMAGE.url] },
 };
 
-// Site and portal are dark only: the browser paints dark from the first frame.
-export const viewport: Viewport = { colorScheme: "dark" };
+// The portal follows the device; the public site declares dark in its own layout.
+export const viewport: Viewport = { colorScheme: "light dark" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
