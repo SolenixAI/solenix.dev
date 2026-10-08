@@ -87,7 +87,19 @@ section{padding-top:72px;display:grid;gap:22px;scroll-margin-top:96px}
 .qed i.h{background:transparent;box-shadow:inset 0 0 0 1.5px var(--accent);opacity:.55}
 @media (prefers-reduced-motion:no-preference){.qed i{animation:pop .5s both}}
 @keyframes pop{from{transform:scale(.4);opacity:.3}to{transform:none}}
-.legend{display:flex;gap:16px;flex-wrap:wrap;font:13px/1.4 var(--f-mono);color:var(--muted);margin-top:12px}
+.legend{display:flex;gap:8px 16px;flex-wrap:wrap;font:13px/1.4 var(--f-body);color:var(--muted);margin-top:12px}
+.legend b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+.legend.groups{margin-top:6px;font-size:12.5px}
+.legend .gd{width:9px;height:9px;border-radius:50%;display:inline-block}
+.qwrap{position:relative}
+.qcap{font:500 13px/1.4 var(--f-body);color:var(--muted);margin-bottom:10px}
+.qcap b{color:var(--ink)}
+.qed i.hot{outline:2px solid var(--ink);outline-offset:2px;transform:scale(1.25);position:relative;z-index:2;transition:transform .2s}
+.qtip{position:absolute;z-index:5;width:min(280px,80%);padding:12px 14px;border-radius:16px;background:rgba(20,24,32,.94);border:1px solid rgba(244,242,238,.14);box-shadow:inset 0 1px 0 rgba(244,242,238,.12),0 16px 40px rgba(0,0,0,.5);pointer-events:none;transition:left .35s cubic-bezier(.2,.8,.2,1),top .35s cubic-bezier(.2,.8,.2,1),opacity .2s;display:grid;gap:4px}
+.qtip .f{font:600 11px/1.3 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:6px}
+.qtip .f i{width:8px;height:8px;border-radius:50%}
+.qtip .h{font:650 15px/1.25 var(--f-display);color:var(--ink);letter-spacing:-.01em}
+.qtip .go{font:600 12.5px var(--f-body);color:var(--accent-text)}
 .legend span{display:inline-flex;gap:6px;align-items:center}
 .sw{width:12px;height:12px;border-radius:2px;background:var(--accent);display:inline-block}
 .sw.h{background:transparent;box-shadow:inset 0 0 0 1.5px var(--accent)}
@@ -347,8 +359,17 @@ abbr.g{text-decoration:underline dotted var(--accent);text-underline-offset:3px;
     <p class="when">Released 6 October 2026 · Updated 8 October 2026</p>
   </div>
   <div>
-    <div class="qed" id="qed" aria-label="372 squares, one per result family. Tap one to open it."></div>
-    <div class="legend"><span><i class="sw"></i>127 main result Lean-checked</span><span><i class="sw" style="background:linear-gradient(135deg,var(--accent) 50%,transparent 50%);box-shadow:inset 0 0 0 1.5px var(--accent)"></i>108 partly</span><span><i class="sw h"></i>137 not yet</span><span class="muted">Colour = area of math. Tap any square.</span></div>
+    <div class="qwrap">
+      <div class="qcap"><b>372 discoveries</b> · each square is one · tap any square</div>
+      <div class="qed" id="qed" aria-label="372 squares, one per discovery. Tap one to open it."></div>
+      <div class="qtip" id="qtip" hidden></div>
+    </div>
+    <div class="legend">
+      <span><i class="sw"></i>Checked by computer <b>127</b></span>
+      <span><i class="sw" style="background:linear-gradient(135deg,var(--accent) 50%,transparent 50%);box-shadow:inset 0 0 0 1.5px var(--accent)"></i>Partly checked <b>108</b></span>
+      <span><i class="sw h"></i>Not checked yet <b>137</b></span>
+    </div>
+    <div class="legend groups"><span><i class="gd" style="background:var(--g0)"></i>Numbers &amp; algebra</span><span><i class="gd" style="background:var(--g1)"></i>Shape &amp; space</span><span><i class="gd" style="background:var(--g2)"></i>Change &amp; motion</span><span><i class="gd" style="background:var(--g3)"></i>Chance &amp; physics</span><span><i class="gd" style="background:var(--g4)"></i>Computing &amp; patterns</span></div>
   </div>
 </header>
 
@@ -866,9 +887,22 @@ const sup=s=>esc(s).replace(/([A-Za-z0-9π)])\^(\(?[-0-9.\/ε]+\)?)/g,"$1<sup>$2
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
 /* hero grid becomes the atlas index */
-(()=>{const q=$("#qed");q.innerHTML="";A.forEach((a,i)=>{const s=el("i",{title:`${a.i} · ${a.h}`,role:"button","aria-label":a.h});s.style.background=a.c==2?GC(a.G):"transparent";
+(()=>{const q=$("#qed");q.innerHTML="";A.forEach((a,i)=>{const s=el("i",{role:"button","aria-label":a.h,"data-i":i});s.style.background=a.c==2?GC(a.G):"transparent";
  s.style.boxShadow=`inset 0 0 0 1.5px ${GC(a.G)}`;if(a.c==1)s.style.background=`linear-gradient(135deg,${GC(a.G)} 50%,transparent 50%)`;if(a.c==0)s.style.opacity=.6;
  s.style.animationDelay=(i*3)+"ms";s.onclick=()=>openD(i);q.append(s)})})();
+
+/* hero grid preview: a card that tours the famous squares, and follows the pointer */
+(()=>{const q=$("#qed"),tip=$("#qtip"),wrap=tip.parentElement,sq=[...q.children];let hot=null,tour=null,k=0;
+ const famous=[...A.keys()].sort((x,y)=>A[y].fm-A[x].fm||A[y].r-A[x].r).slice(0,12);
+ function show(i){const s=sq[i],a=A[i];if(!s)return;hot&&hot.classList.remove("hot");hot=s;s.classList.add("hot");
+  tip.innerHTML=`<span class="f"><i style="background:${GC(a.G)}"></i>${esc(a.F)}</span><span class="h">${sup(a.h)}</span><span class="go">Tap to read →</span>`;tip.hidden=false;
+  const r=s.getBoundingClientRect(),w=wrap.getBoundingClientRect(),tw=tip.offsetWidth,th=tip.offsetHeight;
+  let x=r.left-w.left+r.width/2-tw/2,y=r.top-w.top-th-12;if(y<34)y=r.bottom-w.top+12;x=Math.max(0,Math.min(x,w.width-tw));tip.style.left=x+"px";tip.style.top=y+"px"}
+ const still=matchMedia("(prefers-reduced-motion: reduce)").matches;
+ function start(){if(still){show(famous[0]);return}clearInterval(tour);show(famous[k%famous.length]);tour=setInterval(()=>{k++;show(famous[k%famous.length])},3200)}
+ q.addEventListener("pointerover",e=>{const s=e.target.closest("i[data-i]");if(!s)return;clearInterval(tour);show(+s.dataset.i)});
+ q.addEventListener("pointerleave",()=>start());
+ new IntersectionObserver(es=>{if(es[0].isIntersecting)start();else clearInterval(tour)}).observe(q)})();
 
 /* start-here strip */
 (()=>{const top=[...A].sort((x,y)=>y.fm-x.fm||y.r-x.r||x.i.localeCompare(y.i)).slice(0,12);
