@@ -6,6 +6,7 @@ export declare const NAV: {
   contact: { href: string; label: string }
 }
 export declare function markShapes(fill: string): string
+export declare function sunGradient(id: string): string
 export declare function markSvg(id?: string): string
 export declare function pageSections(html: string): { id: string; label: string }[]
 export declare function footerLinks(): { href: string; label: string }[]

@@ -5,12 +5,10 @@ import { readFileSync } from "node:fs"
 
 const RULES = [
   {
-    what: "the site nav (links, platform button, mark)",
+    what: "the site nav, the mark or the sun's light",
     owner: "lib/site-nav.mjs",
-    re: /Solenix platform|Client sign in|class="f?nav"|<header class="snav"|cx="27" cy="9"|cx=\{27\}/,
-    // Tracked copies outside the served site, each with its fix in Linear:
-    // brand/build.py draws the logo images; design/app.html is an unserved Open Design mock.
-    allow: ["brand/build.py", "design/app.html"],
+    re: /Solenix platform|Client sign in|class="f?nav"|<header class="snav"|cx="27" cy="9"|cx=\{27\}|cx="\.42" cy="\.38"/,
+    allow: [],
   },
 ]
 

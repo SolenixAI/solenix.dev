@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 import { ICONS, OG_IMAGE } from "@/lib/site-meta";
+import { sunGradient } from "@/lib/site-nav.mjs";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://solenix.dev"),
@@ -13,7 +14,8 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image", images: [OG_IMAGE.url] },
 };
 
-export const viewport: Viewport = { colorScheme: "light dark" };
+// Site and portal are dark only: the browser paints dark from the first frame.
+export const viewport: Viewport = { colorScheme: "dark" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -46,11 +48,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 function SharedDefs() {
   return (
     <svg aria-hidden="true" focusable="false" className="absolute size-0 overflow-hidden">
+      <defs dangerouslySetInnerHTML={{ __html: sunGradient("sun") }} />
       <defs>
-        <radialGradient id="sun" cx=".42" cy=".38" r=".62">
-          <stop offset="0" style={{ stopColor: "var(--sun1)" }} />
-          <stop offset="1" style={{ stopColor: "var(--sun2)" }} />
-        </radialGradient>
         <linearGradient id="sparkfill" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" style={{ stopColor: "var(--spark-line)", stopOpacity: 0.22 }} />
           <stop offset="1" style={{ stopColor: "var(--spark-line)", stopOpacity: 0 }} />

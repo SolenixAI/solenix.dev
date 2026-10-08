@@ -1,4 +1,4 @@
 Photos from Unsplash (Unsplash License).
 maple-bread.jpg  https://unsplash.com/photos/photo-1509440159596-0249088772ff
 salt-clinic.jpg  https://unsplash.com/photos/photo-1629909613654-28e377c37b09
-Used as example imagery inside the sample client websites in app.html (portal).
+Used as example imagery inside the sample client websites in the portal.
