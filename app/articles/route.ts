@@ -30,16 +30,16 @@ function card(a: Article, feature = false) {
 // Runs on /articles. Every size and time is read live: the screen, the card, the tokens.
 const LIVE_JS = `(()=>{const css=getComputedStyle(document.documentElement),tok=n=>css.getPropertyValue(n).trim();
 const ms=v=>parseFloat(v)*(v.endsWith("ms")?1:1000);
-function fit(){document.querySelectorAll(".live").forEach(c=>{const r=c.getBoundingClientRect();c.style.setProperty("--s",Math.max(r.width/innerWidth,r.height/innerHeight))})}
+const box=c=>{const r=c.getBoundingClientRect(),s=Math.min(r.width/innerWidth,r.height/innerHeight);return{r,s,x:(r.width-innerWidth*s)/2,y:(r.height-innerHeight*s)/2}};
+function fit(){document.querySelectorAll(".live").forEach(c=>{const b=box(c);c.style.setProperty("--s",b.s);c.style.setProperty("--x",b.x+"px");c.style.setProperty("--y",b.y+"px")})}
 fit();addEventListener("resize",fit);new ResizeObserver(fit).observe(document.body);
 document.querySelectorAll(".live iframe").forEach(f=>{const on=()=>f.parentElement.classList.add("ready");f.addEventListener("load",on);try{if(f.contentDocument&&f.contentDocument.readyState=="complete"&&f.contentDocument.URL!="about:blank")on()}catch(e){}});
 document.addEventListener("click",e=>{const a=e.target.closest(".card a[href]");if(!a||e.defaultPrevented||e.button||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;
  const card=a.closest(".card"),c=card.querySelector(".live.ready");if(!c)return;e.preventDefault();
- const f=c.querySelector("iframe"),r=c.getBoundingClientRect(),s=Math.max(r.width/innerWidth,r.height/innerHeight),rad=parseFloat(getComputedStyle(card).borderTopLeftRadius)||0;
+ const f=c.querySelector("iframe"),b=box(c),rad=parseFloat(getComputedStyle(f).borderTopLeftRadius)||0;
  card.style.transition="none";card.style.transform="none";
  f.style.cssText="position:fixed;left:0;top:0;width:100vw;height:100vh;z-index:calc(var(--z-nav) - 1);transform-origin:0 0";
- const R=innerWidth-r.width/s,B=innerHeight-r.height/s;
- f.animate([{transform:"translate("+r.left+"px,"+r.top+"px) scale("+s+")",clipPath:"inset(0 "+R+"px "+B+"px 0 round "+rad/s+"px)"},{transform:"none",clipPath:"inset(0 0 0 0 round 0px)"}],
+ f.animate([{transform:"translate("+(b.r.left+b.x)+"px,"+(b.r.top+b.y)+"px) scale("+b.s+")",borderRadius:rad/b.s+"px"},{transform:"none",borderRadius:"0px"}],
   {duration:ms(tok("--dur-slow")),easing:tok("--ease-out"),fill:"forwards"}).finished.then(()=>location.assign(a.href))});
 addEventListener("pageshow",e=>{if(!e.persisted)return;document.querySelectorAll(".live iframe").forEach(f=>{f.getAnimations().forEach(x=>x.cancel());f.style.cssText=""});document.querySelectorAll(".card").forEach(c=>c.style.cssText="");fit()});
 })()`
@@ -71,8 +71,9 @@ h1 .grad{background:var(--grad-headline);-webkit-background-clip:text;background
 .card{position:relative;display:grid;border-radius:var(--radius-2xl);overflow:hidden;background:var(--glass-bg);border:1px solid var(--line);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-md);color:var(--text);text-decoration:none;transition:transform .25s,border-color .25s,box-shadow .25s}
 .card:hover{transform:translateY(-3px);border-color:color-mix(in oklch,var(--accent) 45%,transparent);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-lg),0 0 60px color-mix(in srgb,var(--sun2) 14%,transparent)}
 .cover{position:relative;aspect-ratio:1200/630;overflow:hidden;background:var(--bg2)}
-.live iframe{position:absolute;left:0;top:0;width:100vw;height:100vh;border:0;transform-origin:0 0;transform:scale(var(--s,0));pointer-events:none;visibility:hidden;background:var(--bg)}
+.live iframe{position:absolute;left:0;top:0;width:100vw;height:100vh;border:0;border-radius:calc(var(--radius-lg) / var(--s,1));transform-origin:0 0;transform:translate(var(--x,0),var(--y,0)) scale(var(--s,0));pointer-events:none;visibility:hidden;background:var(--bg);box-shadow:0 0 0 calc(1px / var(--s,1)) var(--line-strong)}
 .live.ready iframe{visibility:visible}
+.live.ready>img,.live.ready>.noimg{visibility:hidden}
 .card h2 a{color:inherit;text-decoration:none}
 .card h2 a::after{content:"";position:absolute;inset:0;border-radius:inherit}
 .card:focus-within{outline:2px solid var(--accent);outline-offset:3px}
