@@ -30,8 +30,10 @@ function card(a: Article, feature = false) {
 // Runs on /articles. Every size and time is read live: the screen, the card, the tokens.
 const LIVE_JS = `(()=>{const css=getComputedStyle(document.documentElement),tok=n=>css.getPropertyValue(n).trim();
 const ms=v=>parseFloat(v)*(v.endsWith("ms")?1:1000);
-const box=c=>{const r=c.getBoundingClientRect(),s=Math.min(r.width/innerWidth,r.height/innerHeight);return{r,s,x:(r.width-innerWidth*s)/2,y:(r.height-innerHeight*s)/2}};
-function fit(){document.documentElement.style.setProperty("--screen-ratio",innerWidth/innerHeight);document.querySelectorAll(".live").forEach(c=>{const b=box(c);c.style.setProperty("--s",b.s);c.style.setProperty("--x",b.x+"px");c.style.setProperty("--y",b.y+"px")})}
+// The window fills its box: the page inside is your screen's width, and as tall as the box allows.
+// Every hero fits any height, so the page lays itself out for the box. No gaps, no crop.
+const box=c=>{const r=c.getBoundingClientRect(),s=r.width/innerWidth;return{r,s,h:r.height/s}};
+function fit(){document.querySelectorAll(".live").forEach(c=>{const b=box(c);c.style.setProperty("--s",b.s);c.style.setProperty("--fh",b.h+"px")})}
 fit();addEventListener("resize",fit);new ResizeObserver(fit).observe(document.body);
 document.querySelectorAll(".live iframe").forEach(f=>{const on=()=>f.parentElement.classList.add("ready");f.addEventListener("load",on);try{if(f.contentDocument&&f.contentDocument.readyState=="complete"&&f.contentDocument.URL!="about:blank")on()}catch(e){}});
 document.addEventListener("click",e=>{const a=e.target.closest("a[href]"),card=a&&a.closest("[data-live-scope]");if(!card||e.defaultPrevented||e.button||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;
@@ -39,7 +41,7 @@ document.addEventListener("click",e=>{const a=e.target.closest("a[href]"),card=a
  const f=c.querySelector("iframe"),b=box(c),rad=parseFloat(getComputedStyle(f).borderTopLeftRadius)||0;
  card.style.transition="none";card.style.transform="none";
  f.style.cssText="position:fixed;left:0;top:0;width:100vw;height:100vh;z-index:calc(var(--z-nav) - 1);transform-origin:0 0";
- f.animate([{transform:"translate("+(b.r.left+b.x)+"px,"+(b.r.top+b.y)+"px) scale("+b.s+")",borderRadius:rad/b.s+"px"},{transform:"none",borderRadius:"0px"}],
+ f.animate([{transform:"translate("+b.r.left+"px,"+b.r.top+"px) scale("+b.s+")",height:b.h+"px",borderRadius:rad/b.s+"px"},{transform:"none",height:innerHeight+"px",borderRadius:"0px"}],
   {duration:ms(tok("--dur-slow")),easing:tok("--ease-out"),fill:"forwards"}).finished.then(()=>location.assign(a.href))});
 addEventListener("pageshow",e=>{if(!e.persisted)return;document.querySelectorAll(".live iframe").forEach(f=>{f.getAnimations().forEach(x=>x.cancel());f.style.cssText=""});document.querySelectorAll("[data-live-scope]").forEach(c=>c.style.cssText="");fit()});
 })()`
@@ -81,9 +83,8 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background-im
 .btn.primary:hover{background:var(--accent-hover)}
 .wrap{position:relative;max-width:var(--container);margin:0 auto;padding:24px 20px 96px}
 .grad{background:var(--grad-headline);-webkit-background-clip:text;background-clip:text;color:transparent}
-.hero-live{height:100%;display:flex;flex-direction:column;justify-content:safe center;align-items:center;gap:1.2cqmin;container-type:size}
-/* The live window has the screen's own shape (read live), as large as its column allows. */
-.hero-live .cover{flex:none;aspect-ratio:var(--screen-ratio,16/10);width:min(100%,calc((100cqh - 3em) * var(--screen-ratio,1.6)));border-radius:var(--radius-2xl);border:1px solid var(--line);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-lg),0 0 80px color-mix(in srgb,var(--sun2) 12%,transparent)}
+.hero-live{height:100%;display:flex;flex-direction:column;gap:1.2cqmin}
+.hero-live .cover{flex:1;min-height:0;width:100%;aspect-ratio:auto;border-radius:var(--radius-2xl);border:1px solid var(--line);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-lg),0 0 80px color-mix(in srgb,var(--sun2) 12%,transparent)}
 .hero-live-hit{position:absolute;inset:0;border-radius:var(--radius-2xl);z-index:3}
 .hero-live:hover .cover{border-color:color-mix(in oklch,var(--accent) 45%,transparent)}
 .hero-live-cap{margin:0;font:500 clamp(.68rem,1.6cqmin,.95rem)/1.3 var(--font-mono);letter-spacing:.06em;color:var(--faint)}
@@ -92,7 +93,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background-im
 .card{position:relative;display:grid;border-radius:var(--radius-2xl);overflow:hidden;background:var(--glass-bg);border:1px solid var(--line);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-md);color:var(--text);text-decoration:none;transition:transform .25s,border-color .25s,box-shadow .25s}
 .card:hover{transform:translateY(-3px);border-color:color-mix(in oklch,var(--accent) 45%,transparent);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-lg),0 0 60px color-mix(in srgb,var(--sun2) 14%,transparent)}
 .cover{position:relative;aspect-ratio:1200/630;overflow:hidden;background:var(--bg2)}
-.live iframe{position:absolute;left:0;top:0;width:100vw;height:100vh;border:0;border-radius:calc(var(--radius-lg) / var(--s,1));transform-origin:0 0;transform:translate(var(--x,0),var(--y,0)) scale(var(--s,0));pointer-events:none;visibility:hidden;background:var(--bg);box-shadow:0 0 0 calc(1px / var(--s,1)) var(--line-strong)}
+.live iframe{position:absolute;left:0;top:0;width:100vw;height:var(--fh,100vh);border:0;transform-origin:0 0;transform:scale(var(--s,0));pointer-events:none;visibility:hidden;background:var(--bg)}
 .live.ready iframe{visibility:visible}
 .live.ready>img,.live.ready>.noimg{visibility:hidden}
 .card h2 a{color:inherit;text-decoration:none}
