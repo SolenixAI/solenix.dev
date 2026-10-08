@@ -26,7 +26,7 @@ const BAR = `You are reviewing the solenix.dev homepage the way its founder, Jag
 - Nothing static or dead. The races play under Reduce Motion too.
 - The stable orbit is wide and calm, not cramped.
 - Nothing overlaps or is cut off. Labels are legible.
-Also read ${REPO}/design/research/site-playbook.md ("Decisions for the homepage" and "The six examples") and the "## Decisions" section of ${REPO}/design/DESIGN.md. Hold the scene to them.`
+Also read ${REPO}/design/research/site-playbook.md ("Decisions for the homepage" and "The six examples") and the "## Decisions" section of ${REPO}/DESIGN.md. Hold the scene to them.`
 
 const JUDGED = {
   type: 'object',

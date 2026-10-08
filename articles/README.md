@@ -6,7 +6,7 @@ tags: [articles, solenix.dev, poka-yoke]
 sources:
   - lib/article-rules.mjs (the rules)
   - lib/articles.ts (how pages are served)
-  - design/DESIGN.md (brand and voice)
+  - DESIGN.md (brand and voice)
 generated: { by: agent:claude-opus-5-5, at: 2026-10-08T16:40-02:30 }
 status: draft
 stale_after: 2027-01-08

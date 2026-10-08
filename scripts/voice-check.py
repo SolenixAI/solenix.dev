@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Banned words, read from their source of truth.
 
-Takes the first "- **Avoid:**" list in design/DESIGN.md (the Voice section)
+Takes the first "- **Avoid:**" list in DESIGN.md (the Voice section)
 and reports every one that appears in the visible text of the pages given as
 arguments. Items that describe a class rather than name a phrase ("any
 scarcity", "or any invented metric") are judgment calls and are skipped;
@@ -61,7 +61,7 @@ def visible_text(page: str) -> str:
 
 def main() -> int:
     root = Path(__file__).resolve().parent.parent
-    phrases = banned_phrases((root / "design/DESIGN.md").read_text())
+    phrases = banned_phrases((root / "DESIGN.md").read_text())
     found = 0
     for name in sys.argv[1:]:
         text = re.sub(r"\s+", " ", visible_text((root / name).read_text()))
@@ -70,7 +70,7 @@ def main() -> int:
             for m in re.finditer(pattern, text, re.IGNORECASE):
                 found += 1
                 ctx = text[max(0, m.start() - 30) : m.end() + 30].strip()
-                print(f'check: {name}: banned word "{phrase}" (design/DESIGN.md Voice): …{ctx}…')
+                print(f'check: {name}: banned word "{phrase}" (DESIGN.md Voice): …{ctx}…')
     return 1 if found else 0
 
 

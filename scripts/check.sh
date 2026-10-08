@@ -12,13 +12,13 @@ git ls-files --cached --others --exclude-standard \
   | while read -r f; do echo "check: versioned file name: $f"; done | grep . && fail=1
 
 # No version labels in the design system or code (AGENTS.md quotes them as examples).
-grep -rn -E '· v[0-9]|\(v[0-9]\)|/\* v[0-9]|\bv[0-9] ·' design/DESIGN.md design/tokens.css app components lib 2>/dev/null \
+grep -rn -E '· v[0-9]|\(v[0-9]\)|/\* v[0-9]|\bv[0-9] ·' DESIGN.md design/tokens.css app components lib 2>/dev/null \
   | while read -r l; do echo "check: version label: $l"; done | grep . && fail=1
 
 # The public site is dark; only the portal ([data-portal]) may follow the device.
 grep -q '^\[data-portal\]:not(\[data-theme\]) { color-scheme: light dark; }' design/tokens.css || bad "tokens.css: the portal must follow the device ([data-portal] color-scheme: light dark)"
 grep -q 'data-portal' 'app/(portal)/layout.tsx' || bad "portal layout must set data-portal"
-grep -s -n -i -E 'dark only|no light theme' AGENTS.md design/DESIGN.md \
+grep -s -n -i -E 'dark only|no light theme' AGENTS.md DESIGN.md \
   | while read -r l; do echo "check: contradicts the theme decision (site dark, portal follows the device): ${l:0:80}"; done | grep . && fail=1
 
 # No on-page Motion switch; the OS reduced-motion setting is the control.
@@ -48,14 +48,14 @@ if git diff --cached --name-only | grep -qE '^(articles/|design/(home\.html|toke
 fi
 node scripts/brand-images.mjs --check || fail=1
 
-# Copy follows the Voice rules: no banned words (the list lives in design/DESIGN.md).
+# Copy follows the Voice rules: no banned words (the list lives in DESIGN.md).
 python3 scripts/voice-check.py design/home.html || fail=1
 
-# No industry pages: the site speaks to every small business (design/DESIGN.md Decisions).
+# No industry pages: the site speaks to every small business (DESIGN.md Decisions).
 find "app/(site)" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | grep -i -E '/(law|legal|lawyers?|dental|dentists?|clinic|medical|realty|real-estate|restaurants?|trades?|accountants?|accounting)$' \
   | while read -r d; do echo "check: industry page $d (no industry pages; one site for every small business)"; done | grep . && fail=1
 
-# No public prices: both numbers are agreed on the call (design/DESIGN.md Pricing).
+# No public prices: both numbers are agreed on the call (DESIGN.md Pricing).
 python3 - design/home.html <<'PY' || fail=1
 import re, sys, importlib.util as u
 s = u.spec_from_file_location("v", "scripts/voice-check.py"); v = u.module_from_spec(s); s.loader.exec_module(v)
@@ -81,7 +81,7 @@ if command -v od >/dev/null && curl -s -m 2 http://127.0.0.1:55666 >/dev/null; t
 fi
 
 # Every source of truth named in AGENTS.md exists.
-for f in design/DESIGN.md design/tokens.css design/home.html design/approved.md supabase/config.toml; do
+for f in DESIGN.md design/tokens.css design/home.html design/approved.md supabase/config.toml; do
   [ -f "$f" ] || bad "missing source of truth: $f"
 done
 
