@@ -12,7 +12,7 @@
   --bg:#0b0d12; --bg2:#11141b; --paper:rgba(20,24,32,.84); --paper-solid:#141820; --grid:rgba(244,242,238,.05);
   --ink:#f4f2ee; --muted:#a39e97; --faint:#8f8983; --line:rgba(244,242,238,.09); --line-strong:rgba(244,242,238,.2);
   --accent:#f59e0b; --accent-text:#fbbf24; --on-accent:#1a1206; --accent-soft:rgba(245,158,11,.12); --hi:rgba(245,158,11,.38);
-  --sun1:#fbbf24; --sun2:#f97316; --hot:#fde68a;
+  --sun1:#fbbf24; --sun2:#f97316; --ring:#f59e0b; --hot:#fde68a;
   --ok:#34d399; --ok-soft:rgba(52,211,153,.12); --warn:#fbbf24; --warn-soft:rgba(251,191,36,.12); --bad:#fb7185; --bad-soft:rgba(251,113,133,.12);
   --edge:inset 0 1px 0 rgba(244,242,238,.16); --shadow:0 1px 2px rgba(0,0,0,.3),0 12px 32px rgba(0,0,0,.35);
   --f-display:"Sora", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
@@ -52,7 +52,9 @@ button{font:inherit;color:inherit;cursor:pointer}
 .fnav{view-transition-name:site-nav;position:fixed;z-index:30;top:calc(12px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);width:min(calc(100% - 24px),1080px);height:60px;display:flex;align-items:center;gap:6px;padding:0 8px 0 16px;border-radius:999px;
   background:rgba(20,24,32,.66);backdrop-filter:blur(20px) saturate(140%);-webkit-backdrop-filter:blur(20px) saturate(140%);border:1px solid rgba(244,242,238,.1);box-shadow:inset 0 1px 0 rgba(244,242,238,.12),0 12px 40px rgba(0,0,0,.45);overflow:hidden}
 .fnav .brand{flex:none;display:inline-flex;align-items:center;gap:9px;height:44px;padding-right:12px;color:var(--ink);text-decoration:none;font:650 16px/1 var(--f-display);letter-spacing:-.01em}
-.fnav .brand svg{display:block}
+.fnav .brand svg{display:block;width:28px;height:28px}
+.fnav .crumb{flex:none;display:inline-flex;align-items:center;height:28px;padding:0 14px 0 12px;margin-right:4px;border-left:1px solid rgba(244,242,238,.14);border-right:1px solid rgba(244,242,238,.14);color:var(--ink);text-decoration:none;font:600 14px/1 var(--f-body)}
+.fnav .crumb:hover{color:var(--accent-text)}
 .fnav .in{flex:1;min-width:0;display:flex;align-items:center;gap:2px;overflow-x:auto;scrollbar-width:none;
   -webkit-mask-image:linear-gradient(90deg,transparent,#000 16px,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,transparent,#000 16px,#000 calc(100% - 28px),transparent)}
 .fnav .in::-webkit-scrollbar{display:none}
@@ -62,7 +64,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .fnav .cta{flex:none;display:inline-flex;align-items:center;height:44px;padding:0 18px;border-radius:999px;background:var(--accent);color:var(--on-accent);text-decoration:none;font:600 14px/1 var(--f-body)}
 .fnav .cta:hover{background:var(--sun1)}
 .fnav .prog{position:absolute;left:24px;right:24px;bottom:0;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--sun1),var(--sun2));transform-origin:left;transform:scaleX(0)}
-@media (max-width:640px){.fnav .brand span,.fnav .brand{font-size:0;gap:0;padding-right:6px}.fnav .brand svg{width:26px;height:26px}.fnav .cta{padding:0 14px}}
+@media (max-width:480px){.fnav .brand span{display:none}.fnav .crumb{padding:0 10px}.fnav .brand{padding-right:6px}.fnav .cta{padding:0 14px}}
 section{padding-top:72px;display:grid;gap:22px;scroll-margin-top:96px}
 .lede{max-width:64ch;color:var(--muted);font-size:18px}
 .card{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:var(--edge),var(--shadow);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
@@ -325,10 +327,11 @@ abbr.g{text-decoration:underline dotted var(--accent);text-underline-offset:3px;
 </style>
 
 <nav class="fnav" aria-label="Sections">
-  <a class="brand" href="https://solenix.dev" aria-label="Solenix home"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><defs><radialGradient id="sg" cx="40%" cy="38%"><stop offset="0" stop-color="#fde68a"/><stop offset=".55" stop-color="#fbbf24"/><stop offset="1" stop-color="#f97316"/></radialGradient></defs><circle cx="12" cy="12" r="5" fill="url(#sg)"/><ellipse cx="12" cy="12" rx="10.5" ry="4.2" fill="none" stroke="#f59e0b" stroke-opacity=".7" stroke-width="1" transform="rotate(-24 12 12)"/><circle cx="21" cy="8.6" r="1.4" fill="#f4f2ee"/></svg>Solenix</a>
+  <a class="brand" href="/" aria-label="Solenix home"><svg viewBox="0 0 32 32" aria-hidden="true"><defs><radialGradient id="mk" cx=".42" cy=".38" r=".62"><stop offset="0" stop-color="var(--sun1)"/><stop offset="1" stop-color="var(--sun2)"/></radialGradient></defs><circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/><circle cx="16" cy="16" r="8" fill="url(#mk)"/><circle cx="27" cy="9" r="2.2" fill="var(--ring)"/></svg><span>Solenix</span></a>
+  <a class="crumb" href="/articles">Articles</a>
   <div class="in" id="nav"><a href="#flood">The flood</a><a href="#atlas">All 372</a><a href="#timeline">Timeline</a><a href="#trust">How sure?</a>
   <a href="#play">Play: Erdős</a><a href="#fluid">Play: fluids</a><a href="#lean">Play: proof checker</a><a href="#debate">The fight</a><a href="#future">What it means</a><a href="#sources">Sources</a></div>
-  <a class="cta" href="https://solenix.dev/book">Book a call</a>
+  <a class="cta" href="/book">Book a call</a>
   <i class="prog" id="prog" aria-hidden="true"></i>
 </nav>
 
@@ -529,7 +532,7 @@ abbr.g{text-decoration:underline dotted var(--accent);text-underline-offset:3px;
     <div class="eyebrow">From Solenix</div>
     <h2 style="max-width:22ch">The AI that wrote these proofs can run the busywork in your business.</h2>
     <p class="lede" style="color:var(--muted)">Solenix sets up one AI at the centre of the tools you already use, cuts the ones you don't, and teaches your team. Based in St. John's. A fixed price, in writing.</p>
-    <div class="btns"><a class="btn primary" href="https://solenix.dev/book" style="text-decoration:none">Book a call</a><a class="btn" href="https://solenix.dev" style="text-decoration:none">See what we do</a></div>
+    <div class="btns"><a class="btn primary" href="/book" style="text-decoration:none">Book a call</a><a class="btn" href="/" style="text-decoration:none">See what we do</a></div>
   </div>
 </section>
 
