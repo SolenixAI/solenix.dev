@@ -51,12 +51,12 @@ export async function GET() {
   const title = "Articles"
   const description = "Explorable stories about what AI can do now. Each one is a page you can play with."
   const hero = first
-    ? `<header class="sx-hero" data-hero data-live-scope>
+    ? `<header class="sx-hero ar-hero" data-hero data-live-scope>
  <div class="sx-hero-in">
   <div class="sx-hero-text">
-   <div class="sx-kicker">Articles · newest ${esc(day(first.date))}</div>
-   <h1>What AI can do now, in pages you can <span class="grad">play with</span></h1>
-   <p class="sx-sub">Not posts to scroll past: each one is a page you can touch. Which will you try first?</p>
+   <div class="sx-kicker">Articles · what AI can do now</div>
+   <h1>Pages you can <span class="grad">play with</span></h1>
+   <p class="sx-sub">Each one is a live page, not a post. Which will you try first?</p>
    <div><a class="btn primary" href="${first.path}">Enter ${esc(first.title)} →</a></div>
   </div>
   <div class="hero-live">
@@ -83,6 +83,12 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background-im
 .btn.primary:hover{background:var(--accent-hover)}
 .wrap{position:relative;max-width:var(--container);margin:0 auto;padding:24px 20px 96px}
 .grad{background:var(--grad-headline);-webkit-background-clip:text;background-clip:text;color:transparent}
+/* Articles: the live article is the hero. The words take a compact column (wide) or band (tall). */
+.ar-hero .sx-hero-in{gap:2.4cqmin}
+.ar-hero h1{font-size:clamp(1.5rem,min(5.5cqh,9cqw),4rem)}
+.ar-hero .sx-sub{font-size:clamp(.88rem,min(2.2cqh,3.8cqw),1.25rem)}
+@container (aspect-ratio > 1.15){.ar-hero .sx-hero-in{grid-template-columns:minmax(min-content,.62fr) minmax(0,1.6fr)}.ar-hero h1{font-size:clamp(1.5rem,min(8cqh,4.2cqw),5rem)}.ar-hero .sx-sub{max-width:24ch}}
+@container (aspect-ratio > 1.8){.ar-hero .sx-hero-in{grid-template-columns:minmax(min-content,1fr) minmax(0,1.3fr)}.ar-hero h1{font-size:clamp(1.4rem,min(11cqh,3.6cqw),5rem)}.ar-hero .sx-sub{max-width:none}}
 .hero-live{height:100%;display:flex;flex-direction:column;gap:1.2cqmin}
 .hero-live .cover{flex:1;min-height:0;width:100%;aspect-ratio:auto;border-radius:var(--radius-2xl);border:1px solid var(--line);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-lg),0 0 80px color-mix(in srgb,var(--sun2) 12%,transparent)}
 .hero-live-hit{position:absolute;inset:0;border-radius:var(--radius-2xl);z-index:3}
