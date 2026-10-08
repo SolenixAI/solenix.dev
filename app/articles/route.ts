@@ -57,12 +57,10 @@ export async function GET() {
    <div class="sx-kicker">Articles · what AI can do now</div>
    <h1>Pages you can <span class="grad">play with</span></h1>
    <p class="sx-sub">Each one is a live page, not a post. Which will you try first?</p>
-   <div><a class="btn primary" href="${first.path}">Enter ${esc(first.title)} →</a></div>
   </div>
   <div class="hero-live">
    <div class="cover live">${first.cover ? `<img src="${first.cover}" alt="" width="1200" height="630">` : `<div class="noimg" aria-hidden="true"></div>`}<iframe src="${first.path}" tabindex="-1" aria-hidden="true" title=""></iframe></div>
-   <a class="hero-live-hit" href="${first.path}" aria-label="Enter ${esc(first.title)}, shown live"></a>
-   <p class="hero-live-cap"><b>New</b> · ${esc(first.title)} · live</p>
+   <a class="hero-live-hit" href="${first.path}" aria-label="Enter ${esc(first.title)}, shown live"><span class="hero-live-cap"><span><b>New</b> · ${esc(first.title)}</span><span class="go">Enter →</span></span></a>
   </div>
  </div>
  <a class="sx-cue" href="#more">${rest.length ? "More articles" : "About Solenix"} ↓</a>
@@ -90,10 +88,14 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background-im
 @container (aspect-ratio > 1.8){.ar-hero .sx-hero-in{grid-template-columns:minmax(min-content,1fr) minmax(0,1.3fr)}.ar-hero h1{font-size:clamp(1.4rem,min(11cqh,3.6cqw),5rem)}.ar-hero .sx-sub{max-width:none}}
 .hero-live{height:100%;display:flex;flex-direction:column;gap:1.2cqmin}
 .hero-live .cover{flex:1;min-height:0;width:100%;aspect-ratio:auto;border-radius:var(--radius-2xl);border:1px solid var(--line);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-lg),0 0 80px color-mix(in srgb,var(--sun2) 12%,transparent)}
-.hero-live-hit{position:absolute;inset:0;border-radius:var(--radius-2xl);z-index:3}
+/* The live window is the one way in: the whole window is the link, labelled on itself. */
+.hero-live{position:relative}
+.hero-live-hit{position:absolute;inset:0;border-radius:var(--radius-2xl);z-index:3;display:flex;align-items:flex-end;padding:1.6cqmin;text-decoration:none}
 .hero-live:hover .cover{border-color:color-mix(in oklch,var(--accent) 45%,transparent)}
-.hero-live-cap{margin:0;font:500 clamp(.68rem,1.6cqmin,.95rem)/1.3 var(--font-mono);letter-spacing:.06em;color:var(--faint)}
+.hero-live-cap{display:flex;gap:1.2em;align-items:center;justify-content:space-between;width:100%;padding:.7em 1em;border-radius:var(--radius-pill);background:color-mix(in srgb,var(--surface-solid) 82%,transparent);backdrop-filter:blur(var(--glass-blur));-webkit-backdrop-filter:blur(var(--glass-blur));border:1px solid var(--line);font:500 clamp(.7rem,1.7cqmin,1rem)/1.2 var(--font-mono);letter-spacing:.06em;color:var(--muted)}
 .hero-live-cap b{color:var(--accent-text);font-weight:600}
+.hero-live-cap .go{color:var(--accent-text);font-weight:600;white-space:nowrap}
+.hero-live-hit:hover .hero-live-cap{border-color:color-mix(in oklch,var(--accent) 45%,transparent);color:var(--text)}
 .hero-live-hit:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 .card{position:relative;display:grid;border-radius:var(--radius-2xl);overflow:hidden;background:var(--glass-bg);border:1px solid var(--line);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-md);color:var(--text);text-decoration:none;transition:transform .25s,border-color .25s,box-shadow .25s}
 .card:hover{transform:translateY(-3px);border-color:color-mix(in oklch,var(--accent) 45%,transparent);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-lg),0 0 60px color-mix(in srgb,var(--sun2) 14%,transparent)}
