@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en-CA">
 <head>
-<meta charset="utf-8">
+<meta charset="utf-8"><meta name="color-scheme" content="dark">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Solenix — Your business is a three-body problem</title>
 <meta name="description" content="One AI at the centre of the tools you already use, set up and taught by a St. John's tech expert. Hours back, lower costs, more sales.">
@@ -57,14 +57,9 @@ img, svg { display: block; }
 .btn-sm { min-height: var(--tap-min); padding: 0 var(--space-4); font-size: var(--fs-sm); }
 
 /* ── Nav ── */
-/* One continuous site: the nav stays put while pages crossfade (cross-document view transitions). */
-@view-transition { navigation: auto; }
-::view-transition-group(site-nav) { animation-duration: .35s; }
-::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
 html { background: var(--bg); }
-@media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
 
-.nav { view-transition-name: site-nav; position: fixed; top: calc(12px + env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%); z-index: var(--z-nav); width: min(calc(100% - 24px), 1040px); height: 60px; color: var(--text); border-radius: var(--radius-pill); background: color-mix(in srgb, var(--surface-solid) 58%, transparent); backdrop-filter: blur(20px) saturate(140%); -webkit-backdrop-filter: blur(20px) saturate(140%); border: 1px solid var(--line); box-shadow: inset 0 1px 0 var(--glass-edge), 0 12px 40px rgba(0,0,0,.42); transition: background-color var(--dur-slow) var(--ease-out), box-shadow var(--dur-slow); }
+.nav { position: fixed; top: calc(12px + env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%); z-index: var(--z-nav); width: min(calc(100% - 24px), 1040px); height: 60px; color: var(--text); border-radius: var(--radius-pill); background: color-mix(in srgb, var(--surface-solid) 58%, transparent); backdrop-filter: blur(20px) saturate(140%); -webkit-backdrop-filter: blur(20px) saturate(140%); border: 1px solid var(--line); box-shadow: inset 0 1px 0 var(--glass-edge), 0 12px 40px rgba(0,0,0,.42); transition: background-color var(--dur-slow) var(--ease-out), box-shadow var(--dur-slow); }
 .nav.is-solid { background: color-mix(in srgb, var(--surface-solid) 82%, transparent); box-shadow: inset 0 1px 0 var(--glass-edge), 0 16px 48px rgba(0,0,0,.5); }
 .nav .wrap { height: 100%; max-width: none; padding: 0 8px 0 18px; display: flex; align-items: center; gap: var(--space-4); }
 .brand { display: inline-flex; align-items: center; gap: var(--space-2); text-decoration: none; font: var(--fw-brand) 1.15rem/1 var(--font-display); letter-spacing: -0.01em; min-height: var(--tap-min); }

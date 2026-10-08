@@ -33,16 +33,15 @@ export async function GET() {
     : `<p class="lede">The first article is on its way.</p>`
   const html = `<!doctype html>
 <html lang="en"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta charset="utf-8"><meta name="color-scheme" content="dark"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${title}</title><meta name="description" content="${esc(description)}">
 <link rel="stylesheet" href="/tokens.css">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400..800&display=swap">
 <style>
 *{box-sizing:border-box}
-@view-transition { navigation: auto; }::view-transition-group(site-nav) { animation-duration: .35s; }::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }html { background: var(--bg); }@media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
-body{margin:0;background:radial-gradient(ellipse 90% 60% at 78% -10%,rgba(249,115,22,.16),transparent 60%),var(--bg);color:var(--text);font:17px/1.6 ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;min-height:100vh}
+html { background: var(--bg); }body{margin:0;background:radial-gradient(ellipse 90% 60% at 78% -10%,rgba(249,115,22,.16),transparent 60%),var(--bg);color:var(--text);font:17px/1.6 ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;min-height:100vh}
 body::before{content:"";position:fixed;inset:0;pointer-events:none;background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);background-size:32px 32px}
-.nav{view-transition-name:site-nav;position:fixed;top:calc(12px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);z-index:20;width:min(calc(100% - 24px),1040px);height:60px;display:flex;align-items:center;gap:12px;padding:0 8px 0 18px;border-radius:999px;background:color-mix(in srgb,var(--surface-solid) 70%,transparent);backdrop-filter:blur(20px) saturate(140%);-webkit-backdrop-filter:blur(20px) saturate(140%);border:1px solid var(--line);box-shadow:inset 0 1px 0 var(--glass-edge),0 12px 40px rgba(0,0,0,.42)}
+.nav{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);z-index:20;width:min(calc(100% - 24px),1040px);height:60px;display:flex;align-items:center;gap:12px;padding:0 8px 0 18px;border-radius:999px;background:color-mix(in srgb,var(--surface-solid) 70%,transparent);backdrop-filter:blur(20px) saturate(140%);-webkit-backdrop-filter:blur(20px) saturate(140%);border:1px solid var(--line);box-shadow:inset 0 1px 0 var(--glass-edge),0 12px 40px rgba(0,0,0,.42)}
 .brand{display:inline-flex;align-items:center;gap:8px;color:var(--text);text-decoration:none;font:650 1.15rem/1 Sora,ui-sans-serif,sans-serif;letter-spacing:-.01em;min-height:44px}
 .brand svg{width:28px;height:28px}
 .links{display:flex;gap:4px;margin-left:auto}
