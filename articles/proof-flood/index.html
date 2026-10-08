@@ -47,7 +47,8 @@ button{font:inherit;color:inherit;cursor:pointer}
 /* nav */
 @view-transition { navigation: auto; }
 ::view-transition-group(site-nav) { animation-duration: .35s; }
-::view-transition-old(root), ::view-transition-new(root) { animation-duration: .3s; }
+::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+html { background: var(--bg); }
 @media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
 .fnav{view-transition-name:site-nav;position:fixed;z-index:30;top:calc(12px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);width:min(calc(100% - 24px),1080px);height:60px;display:flex;align-items:center;gap:6px;padding:0 8px 0 16px;border-radius:999px;
   background:rgba(20,24,32,.66);backdrop-filter:blur(20px) saturate(140%);-webkit-backdrop-filter:blur(20px) saturate(140%);border:1px solid rgba(244,242,238,.1);box-shadow:inset 0 1px 0 rgba(244,242,238,.12),0 12px 40px rgba(0,0,0,.45);overflow:hidden}
@@ -99,6 +100,7 @@ section{padding-top:72px;display:grid;gap:22px;scroll-margin-top:96px}
 .qtip .f{font:600 11px/1.3 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:6px}
 .qtip .f i{width:8px;height:8px;border-radius:50%}
 .qtip .h{font:650 15px/1.25 var(--f-display);color:var(--ink);letter-spacing:-.01em}
+.qtip .k{font:400 13.5px/1.4 var(--f-body);color:var(--muted)}
 .qtip .go{font:600 12.5px var(--f-body);color:var(--accent-text)}
 .legend span{display:inline-flex;gap:6px;align-items:center}
 .sw{width:12px;height:12px;border-radius:2px;background:var(--accent);display:inline-block}
@@ -350,7 +352,6 @@ abbr.g{text-decoration:underline dotted var(--accent);text-underline-offset:3px;
 <div class="wrap">
 
 <header class="hero" id="top">
-  <canvas id="orbit" aria-hidden="true"></canvas>
   <div>
     <div class="eyebrow" style="margin-bottom:14px">AI × mathematics · October 2026</div>
     <h1>The Proof <span class="grad">Flood</span></h1>
@@ -361,6 +362,7 @@ abbr.g{text-decoration:underline dotted var(--accent);text-underline-offset:3px;
   <div>
     <div class="qwrap">
       <div class="qcap"><b>372 discoveries</b> · each square is one · tap any square</div>
+      <canvas id="orbit" aria-hidden="true"></canvas>
       <div class="qed" id="qed" aria-label="372 squares, one per discovery. Tap one to open it."></div>
       <div class="qtip" id="qtip" hidden></div>
     </div>
@@ -893,9 +895,10 @@ const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&g
 
 /* hero grid preview: a card that tours the famous squares, and follows the pointer */
 (()=>{const q=$("#qed"),tip=$("#qtip"),wrap=tip.parentElement,sq=[...q.children];let hot=null,tour=null,k=0;
- const famous=[...A.keys()].sort((x,y)=>A[y].fm-A[x].fm||A[y].r-A[x].r).slice(0,12);
+ // Start with the ones anyone can follow: closest to everyday life first, then the famous ones.
+ const famous=[...A.keys()].sort((x,y)=>A[y].r-A[x].r||A[y].fm-A[x].fm).slice(0,12);
  function show(i){const s=sq[i],a=A[i];if(!s)return;hot&&hot.classList.remove("hot");hot=s;s.classList.add("hot");
-  tip.innerHTML=`<span class="f"><i style="background:${GC(a.G)}"></i>${esc(a.F)}</span><span class="h">${sup(a.h)}</span><span class="go">Tap to read →</span>`;tip.hidden=false;
+  tip.innerHTML=`<span class="f"><i style="background:${GC(a.G)}"></i>${GROUPS[a.G]}</span><span class="h">${sup(a.h)}</span><span class="k">${sup(a.kd)}</span><span class="go">Tap to read →</span>`;tip.hidden=false;
   const r=s.getBoundingClientRect(),w=wrap.getBoundingClientRect(),tw=tip.offsetWidth,th=tip.offsetHeight;
   let x=r.left-w.left+r.width/2-tw/2,y=r.top-w.top-th-12;if(y<34)y=r.bottom-w.top+12;x=Math.max(0,Math.min(x,w.width-tw));tip.style.left=x+"px";tip.style.top=y+"px"}
  const still=matchMedia("(prefers-reduced-motion: reduce)").matches;
