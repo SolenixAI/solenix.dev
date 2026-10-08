@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 import { ICONS, OG_IMAGE } from "@/lib/site-meta";
+import { FONT_CSS, FONT_PRELOAD } from "@/lib/site-fonts.mjs";
 import { sunGradient } from "@/lib/site-nav.mjs";
 
 export const metadata: Metadata = {
@@ -21,11 +22,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en-CA" suppressHydrationWarning>
       <head>
-        {/* Sora, per DESIGN.md §2: variable 400–800, system fallback renders first. */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400..800&display=swap" />
+        {/* Sora, per DESIGN.md §2: served from the site itself (lib/site-fonts.mjs); never swaps. */}
+        <link rel="preload" href={FONT_PRELOAD} as="font" type="font/woff2" crossOrigin="" />
+        <link rel="stylesheet" href={FONT_CSS} />
         {/* Before first paint: mark the page as scripted (so reveals can hide safely)
             and apply a saved light/dark choice, so there is no flash. */}
         <script

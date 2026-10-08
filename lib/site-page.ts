@@ -1,11 +1,12 @@
 import { POSTHOG_SNIPPET, SPEED_INSIGHTS_SNIPPET } from "@/lib/analytics"
 import { headTags } from "@/lib/site-meta"
+import { fontHead } from "@/lib/site-fonts.mjs"
 import { withHero } from "@/lib/site-hero.mjs"
 import { withSiteNav } from "@/lib/site-nav.mjs"
 
 // Every page served as raw HTML (the homepage, Articles, each article) goes out through here,
 // so each one gets the same things and no page has to remember them:
-//   dark from the first byte, the design tokens, "Title · Solenix" in the tab,
+//   dark from the first byte, the design tokens, the fonts (from the site itself), "Title · Solenix" in the tab,
 //   tab icons and link-preview tags, measurement, the site nav (lib/site-nav.mjs) and, for a page
 //   that uses it, the hero frame (lib/site-hero.mjs).
 
@@ -14,7 +15,8 @@ export type PageMeta = { title: string; description: string; path: string; cover
 export function servePage(html: string, meta: PageMeta) {
   // The browser paints its white default canvas unless it knows at once that the page is dark.
   const first = `<meta charset="utf-8"><meta name="color-scheme" content="dark">` +
-    (/href="\/?tokens\.css"/.test(html) ? "" : `<link rel="stylesheet" href="/tokens.css">`)
+    (/href="\/?tokens\.css"/.test(html) ? "" : `<link rel="stylesheet" href="/tokens.css">`) +
+    fontHead()
   const page = html
     .replace(/<meta charset="[^"]*">/i, "")
     .replace(/<head>/i, `<head>${first}`)

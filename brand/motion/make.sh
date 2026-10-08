@@ -3,7 +3,8 @@
 #   bash brand/motion/make.sh [outDir]   (default: brand/motion/out, which git ignores)
 set -euo pipefail
 here="$(cd "$(dirname "$0")" && pwd)"; out="${1:-$here/out}"; mkdir -p "$out"
-python3 -m http.server 8812 --bind 127.0.0.1 --directory "$here" >/dev/null 2>&1 & srv=$!
+root="$(cd "$here/../.." && pwd)"; (cd "$root" && node scripts/vendor.mjs >/dev/null)
+python3 -m http.server 8812 --bind 127.0.0.1 --directory "$root" >/dev/null 2>&1 & srv=$!
 trap 'kill $srv 2>/dev/null' EXIT; sleep 1
 rm -rf "$out/frames" && node "$here/render.mjs" "$out/frames"
 (cd "$out" && python3 "$here/sound.py")

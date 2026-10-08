@@ -8,11 +8,19 @@ export const POSTHOG_KEY = process.env.NEXT_PUBLIC_POSTHOG_KEY ?? "phc_pNXLaGwzr
 export const POSTHOG_HOST = process.env.NEXT_PUBLIC_POSTHOG_HOST ?? "https://us.i.posthog.com"
 export const LIVE_HOST = "solenix.dev"
 
+// Analytics travel through the site's own domain (PostHog's documented Next.js reverse proxy,
+// https://posthog.com/docs/advanced/proxy/nextjs), so the page loads nothing from another host
+// and ad blockers do not drop the data. next.config.ts builds its rewrites from these values.
+export const POSTHOG_PROXY = "/lumen"
+export const POSTHOG_ASSETS_HOST = POSTHOG_HOST.replace(".i.posthog.com", "-assets.i.posthog.com")
+export const POSTHOG_UI_HOST = POSTHOG_HOST.replace(".i.posthog.com", ".posthog.com")
+
 // Clicks, scroll depth (page-leave), heatmaps and session replay measure each
 // section. Replay masks every input and anything
 // marked data-ph-mask, so nothing a visitor types is recorded.
 export const POSTHOG_OPTIONS = {
-  api_host: POSTHOG_HOST,
+  api_host: POSTHOG_PROXY,
+  ui_host: POSTHOG_UI_HOST,
   defaults: "2025-05-24",
   person_profiles: "identified_only",
   autocapture: true,

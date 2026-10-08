@@ -41,6 +41,7 @@ The rules, from `lib/article-rules.mjs`:
 * no private data: local file paths, private email or inbox names, localhost links, internal Linear references, secret keys
 * no nav of its own: the site adds the one nav
 * no raw colours: name a token, `var(--name)`, from `design/tokens.css`
+* nothing loaded from another host: fonts and libraries come from npm through `scripts/vendor.mjs` (`npm run check` fails otherwise)
 
 ## What the site adds
 

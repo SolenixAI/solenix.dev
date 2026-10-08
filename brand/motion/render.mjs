@@ -3,7 +3,7 @@
 import { mkdir } from "node:fs/promises"
 import { launch } from "../../scripts/browser.mjs"
 const OUT = process.argv[2], STILLS = process.argv[3] ? process.argv[3].split(",").map(Number) : null
-const URL = process.env.MOTION_URL ?? "http://127.0.0.1:8812/"
+const URL = process.env.MOTION_URL ?? "http://127.0.0.1:8812/brand/motion/"
 await mkdir(OUT, { recursive: true })
 const browser = await launch()
 for (const sig of ["SIGINT", "SIGTERM", "SIGHUP"]) process.on(sig, () => browser.close().finally(() => process.exit(130)))

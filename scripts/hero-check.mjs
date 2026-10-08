@@ -6,7 +6,7 @@
 // Pages come from the code (the same list the journey check reads), so a new page is checked
 // without being listed here. Runs against a local server only: nothing outside the repo.
 //   npm run hero-check [-- <base url>]   (starts the dev server itself when none is running)
-import { spawn } from "node:child_process"
+import { execFileSync, spawn } from "node:child_process"
 import { readdirSync, readFileSync, statSync } from "node:fs"
 import { launch } from "./browser.mjs"
 
@@ -22,6 +22,7 @@ const up = () => fetch(base).then((r) => r.ok, () => false)
 let server
 if (!(await up())) {
   base = "http://localhost:3123"
+  execFileSync("node", ["scripts/vendor.mjs"]) // what predev does for npm run dev
   server = spawn("npx", ["next", "dev", "-p", "3123"], { stdio: "ignore" })
   for (let i = 0; i < 120 && !(await up()); i++) await new Promise((r) => setTimeout(r, 500))
 }
