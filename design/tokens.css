@@ -217,7 +217,7 @@
   /* Display sizes grow 1.5–2× from phone to desktop and stop at 5rem (80px).
      The fluid part is rem + vw, so nothing balloons at 1920 or 2560. */
   --fs-beat: clamp(2.4rem, 1.7rem + 3.2vw, 5rem);      /* story beat word, scene only */
-  --fs-hero: clamp(2.6rem, 1.9rem + 3vw, 5rem);     /* scene headline, one per page */
+  --fs-hero: clamp(1.6rem, min(1.9rem + 3vw, 11svh), 5rem); /* scene headline, one per page; scales with width and height, so it fits any screen */
   --fs-statement: clamp(2.5rem, 1.85rem + 2.8vw, 4.75rem);   /* big statement, one per page */
   --fs-display: clamp(2.2rem, 1.7rem + 2.2vw, 3.75rem);   /* page-owning headline */
   --fs-h1: clamp(1.9rem, 5vw, 2.6rem);
@@ -225,7 +225,7 @@
   --fs-h3: 1.2rem;
   --fs-h4: 1.02rem;
   --fs-stat: clamp(1.9rem, 5.5vw, 2.75rem);     /* a stat's numeral */
-  --fs-lede: clamp(1.05rem, 2.6vw, 1.25rem);
+  --fs-lede: clamp(0.92rem, min(2.6vw, 3.4svh), 1.25rem);
   --fs-body: 1rem;
   --fs-sm: 0.92rem;
   --fs-xs: 0.8rem;

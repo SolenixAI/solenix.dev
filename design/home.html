@@ -87,14 +87,16 @@ footer { position: relative; z-index: 2; }
 .stop-mk.cur { box-shadow: 0 0 0 6px var(--accent-quiet), 0 0 24px color-mix(in srgb, var(--ring) 45%, transparent); }
 .stop-mk.cur span { opacity: 1; }
 @media (max-width: 720px) { .stop-mk { width: 28px; height: 28px; margin: -14px 0 0 -14px; } .stop-mk span { display: none; } }
-.hero-copy { position: absolute; left: 0; right: 0; bottom: clamp(1.75rem, 9vh, 6.5rem); }
-.hero-copy .eyebrow { color: var(--accent-text); margin-bottom: var(--space-5); }
+.hero-copy { position: absolute; left: 0; right: 0; bottom: clamp(1rem, 9svh, 6.5rem); }
+.hero-copy .eyebrow { color: var(--accent-text); margin-bottom: min(var(--space-5), 2.5svh); }
 .h1 { font-size: var(--fs-hero); font-weight: var(--fw-bold); letter-spacing: var(--track-hero); line-height: 0.98; max-width: 12.5ch; }
+/* Very wide and short screens (a phone held sideways): the headline takes the width it has, so it wraps less and the hero fits. */
+@media (min-aspect-ratio: 9/5) { .h1 { max-width: none; } }
 .h1 .w { display: inline-block; overflow: clip; padding-block: 0.06em 0.12em; margin-block: -0.06em -0.12em; vertical-align: top; }
 .h1 .w > span { display: inline-block; }
 .h1 .g > span { background: var(--grad-headline); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.hero-sub { margin-top: var(--space-5); font-size: var(--fs-lede); color: var(--muted); max-width: 30rem; }
-.hero-ctas { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-6); }
+.hero-sub { margin-top: min(var(--space-5), 2.5svh); font-size: var(--fs-lede); color: var(--muted); max-width: 30rem; }
+.hero-ctas { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: min(var(--space-6), 3svh); }
 
 /* The story, scrubbed by scroll: a three-stop rail, then headlines that build word by word. */
 .beats { position: absolute; left: var(--gutter); right: var(--gutter); bottom: clamp(1.75rem, 8vh, 6rem); max-width: var(--container-wide); margin-inline: auto; display: grid; pointer-events: none; }

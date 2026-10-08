@@ -1,7 +1,7 @@
 // Every page's first screen is its hero, and a hero that does not fit the screen has failed.
 // For each page with a hero and each size in design/viewports.json, this opens the page and checks:
 //   the [data-hero] element starts at the top and is exactly one screen tall,
-//   nothing inside it spills out or is cut off, the page never scrolls sideways,
+//   nothing inside it spills out, hides under the nav or sits on other text, the page never scrolls sideways,
 //   and the headline (its h1) has 12 words or fewer.
 // Pages come from the code (the same list the journey check reads), so a new page is checked
 // without being listed here. Runs against a local server only: nothing outside the repo.
@@ -46,6 +46,32 @@ const measure = () => {
       break
     }
   }
+  // Nothing in the hero hides under a fixed bar such as the nav.
+  const bars = [...document.querySelectorAll("body *")].filter((e) => getComputedStyle(e).position === "fixed" && !hero.contains(e))
+    .map((e) => e.getBoundingClientRect()).filter((b) => b.width > W / 2 && b.height && b.height < H / 3)
+  for (const el of hero.querySelectorAll("h1,h2,p,a,button,.eyebrow,[role=button]")) {
+    const b = el.getBoundingClientRect()
+    if (b.width && b.height && !el.closest("[data-overlay]") && bars.some((bar) => b.top < bar.bottom - 1 && b.bottom > bar.top + 1)) {
+      out.push(`"${el.textContent.trim().slice(0, 30)}" is hidden under a fixed bar (the nav)`)
+      break
+    }
+  }
+  // Text never sits on top of other text, except an overlay meant to float (data-overlay).
+  const texts = [...hero.querySelectorAll("*")].filter((el) => {
+    if (el.closest("[data-overlay]") || getComputedStyle(el).visibility === "hidden") return false
+    return [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim())
+  }).map((el) => ({ el, b: el.getBoundingClientRect() })).filter(({ b }) => b.width && b.height)
+  overlap: for (let i = 0; i < texts.length; i++)
+    for (let j = i + 1; j < texts.length; j++) {
+      const a = texts[i], c = texts[j]
+      if (a.el.contains(c.el) || c.el.contains(a.el)) continue
+      const x = Math.min(a.b.right, c.b.right) - Math.max(a.b.left, c.b.left), y = Math.min(a.b.bottom, c.b.bottom) - Math.max(a.b.top, c.b.top)
+      // Tight leading lets line boxes touch; a real collision covers over a quarter of a line.
+      if (x > 2 && y > Math.min(a.b.height, c.b.height) / 4) {
+        out.push(`"${a.el.textContent.trim().slice(0, 30)}" overlaps "${c.el.textContent.trim().slice(0, 30)}"`)
+        break overlap
+      }
+    }
   const h1 = hero.querySelector("h1")
   if (!h1) out.push("hero has no h1 headline")
   else if (h1.textContent.trim().split(/\s+/).length > 12) out.push(`headline has ${h1.textContent.trim().split(/\s+/).length} words (12 at most)`)
@@ -60,6 +86,8 @@ try {
       const page = await browser.newPage({ viewport: { width: w, height: h } })
       await page.goto(base + path, { waitUntil: "load" })
       await page.evaluate(() => document.fonts.ready)
+      // Judge the settled first screen: wait for one-off animations (not endless ones) to end.
+      await page.waitForFunction(() => document.getAnimations().every((a) => a.playState !== "running" || a.effect.getComputedTiming().endTime === Infinity), null, { timeout: 10000 }).catch(() => {})
       for (const p of await page.evaluate(measure)) {
         console.log(`hero: ${path} at ${w}×${h}: ${p}`)
         bad++
