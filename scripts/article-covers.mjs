@@ -13,7 +13,7 @@ try {
     const page = await browser.newPage({ viewport: { width: 1200, height: 630 }, deviceScaleFactor: 1, reducedMotion: "no-preference" })
     await page.goto(`${ORIGIN}/articles/${slug}`, { waitUntil: "networkidle", timeout: 60000 }).catch(() => page.waitForTimeout(3000))
     // The cover is the story, not the chrome: hide any nav bar before the shot.
-    await page.addStyleTag({ content: "nav,.nav,.fnav{display:none!important}" })
+    await page.addStyleTag({ content: ".snav{display:none!important}" })
     await page.waitForTimeout(Number(process.env.SETTLE_MS ?? 3500))
     await mkdir(`public/articles/${slug}`, { recursive: true })
     await page.screenshot({ path: `public/articles/${slug}/cover.png` })

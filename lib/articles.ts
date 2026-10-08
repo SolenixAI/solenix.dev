@@ -1,15 +1,14 @@
 import { existsSync } from "node:fs"
 import { readdir, readFile } from "node:fs/promises"
 import path from "node:path"
-import { POSTHOG_SNIPPET, SPEED_INSIGHTS_SNIPPET } from "@/lib/analytics"
-import { headTags } from "@/lib/site-meta"
+import { servePage } from "@/lib/site-page"
 import { SLUG, articleProblems } from "@/lib/article-rules.mjs"
 
 // Articles are self-contained interactive pages: one folder per article in articles/,
 // holding index.html and whatever data it loads. Adding an article = adding a folder.
 // The page is the one source of truth for its title, description and date
 // (<title>, <meta name="description">, <meta name="article:published_time">).
-// At serve time the site adds only the shared head: icons, link-preview tags and measurement.
+// At serve time lib/site-page.ts adds what every page shares: the nav, head tags and measurement.
 
 const DIR = path.join(process.cwd(), "articles")
 
@@ -48,18 +47,9 @@ export async function listArticles(): Promise<Article[]> {
     .sort((a, b) => b.date.localeCompare(a.date))
 }
 
-/** The shared head for a page served as plain HTML. */
-export function sharedHead(page: { title: string; description: string; path: string; cover?: string }) {
-  return headTags({ ...page, image: page.cover }) + POSTHOG_SNIPPET + SPEED_INSIGHTS_SNIPPET
-}
-
-/** Serve an article: wrap a bare page in a document, then add the shared head once. */
+/** Serve an article: wrap a bare page in a document, then add what every page shares. */
 export function serveArticle(meta: Article, html: string) {
-  const page = /<html[\s>]/i.test(html) ? html : wrapFragment(html)
-  // The tab names the site, like every other page: "Title · Solenix".
-  return page
-    .replace(/<title>([^<]*)<\/title>/, (t, x: string) => (x.includes("Solenix") ? t : `<title>${x} · Solenix</title>`))
-    .replace("</head>", `${sharedHead(meta)}</head>`)
+  return servePage(/<html[\s>]/i.test(html) ? html : wrapFragment(html), meta)
 }
 
 // A page written as a fragment (no <html>): its leading meta, title, link and style tags

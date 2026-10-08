@@ -7,7 +7,7 @@ sources:
   - lib/article-rules.mjs (the rules)
   - lib/articles.ts (how pages are served)
   - design/DESIGN.md (brand and voice)
-generated: { by: agent:claude-opus-5-5, at: 2026-10-08T15:10-02:30 }
+generated: { by: agent:claude-opus-5-5, at: 2026-10-08T16:40-02:30 }
 status: draft
 stale_after: 2027-01-08
 ---
@@ -39,14 +39,22 @@ The rules, from `lib/article-rules.mjs`:
 * a mobile viewport tag
 * page under 8 MB
 * no private data: local file paths, private email or inbox names, localhost links, internal Linear references, secret keys
+* no nav of its own: the site adds the one nav
+* no raw colours: name a token, `var(--name)`, from `design/tokens.css`
 
 ## What the site adds
 
-Only the shared head, once: tab icons, link-preview tags built from the page's own title and description, PostHog (on solenix.dev only) and Speed Insights. A page written without `<html>` (an artifact draft) is wrapped in a document automatically.
+Everything every page shares, from one place (`lib/site-page.ts`), so a page cannot forget or copy it:
+
+* dark from the first byte (`color-scheme`), the design tokens (`/tokens.css`), "Title · Solenix" in the tab
+* the nav, from `lib/site-nav.mjs`: the same links and Solenix platform button as every page. Give a section an `id` and `data-nav="Label"` and it becomes a link in the nav, with a reading line.
+* tab icons, link-preview tags from the page's own title and description, PostHog (on solenix.dev only) and Speed Insights
+
+A page written without `<html>` (an artifact draft) is wrapped in a document automatically. `npm run check` also fails if a copy of the nav appears anywhere outside `lib/site-nav.mjs` (`scripts/sot-check.mjs`).
 
 ## Rules of thumb
 
-* Use `/tokens.css` for colour and type; never copy hex values into a page.
+* Colour and type come from the tokens by name; the check stops a raw value.
 * Show before you tell: a picture or playground before each block of text.
 * Every fact links to its source, with its date.
 * End on one action: Book a call.

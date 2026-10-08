@@ -1,30 +1,25 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="color-scheme" content="dark">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <!-- Required by the article rules (lib/article-rules.mjs): title 3–70 characters,
      description 50–200 characters, date YYYY-MM-DD. The site builds the share tags from these. -->
 <title>Article title</title>
 <meta name="description" content="One sentence a busy owner reads in a feed and wants to open: what this shows and why it matters.">
 <meta name="article:published_time" content="2026-01-01">
-<!-- Colours, type, radius and light come from the one design system (design/tokens.css). -->
-<link rel="stylesheet" href="/tokens.css">
+<!-- The site adds the rest: dark from the first byte, the design tokens (design/tokens.css: use only
+     their var(--…) names, never a raw colour), the nav, share tags and measurement (lib/site-page.ts).
+     The nav lists each element that has an id and data-nav="Label" as a link on this page. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400..800&display=swap">
 <style>
 *{box-sizing:border-box}
 html { background: var(--bg); }
 
-body{margin:0;background:radial-gradient(ellipse 90% 60% at 78% -10%,rgba(249,115,22,.14),transparent 60%),var(--bg);color:var(--text);font:17px/1.6 ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+body{margin:0;background:radial-gradient(ellipse 90% 60% at 78% -10%,color-mix(in srgb,var(--sun2) 14%,transparent),transparent 60%),var(--bg);color:var(--text);font:17px/1.6 ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
 body::before{content:"";position:fixed;inset:0;pointer-events:none;background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);background-size:32px 32px}
-.wrap{position:relative;max-width:64rem;margin:0 auto;padding:0 20px 96px}
-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;height:72px}
-nav .logo{display:inline-flex;align-items:center;gap:10px;color:var(--text);text-decoration:none;font:650 18px/1 Sora,ui-sans-serif,sans-serif}
-nav .logo img{width:28px;height:28px}
-nav .links{display:flex;gap:4px;align-items:center}
-nav .links a{color:var(--muted);text-decoration:none;min-height:44px;display:inline-flex;align-items:center;padding:0 14px;border-radius:999px}
-nav .links a:hover{color:var(--text)}
+.wrap{position:relative;max-width:var(--container);margin:0 auto;padding:calc(var(--nav-height) + 48px) 20px 96px}
 .btn{display:inline-flex;align-items:center;min-height:44px;padding:0 20px;border-radius:999px;font-weight:600;text-decoration:none;color:var(--text);border:1px solid var(--line-strong)}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .eyebrow{font:600 .8rem/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
@@ -39,16 +34,13 @@ section{padding-top:72px;display:grid;gap:20px}
 </head>
 <body>
 <div class="wrap">
-  <nav><a class="logo" href="/"><img src="/brand/out/logo-dark.svg" alt="">Solenix</a>
-    <span class="links"><a href="/articles">Articles</a><a class="btn" href="/app">Solenix platform</a></span></nav>
-
   <header>
     <div class="eyebrow">Topic · Month Year</div>
     <h1>The headline with one <span class="grad">glowing</span> word</h1>
     <p class="lede">The promise of the page in two lines: what the reader will understand by the end.</p>
   </header>
 
-  <section>
+  <section id="idea" data-nav="The idea">
     <h2>One section, one idea</h2>
     <div class="card">Replace with the real thing: a playground, a picture, a map. Show before you tell.</div>
   </section>
@@ -62,7 +54,7 @@ section{padding-top:72px;display:grid;gap:20px}
     </div>
   </section>
 
-  <section>
+  <section id="sources" data-nav="Sources">
     <h2>Sources</h2>
     <ol><li>Every fact links to its source, newest first, with its date.</li></ol>
   </section>

@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en-CA">
 <head>
-<meta charset="utf-8"><meta name="color-scheme" content="dark">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Solenix — Your business is a three-body problem</title>
 <meta name="description" content="One AI at the centre of the tools you already use, set up and taught by a St. John's tech expert. Hours back, lower costs, more sales.">
@@ -53,34 +53,12 @@ img, svg { display: block; }
 .btn-primary:active { transform: none; }
 .btn-ghost { background: transparent; color: var(--text); border-color: var(--line-strong); }
 .btn-ghost:hover { background: color-mix(in oklch, var(--text) 8%, transparent); transform: translateY(var(--lift)); }
-.nav-signin { gap: 0; }
 .btn-sm { min-height: var(--tap-min); padding: 0 var(--space-4); font-size: var(--fs-sm); }
 
-/* ── Nav ── */
 html { background: var(--bg); }
 
-.nav { position: fixed; top: calc(12px + env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%); z-index: var(--z-nav); width: min(calc(100% - 24px), 1040px); height: 60px; color: var(--text); border-radius: var(--radius-pill); background: color-mix(in srgb, var(--surface-solid) 58%, transparent); backdrop-filter: blur(20px) saturate(140%); -webkit-backdrop-filter: blur(20px) saturate(140%); border: 1px solid var(--line); box-shadow: inset 0 1px 0 var(--glass-edge), 0 12px 40px rgba(0,0,0,.42); transition: background-color var(--dur-slow) var(--ease-out), box-shadow var(--dur-slow); }
-.nav.is-solid { background: color-mix(in srgb, var(--surface-solid) 82%, transparent); box-shadow: inset 0 1px 0 var(--glass-edge), 0 16px 48px rgba(0,0,0,.5); }
-.nav .wrap { height: 100%; max-width: none; padding: 0 8px 0 18px; display: flex; align-items: center; gap: var(--space-4); }
 .brand { display: inline-flex; align-items: center; gap: var(--space-2); text-decoration: none; font: var(--fw-brand) 1.15rem/1 var(--font-display); letter-spacing: -0.01em; min-height: var(--tap-min); }
 .brand svg { width: 28px; height: 28px; }
-.nav-links { display: flex; gap: var(--space-1); margin-left: auto; list-style: none; padding: 0; }
-.nav-links a { display: inline-flex; align-items: center; min-height: var(--tap-min); padding: 0 var(--space-3); border-radius: var(--radius-pill); text-decoration: none; font-size: var(--fs-sm); color: var(--muted); transition: background-color var(--dur-fast), color var(--dur-fast); }
-.nav-links a:hover { background: var(--line); color: var(--text); }
-.nav-actions { display: flex; align-items: center; gap: var(--space-2); }
-@media (max-width: 860px) { .nav-links a.wide { display: none; } }
-@media (max-width: 480px) { .nav .wrap { padding-left: 12px; gap: var(--space-2); } .nav-links a { padding: 0 var(--space-2); } }
-.nav-signin .short { display: none; }
-/* Solenix platform: a small orbit, the agent dot from the mark circling its ring. It wakes up on hover. */
-.nav-portal { gap: 10px; padding-left: 12px; }
-.nav-portal .orb { position: relative; width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid color-mix(in srgb, var(--ring) 55%, transparent); display: inline-block; flex: none; }
-.nav-portal .orb::before { content: ""; position: absolute; inset: 5px; border-radius: 50%; background: radial-gradient(circle at 40% 38%, var(--sun1), var(--sun2)); box-shadow: 0 0 8px color-mix(in srgb, var(--sun2) 60%, transparent); }
-.nav-portal .orb i { position: absolute; inset: -1.5px; border-radius: 50%; animation: orb-spin 12s linear infinite; }
-.nav-portal .orb i::after { content: ""; position: absolute; top: -2px; left: 50%; width: 5px; height: 5px; margin-left: -2.5px; border-radius: 50%; background: var(--text); box-shadow: 0 0 6px var(--sun1); }
-.nav-portal:hover .orb i, .nav-portal:focus-visible .orb i { animation-duration: 1.4s; }
-@keyframes orb-spin { to { transform: rotate(360deg); } }
-@media (prefers-reduced-motion: reduce) { .nav-portal .orb i { animation: none; transform: rotate(45deg); } }
-@media (max-width: 420px) { .nav-signin .long { display: none; } .nav-signin .short { display: inline; } }
 
 /* ── The world: one three-body scene behind the whole page. The canvas stays put and
    every section scrolls over it; the scroll decides which moment of the story you see. ── */
@@ -671,21 +649,6 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
 <body>
 <a class="skip" href="#main">Skip to content</a>
 
-<header class="nav" data-theme="dark" data-od-id="nav">
-  <div class="wrap">
-    <a class="brand" href="/" aria-label="Solenix home">
-      <svg viewBox="0 0 32 32" aria-hidden="true"><defs><radialGradient id="mk" cx=".42" cy=".38" r=".62"><stop offset="0" stop-color="var(--sun1)"/><stop offset="1" stop-color="var(--sun2)"/></radialGradient></defs><circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/><circle cx="16" cy="16" r="8" fill="url(#mk)"/><circle cx="27" cy="9" r="2.2" fill="var(--ring)"/></svg>
-      Solenix
-    </a>
-    <ul class="nav-links">
-      <li><a href="/articles">Articles</a></li>
-      <li><a class="wide" href="/agents">Agents Marketplace</a></li>
-    </ul>
-    <div class="nav-actions">
-      <a class="btn btn-ghost btn-sm nav-signin nav-portal" href="/app" data-od-id="nav-signin" aria-label="Solenix platform: sign in"><span class="orb" aria-hidden="true"><i></i></span><span class="long">Solenix platform</span><span class="short">Platform</span></a>
-    </div>
-  </div>
-</header>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
 <symbol id="lg-shopify" viewBox="0 0 24 24"><path d="M15.337 23.979l7.216-1.561s-2.604-17.613-2.625-17.73c-.018-.116-.114-.192-.211-.192s-1.929-.136-1.929-.136-1.275-1.274-1.439-1.411c-.045-.037-.075-.057-.121-.074l-.914 21.104h.023zM11.71 11.305s-.81-.424-1.774-.424c-1.447 0-1.504.906-1.504 1.141 0 1.232 3.24 1.715 3.24 4.629 0 2.295-1.44 3.76-3.406 3.76-2.354 0-3.54-1.465-3.54-1.465l.646-2.086s1.245 1.066 2.28 1.066c.675 0 .975-.545.975-.932 0-1.619-2.654-1.694-2.654-4.359-.034-2.237 1.571-4.416 4.827-4.416 1.257 0 1.875.361 1.875.361l-.945 2.715-.02.01zM11.17.83c.136 0 .271.038.405.135-.984.465-2.064 1.639-2.508 3.992-.656.213-1.293.405-1.889.578C7.697 3.75 8.951.84 11.17.84V.83zm1.235 2.949v.135c-.754.232-1.583.484-2.394.736.466-1.777 1.333-2.645 2.085-2.971.193.501.309 1.176.309 2.1zm.539-2.234c.694.074 1.141.867 1.429 1.755-.349.114-.735.231-1.158.366v-.252c0-.752-.096-1.371-.271-1.871v.002zm2.992 1.289c-.02 0-.06.021-.078.021s-.289.075-.714.21c-.423-1.233-1.176-2.37-2.508-2.37h-.115C12.135.209 11.669 0 11.265 0 8.159 0 6.675 3.877 6.21 5.846c-1.194.365-2.063.636-2.16.674-.675.213-.694.232-.772.87-.075.462-1.83 14.063-1.83 14.063L15.009 24l.927-21.166z"/></symbol>
@@ -1006,9 +969,9 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
 
 <footer data-od-id="footer">
   <div class="wrap">
-    <a class="brand" href="/"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/><circle cx="16" cy="16" r="8" fill="url(#mk)"/><circle cx="27" cy="9" r="2.2" fill="var(--ring)"/></svg>Solenix</a>
+    <!--site:brand-->
     <p>One AI at the centre of your business. St. John's, Newfoundland and Labrador.</p>
-    <ul><li><a href="/app">Solenix platform</a></li><li><a href="/articles">Articles</a></li><li><a href="/agents">Agents Marketplace</a></li><li><a href="mailto:hello@solenix.dev">hello@solenix.dev</a></li></ul>
+    <ul><!--site:footer-links--></ul>
     <p class="mono" style="font-size: var(--fs-xs);">© 2026 Solenix</p>
     <p class="tm-note" data-od-id="trademark-note">The logos on this page belong to their owners. They are shown because they are tools you may already use; no partnership is implied.</p>
   </div>
@@ -1099,7 +1062,7 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
     S.sec = t < 0.5 ? A.sel : B.sel;
   }
 
-  const sky = $('.sky'), nav = $('.nav'), hero = $('.hero-copy'), beat = $('.beat'), cue = $('.scroll-cue'), world = $('.world');
+  const sky = $('.sky'), hero = $('.hero-copy'), beat = $('.beat'), cue = $('.scroll-cue'), world = $('.world');
   const rets = $$('.scene-ui .ret:not(.ret-ai)'), retAi = $('.ret-ai'), tools = $$('.tool');
   S.stops = $$('.stop-mk'); S.pingN = 0;
   const prSec = $('#promises'), pSteps = $$('[data-promises] li'), pDots = $$('#promises .jr-dots i');
@@ -1132,7 +1095,6 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
     S.jCur = cur;
     jSteps.forEach((li, i) => li.classList.toggle('on', i === Math.max(0, cur) && (inJ || jrR.top < vh)));
     jDots.forEach((d, i) => d.classList.toggle('on', i <= cur));
-    nav.classList.toggle('is-solid', scrollY > 40);
     /* The promises: one at a time. Each one that arrives rings out across the ground. */
     { const pr = prSec.getBoundingClientRect(), inP = pr.top < vh * 0.4 && pr.bottom > vh * 0.3, pc = Math.min(3, Math.floor(clamp(-pr.top / (pr.height - vh)) * 4));
       pSteps.forEach((li, i) => li.classList.toggle('on', i === pc && (inP || pr.top < vh))); pDots.forEach((d, i) => d.classList.toggle('on', i <= pc));

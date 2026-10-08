@@ -31,14 +31,15 @@ awk '/^\[auth\]$/{s="auth"} /^\[auth\.email\]$/{s="email"} /^\[/{if($0!="[auth]"
 grep -qx 'auth: enable_signup = false' /tmp/solenix-signup.txt || bad "self sign-up is on: [auth] enable_signup must be false (portal is invite-only)"
 grep -qx 'email: enable_signup = true' /tmp/solenix-signup.txt || bad "[auth.email] enable_signup must be true, or email sign-in is disabled"
 
-# The homepage is measured: analytics are injected where it is served.
-grep -q 'POSTHOG_SNIPPET' app/route.ts && grep -q 'capture_pageleave' lib/analytics.ts || bad "homepage has no analytics (app/route.ts + lib/analytics.ts)"
+# Every raw HTML page is measured: lib/site-page.ts adds analytics, and the homepage is served through it.
+grep -q 'servePage' app/route.ts && grep -q 'POSTHOG_SNIPPET' lib/site-page.ts && grep -q 'capture_pageleave' lib/analytics.ts || bad "homepage has no analytics (app/route.ts → lib/site-page.ts → lib/analytics.ts)"
 
 # The agents page is called "Agents Marketplace" everywhere.
 grep -rn ">Tools we use<" app components design/*.html 2>/dev/null | while read -r l; do echo "check: say \"Agents Marketplace\", not \"Tools we use\": ${l:0:80}"; done | grep . && fail=1
 
 # Every article passes the article rules (lib/article-rules.mjs; the build enforces the same rules).
 node scripts/article-check.mjs || fail=1
+node scripts/sot-check.mjs || fail=1
 
 # Copy follows the Voice rules: no banned words (the list lives in design/DESIGN.md).
 python3 scripts/voice-check.py design/home.html design/app.html || fail=1

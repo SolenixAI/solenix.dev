@@ -57,6 +57,7 @@
   --accent-text: light-dark(#9a3412, #fbbf24);
 
   --sun1: #fbbf24;
+  --hot: #fde68a;                      /* the hottest point of a sun: sparks, peaks, a lit trail */
   --sun2: light-dark(#ea580c, #f97316);
   --ring: light-dark(#ea580c, #f59e0b);
 

@@ -12,7 +12,5 @@ export async function GET(_req: Request, ctx: { params: Promise<{ slug: string }
   const { slug } = await ctx.params
   const article = await readArticle(slug)
   if (!article) return new Response("Not found", { status: 404 })
-  return new Response(serveArticle(article.meta, article.html), {
-    headers: { "content-type": "text/html; charset=utf-8" },
-  })
+  return serveArticle(article.meta, article.html)
 }
