@@ -58,10 +58,18 @@ html { background: var(--bg); }
 .fnav .in a{flex:none;display:inline-flex;align-items:center;height:40px;padding:0 13px;border-radius:999px;text-decoration:none;color:var(--muted);font:500 14px/1 var(--f-body);transition:color .15s,background .15s}
 .fnav .in a:hover{color:var(--ink);background:rgba(244,242,238,.06)}
 .fnav .in a.on{color:var(--accent-text);background:var(--accent-soft)}
-.fnav .cta{flex:none;display:inline-flex;align-items:center;height:44px;padding:0 18px;border-radius:999px;background:var(--accent);color:var(--on-accent);text-decoration:none;font:600 14px/1 var(--f-body)}
-.fnav .cta:hover{background:var(--sun1)}
+.fnav .cta{flex:none;display:inline-flex;align-items:center;gap:10px;height:44px;padding:0 18px 0 12px;border-radius:999px;border:1px solid var(--line-strong);color:var(--ink);text-decoration:none;font:600 14px/1 var(--f-body);white-space:nowrap}
+.fnav .cta:hover{background:rgba(244,242,238,.06)}
+.portal .short{display:none}
+.portal .orb{position:relative;width:20px;height:20px;border-radius:50%;border:1.5px solid color-mix(in srgb,var(--ring) 55%,transparent);flex:none}
+.portal .orb::before{content:"";position:absolute;inset:5px;border-radius:50%;background:radial-gradient(circle at 40% 38%,var(--sun1),var(--sun2));box-shadow:0 0 8px color-mix(in srgb,var(--sun2) 60%,transparent)}
+.portal .orb i{position:absolute;inset:-1.5px;border-radius:50%;animation:orb-spin 12s linear infinite}
+.portal .orb i::after{content:"";position:absolute;top:-2px;left:50%;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:var(--ink);box-shadow:0 0 6px var(--sun1)}
+.portal:hover .orb i,.portal:focus-visible .orb i{animation-duration:1.4s}
+@keyframes orb-spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.portal .orb i{animation:none;transform:rotate(45deg)}}
 .fnav .prog{position:absolute;left:24px;right:24px;bottom:0;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--sun1),var(--sun2));transform-origin:left;transform:scaleX(0)}
-@media (max-width:480px){.fnav .brand span{display:none}.fnav .crumb{padding:0 10px}.fnav .brand{padding-right:6px}.fnav .cta{padding:0 14px}}
+@media (max-width:480px){.fnav .brand span{display:none}.fnav .crumb{padding:0 10px}.fnav .brand{padding-right:6px}.fnav .cta{padding:0 12px 0 10px}.portal .long{display:none}.portal .short{display:inline}}
 section{padding-top:72px;display:grid;gap:22px;scroll-margin-top:96px}
 .lede{max-width:64ch;color:var(--muted);font-size:18px}
 .card{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:20px;box-shadow:var(--edge),var(--shadow);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
@@ -93,11 +101,11 @@ section{padding-top:72px;display:grid;gap:22px;scroll-margin-top:96px}
 .qcap b{color:var(--ink)}
 .qed i.hot{outline:2px solid var(--ink);outline-offset:2px;transform:scale(1.25);position:relative;z-index:2;transition:transform .2s}
 .qtip{position:absolute;z-index:5;width:min(280px,80%);padding:12px 14px;border-radius:16px;background:rgba(20,24,32,.94);border:1px solid rgba(244,242,238,.14);box-shadow:inset 0 1px 0 rgba(244,242,238,.12),0 16px 40px rgba(0,0,0,.5);pointer-events:none;transition:left .35s cubic-bezier(.2,.8,.2,1),top .35s cubic-bezier(.2,.8,.2,1),opacity .2s;display:grid;gap:4px}
-.qtip .f{font:600 11px/1.3 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:6px}
-.qtip .f i{width:8px;height:8px;border-radius:50%}
-.qtip .h{font:650 15px/1.25 var(--f-display);color:var(--ink);letter-spacing:-.01em}
-.qtip .k{font:400 13.5px/1.4 var(--f-body);color:var(--muted)}
-.qtip .go{font:600 12.5px var(--f-body);color:var(--accent-text)}
+.qtip .f,.tip .f{font:600 11px/1.3 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:6px}
+.qtip .f i,.tip .f i{width:8px;height:8px;border-radius:50%}
+.qtip .h,.tip .h{font:650 15px/1.25 var(--f-display);color:var(--ink);letter-spacing:-.01em}
+.qtip .k,.tip .k{font:400 13.5px/1.4 var(--f-body);color:var(--muted)}
+.qtip .go,.tip .go{font:600 12.5px var(--f-body);color:var(--accent-text)}
 .legend span{display:inline-flex;gap:6px;align-items:center}
 .sw{width:12px;height:12px;border-radius:2px;background:var(--accent);display:inline-block}
 .sw.h{background:transparent;box-shadow:inset 0 0 0 1.5px var(--accent)}
@@ -254,9 +262,12 @@ details.tech summary{cursor:pointer;font:600 13px var(--f-mono);color:var(--acce
 details.tech p{margin-top:8px;font-size:14.5px;color:var(--muted)}
 .dfoot{display:flex;gap:8px;padding:12px 18px calc(12px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line)}
 .dfoot button{flex:1}
+.grip{display:none}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);font:600 13px var(--f-mono);padding:10px 14px;border-radius:10px;z-index:80}
 @media (max-width:700px){
-  .drawer::before{content:"";position:absolute;top:8px;left:50%;width:40px;height:4px;margin-left:-20px;border-radius:4px;background:var(--line-strong)}
+  .grip{display:block;position:absolute;z-index:2;top:0;left:25%;right:25%;height:26px;touch-action:none;cursor:grab}
+  .grip::after{content:"";position:absolute;top:8px;left:50%;width:40px;height:4px;margin-left:-20px;border-radius:4px;background:var(--line-strong)}
+  .dhead{touch-action:none}
   .drawer{top:auto;left:0;width:100%;height:88%;border-left:0;border-top:1px solid var(--line);border-radius:18px 18px 0 0;transform:translateY(105%)}
   .pvi-key{grid-template-columns:1fr}
   .toolbar{grid-template-columns:1fr}
@@ -323,7 +334,8 @@ ol.src .dt{font:12px var(--f-mono);color:var(--muted)}
 
 /* glossary */
 abbr.g{text-decoration:underline dotted var(--accent);text-underline-offset:3px;cursor:help;position:relative}
-.tip{position:fixed;z-index:50;max-width:280px;background:var(--ink);color:var(--bg);font:14px/1.45 var(--f-body);padding:10px 12px;border-radius:10px;pointer-events:none;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+.tip{position:fixed;z-index:50;max-width:280px;display:grid;gap:4px;background:rgba(20,24,32,.94);color:var(--ink);border:1px solid rgba(244,242,238,.14);font:14px/1.45 var(--f-body);padding:12px 14px;border-radius:16px;pointer-events:none;box-shadow:inset 0 1px 0 rgba(244,242,238,.12),0 16px 40px rgba(0,0,0,.5)}
+.tip[hidden]{display:none}
 
 @media (max-width:860px){
   .hero,.play,.lean{grid-template-columns:1fr}
@@ -341,7 +353,7 @@ abbr.g{text-decoration:underline dotted var(--accent);text-underline-offset:3px;
   <a class="crumb" href="/articles">Articles</a>
   <div class="in" id="nav"><a href="#flood">The flood</a><a href="#atlas">All 372</a><a href="#timeline">Timeline</a><a href="#trust">How sure?</a>
   <a href="#play">Play: Erdős</a><a href="#fluid">Play: fluids</a><a href="#lean">Play: proof checker</a><a href="#debate">The fight</a><a href="#future">What it means</a><a href="#sources">Sources</a></div>
-  <a class="cta" href="/book">Book a call</a>
+  <a class="cta portal" href="/app" aria-label="Solenix platform: sign in"><span class="orb" aria-hidden="true"><i></i></span><span class="long">Solenix platform</span><span class="short">Platform</span></a>
   <i class="prog" id="prog" aria-hidden="true"></i>
 </nav>
 
@@ -590,6 +602,7 @@ abbr.g{text-decoration:underline dotted var(--accent);text-underline-offset:3px;
 
 <div class="scrim" id="scrim"></div>
 <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Discovery details" tabindex="-1">
+  <div class="grip" aria-hidden="true"></div>
   <div class="dhead"><span id="dId"></span><span style="display:flex;gap:6px"><button class="x" id="dCopy" title="Copy link to this discovery" aria-label="Copy link">⧉</button><button class="x" id="dClose" aria-label="Close">×</button></span></div>
   <div class="dbody" id="dBody"></div>
   <div class="dfoot"><button class="btn ghost" id="dPrev">← Prev</button><button class="btn ghost" id="dRand">Surprise me</button><button class="btn ghost" id="dNext">Next →</button></div>
@@ -938,9 +951,13 @@ const MAP={W:1000,H:640,l:150,r:20,t:20,b:70};
   const n=list.length,c=Math.min(7.2,Math.sqrt((Math.min(cw,ch)/2-8)**2/Math.max(n,1)));
   list.forEach((i,k)=>{const r=c*Math.sqrt(k+.5),th=k*2.39996;A[i].mx=cx+r*Math.cos(th);A[i].my=cy+r*Math.sin(th)})}
  A.forEach((a,i)=>{const col=GC(a.G),fill=a.c==2?col:a.c==1?col:"var(--paper)";
-  h+=`<circle class="d" data-i="${i}" cx="${a.mx.toFixed(1)}" cy="${a.my.toFixed(1)}" r="5.2" fill="${fill}" fill-opacity="${a.c==1?.4:1}" stroke="${col}" stroke-width="1.6"><title>${esc(a.i+" · "+a.h)}</title></circle>`});
+  h+=`<circle class="d" data-i="${i}" cx="${a.mx.toFixed(1)}" cy="${a.my.toFixed(1)}" r="5.2" fill="${fill}" fill-opacity="${a.c==1?.4:1}" stroke="${col}" stroke-width="1.6" aria-label="${esc(a.i+" · "+a.h)}"></circle>`});
  h+=`<circle class="sel" id="selRing" r="0" cx="-20" cy="-20"/>`;svg.innerHTML=h;
- svg.onclick=e=>{const c=e.target.closest("circle.d");if(c)openD(+c.dataset.i)}})();
+ svg.onclick=e=>{const c=e.target.closest("circle.d");if(c)openD(+c.dataset.i)};
+ svg.addEventListener("pointerover",e=>{const c=e.target.closest("circle.d");if(!c||e.pointerType=="touch")return;const a=A[+c.dataset.i],r=c.getBoundingClientRect();
+  tip.innerHTML=`<span class="f"><i style="background:${GC(a.G)}"></i>${esc(a.i)} · ${esc(GROUPS[a.G])}</span><span class="h">${sup(a.h)}</span><span class="k">${sup(a.kd)}</span><span class="go">Click to read →</span>`;tip.hidden=false;
+  tip.style.left=Math.max(8,Math.min(r.left+r.width/2-140,innerWidth-296))+"px";tip.style.top=(r.top-tip.offsetHeight-10<8?r.bottom+10:r.top-tip.offsetHeight-10)+"px"});
+ svg.addEventListener("pointerout",e=>{if(e.target.closest("circle.d"))tip.hidden=true})})();
 
 function render(){const M=A.map(match),n=M.filter(Boolean).length,sel=A.filter((a,i)=>M[i]);
  document.querySelectorAll("#map circle.d").forEach(c=>c.classList.toggle("off",!M[+c.dataset.i]));
@@ -951,7 +968,7 @@ function render(){const M=A.map(match),n=M.filter(Boolean).length,sel=A.filter((
 $("#cards").onclick=e=>{const b=e.target.closest("[data-i]");if(b)openD(+b.dataset.i)};
 $("#moreBtn").onclick=()=>{st.shown+=60;render()};
 $("#sort").onchange=e=>{st.sort=e.target.value;st.shown=60;render()};
-let qt;$("#q").oninput=e=>{clearTimeout(qt);qt=setTimeout(()=>{st.q=e.target.value.trim().toLowerCase();st.shown=60;render()},120)};
+$("#q").oninput=e=>{st.q=e.target.value.trim().toLowerCase();st.shown=60;render()};
 const setView=v=>{st.view=v;$("#vMap").setAttribute("aria-pressed",v=="map");$("#vCards").setAttribute("aria-pressed",v=="cards");$("#mapView").hidden=v!="map";$("#cardView").hidden=v!="cards";render()};
 $("#vMap").onclick=()=>setView("map");$("#vCards").onclick=()=>setView("cards");
 document.addEventListener("keydown",e=>{if(e.key=="/"&&document.activeElement.tagName!="INPUT"){e.preventDefault();$("#q").focus();$("#atlas").scrollIntoView({behavior:"smooth"})}});
@@ -960,7 +977,8 @@ render();
 /* drawer */
 let cur=-1;const dr=$("#drawer"),scrim=$("#scrim");
 let lastFocus=null;
-function openD(i){if(!dr.classList.contains("on"))lastFocus=document.activeElement;cur=(i+A.length)%A.length;const a=A[cur],col=GC(a.G);dr.style.setProperty("--gc",col);
+let pushed=false,pushOk=true;
+function openD(i,fromHist){const wasOpen=dr.classList.contains("on");if(!wasOpen)lastFocus=document.activeElement;cur=(i+A.length)%A.length;const a=A[cur],col=GC(a.G);dr.style.setProperty("--gc",col);
  const pips=(n,m)=>`<span class="pips">${Array.from({length:m},(_,k)=>`<i class="${k<n?"on":""}"></i>`).join("")}</span>`;
  const ageTxt=a.y?`Open since ${a.y} · ${2026-a.y} years`:"Age of question: not known";
  $("#dId").innerHTML=`<span style="color:${col}">●</span> ${a.i} · ${esc(a.F)}`;
@@ -981,14 +999,20 @@ function openD(i){if(!dr.classList.contains("on"))lastFocus=document.activeEleme
  requestAnimationFrame(()=>picMount($("#dPic"),a.pc,getComputedStyle(document.documentElement).getPropertyValue("--g"+a.G).trim()));
  dr.classList.add("on");scrim.classList.add("on");dr.setAttribute("aria-hidden","false");$("#dBody").scrollTop=0;setTimeout(()=>$("#dClose").focus({preventScroll:true}),50);
  const r=$("#selRing");r.setAttribute("cx",a.mx);r.setAttribute("cy",a.my);r.setAttribute("r",10);
- try{history.replaceState(null,"","#f"+a.i)}catch(e){}}
-function closeD(){if(lastFocus&&lastFocus.focus)lastFocus.focus({preventScroll:true});dr.classList.remove("on");scrim.classList.remove("on");dr.setAttribute("aria-hidden","true");$("#selRing").setAttribute("r",0);try{history.replaceState(null,"","#atlas")}catch(e){}}
-$("#dClose").onclick=closeD;scrim.onclick=closeD;
+ try{if(fromHist){if(!wasOpen)pushed=true}else if(wasOpen||!pushOk)history.replaceState(history.state,"","#f"+a.i);else{history.pushState({drawer:1},"","#f"+a.i);pushed=true}}catch(e){}}
+function closeD(fromHist){if(!dr.classList.contains("on"))return;if(lastFocus&&lastFocus.focus)lastFocus.focus({preventScroll:true});dr.classList.remove("on");scrim.classList.remove("on");dr.setAttribute("aria-hidden","true");$("#selRing").setAttribute("r",0);if(fromHist){pushed=false;return}try{if(pushed){pushed=false;history.back()}else history.replaceState(null,"","#atlas")}catch(e){}}
+addEventListener("popstate",()=>{const m=location.hash.match(/^#f(\d{3})$/);if(m&&byId[m[1]]!=null)openD(byId[m[1]],true);else closeD(true)});
+$("#dClose").onclick=()=>closeD();scrim.onclick=()=>closeD();
+{const mq=matchMedia("(max-width:700px)");let g=null;
+ dr.addEventListener("pointerdown",e=>{if(!mq.matches||e.target.closest("button")||!e.target.closest(".grip,.dhead"))return;g={y:e.clientY,t:e.timeStamp,dy:0};dr.setPointerCapture(e.pointerId);dr.style.transition=scrim.style.transition="none"});
+ dr.addEventListener("pointermove",e=>{if(!g)return;g.dy=Math.max(0,e.clientY-g.y);dr.style.transform=`translateY(${g.dy}px)`;scrim.style.opacity=1-g.dy/dr.offsetHeight});
+ const end=e=>{if(!g)return;const v=g.dy/Math.max(1,e.timeStamp-g.t),close=g.dy>dr.offsetHeight*.25||(v>.6&&g.dy>40);g=null;dr.style.transition=scrim.style.transition=dr.style.transform=scrim.style.opacity="";if(close)closeD()};
+ dr.addEventListener("pointerup",end);dr.addEventListener("pointercancel",end)}
 $("#dPrev").onclick=()=>openD(cur-1);$("#dNext").onclick=()=>openD(cur+1);$("#dRand").onclick=()=>openD(Math.floor(Math.random()*A.length));
 document.addEventListener("keydown",e=>{if(!dr.classList.contains("on"))return;if(e.key=="Escape")closeD();if(e.key=="ArrowRight")openD(cur+1);if(e.key=="ArrowLeft")openD(cur-1)});
 $("#dCopy").onclick=async()=>{const url=location.href.split("#")[0]+"#f"+A[cur].i;try{await navigator.clipboard.writeText(url);toast("Link copied")}catch(e){toast("Copy this: #f"+A[cur].i)}};
 function toast(m){let t=$("#toast");if(!t){t=el("div",{class:"toast",id:"toast"});document.body.append(t)}t.textContent=m;t.hidden=false;clearTimeout(t._h);t._h=setTimeout(()=>t.hidden=true,1600)}
-const hm=location.hash.match(/^#f(\d{3})$/);if(hm&&byId[hm[1]]!=null)setTimeout(()=>openD(byId[hm[1]]),300);
+const hm=location.hash.match(/^#f(\d{3})$/);if(hm&&byId[hm[1]]!=null){pushOk=false;dr.style.transition="none";scrim.style.transition="none";openD(byId[hm[1]]);dr.offsetWidth;dr.style.transition=scrim.style.transition="";pushOk=true}
 $("#surprise")&&($("#surprise").onclick=()=>openD(Math.floor(Math.random()*A.length)));
 
 /* hero: three suns on the figure-eight orbit (Chenciner–Montgomery initial conditions) */

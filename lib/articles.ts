@@ -56,7 +56,10 @@ export function sharedHead(page: { title: string; description: string; path: str
 /** Serve an article: wrap a bare page in a document, then add the shared head once. */
 export function serveArticle(meta: Article, html: string) {
   const page = /<html[\s>]/i.test(html) ? html : wrapFragment(html)
-  return page.replace("</head>", `${sharedHead(meta)}</head>`)
+  // The tab names the site, like every other page: "Title · Solenix".
+  return page
+    .replace(/<title>([^<]*)<\/title>/, (t, x: string) => (x.includes("Solenix") ? t : `<title>${x} · Solenix</title>`))
+    .replace("</head>", `${sharedHead(meta)}</head>`)
 }
 
 // A page written as a fragment (no <html>): its leading meta, title, link and style tags
