@@ -40,6 +40,7 @@ grep -rn ">Tools we use<" app components design/*.html 2>/dev/null | while read 
 # Every article passes the article rules (lib/article-rules.mjs; the build enforces the same rules).
 node scripts/article-check.mjs || fail=1
 node scripts/sot-check.mjs || fail=1
+node scripts/journey-check.mjs || fail=1
 node scripts/brand-images.mjs --check || fail=1
 
 # Copy follows the Voice rules: no banned words (the list lives in design/DESIGN.md).
