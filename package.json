@@ -12,7 +12,8 @@
     "scenes": "node scripts/scene-check.mjs",
     "shots": "node scripts/shots.mjs",
     "check:test": "bash scripts/check-test.sh",
-    "share-images": "node scripts/share-images.mjs"
+    "share-images": "node scripts/share-images.mjs",
+    "article-covers": "node scripts/article-covers.mjs"
   },
   "engines": {
     "node": ">=22"

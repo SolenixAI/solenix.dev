@@ -37,6 +37,9 @@ grep -q 'POSTHOG_SNIPPET' app/route.ts && grep -q 'capture_pageleave' lib/analyt
 # The agents page is called "Agents Marketplace" everywhere.
 grep -rn ">Tools we use<" app components design/*.html 2>/dev/null | while read -r l; do echo "check: say \"Agents Marketplace\", not \"Tools we use\": ${l:0:80}"; done | grep . && fail=1
 
+# Every article passes the article rules (lib/article-rules.mjs; the build enforces the same rules).
+node scripts/article-check.mjs || fail=1
+
 # Copy follows the Voice rules: no banned words (the list lives in design/DESIGN.md).
 python3 scripts/voice-check.py design/home.html design/app.html || fail=1
 

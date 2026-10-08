@@ -57,17 +57,34 @@ img, svg { display: block; }
 .btn-sm { min-height: var(--tap-min); padding: 0 var(--space-4); font-size: var(--fs-sm); }
 
 /* ── Nav ── */
-.nav { position: fixed; inset: 0 0 auto; z-index: var(--z-nav); height: var(--nav-height); color: var(--text); transition: background-color var(--dur-slow) var(--ease-out), border-color var(--dur-slow); border-bottom: 1px solid transparent; }
-.nav.is-solid { background: var(--glass-bg); backdrop-filter: blur(var(--glass-blur)); -webkit-backdrop-filter: blur(var(--glass-blur)); border-bottom-color: var(--line); }
-.nav .wrap { height: 100%; display: flex; align-items: center; gap: var(--space-5); }
+/* One continuous site: the nav stays put while pages crossfade (cross-document view transitions). */
+@view-transition { navigation: auto; }
+::view-transition-group(site-nav) { animation-duration: .35s; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: .3s; }
+@media (prefers-reduced-motion: reduce) { @view-transition { navigation: none; } }
+
+.nav { view-transition-name: site-nav; position: fixed; top: calc(12px + env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%); z-index: var(--z-nav); width: min(calc(100% - 24px), 1040px); height: 60px; color: var(--text); border-radius: var(--radius-pill); background: color-mix(in srgb, var(--surface-solid) 58%, transparent); backdrop-filter: blur(20px) saturate(140%); -webkit-backdrop-filter: blur(20px) saturate(140%); border: 1px solid var(--line); box-shadow: inset 0 1px 0 var(--glass-edge), 0 12px 40px rgba(0,0,0,.42); transition: background-color var(--dur-slow) var(--ease-out), box-shadow var(--dur-slow); }
+.nav.is-solid { background: color-mix(in srgb, var(--surface-solid) 82%, transparent); box-shadow: inset 0 1px 0 var(--glass-edge), 0 16px 48px rgba(0,0,0,.5); }
+.nav .wrap { height: 100%; max-width: none; padding: 0 8px 0 18px; display: flex; align-items: center; gap: var(--space-4); }
 .brand { display: inline-flex; align-items: center; gap: var(--space-2); text-decoration: none; font: var(--fw-brand) 1.15rem/1 var(--font-display); letter-spacing: -0.01em; min-height: var(--tap-min); }
 .brand svg { width: 28px; height: 28px; }
 .nav-links { display: flex; gap: var(--space-1); margin-left: auto; list-style: none; padding: 0; }
 .nav-links a { display: inline-flex; align-items: center; min-height: var(--tap-min); padding: 0 var(--space-3); border-radius: var(--radius-pill); text-decoration: none; font-size: var(--fs-sm); color: var(--muted); transition: background-color var(--dur-fast), color var(--dur-fast); }
 .nav-links a:hover { background: var(--line); color: var(--text); }
 .nav-actions { display: flex; align-items: center; gap: var(--space-2); }
-@media (max-width: 860px) { .nav-links { display: none; } .nav-actions { margin-left: auto; } }
-@media (max-width: 420px) { .nav-signin .long { display: none; } }
+@media (max-width: 860px) { .nav-links a.wide { display: none; } }
+@media (max-width: 480px) { .nav .wrap { padding-left: 12px; gap: var(--space-2); } .nav-links a { padding: 0 var(--space-2); } }
+.nav-signin .short { display: none; }
+/* Solenix platform: a small orbit, the agent dot from the mark circling its ring. It wakes up on hover. */
+.nav-portal { gap: 10px; padding-left: 12px; }
+.nav-portal .orb { position: relative; width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid color-mix(in srgb, var(--ring) 55%, transparent); display: inline-block; flex: none; }
+.nav-portal .orb::before { content: ""; position: absolute; inset: 5px; border-radius: 50%; background: radial-gradient(circle at 40% 38%, var(--sun1), var(--sun2)); box-shadow: 0 0 8px color-mix(in srgb, var(--sun2) 60%, transparent); }
+.nav-portal .orb i { position: absolute; inset: -1.5px; border-radius: 50%; animation: orb-spin 12s linear infinite; }
+.nav-portal .orb i::after { content: ""; position: absolute; top: -2px; left: 50%; width: 5px; height: 5px; margin-left: -2.5px; border-radius: 50%; background: var(--text); box-shadow: 0 0 6px var(--sun1); }
+.nav-portal:hover .orb i, .nav-portal:focus-visible .orb i { animation-duration: 1.4s; }
+@keyframes orb-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .nav-portal .orb i { animation: none; transform: rotate(45deg); } }
+@media (max-width: 420px) { .nav-signin .long { display: none; } .nav-signin .short { display: inline; } }
 
 /* ── The world: one three-body scene behind the whole page. The canvas stays put and
    every section scrolls over it; the scroll decides which moment of the story you see. ── */
@@ -663,10 +680,11 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
       Solenix
     </a>
     <ul class="nav-links">
-      <li><a href="/agents">Agents Marketplace</a></li>
+      <li><a href="/articles">Articles</a></li>
+      <li><a class="wide" href="/agents">Agents Marketplace</a></li>
     </ul>
     <div class="nav-actions">
-      <a class="btn btn-ghost btn-sm nav-signin" href="/app" data-od-id="nav-signin"><span class="long">Client&nbsp;</span>sign in</a>
+      <a class="btn btn-ghost btn-sm nav-signin nav-portal" href="/app" data-od-id="nav-signin" aria-label="Solenix platform: sign in"><span class="orb" aria-hidden="true"><i></i></span><span class="long">Solenix platform</span><span class="short">Platform</span></a>
     </div>
   </div>
 </header>
@@ -992,7 +1010,7 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
   <div class="wrap">
     <a class="brand" href="/"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/><circle cx="16" cy="16" r="8" fill="url(#mk)"/><circle cx="27" cy="9" r="2.2" fill="var(--ring)"/></svg>Solenix</a>
     <p>One AI at the centre of your business. St. John's, Newfoundland and Labrador.</p>
-    <ul><li><a href="/app">Client sign in</a></li><li><a href="/agents">Agents Marketplace</a></li><li><a href="mailto:hello@solenix.dev">hello@solenix.dev</a></li></ul>
+    <ul><li><a href="/app">Solenix platform</a></li><li><a href="/articles">Articles</a></li><li><a href="/agents">Agents Marketplace</a></li><li><a href="mailto:hello@solenix.dev">hello@solenix.dev</a></li></ul>
     <p class="mono" style="font-size: var(--fs-xs);">© 2026 Solenix</p>
     <p class="tm-note" data-od-id="trademark-note">The logos on this page belong to their owners. They are shown because they are tools you may already use; no partnership is implied.</p>
   </div>

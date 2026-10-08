@@ -37,6 +37,7 @@ The system behind solenix.dev. Solenix is one tech expert for small businesses i
 - Offer: one AI at the centre of the tools they already use; cut unused tools; teach; build the website. Claims land on time or money.
 - "Agents Marketplace" (never "Tools we use"): works with any AI, one copy-paste prompt per tool, GitHub stars for open source.
 - Book a call opens a real booking page, never mailto.
+- Nav: one floating glass pill on every page (homepage, Articles, each article), with Articles in it on every screen size. The sign-in button is "Solenix platform" ("Platform" on phones) with a small orbiting dot. Pages crossfade under the nav (view transitions), so the site feels like one continuous place. (2026-10-08)
 - Portal words: Initiatives are Solenix's projects with the client; Billing is Solenix billing them, never "your bills". Solenix is client one.
 - Sign-in: passkey, Google, email link. Invite-only. Apple undecided.
 - What Jager approved stays word for word: design/approved.md.
