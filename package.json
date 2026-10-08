@@ -14,7 +14,8 @@
     "check:test": "bash scripts/check-test.sh",
     "share-images": "node scripts/share-images.mjs",
     "article-covers": "node scripts/article-covers.mjs",
-    "brand": "node scripts/brand-images.mjs"
+    "brand": "node scripts/brand-images.mjs",
+    "hero-check": "node scripts/hero-check.mjs"
   },
   "engines": {
     "node": ">=22"

@@ -1,0 +1,21 @@
+{
+  "about": "Screen sizes every page's first screen (its hero) must fit. scripts/hero-check.mjs reads only this file. 'real' is refreshed from the site's own analytics by npm run viewports; 'edges' are the outer limits from published standards and device classes.",
+  "real": {
+    "source": "PostHog, $pageview events, $viewport_width x $viewport_height, last 180 days",
+    "refreshed": "2026-10-08T18:10-02:30",
+    "sizes": [
+      { "w": 636, "h": 710, "views": 13 },
+      { "w": 1454, "h": 754, "views": 7 },
+      { "w": 305, "h": 624, "views": 1 }
+    ]
+  },
+  "edges": [
+    { "w": 320, "h": 568, "why": "smallest phone still in use; WCAG 1.4.10 reflow width" },
+    { "w": 375, "h": 812, "why": "common phone, tall" },
+    { "w": 667, "h": 300, "why": "phone held sideways, toolbars showing" },
+    { "w": 640, "h": 360, "why": "a 1280x720 laptop at 200% zoom" },
+    { "w": 1200, "h": 630, "why": "link preview and live card frame" },
+    { "w": 1280, "h": 800, "why": "common laptop" },
+    { "w": 3440, "h": 1440, "why": "ultrawide desktop" }
+  ]
+}
