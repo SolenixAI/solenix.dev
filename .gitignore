@@ -17,3 +17,6 @@ public/vendor/
 # Impeccable review captures (regenerated, never committed)
 .impeccable/review/
 .impeccable/mocks/
+
+# Page scripts compiled from client/*.ts by scripts/build-client.ts
+lib/client.generated.ts

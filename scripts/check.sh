@@ -48,7 +48,8 @@ git ls-files -co --exclude-standard | grep -E '\.(js|jsx|mjs|cjs)$' | grep -v '^
 # CI workflows: valid (actionlint) and safe (zizmor: pinned actions, least privilege), where installed.
 if command -v actionlint >/dev/null; then actionlint .github/workflows/*.yml || fail=1; fi
 if command -v zizmor >/dev/null; then zizmor --offline -q .github/workflows/ >/dev/null 2>&1 || { zizmor --offline .github/workflows/; fail=1; }; fi
-# Types: the TypeScript compiler, strict, over the whole repo.
+# Types: the page scripts are compiled from client/*.ts first, then the compiler checks the whole repo.
+node --no-warnings scripts/build-client.ts >/dev/null || fail=1
 npx tsc --noEmit || fail=1
 # The hero fit check opens pages in a browser, so locally it runs when something that shapes a first
 # screen changes; in CI it always runs.

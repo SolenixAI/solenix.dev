@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev",
+    "dev": "node --no-warnings scripts/build-client.ts --watch & next dev",
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
@@ -16,9 +16,10 @@
     "article-covers": "node scripts/article-covers.ts",
     "brand": "node scripts/brand-images.ts",
     "hero-check": "node scripts/hero-check.ts",
-    "predev": "node scripts/vendor.ts",
-    "prebuild": "node scripts/vendor.ts",
-    "vendor": "node scripts/vendor.ts"
+    "predev": "node scripts/vendor.ts && node --no-warnings scripts/build-client.ts",
+    "prebuild": "node scripts/vendor.ts && node --no-warnings scripts/build-client.ts",
+    "vendor": "node scripts/vendor.ts",
+    "client": "node --no-warnings scripts/build-client.ts"
   },
   "engines": {
     "node": ">=24.12"

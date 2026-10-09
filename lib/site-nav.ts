@@ -7,6 +7,8 @@
 // the page: each element with id and data-nav="Label". The site nav stays the same on every page.
 // scripts/sot-check.ts fails the commit if any nav copy appears anywhere else.
 
+import { CLIENT } from "./client.generated.ts"
+
 export const NAV = {
   home: { href: "/", label: "Solenix", aria: "Solenix home" },
   links: [
@@ -123,36 +125,9 @@ html{scroll-padding-top:var(--nav-height)}
 @media (prefers-reduced-motion:reduce){.snav-orb i{animation:none;transform:rotate(45deg)}}
 `.trim()
 
-// Runs right after the nav markup, before the first paint: it marks the current page from location
-// (so the markup is the same on every page) and fits the nav to its real width. No timers, no fades.
-// A page shown inside a frame (the live preview on an article card) belongs to the page around it,
-// which already has the one nav; so a framed page draws none.
-const JS = `(()=>{const n=document.currentScript.previousElementSibling,p=location.pathname.replace(/\\/$/,"")||"/";if(window.top!==window.self){n.remove();return}
-for(const a of n.querySelectorAll(".snav-links a")){const h=a.getAttribute("href");if(p==h||p.startsWith(h+"/"))a.setAttribute("aria-current",p==h?"page":"true")}
-const F=[[],["c1"],["c1","c2"],["c1","c3"],["c1","c2","c3"]];
-function fit(){for(const f of F){n.classList.remove("c1","c2","c3");n.classList.add(...f);if(n.scrollWidth<=n.clientWidth)return}}
-fit();new ResizeObserver(fit).observe(n);document.fonts&&document.fonts.ready.then(fit);
-let t=0;const f=()=>{t=0;n.classList.toggle("is-solid",scrollY>0)};addEventListener("scroll",()=>{t||(t=requestAnimationFrame(f))},{passive:true});f()})()`
-
-// The article bar: slides in as the site nav leaves, keeps the section you are in marked, the reading
-// line in step, closes the section list on a pick, and shares through the device's own share sheet
-// (a copied link where there is none).
-const LJS = `(()=>{const n=document.currentScript.previousElementSibling,g=document.querySelector("[data-snav]");if(window.top!==window.self){n.remove();return}
-const L=[...n.querySelectorAll(".lnav-in a,.lnav-list a")],pop=n.querySelector("[popover]"),cur=n.querySelector(".lnav-cur .lab"),P=n.querySelector(".lnav-prog"),sh=n.querySelector(".lnav-share"),lab=sh.querySelector(".lab"),L0=lab.textContent,none=cur.textContent;
-const ids=[...new Set(L.map(a=>a.hash.slice(1)))];
-const F=[[],["l1"],["l1","l2"],["l1","l2","l3"],["l1","l2","l3","l4"]];
-function fit(){for(const f of F){n.classList.remove("l1","l2","l3","l4");n.classList.add(...f);if(n.scrollWidth<=n.clientWidth)return}}
-fit();new ResizeObserver(fit).observe(n);document.fonts&&document.fonts.ready.then(fit);
-let t=0,c0;function f(){t=0;const B=g?g.offsetTop+g.offsetHeight:0,H=n.offsetTop+n.offsetHeight+4,off=Math.min(0,Math.max(0,scrollY-B)-H);
-n.style.setProperty("--ly",off+"px");n.classList.toggle("is-on",off>-H);
-let c=null;for(const i of ids){const s=document.getElementById(i);if(s&&s.getBoundingClientRect().top<=H)c=i}
-if(c!==c0){c0=c;let on;for(const a of L)a.hash=="#"+c?(a.setAttribute("aria-current","location"),on=a):a.removeAttribute("aria-current");cur.textContent=on?on.textContent:none}
-const h=document.documentElement;P.style.transform="scaleX("+Math.min(1,h.scrollTop/Math.max(1,h.scrollHeight-innerHeight))+")"}
-addEventListener("scroll",()=>{t||(t=requestAnimationFrame(f))},{passive:true});addEventListener("resize",f);document.readyState=="loading"?addEventListener("DOMContentLoaded",f):f();
-pop.addEventListener("click",e=>{e.target.closest("a")&&pop.hidePopover()});
-sh.addEventListener("click",async()=>{const u=location.origin+location.pathname;if(navigator.share){try{await navigator.share({title:document.title,url:u})}catch(e){}return}try{await navigator.clipboard.writeText(u);lab.textContent="Link copied"}catch(e){}});
-for(const e of["mouseleave","blur"])sh.addEventListener(e,()=>{lab.textContent=L0})})()`
-
+// The nav's and the article bar's behaviour live in client/site-nav.ts and client/article-bar.ts
+// (TypeScript), compiled by scripts/build-client.ts and inlined right after their markup, so they run
+// before the first paint.
 const CHEVRON = `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`
 const SHARE = `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v8M5 5l3-3 3 3M3.5 8.5V14h9V8.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`
 
@@ -171,7 +146,7 @@ export function siteNav({ local = false } = {}) {
     `<a class="snav-brand" href="${NAV.home.href}" aria-label="${esc(NAV.home.aria)}">${markSvg()}<span>${esc(NAV.home.label)}</span></a>` +
     `<nav class="snav-links" aria-label="Main">${links}</nav>` +
     `<a class="snav-act" href="${p.href}" aria-label="${esc(p.aria)}"><span class="snav-orb" aria-hidden="true"><i></i></span><span class="long">${esc(p.label)}</span><span class="short">${esc(p.short)}</span></a>` +
-    `</header><script>${JS}</script><script type="speculationrules">${PREFETCH}</script>`
+    `</header><script>${CLIENT["site-nav"]}</script><script type="speculationrules">${PREFETCH}</script>`
   )
 }
 
@@ -187,7 +162,7 @@ export function localNav(title: string, sections: Section[]) {
     `<button class="lnav-share" type="button">${SHARE}<span class="lab" aria-live="polite">Share</span></button>` +
     `<i class="lnav-prog" aria-hidden="true"></i>` +
     `<div class="lnav-list" id="lnav-list" popover><nav aria-label="Sections">${items}</nav></div>` +
-    `</header><script>${LJS}</script>`
+    `</header><script>${CLIENT["article-bar"]}</script>`
   )
 }
 

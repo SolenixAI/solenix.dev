@@ -29,7 +29,7 @@ const up = () => fetch(base).then((r) => r.ok, () => false)
 let server
 if (!(await up())) {
   base = "http://localhost:3123"
-  execFileSync("node", ["scripts/vendor.ts"]) // what predev does for npm run dev
+  execFileSync("node", ["scripts/vendor.ts"]); execFileSync("node", ["--no-warnings", "scripts/build-client.ts"]) // what predev does for npm run dev
   server = spawn("npx", ["next", "dev", "-p", "3123"], { stdio: "ignore" })
   for (let i = 0; i < 120 && !(await up()); i++) await new Promise((r) => setTimeout(r, 500))
 }
