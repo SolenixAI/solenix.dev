@@ -7,6 +7,10 @@ Impeccable reads it as PRODUCT.md; Corey Haines' marketing skills read it throug
 `.agents/product-marketing.md`, a link to this file. Visual decisions live in DESIGN.md; user journeys
 in design/journeys.md. Confirmed with Jager on 2026-10-08; anything not yet decided says so.
 
+## North star
+
+Solenix bridges the gap between all the best technology that exists and the people who need it: minimum effort, maximum value, by design. (Jager, 2026-10-09)
+
 ## Platform
 
 web
