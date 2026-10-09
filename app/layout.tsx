@@ -20,7 +20,7 @@ export const viewport: Viewport = { colorScheme: "light dark" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-CA" suppressHydrationWarning>
+    <html lang="en-CA" data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
         {/* Sora, per DESIGN.md §2: served from the site itself (lib/site-fonts.ts); never swaps. */}
         <link rel="preload" href={FONT_PRELOAD} as="font" type="font/woff2" crossOrigin="" />

@@ -1,5 +1,5 @@
 // Tab icons and link-preview tags, one definition for the Next.js pages (app/layout.tsx)
-// and for the homepage, which is served as raw HTML (app/route.ts).
+// and for the pages served as raw HTML (the articles).
 // The images come from `npm run share-images` (public/favicon.ico, public/og.png).
 
 export const SITE_URL = "https://solenix.dev"

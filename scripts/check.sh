@@ -27,12 +27,15 @@ grep -n -E 'motion-toggle|class="word">Motion<' design/*.html 2>/dev/null \
 
 # The portal is invite-only: self sign-up stays off.
 # ([auth] enable_signup must be false; [auth.email] enable_signup must stay true, or email sign-in is disabled.)
-awk '/^\[auth\]$/{s="auth"} /^\[auth\.email\]$/{s="email"} /^\[/{if($0!="[auth]"&&$0!="[auth.email]")s=""} /^enable_signup/{print s": "$0}' supabase/config.toml > /tmp/solenix-signup.txt
-grep -qx 'auth: enable_signup = false' /tmp/solenix-signup.txt || bad "self sign-up is on: [auth] enable_signup must be false (portal is invite-only)"
-grep -qx 'email: enable_signup = true' /tmp/solenix-signup.txt || bad "[auth.email] enable_signup must be true, or email sign-in is disabled"
+signup=$(mktemp)
+awk '/^\[auth\]$/{s="auth"} /^\[auth\.email\]$/{s="email"} /^\[/{if($0!="[auth]"&&$0!="[auth.email]")s=""} /^enable_signup/{print s": "$0}' supabase/config.toml > "$signup"
+grep -qx 'auth: enable_signup = false' "$signup" || bad "self sign-up is on: [auth] enable_signup must be false (portal is invite-only)"
+grep -qx 'email: enable_signup = true' "$signup" || bad "[auth.email] enable_signup must be true, or email sign-in is disabled"
 
-# Every raw HTML page is measured: lib/site-page.ts adds analytics, and the homepage is served through it.
-grep -q 'servePage' app/route.ts && grep -q 'POSTHOG_SNIPPET' lib/site-page.ts && grep -q 'capture_pageleave' lib/analytics.ts || bad "homepage has no analytics (app/route.ts → lib/site-page.ts → lib/analytics.ts)"
+# Every page is measured: the site layout mounts one analytics component for all its pages, the homepage among them
+# (app/(site)/page.tsx). The raw pages (Articles) keep the inline snippet (lib/site-page.ts).
+grep -q '<Analytics />' 'app/(site)/layout.tsx' && grep -q 'posthog.init' 'app/(site)/analytics.tsx' && grep -q 'capture_pageleave' lib/analytics.ts || bad "homepage has no analytics (app/(site)/layout.tsx → analytics.tsx → lib/analytics.ts)"
+grep -q 'POSTHOG_SNIPPET' lib/site-page.ts || bad "raw pages have no analytics (lib/site-page.ts)"
 
 # The agents page is called "Agents Marketplace" everywhere.
 grep -rn ">Tools we use<" app components design/*.html 2>/dev/null | while read -r l; do echo "check: say \"Agents Marketplace\", not \"Tools we use\": ${l:0:80}"; done | grep . && fail=1
@@ -76,14 +79,18 @@ PY
 # CI workflows: valid (actionlint) and safe (zizmor: pinned actions, least privilege), where installed.
 if command -v actionlint >/dev/null; then actionlint .github/workflows/*.yml || fail=1; fi
 if command -v zizmor >/dev/null; then zizmor --offline -q .github/workflows/ >/dev/null 2>&1 || { zizmor --offline .github/workflows/; fail=1; }; fi
+# One 3D world: only lib/space imports three (the space engine, lib/space/engine.ts). A page that shows 3D imports
+# 'solenix-space' instead, so there is never a second world beside the first.
+git ls-files -co --exclude-standard -- '*.ts' '*.tsx' '*.html' | grep -v '^lib/space/' | xargs -r grep -n -E "(from|import)[[:space:]]*\(?[[:space:]]*['\"]three(/[^'\"]*)?['\"]" \
+  | while read -r l; do echo "check: only lib/space may import three (one 3D world; import 'solenix-space' instead): ${l:0:120}"; done | grep . && fail=1
 # Types: the page scripts are compiled from client/*.ts first, then the compiler checks the whole repo.
 node --no-warnings scripts/build-client.ts >/dev/null || fail=1
 npx tsc --noEmit || fail=1
-# Unit tests, next to the module they test (lib/*.test.ts), with Node's own test runner.
-node --test lib/*.test.ts >/dev/null 2>&1 || { node --test lib/*.test.ts; fail=1; }
+# Unit tests, next to the module they test (lib/**/*.test.ts, any depth), with Node's own test runner.
+node --test 'lib/**/*.test.ts' >/dev/null 2>&1 || { node --test 'lib/**/*.test.ts'; fail=1; }
 # The hero fit check opens pages in a browser, so locally it runs when something that shapes a first
 # screen changes; in CI it always runs.
-if [ -n "${CI:-}" ] || git diff --cached --name-only | grep -qE '^(articles/|design/(home\.html|tokens\.css|viewports\.json)|app/articles/|lib/site-(nav|hero|page)|scripts/hero-check)'; then
+if [ -n "${CI:-}" ] || git diff --cached --name-only | grep -qE '^(articles/|app/\(site\)/|app/articles/|components/(home|site|space)/|design/(home\.html|tokens\.css|viewports\.json)|lib/(home|space)/|lib/site-(nav|hero|page)|scripts/hero-check)'; then
   node scripts/hero-check.ts || fail=1
 fi
 node scripts/brand-images.ts --check || fail=1
@@ -115,9 +122,28 @@ for m in missing: print(f"check: approved by Jager but missing from the homepage
 sys.exit(1 if missing else 0)
 PY
 
-# Open Design's own anti-slop linter: no P0 findings on the homepage.
-if command -v od >/dev/null && curl -s -m 2 http://127.0.0.1:55666 >/dev/null; then
-  OD_DAEMON_URL=http://127.0.0.1:55666 od lint design/home.html --fail-on p0 >/dev/null 2>&1 || bad "od lint: P0 design finding in design/home.html (run: od lint design/home.html)"
+# Impeccable's detector on the homepage. Findings may not rise above the baseline
+# (30 on 2026-10-09). Fix findings and lower the baseline; never raise it.
+# The launcher ships inside the installed plugin, whose path changes with each version: read it live.
+imp_plugin=$(python3 -c 'import json,os;p=json.load(open(os.path.expanduser("~/.claude/plugins/installed_plugins.json")))["plugins"].get("impeccable@impeccable") or [{}];print(p[0].get("installPath",""))' 2>/dev/null)
+IMP=${IMPECCABLE:-$imp_plugin/skills/impeccable/scripts/impeccable}
+IMPECCABLE_BASELINE=30
+if [ -x "$IMP" ]; then
+  det=$(mktemp)
+  "$IMP" detect --json --no-advisory design/home.html >"$det" 2>/dev/null; rc=$?
+  if [ "$rc" -gt 2 ]; then bad "impeccable detect failed on design/home.html (exit $rc)"
+  else python3 - "$det" "$IMPECCABLE_BASELINE" <<'PYEOF' || fail=1
+import json, sys
+found, base = json.load(open(sys.argv[1])), int(sys.argv[2])
+if len(found) > base:
+    for x in found: print(f"check: impeccable {x['antipattern']} on design/home.html:{x['line']}: {x['snippet']}")
+    print(f"check: impeccable found {len(found)} findings on design/home.html, above the baseline of {base} (scripts/check.sh)")
+    sys.exit(1)
+PYEOF
+  fi
+  rm -f "$det"
+else
+  echo "skip: impeccable is not installed (set IMPECCABLE=path); the homepage design detector did not run" >&2
 fi
 
 # Every source of truth named in AGENTS.md exists.
@@ -125,14 +151,11 @@ for f in DESIGN.md design/tokens.css design/home.html design/approved.md supabas
   [ -f "$f" ] || bad "missing source of truth: $f"
 done
 
-# No orphaned Open Design sidecars.
-for s in design/*.artifact.json; do
-  [ -e "$s" ] || continue
-  [ -f "${s%.artifact.json}" ] || bad "orphaned sidecar: $s"
-done
-
-# The homepage is served from design/home.html, not a second React page.
-[ -f "app/(site)/page.tsx" ] && bad "second homepage: app/(site)/page.tsx (/ is design/home.html)"
+# The homepage is app/(site)/page.tsx, which reads design/home.html. No second route may serve "/".
+[ -f app/route.ts ] && bad "second homepage: app/route.ts (/ is app/(site)/page.tsx, which reads design/home.html)"
+grep -q 'homeSource' 'app/(site)/page.tsx' && grep -q '"design/home.html"' lib/home/source.ts || bad "the homepage must render design/home.html through lib/home/source.ts (app/(site)/page.tsx)"
+# One 3D world, mounted once by the site layout; the homepage binds to it (lib/space/world.ts).
+grep -q '<SpaceWorld />' 'app/(site)/layout.tsx' && grep -q 'HomeBinding' 'app/(site)/page.tsx' || bad "the 3D world must be mounted in app/(site)/layout.tsx, and the homepage must bind to it (app/(site)/page.tsx)"
 
 # The page Jager looks at must load. When a local server is up, / answers 200.
 # (A dev server that restarts onto a stale build cache serves 404 for every page.)

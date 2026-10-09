@@ -7,18 +7,20 @@
 <meta name="description" content="One AI at the centre of the tools you already use, set up and taught by a St. John's tech expert. Hours back, lower costs, more sales.">
 <link rel="stylesheet" href="tokens.css">
 <script>document.documentElement.classList.add('js')</script>
-<script type="importmap">
-{ "imports": {
-  "three": "/vendor/three/build/three.module.js",
-  "three/addons/": "/vendor/three/addons/"
-} }
-</script>
 <style>
 /* ── Local values. Type sizes all come from tokens.css. ── */
 :root {
   --page-bg: var(--bg);            /* resolved at :root, so it survives into the dark sky */
     --track-hero: -0.045em;
   --section-pad: clamp(5rem, 14vh, 10rem);
+}
+
+/* The site layout marks its pages dark with data-theme. tokens.css declares its tokens on :root and [data-theme], but
+   two sets are declared on :root alone: the 640px gutter and the reduced-motion durations. Under data-theme they would
+   fall back to the phone gutter and to full-length durations, so this page declares them where it sits, as on :root. */
+@media (min-width: 640px) { [data-theme] { --gutter: var(--space-6); } }
+@media (prefers-reduced-motion: reduce) {
+  [data-theme] { --dur-fast: 1ms; --dur-base: 1ms; --dur-slow: 1ms; --dur-reveal: 1ms; --dur-sweep: 1ms; --dur-count: 1ms; --stagger: 0ms; --lift: 0px; --lift-card: 0px; --reveal-rise: 0px; --parallax: 0; }
 }
 * { box-sizing: border-box; }
 html { background: var(--bg); color: var(--text); -webkit-text-size-adjust: 100%; }
@@ -61,12 +63,12 @@ html { background: var(--bg); }
    every section scrolls over it; the scroll decides which moment of the story you see. ── */
 .world { position: fixed; inset: 0; z-index: 0; background: var(--bg); pointer-events: none; }
 .world canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-.fallback { position: absolute; inset: 0; display: grid; place-items: center; background: radial-gradient(60% 50% at 62% 42%, color-mix(in oklch, var(--sun2) 22%, transparent), transparent 70%), var(--texture-stars); }
+.fallback { position: absolute; inset: 0; display: grid; place-items: center; background: url(/space/poster.webp) center / cover no-repeat, url(data:image/webp;base64,UklGRsgAAABXRUJQVlA4ILwAAABwBgCdASpAACgAPrVKnkwnL6KiLVZrafAWiWdr21u9FBrqCEKc+CV92OdcmPMAHgpNU/eNzTdac//MouAA/vNDxMy8zWn0gak3/IDGzARPL2NVwjrLdYAk6TLPH004FajsJty5i7a0WTvExDwU0HrosITW7qDZQECu9ZXkVOkFqBMZ/vqJDHQjMYs6+7BZNP+mICjQdtXenLk0hFF4UnC5eG1tEKsUQagTZhDKe8aIeSyTdPExdxf5+1mEAA==) center / cover no-repeat, var(--bg); }
+@media (max-aspect-ratio: 3/4) { .fallback { background-image: url(/space/poster-phone.webp), url(data:image/webp;base64,UklGRqAAAABXRUJQVlA4IJQAAABQBQCdASoeAEAAPrVKn0unJCKlMBQKAOAWiWcAzfws//1dLObvjIAmVCH5WGo0beIzL6AA/viSU30Rprkva6K5lhwn/h8HE/F4Rzp5DtSeIocaqlHTuob6v7FnWrrYJRYM2ykg+KJn2B+FFj+fYdDMhxt1xFkIA/PZv5rbOcHQtAPgkSWUG6zjd6TkjcLFCJJZYAAA); } }
 .fallback svg { width: min(78vw, 900px); translate: 8% -12%; }
-/* Arrival: the flat sky paints with the page, so the first frame is never an empty stage. The 3D sky
-   fades in over it the moment its first frame is drawn (gl-on); the flat sky stays beneath, so no
-   timer decides when it goes. */
-.js .world #gl { opacity: 0; }
+/* Arrival: a still of the world's own first frame (public/space/poster*.webp) paints with the page, so the
+   3D sky fades in over the same picture and never pops in. Regenerate the posters when the world's look changes. */
+.world #gl { opacity: 0; } /* hidden until its first frame is drawn, with or without script: an undrawn canvas can composite white */
 .world.gl-on #gl { opacity: 1; }
 /* The veil darkens the scene behind reading sections; --dim is set by the scroll. */
 .world .veil { position: absolute; inset: 0; pointer-events: none; opacity: var(--dim, 0); background: radial-gradient(120% 90% at 50% 50%, color-mix(in oklch, var(--bg) 55%, transparent), color-mix(in oklch, var(--bg) 78%, transparent)); }
@@ -95,6 +97,7 @@ footer { position: relative; z-index: 2; }
 .h1 .w > span { display: inline-block; }
 .h1 .g > span { background: var(--grad-headline); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .hero-sub { margin-top: min(var(--space-5), 2.5svh); font-size: var(--fs-lede); color: var(--muted); max-width: 30rem; }
+.hero-sub strong { color: var(--text); font-weight: var(--fw-semibold); }
 .hero-ctas { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: min(var(--space-6), 3svh); }
 
 /* The story, scrubbed by scroll: a three-stop rail, then headlines that build word by word. */
@@ -268,6 +271,43 @@ html[data-motion="on"] .pulse::after { animation: pulse 2.4s var(--ease-out) inf
 .jr-dots i { width: 28px; height: 3px; border-radius: 2px; background: var(--line-strong); transition: background-color var(--dur-slow), box-shadow var(--dur-slow); }
 .jr-dots i.on { background: var(--ring); box-shadow: 0 0 8px var(--ring); }
 @media (max-width: 720px) { .jr-in { padding-top: calc(var(--nav-height) + 5.5rem); } .jr-head .h2 { font-size: 1.9rem; } .jr-steps h3 { font-size: 1.7rem; } }
+/* The plan (#after). Every stop stays in the reading order for screen readers and keyboard users, not only the one on screen.
+   The stops sit on the scene, so they carry shade, as the guide does, and never a panel. The call sits in reach at every stop. */
+#after .jr-head, #after .jr-steps { text-shadow: 0 0 26px var(--bg), 0 0 10px var(--bg), 0 1px 2px var(--bg); }
+#after .jr-steps li { visibility: visible; pointer-events: none; }
+#after .jr-steps li.on { pointer-events: auto; }
+#after .jr-foot { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-5) var(--space-6); margin-top: var(--space-5); }
+#after .jr-foot .jr-dots { margin: 0; }
+html:not(.js) #after .jr-steps li { grid-area: auto; }
+/* Motion (#after). One thesis: the plan settles like an orbit. Each stop lands in turn, the track fills as the stops land,
+   and Book a call sweeps once when it is ready. Only transform and opacity move. Reduced motion keeps every state and drops the travel. */
+#after { view-timeline: --after block; }
+#after .jr-steps li { transform: none; transition: opacity 420ms var(--ease-out), visibility 0s linear 420ms; }
+#after .jr-steps li.on { transform: none; transition: opacity 420ms var(--ease-out), visibility 0s; }
+#after .jr-steps li.on > * { animation: after-settle 640ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+#after .jr-steps li.on > h3 { animation-delay: 110ms; }
+#after .jr-steps li.on > p { animation-delay: 210ms; }
+#after .jr-dots i, #after .jr-dots i.on { position: relative; overflow: hidden; background: var(--line-strong); box-shadow: none; transition: none; }
+#after .jr-dots i::after { content: ""; position: absolute; inset: 0; background: var(--ring); transform: scaleX(0); transform-origin: 0 50%; transition: transform 560ms cubic-bezier(0.16, 1, 0.3, 1); }
+#after .jr-dots i.on::after { transform: scaleX(1); }
+#after .jr-foot svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform var(--dur-base) var(--ease-out); }
+#after .btn-primary:hover svg { transform: translateX(4px); }
+#after .btn-primary:active svg { transform: translateX(2px); }
+#after .btn:focus-visible { outline: var(--focus-width) solid var(--focus-color); outline-offset: 3px; }
+@supports (animation-timeline: view()) {
+  #after .jr-foot { animation: after-rise linear both; animation-timeline: --after; animation-range: cover 14% cover 30%; }
+  #after .btn-primary::after { animation: after-sheen 1100ms cubic-bezier(0.16, 1, 0.3, 1) backwards; animation-timeline: --after; animation-range: cover 22% cover 42%; }
+}
+@keyframes after-settle { from { opacity: 0; transform: translate3d(0, 14px, 0); } to { opacity: 1; transform: none; } }
+@keyframes after-rise { from { opacity: 0; transform: translate3d(0, 18px, 0); } to { opacity: 1; transform: none; } }
+@keyframes after-sheen { from { transform: translateX(-120%); } to { transform: translateX(120%); } }
+@media (prefers-reduced-motion: reduce) {
+  #after .jr-steps li.on > * { animation: none; }
+  #after .jr-dots i::after { transition: none; }
+  #after .jr-foot { animation: none; }
+  #after .btn-primary::after { animation: none; }
+  #after .jr-foot svg { transition: none; }
+}
 
 /* ── 3 · Demo: the chat, and the wires it actually uses ── */
 .demo-sec .light { --ls: 70vmax; left: 18%; top: 60%; }
@@ -353,18 +393,12 @@ html[data-motion="on"] .wire li.flow::after { animation: flow 1.1s var(--ease-in
 .say-src { font-size: var(--fs-xs); color: var(--muted); max-width: 56rem; line-height: 1.6; padding: var(--space-4) var(--space-5); background: color-mix(in oklch, var(--bg) 88%, transparent); border: 1px solid var(--line); border-radius: var(--radius-xl); }
 .say-src a { color: var(--text); text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 3px; }
 
-/* ── Promises: four equal columns, one calm step in size from title to line. ── */
-/* The scene keeps moving around the list, but the words sit on a calm, near-opaque panel. */
-.promises { list-style: none; margin: 0; display: grid; gap: 0; padding: 0 var(--space-5); background: color-mix(in oklch, var(--bg) 88%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid var(--line); border-radius: var(--radius-2xl); box-shadow: var(--shadow-md), var(--glass-inset); }
-.promises li:last-child { border-bottom: 0; }
-@media (min-width: 640px) and (max-width: 999px) { .promises li:nth-last-child(2) { border-bottom: 0; } }
-@media (min-width: 640px) { .promises { grid-template-columns: 1fr 1fr; } }
-@media (min-width: 1000px) { .promises { grid-template-columns: repeat(4, 1fr); } }
-.promises li { display: grid; gap: var(--space-3); align-content: start; padding: var(--space-6) var(--space-5) var(--space-6) 0; border-bottom: 1px solid var(--line); }
-@media (min-width: 1000px) { .promises li { border-bottom: 0; } .promises li + li { padding-left: var(--space-5); border-left: 1px solid var(--line); } }
-.pno { font: var(--fw-semibold) var(--fs-xs)/1 var(--font-mono); letter-spacing: var(--track-label); color: var(--accent-text); }
-.promises h3 { font-size: clamp(1.4rem, 2.2vw, 1.85rem); font-weight: var(--fw-bold); letter-spacing: var(--track-heading); line-height: 1.15; }
-.promises p { color: var(--muted); font-size: var(--fs-body); max-width: 18rem; }
+/* ── Promises: one at a time, with all four named under the line, so the list reads at a glance. ── */
+/* The index lights up as each promise arrives. Scoped to #promises: the journey and guide keep their own dashes. */
+#promises .jr-dots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3) var(--space-4); max-width: 26rem; margin-top: var(--space-6); }
+@media (min-width: 640px) { #promises .jr-dots { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0 var(--space-3); } }
+#promises .jr-dots i { display: block; width: auto; height: auto; padding-top: var(--space-3); border-top: 2px solid var(--line-strong); border-radius: 0; background: none; box-shadow: none; color: var(--muted); font-size: var(--fs-xs); font-style: normal; font-weight: var(--fw-semibold); line-height: 1.25; transition: color var(--dur-slow), border-color var(--dur-slow); }
+#promises .jr-dots i.on { border-top-color: var(--ring); background: none; box-shadow: none; color: var(--text); }
 
 /* ── 5 · Pricing bento: one closed ring, one ring that keeps going ── */
 .px .light { --ls: 60vmax; left: 12%; top: 20%; }
@@ -424,11 +458,14 @@ html[data-motion="on"] .faq-side .mk .spin { animation: orbit 24s linear infinit
 .close-ctas { margin-top: var(--space-7); display: flex; flex-wrap: wrap; justify-content: flex-start; align-items: center; gap: var(--space-5); }
 .textlink { display: inline-flex; align-items: center; min-height: var(--tap-min); text-decoration: none; font-weight: var(--fw-medium); }
 .textlink:hover { text-decoration: underline; text-underline-offset: 3px; }
-.trust { list-style: none; padding: 0; margin: var(--space-7) 0 0; display: flex; flex-wrap: wrap; justify-content: flex-start; align-items: center; gap: var(--space-3) var(--space-5); font-size: var(--fs-sm); color: var(--muted); }
-.trust li { display: inline-flex; align-items: center; gap: var(--space-2); }
-.trust li + li::before { content: ""; width: 4px; height: 4px; border-radius: 50%; background: var(--line-strong); margin-right: var(--space-3); }
-.trust .who { color: var(--text); font-weight: var(--fw-semibold); }
-@media (max-width: 640px) { .trust { display: grid; grid-template-columns: 1fr 1fr; justify-items: start; gap: var(--space-3); } .trust li:first-child { grid-column: 1 / -1; } .trust li + li::before { display: none; } .close-in { padding-bottom: 46svh; } }
+/* The signature under the call: a hairline, the founder, then the two things an owner checks. The email is a quiet fallback. */
+.close-sec .close-proof { margin: var(--space-7) 0 0; padding-top: var(--space-5); border-top: 1px solid var(--line); display: grid; gap: var(--space-3); }
+.close-sec .close-who { margin: 0; display: flex; align-items: center; gap: var(--space-3); font-size: var(--fs-body); color: var(--muted); }
+.close-sec .close-who .who { color: var(--text); font-weight: var(--fw-semibold); }
+.close-sec .close-terms { margin: 0; font-size: var(--fs-body); font-weight: var(--fw-medium); color: var(--text); }
+.close-sec .close-alt { display: inline-flex; align-items: center; min-height: var(--tap-min); font-size: var(--fs-body); color: var(--muted); text-decoration: underline; text-decoration-color: var(--line-strong); text-underline-offset: 4px; }
+.close-sec .close-alt:hover { color: var(--text); text-decoration-color: currentColor; }
+.close-sec .close-alt:focus-visible { outline: var(--focus-width) solid var(--focus-color); outline-offset: 3px; border-radius: var(--radius-pill); }
 .photo { width: 36px; height: 36px; border-radius: 50%; border: 1px dashed var(--line-strong); display: grid; place-items: center; font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); color: var(--muted); letter-spacing: .04em; }
 
 footer { border-top: 1px solid var(--line); padding-block: var(--space-7); font-size: var(--fs-sm); color: var(--muted); background: var(--bg); }
@@ -437,11 +474,9 @@ footer ul { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: v
 footer a { display: inline-flex; align-items: center; min-height: 24px; padding-block: var(--space-2); text-decoration: none; color: var(--text); }
 footer a:hover { text-decoration: underline; text-underline-offset: 3px; }
 
-/* Reveal: hidden only when script is here and motion is on. */
-html.js[data-motion="on"] .rv:not(.in) { opacity: 0; transform: perspective(1100px) translate3d(0, var(--reveal-rise), -140px) rotateX(8deg); transform-origin: 50% 100%; }
+/* Reveal: only blocks still below the screen at load are armed (lib/home/ui.ts); what is on screen never hides. */
+html.js[data-motion="on"] .rv.arm:not(.in) { opacity: 0; transform: perspective(1100px) translate3d(0, var(--reveal-rise), -140px) rotateX(8deg); transform-origin: 50% 100%; }
 .rv { transition: opacity var(--dur-reveal) var(--ease-out), transform var(--dur-reveal) var(--ease-out); transition-delay: calc(var(--d, 0) * var(--stagger)); }
-html.js[data-motion="on"] .h1:not(.play) .w > span { transform: translateY(110%); }
-html.js .h1 .w > span { transition: transform 1.1s var(--ease-out); transition-delay: calc(var(--i) * 70ms + 150ms); }
 html[data-motion="off"] *, html[data-motion="off"] *::before, html[data-motion="off"] *::after { animation-play-state: paused !important; }
 @media (prefers-reduced-motion: reduce) { .btn-primary:hover::after { transition: none; } }
 /* Labels settle when the orbit locks. */
@@ -457,7 +492,7 @@ html[data-motion="on"] .scene-ui.lock-pop .body-tag.ai { animation-delay: 320ms;
 .hw { display: inline-block; overflow: clip; padding-block: 0.08em 0.16em; margin-block: -0.08em -0.16em; vertical-align: top; }
 .hw > span { display: inline-block; transition: transform 0.95s var(--ease-out); transition-delay: calc(var(--i) * 65ms + 90ms); }
 .h2 em .hw > span, .say-h em .hw > span, #close-h em .hw > span { background: var(--grad-headline); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .04em; }
-html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%); }
+html.js[data-motion="on"] .hb.arm:not(.play) .hw > span { transform: translateY(112%); }
 /* The guide headline names a tool, and the name changes in place. It shares its line only with "in", so a
    longer or shorter name moves nothing else. The name leaving is lifted out of the flow while it fades. */
 .tool-swap { position: relative; white-space: nowrap; }
@@ -635,6 +670,100 @@ html.js[data-motion="on"] .hb:not(.play) .hw > span { transform: translateY(112%
   .race-head .h2 { font-size: 1.35rem; }
   .scr-row { padding: 2px 0; }
 }
+/* Shopify race: the foot holds the one next step (Book a call) beside the footnote. The footnote may drop on short
+   phones; the next step never does. On phones the answer sits under its own header, not at the bottom of the lane. */
+#fly-shopify .race-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3) var(--space-6); }
+#fly-shopify .race-foot .race-note { flex: 1 1 24rem; max-width: 40rem; }
+#fly-shopify .race-note a { color: var(--accent-text); text-decoration: underline; text-underline-offset: 3px; }
+#fly-shopify .race-cta { margin: 0 0 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3) var(--space-4); font-size: var(--fs-sm); text-shadow: 0 0 12px var(--bg), 0 1px 2px var(--bg); }
+#fly-shopify .race-lead { color: var(--text); }
+#fly-shopify .race-head em { white-space: nowrap; }
+@media (max-width: 899px) { #fly-shopify .race-cta { margin-left: 0; } #fly-shopify .chat-body { justify-content: flex-start; } }
+/* QuickBooks race: the same foot as the Shopify race (one next step, Book a call, beside the footnote). The answer
+   starts its own line under the headline. On phones the by-hand lane takes only the height it needs, so the answer
+   lane keeps its full height when the next step sits under the footnote. */
+#fly-quickbooks .race-head em { display: block; }
+#fly-quickbooks .race-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3) var(--space-6); }
+#fly-quickbooks .race-foot .race-note { flex: 1 1 24rem; max-width: 40rem; }
+#fly-quickbooks .race-note a { color: var(--accent-text); text-decoration: underline; text-underline-offset: 3px; }
+#fly-quickbooks .race-cta { margin: 0 0 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3) var(--space-4); font-size: var(--fs-sm); text-shadow: 0 0 12px var(--bg), 0 1px 2px var(--bg); }
+#fly-quickbooks .race-lead { color: var(--text); }
+@media (max-width: 899px) {
+  #fly-quickbooks .race-cta { margin-left: 0; }
+  #fly-quickbooks .race-in { gap: var(--space-2); }
+  #fly-quickbooks .race-foot { gap: var(--space-2) var(--space-6); }
+  #fly-quickbooks .lanes { grid-template-rows: auto minmax(0, 1fr); gap: var(--space-3); }
+}
+/* Meta race: the header rule becomes the race track. Both lanes start together. Just ask stops at Done and turns green;
+   By hand keeps going, so the gap grows with no number shown. The foot holds the one next step (Book a call) beside a
+   short disclosure. On phones the disclosure shrinks to one line and the lead-in drops; the button never does. */
+#fly-meta .lane > header { position: relative; }
+#fly-meta .lane > header::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--muted); transform: scaleX(0); transform-origin: 0 50%; }
+#fly-meta .lane.ask > header::after { background: var(--accent); }
+#fly-meta .lane.go > header::after { animation: meta-track 60s linear forwards; }
+#fly-meta .lane.ask.done > header::after { animation-play-state: paused; background: var(--ok); }
+@keyframes meta-track { to { transform: scaleX(1); } }
+@media (prefers-reduced-motion: reduce) { #fly-meta .lane > header::after { display: none; } }
+#fly-meta .race-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3) var(--space-6); }
+#fly-meta .race-foot .race-note { flex: 1 1 24rem; max-width: 40rem; font-size: var(--fs-sm); }
+#fly-meta .rn-short { display: none; }
+#fly-meta .race-cta { margin: 0 0 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3) var(--space-4); font-size: var(--fs-sm); text-shadow: 0 0 12px var(--bg), 0 1px 2px var(--bg); }
+#fly-meta .race-lead { color: var(--text); }
+@media (max-width: 899px) {
+  #fly-meta .race-foot .race-note { flex: 1 1 auto; max-width: none; font-size: var(--fs-xs); }
+  #fly-meta .race-cta { margin-left: auto; }
+  #fly-meta .race-lead { display: none; }
+  #fly-meta .rn-long { display: none; }
+  #fly-meta .rn-short { display: inline; }
+}
+@media (max-width: 899px) and (max-height: 740px) { #fly-meta .race-note { display: block; } }
+/* Meta race, motion. Transform and opacity only (60 fps, no layout shift). An entrance plays when a race starts, from
+   40 percent opacity, so nothing is hidden at first paint. Every new row rises in as the screen changes. The done
+   clock beats once. Press and focus answer the touch. The still fallback is the default: no motion, every value shown. */
+@keyframes meta-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes meta-enter { from { opacity: .4; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes meta-beat { 0% { transform: scale(1); } 40% { transform: scale(1.08); } 100% { transform: scale(1); } }
+@media (prefers-reduced-motion: no-preference) {
+  #fly-meta .lane.go { animation: meta-enter 640ms var(--ease-out) both; }
+  #fly-meta:has(.lane.go) .race-cta { animation: meta-enter 700ms var(--ease-out) 320ms both; }
+  #fly-meta .scr-view .scr-row { animation: meta-rise 380ms var(--ease-out) both; }
+  #fly-meta .scr-view .scr-row:nth-child(2) { animation-delay: 40ms; }
+  #fly-meta .scr-view .scr-row:nth-child(3) { animation-delay: 80ms; }
+  #fly-meta .scr-view .scr-row:nth-child(4) { animation-delay: 120ms; }
+  #fly-meta .scr-view .scr-row:nth-child(5) { animation-delay: 160ms; }
+  #fly-meta .rmsg.ai .scr-row { animation: meta-rise 440ms var(--ease-out) both; }
+  #fly-meta .rmsg.ai .scr-row:nth-child(2) { animation-delay: 90ms; }
+  #fly-meta .rmsg.ai .scr-row:nth-child(3) { animation-delay: 180ms; }
+  #fly-meta .rmsg.ai > p { animation: meta-rise 440ms var(--ease-out) 270ms both; }
+  #fly-meta .lane.ask.done .sw { transform-origin: 100% 50%; animation: meta-beat 520ms var(--ease-out) both; }
+  #fly-meta .race-cta .btn:active { transform: translateY(0) scale(.97); transition-duration: 60ms; }
+}
+/* Gmail race: the foot holds the one next step (Book a call) beside a disclosure, as the Shopify and Meta races do.
+   On phones the disclosure shrinks to one line and the lead-in drops; the button never does. */
+#fly-gmail .race-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3) var(--space-6); }
+#fly-gmail .race-foot .race-note { flex: 1 1 24rem; max-width: 40rem; }
+#fly-gmail .rn-short { display: none; }
+#fly-gmail .race-cta { margin: 0 0 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3) var(--space-4); font-size: var(--fs-sm); text-shadow: 0 0 12px var(--bg), 0 1px 2px var(--bg); }
+#fly-gmail .race-lead { color: var(--text); }
+#fly-gmail .race-head em { white-space: nowrap; }
+@media (max-width: 899px) {
+  #fly-gmail .race-foot .race-note { flex: 1 1 auto; max-width: none; }
+  #fly-gmail .race-cta { margin-left: auto; }
+  #fly-gmail .race-lead { display: none; }
+  #fly-gmail .rn-long { display: none; }
+  #fly-gmail .rn-short { display: inline; }
+  #fly-gmail .lane.done .rmsg.me span { -webkit-line-clamp: 3; }
+}
+/* Phones: the two lanes and the foot fit one screen, so the done line and the button show at 390 by 844. */
+@media (max-width: 899px) {
+  #fly-meta .lanes { gap: var(--space-3); }
+  #fly-meta .lane { gap: 6px; }
+  #fly-meta .lane > header { padding-bottom: 6px; }
+  #fly-meta .scr-bar { padding-bottom: 6px; }
+  #fly-meta .scr-row { padding: 4px 0; }
+  #fly-meta .race-note { font-size: var(--fs-xs); }
+  #fly-meta .chat-body { -webkit-mask-image: linear-gradient(to bottom, transparent 0, currentColor 1.5rem); mask-image: linear-gradient(to bottom, transparent 0, currentColor 1.5rem); }
+}
 html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relative; height: auto; } html:not(.js) .sr-race { position: static; width: auto; height: auto; clip-path: none; white-space: normal; }
 .world-tag { width: 52px; height: 52px; background: color-mix(in oklch, var(--bg) 88%, transparent); border-color: color-mix(in oklch, var(--accent) 55%, transparent); box-shadow: 0 0 24px color-mix(in srgb, var(--ring) 40%, transparent); }
 .world-tag .lg { width: 26px; height: 26px; }
@@ -643,12 +772,13 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
 #guide { height: 210vh; height: 210svh; }
 .guide-say { align-self: end; display: grid; gap: var(--space-4); max-width: 30rem; text-shadow: 0 0 26px var(--bg), 0 0 10px var(--bg), 0 1px 2px var(--bg); }
 #guide .jr-head { text-shadow: 0 0 26px var(--bg), 0 0 10px var(--bg), 0 1px 2px var(--bg); }
+/* The guide's one next step: a ghost pill, the same route as the hero's and the close's Book a call. */
+#guide .guide-say .btn { justify-self: start; margin-top: var(--space-2); }
 /* Reduced motion: the camera does not fly. It cuts between stations under a short dip to dark. */
-#gl { transition: opacity var(--dur-slow) var(--ease-out); } .world #gl.dip { opacity: 0; transition-duration: 200ms; transition-timing-function: linear; }
+.world #gl.dip { opacity: 0; transition: opacity 200ms linear; }
 </style>
 </head>
 <body>
-<a class="skip" href="#main">Skip to content</a>
 
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -659,78 +789,71 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
 <symbol id="lg-microsoftexcel" viewBox="0 0 24 24"><path d="M23 1.5q.41 0 .7.3.3.29.3.7v19q0 .41-.3.7-.29.3-.7.3H7q-.41 0-.7-.3-.3-.29-.3-.7V18H1q-.41 0-.7-.3-.3-.29-.3-.7V7q0-.41.3-.7Q.58 6 1 6h5V2.5q0-.41.3-.7.29-.3.7-.3zM6 13.28l1.42 2.66h2.14l-2.38-3.87 2.34-3.8H7.46l-1.3 2.4-.05.08-.04.09-.64-1.28-.66-1.29H2.59l2.27 3.82-2.48 3.85h2.16zM14.25 21v-3H7.5v3zm0-4.5v-3.75H12v3.75zm0-5.25V7.5H12v3.75zm0-5.25V3H7.5v3zm8.25 15v-3h-6.75v3zm0-4.5v-3.75h-6.75v3.75zm0-5.25V7.5h-6.75v3.75zm0-5.25V3h-6.75v3Z"/></symbol>
 <symbol id="lg-hubspot" viewBox="0 0 24 24"><path d="M18.164 7.93V5.084a2.198 2.198 0 001.267-1.978v-.067A2.2 2.2 0 0017.238.845h-.067a2.2 2.2 0 00-2.193 2.193v.067a2.196 2.196 0 001.252 1.973l.013.006v2.852a6.22 6.22 0 00-2.969 1.31l.012-.01-7.828-6.095A2.497 2.497 0 104.3 4.656l-.012.006 7.697 5.991a6.176 6.176 0 00-1.038 3.446c0 1.343.425 2.588 1.147 3.607l-.013-.02-2.342 2.343a1.968 1.968 0 00-.58-.095h-.002a2.033 2.033 0 102.033 2.033 1.978 1.978 0 00-.1-.595l.005.014 2.317-2.317a6.247 6.247 0 104.782-11.134l-.036-.005zm-.964 9.378a3.206 3.206 0 113.215-3.207v.002a3.206 3.206 0 01-3.207 3.207z"/></symbol>
 </svg>
-<div class="world" aria-hidden="true">
-  <div class="fallback" aria-hidden="true">
-      <svg viewBox="0 0 600 220"><path d="M300 110L283.4 125.3L266.5 140.3L249.2 154.7L231.2 168L212.6 179.9L193.3 189.9L173.7 197.8L154.1 203.2L134.8 206.1L116.5 206.6L99.4 204.8L83.8 201.2L69.9 196.2L57.7 190.1L47.1 183.1L38.1 175.6L30.5 167.8L24.2 159.7L19.1 151.5L15 143.2L11.9 134.9L9.8 126.6L8.5 118.3L8.1 110L8.5 101.7L9.8 93.4L11.9 85.1L15 76.8L19.1 68.5L24.2 60.3L30.5 52.2L38.1 44.4L47.1 36.9L57.7 29.9L69.9 23.8L83.8 18.8L99.4 15.2L116.5 13.4L134.8 13.9L154.1 16.8L173.7 22.2L193.3 30.1L212.6 40.1L231.2 52L249.2 65.3L266.5 79.7L283.4 94.7L300 110L316.6 125.3L333.5 140.3L350.8 154.7L368.8 168L387.4 179.9L406.7 189.9L426.3 197.8L445.9 203.2L465.2 206.1L483.5 206.6L500.6 204.8L516.2 201.2L530.1 196.2L542.3 190.1L552.9 183.1L561.9 175.6L569.5 167.8L575.8 159.7L580.9 151.5L585 143.2L588.1 134.9L590.2 126.6L591.5 118.3L591.9 110L591.5 101.7L590.2 93.4L588.1 85.1L585 76.8L580.9 68.5L575.8 60.3L569.5 52.2L561.9 44.4L552.9 36.9L542.3 29.9L530.1 23.8L516.2 18.8L500.6 15.2L483.5 13.4L465.2 13.9L445.9 16.8L426.3 22.2L406.7 30.1L387.4 40.1L368.8 52L350.8 65.3L333.5 79.7L316.6 94.7Z" fill="none" stroke="var(--ring)" stroke-width="2" stroke-opacity=".7"/><circle cx="300" cy="110" r="14" fill="var(--sun1)"/><circle cx="99.4" cy="204.8" r="14" fill="var(--sun2)"/><circle cx="483.5" cy="13.4" r="14" fill="var(--sun2)"/></svg>
-    </div>
-  <canvas id="gl"></canvas>
-  <div class="veil"></div>
-</div>
 <div class="scene-ui" aria-hidden="true">
-  <div class="body-tag" data-od-id="tag-revenue"><i></i>Revenue</div>
-  <div class="body-tag" data-od-id="tag-costs"><i></i>Costs</div>
-  <div class="body-tag" data-od-id="tag-time"><i></i>Time</div>
-  <div class="body-tag ai" data-od-id="tag-ai">AI</div>
+  <div class="body-tag"><i></i>Revenue</div>
+  <div class="body-tag"><i></i>Costs</div>
+  <div class="body-tag"><i></i>Time</div>
+  <div class="body-tag ai">AI</div>
   <div class="moon-tag world-tag"><svg class="lg"><use href="#lg-shopify"/></svg></div>
   <div class="moon-tag world-tag"><svg class="lg"><use href="#lg-meta"/></svg></div>
   <div class="moon-tag world-tag"><svg class="lg"><use href="#lg-quickbooks"/></svg></div>
   <div class="moon-tag world-tag"><svg class="lg"><use href="#lg-gmail"/></svg></div>
   <div class="moon-tag world-tag"><svg class="lg"><use href="#lg-microsoftexcel"/></svg></div>
   <div class="moon-tag world-tag"><svg class="lg"><use href="#lg-hubspot"/></svg></div>
-  <div class="stop-mk" data-k="0">01<span>A clear picture</span></div>
-  <div class="stop-mk" data-k="1">02<span>Your own portal</span></div>
-  <div class="stop-mk" data-k="2">03<span>Your new website</span></div>
-  <div class="stop-mk" data-k="3">04<span>A fixed price</span></div>
-  <div class="stop-mk" data-k="4">05<span>Looked after</span></div>
+  <div class="stop-mk" data-k="0">01<span>Find the hours</span></div>
+  <div class="stop-mk" data-k="1">02<span>Cut the tools</span></div>
+  <div class="stop-mk" data-k="2">03<span>One AI</span></div>
+  <div class="stop-mk" data-k="3">04<span>Your website</span></div>
+  <div class="stop-mk" data-k="4">05<span>Fixed price</span></div>
 </div>
 
-<main id="main">
-<section class="sky" id="top" data-od-id="hero-story" data-scene="hero" aria-label="Your business is a three-body problem">
+<div id="main">
+<section class="sky" id="top" data-scene="hero" aria-label="Your business is a three-body problem">
   <span class="anchor" id="settle" aria-hidden="true"></span>
   <div class="stage" data-hero>
-    <div class="hero-copy" data-od-id="hero-copy">
+    <div class="hero-copy">
         <div class="wrap">
           <p class="eyebrow">Solenix · St. John's, NL</p>
-          <h1 class="h1" data-od-id="hero-headline"><span class="w" style="--i:0"><span>Your</span></span> <span class="w" style="--i:1"><span>business</span></span> <span class="w" style="--i:2"><span>is</span></span> <span class="w" style="--i:3"><span>a</span></span> <span class="w g" style="--i:4"><span>three&#8209;body</span></span> <span class="w g" style="--i:5"><span>problem.</span></span></h1>
-          <p class="hero-sub">Revenue, costs and time, pulled apart by a dozen tools. Scroll, and watch one AI at the centre settle them. Hours back, every week.</p>
+          <h1 class="h1"><span class="w" style="--i:0"><span>Your</span></span> <span class="w" style="--i:1"><span>business</span></span> <span class="w" style="--i:2"><span>is</span></span> <span class="w" style="--i:3"><span>a</span></span> <span class="w g" style="--i:4"><span>three&#8209;body</span></span> <span class="w g" style="--i:5"><span>problem.</span></span></h1>
+          <p class="hero-sub">Revenue, costs and time, pulled apart by a dozen tools. We put one AI at the centre of the tools you already use. <strong>Hours back, every week.</strong></p>
           <div class="hero-ctas">
-            <a class="btn btn-primary" href="/book" data-od-id="hero-cta">Book a call</a>
+            <a class="btn btn-primary" href="/book">Book a call</a>
           </div>
         </div>
       </div>
 
       <div class="beats">
-        <article class="beat" data-od-id="beat-look"><p class="beat-no bl">01 · Look</p><h2 class="beat-h">Every tool pulling <em>its own way.</em></h2><p class="bl">Each one eats hours you don't get paid for. That is where this starts.</p></article>
+        <article class="beat"><p class="beat-no bl">01 · Look</p><h2 class="beat-h">Every tool pulling <em>its own way.</em></h2><p class="bl">Each one eats hours you don't get paid for. That is where this starts.</p></article>
       </div>
       <p class="scroll-cue" aria-hidden="true">Scroll · it settles as you go</p>
   </div>
 </section>
 
-<section class="jr" id="guide" data-od-id="guide" data-scene="guide">
+<section class="jr" id="guide" data-scene="guide">
   <div class="jr-pin">
     <div class="wrap jr-in">
       <div class="jr-head">
         <p class="eyebrow">One AI at the centre</p>
-        <h2 class="h2" data-od-id="guide-headline">You don't need to be an expert <br>in <span class="hw tool-swap" aria-hidden="true" data-tools="Shopify|QuickBooks|Excel|Meta Ads|HubSpot"><span style="--i:8">Shopify</span></span> <br><em>anymore.</em></h2>
+        <h2 class="h2">You don't need to be an expert <br>in <span class="hw tool-swap" aria-hidden="true" data-tools="Shopify|QuickBooks|Excel|Meta Ads|HubSpot"><span style="--i:8">Shopify</span></span> <br><em>anymore.</em></h2>
       </div>
-      <div class="guide-say rv" data-od-id="guide-say">
+      <div class="guide-say rv">
         <p class="w-big">Stop learning ten tools. Talk to one.</p>
         <p class="lede">We set up Claude or ChatGPT for your team and connect it to the tools you already use. You say what you want in plain words, and it gets done in those tools.</p>
+        <a class="btn btn-ghost" href="/book">Book a call</a>
       </div>
     </div>
   </div>
 </section>
 
-<section class="race" id="fly-shopify" data-od-id="flyby-shopify" data-scene="flyby" data-race="shopify">
+<section class="race" id="fly-shopify" data-scene="flyby" data-race="shopify">
   <div class="race-pin">
     <div class="wrap race-in">
       <header class="race-head">
-        <p class="eyebrow toolname"><svg class="lg" aria-hidden="true"><use href="#lg-shopify"/></svg>Shopify</p>
-        <h2 class="h2">What sold, and <em>what to reorder.</em></h2>
+        <h2 class="h2">Keep your <em>best sellers</em> on the shelf.</h2>
         <p class="sr-race">By hand: Open Analytics. Open Reports. Find Sales by product. Set the date range to last month. Sort by units sold. Now open Inventory, a separate screen. Check the stock on each product, one at a time. Or just ask: “Pull last month's top 10 sellers by units sold, show current stock for each, and tell me which will run out in 30 days”</p>
       </header>
       <div class="lanes" aria-hidden="true">
-        <article class="lane hand" data-od-id="race-shopify-by-hand">
+        <article class="lane hand">
           <header><span class="lane-t">By hand</span><span class="sw">0:00</span></header>
           <div class="scr">
             <div class="scr-bar"><svg class="lg"><use href="#lg-shopify"/></svg><span class="crumb">Shopify</span><span class="ex">Example</span></div>
@@ -739,7 +862,7 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
           </div>
           <p class="lane-s"></p>
         </article>
-        <article class="lane ask" data-od-id="race-shopify-just-ask">
+        <article class="lane ask">
           <header><span class="lane-t">Just ask</span><span class="sw">0:00</span></header>
           <div class="scr rchat">
             <div class="scr-bar"><i class="rdot"></i><span class="crumb">Your AI, connected to Shopify</span><span class="ex">Example</span></div>
@@ -748,21 +871,23 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
           <p class="lane-s"></p>
         </article>
       </div>
-      <p class="race-note">A replay with example data. Both clocks run in real time on your screen. It works through Shopify's official connector for Claude.</p>
+      <div class="race-foot">
+        <p class="race-note">This is a replay with example data. The by-hand pace is typical. It is estimated. It works through <a href="https://help.shopify.com/en/manual/ai-powered-tools/connecting-ai-tools/shopify-connector-for-claude" target="_blank" rel="noopener">Shopify's official connector for Claude</a>.</p>
+        <p class="race-cta"><span class="race-lead">Want this for your business?</span><a class="btn btn-ghost btn-sm" href="/book">Book a call</a></p>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="race" id="fly-meta" data-od-id="flyby-meta" data-scene="flyby" data-race="meta">
+<section class="race" id="fly-meta" data-scene="flyby" data-race="meta">
   <div class="race-pin">
     <div class="wrap race-in">
       <header class="race-head">
-        <p class="eyebrow toolname"><svg class="lg" aria-hidden="true"><use href="#lg-meta"/></svg>Meta Ads</p>
         <h2 class="h2">Which ads worked, and <em>which to pause.</em></h2>
         <p class="sr-race">By hand: Log into Ads Manager. Set the date range to the last 7 days. Read the spend and the cost per result. Switch to the 7 days before. Compare every campaign by eye, back and forth. Or just ask: “Pull spend, cost per result, and ROAS for all active campaigns over the last 7 days vs. the 7 days before. Tell me which ad sets are underperforming and recommend which to pause.”</p>
       </header>
       <div class="lanes" aria-hidden="true">
-        <article class="lane hand" data-od-id="race-meta-by-hand">
+        <article class="lane hand">
           <header><span class="lane-t">By hand</span><span class="sw">0:00</span></header>
           <div class="scr">
             <div class="scr-bar"><svg class="lg"><use href="#lg-meta"/></svg><span class="crumb">Meta Ads</span><span class="ex">Example</span></div>
@@ -771,7 +896,7 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
           </div>
           <p class="lane-s"></p>
         </article>
-        <article class="lane ask" data-od-id="race-meta-just-ask">
+        <article class="lane ask">
           <header><span class="lane-t">Just ask</span><span class="sw">0:00</span></header>
           <div class="scr rchat">
             <div class="scr-bar"><i class="rdot"></i><span class="crumb">Your AI, connected to Meta Ads</span><span class="ex">Example</span></div>
@@ -780,21 +905,24 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
           <p class="lane-s"></p>
         </article>
       </div>
-      <p class="race-note">A replay with example data. Both clocks run in real time on your screen. It works through Meta's own connector.</p>
+      <div class="race-foot">
+        <p class="race-note"><span class="rn-long">A replay with example data. Both clocks run in real time on your screen. It works through Meta's own AI access.</span><span class="rn-short">Example data, in real time.</span></p>
+        <p class="race-cta"><span class="race-lead">Want this for your ads?</span><a class="btn btn-ghost btn-sm" href="/book">Book a call</a></p>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="race" id="fly-quickbooks" data-od-id="flyby-quickbooks" data-scene="flyby" data-race="quickbooks">
+<section class="race" id="fly-quickbooks" data-scene="flyby" data-race="quickbooks">
   <div class="race-pin">
     <div class="wrap race-in">
       <header class="race-head">
         <p class="eyebrow toolname"><svg class="lg" aria-hidden="true"><use href="#lg-quickbooks"/></svg>QuickBooks</p>
-        <h2 class="h2">Who owes you, <em>and the invoice sent.</em></h2>
+        <h2 class="h2">Know who owes you. <em>The invoice is ready.</em></h2>
         <p class="sr-race">By hand: Open Reports. Open the report of who owes you. Read down the list and decide who to chase. Now open a new invoice, a separate screen. Fill in the customer, the item, the amount and the date. Or just ask: “Show me who owes us, flag anyone over 60 days, and send Harbour Dental an invoice for the retainer”</p>
       </header>
       <div class="lanes" aria-hidden="true">
-        <article class="lane hand" data-od-id="race-quickbooks-by-hand">
+        <article class="lane hand">
           <header><span class="lane-t">By hand</span><span class="sw">0:00</span></header>
           <div class="scr">
             <div class="scr-bar"><svg class="lg"><use href="#lg-quickbooks"/></svg><span class="crumb">QuickBooks</span><span class="ex">Example</span></div>
@@ -803,7 +931,7 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
           </div>
           <p class="lane-s"></p>
         </article>
-        <article class="lane ask" data-od-id="race-quickbooks-just-ask">
+        <article class="lane ask">
           <header><span class="lane-t">Just ask</span><span class="sw">0:00</span></header>
           <div class="scr rchat">
             <div class="scr-bar"><i class="rdot"></i><span class="crumb">Your AI, connected to QuickBooks</span><span class="ex">Example</span></div>
@@ -812,21 +940,24 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
           <p class="lane-s"></p>
         </article>
       </div>
-      <p class="race-note">A replay with example data. Both clocks run in real time on your screen. It works through Intuit's official connector.</p>
+      <div class="race-foot">
+        <p class="race-note">A replay with example data. The by-hand pace is estimated. Works through <a href="https://quickbooks.intuit.com/learn-support/en-us/help-article/accounting-bookkeeping/use-quickbooks-connector-claude/L3YBlo6Ht_US_en_US" target="_blank" rel="noopener">Intuit's official connector</a>, US-only for now.</p>
+        <p class="race-cta"><span class="race-lead">Want this for your books?</span><a class="btn btn-ghost btn-sm" href="/book">Book a call</a></p>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="race" id="fly-gmail" data-od-id="flyby-gmail" data-scene="flyby" data-race="gmail">
+<section class="race" id="fly-gmail" data-scene="flyby" data-race="gmail">
   <div class="race-pin">
     <div class="wrap race-in">
       <header class="race-head">
         <p class="eyebrow toolname"><svg class="lg" aria-hidden="true"><use href="#lg-gmail"/></svg>Gmail and Calendar</p>
-        <h2 class="h2">The inbox sorted, <em>the meeting booked.</em></h2>
+        <h2 class="h2">Your inbox sorted, <em>the invite ready to send.</em></h2>
         <p class="sr-race">By hand: Open the inbox. Open the first email and read it. Decide: reply today, later, or junk. Back to the inbox. Then the next one, and the next. Or just ask: “Group today's inbox into needs a reply today, can wait, and junk. Then find 30 minutes next week with Harbour Dental and send the invite.”</p>
       </header>
       <div class="lanes" aria-hidden="true">
-        <article class="lane hand" data-od-id="race-gmail-by-hand">
+        <article class="lane hand">
           <header><span class="lane-t">By hand</span><span class="sw">0:00</span></header>
           <div class="scr">
             <div class="scr-bar"><svg class="lg"><use href="#lg-gmail"/></svg><span class="crumb">Gmail and Calendar</span><span class="ex">Example</span></div>
@@ -835,7 +966,7 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
           </div>
           <p class="lane-s"></p>
         </article>
-        <article class="lane ask" data-od-id="race-gmail-just-ask">
+        <article class="lane ask">
           <header><span class="lane-t">Just ask</span><span class="sw">0:00</span></header>
           <div class="scr rchat">
             <div class="scr-bar"><i class="rdot"></i><span class="crumb">Your AI, connected to Gmail and Calendar</span><span class="ex">Example</span></div>
@@ -844,12 +975,15 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
           <p class="lane-s"></p>
         </article>
       </div>
-      <p class="race-note">A replay with example data. Both clocks run in real time on your screen. It works through the official Gmail and Calendar connectors.</p>
+      <div class="race-foot">
+        <p class="race-note"><span class="rn-long">A replay with example data. Both clocks run in real time on your screen. It works in the Gmail and Calendar you already use.</span><span class="rn-short">Example data, in real time.</span></p>
+        <p class="race-cta"><span class="race-lead">Want this for your inbox?</span><a class="btn btn-ghost btn-sm" href="/book">Book a call</a></p>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="race" id="fly-microsoftexcel" data-od-id="flyby-microsoftexcel" data-scene="flyby" data-race="microsoftexcel">
+<section class="race" id="fly-microsoftexcel" data-scene="flyby" data-race="microsoftexcel">
   <div class="race-pin">
     <div class="wrap race-in">
       <header class="race-head">
@@ -858,7 +992,7 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
         <p class="sr-race">By hand: Open the sales workbook. Select all of the sales data. Insert a pivot table. Set up each field, then build the chart. Or just ask: “Add a pivot table of revenue by category this month vs. last, with a bar chart”</p>
       </header>
       <div class="lanes" aria-hidden="true">
-        <article class="lane hand" data-od-id="race-microsoftexcel-by-hand">
+        <article class="lane hand">
           <header><span class="lane-t">By hand</span><span class="sw">0:00</span></header>
           <div class="scr">
             <div class="scr-bar"><svg class="lg"><use href="#lg-microsoftexcel"/></svg><span class="crumb">Excel</span><span class="ex">Example</span></div>
@@ -867,7 +1001,7 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
           </div>
           <p class="lane-s"></p>
         </article>
-        <article class="lane ask" data-od-id="race-microsoftexcel-just-ask">
+        <article class="lane ask">
           <header><span class="lane-t">Just ask</span><span class="sw">0:00</span></header>
           <div class="scr rchat">
             <div class="scr-bar"><i class="rdot"></i><span class="crumb">Your AI, connected to Excel</span><span class="ex">Example</span></div>
@@ -881,7 +1015,7 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
   </div>
 </section>
 
-<section class="race" id="fly-hubspot" data-od-id="flyby-hubspot" data-scene="flyby" data-race="hubspot">
+<section class="race" id="fly-hubspot" data-scene="flyby" data-race="hubspot">
   <div class="race-pin">
     <div class="wrap race-in">
       <header class="race-head">
@@ -890,7 +1024,7 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
         <p class="sr-race">By hand: Open the deals list. Filter by last activity date, then sort. Open the first stalled deal and reread it. Write a follow-up by hand. Back to the list. Next deal, same again. Or just ask: “Show every deal with no activity in 14 days and draft a follow-up for each”</p>
       </header>
       <div class="lanes" aria-hidden="true">
-        <article class="lane hand" data-od-id="race-hubspot-by-hand">
+        <article class="lane hand">
           <header><span class="lane-t">By hand</span><span class="sw">0:00</span></header>
           <div class="scr">
             <div class="scr-bar"><svg class="lg"><use href="#lg-hubspot"/></svg><span class="crumb">HubSpot</span><span class="ex">Example</span></div>
@@ -899,7 +1033,7 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
           </div>
           <p class="lane-s"></p>
         </article>
-        <article class="lane ask" data-od-id="race-hubspot-just-ask">
+        <article class="lane ask">
           <header><span class="lane-t">Just ask</span><span class="sw">0:00</span></header>
           <div class="scr rchat">
             <div class="scr-bar"><i class="rdot"></i><span class="crumb">Your AI, connected to HubSpot</span><span class="ex">Example</span></div>
@@ -913,26 +1047,28 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
   </div>
 </section>
 
-<section class="jr" id="after" data-od-id="journey" data-scene="journey">
+<section class="jr" id="after" data-scene="journey">
   <div class="jr-pin">
     <div class="wrap jr-in">
       <div class="jr-head">
-        <p class="eyebrow">The plan</p>
         <h2 class="h2">From one call to a <em>stable orbit.</em></h2>
       </div>
       <ol class="jr-steps" data-steps>
-        <li><span class="no">01 / 05</span><h3>A clear picture</h3><p>One call. We find the hours and dollars your tools are costing you.</p></li>
-        <li><span class="no">02 / 05</span><h3>Your own portal</h3><p>Your website, plans and billing in one place.</p></li>
-        <li><span class="no">03 / 05</span><h3>Your new website</h3><p>It is where customers decide. Built to bring in orders and calls, and you see it first.</p></li>
-        <li><span class="no">04 / 05</span><h3>A fixed price, in writing</h3><p>Agreed on the call. No surprise invoice.</p></li>
-        <li><span class="no">05 / 05</span><h3>Looked after</h3><p>One AI at the centre, your team using it daily, and the hours saved adding up every month.</p></li>
+        <li><span class="no">01 / 05</span><h3>We find where the hours go.</h3><p>On the call, we add up what your tools cost you, in hours and dollars.</p></li>
+        <li><span class="no">02 / 05</span><h3>We cut the tools you don't need.</h3><p>You stop paying for the ones you barely use. The rest move off outdated software.</p></li>
+        <li><span class="no">03 / 05</span><h3>One AI sits at the centre.</h3><p>We set up Claude or ChatGPT and connect it to your tools. Then we teach your team to use it.</p></li>
+        <li><span class="no">04 / 05</span><h3>We build your website.</h3><p>It is where your customers decide to call you. We look after it. You own everything.</p></li>
+        <li><span class="no">05 / 05</span><h3>A fixed price, in writing.</h3><p>Agreed on the call. No surprise invoice.</p></li>
       </ol>
-      <div class="jr-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="jr-foot">
+        <div class="jr-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+        <a class="btn btn-primary" href="/book">Book a call<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>
+      </div>
     </div>
   </div>
 </section>
 
-<section class="jr pr" id="promises" data-od-id="promises" data-scene="promises">
+<section class="jr pr" id="promises" data-scene="promises">
   <div class="jr-pin">
     <div class="wrap jr-in">
       <div class="jr-head">
@@ -940,48 +1076,41 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
         <h2 class="h2">Four promises, <em>on paper.</em></h2>
       </div>
       <ol class="jr-steps" data-promises>
-        <li data-od-id="promise-price"><span class="no">01 / 04</span><h3>Fixed price</h3><p>One number, agreed before we start. No surprise invoices.</p></li>
-        <li data-od-id="promise-own"><span class="no">02 / 04</span><h3>You own it all</h3><p>Accounts, code and data in your name. Nothing to buy back.</p></li>
-        <li data-od-id="promise-plain"><span class="no">03 / 04</span><h3>Plain English</h3><p>Updates you read in a minute, on your phone.</p></li>
-        <li data-od-id="promise-lockin"><span class="no">04 / 04</span><h3>No lock-in</h3><p>Leave any month. Keep everything you paid for.</p></li>
+        <li><span class="no">01 / 04</span><h3>Fixed price</h3><p>One number, in writing, agreed on the call. No surprise invoice.</p></li>
+        <li><span class="no">02 / 04</span><h3>You own it all</h3><p>Accounts, code and data in your name. Nothing to buy back.</p></li>
+        <li><span class="no">03 / 04</span><h3>Plain English</h3><p>Updates you read in a minute, on your phone.</p></li>
+        <li><span class="no">04 / 04</span><h3>No lock-in</h3><p>Leave any month. Keep everything you paid for.</p></li>
       </ol>
-      <div class="jr-dots" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+      <div class="jr-dots" aria-hidden="true"><i>Fixed price</i><i>You own it all</i><i>Plain English</i><i>No lock-in</i></div>
     </div>
   </div>
 </section>
 
-<section class="close-sec" id="close" data-od-id="closing" data-scene="close" aria-labelledby="close-h">
+<section class="close-sec" id="close" data-scene="close" aria-labelledby="close-h">
   <div class="wrap close-in">
     <h2 id="close-h" class="rv">Let's find your <em>stable orbit.</em></h2>
     <p class="rv">A short call. We find where your hours and dollars are going, and what one AI at the centre would change.</p>
     <div class="close-ctas rv">
-      <a class="btn btn-primary" href="/book" data-od-id="closing-cta">Book a call</a>
-      <a class="textlink" href="mailto:hello@solenix.dev">hello@solenix.dev</a>
+      <a class="btn btn-primary" href="/book">Book a call</a>
+      <a class="close-alt" href="mailto:hello@solenix.dev">or email hello@solenix.dev</a>
     </div>
-    <ul class="trust rv" data-od-id="trust-row">
-      <li><span class="photo" title="Photo to come">JC</span><span><span class="who">Jager Cooper</span>, founder</span></li>
-      <li>St. John's, NL</li>
-      <li>Fixed price in writing</li>
-      <li>You own everything</li>
-    </ul>
+    <div class="close-proof rv">
+      <p class="close-who"><span class="photo" title="Photo to come" aria-hidden="true">JC</span><span><span class="who">Jager Cooper</span>, founder, St. John's, NL</span></p>
+      <p class="close-terms">Fixed price in writing. You own everything.</p>
+    </div>
   </div>
 </section>
-</main>
+</div>
 
-<footer data-od-id="footer">
+<footer>
   <div class="wrap">
     <!--site:brand-->
     <p>One AI at the centre of your business. St. John's, Newfoundland and Labrador.</p>
     <ul><!--site:footer-links--></ul>
     <p class="mono" style="font-size: var(--fs-xs);">© 2026 Solenix</p>
-    <p class="tm-note" data-od-id="trademark-note">The logos on this page belong to their owners. They are shown because they are tools you may already use; no partnership is implied.</p>
+    <p class="tm-note">The logos on this page belong to their owners. They are shown because they are tools you may already use; no partnership is implied.</p>
   </div>
 </footer>
 
-<!--client:home-ui-->
-
-<!--client:home-races-->
-
-<!--client:home-scene-->
 </body>
 </html>

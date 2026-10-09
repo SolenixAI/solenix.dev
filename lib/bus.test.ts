@@ -50,3 +50,30 @@ test("a failed connection is retried on the next use, not remembered", async () 
   await hub.publish("m", "x")
   assert.equal(tries, 2)
 })
+
+test("a failed subscribe does not leave the channel deaf: the next page subscribes for real", async () => {
+  const r = fakeRedis()
+  let fail = true
+  const hub = makeHub(async () => {
+    const w = await r.connect()
+    return { ...w, subscribe: async (c: string, l: Listener) => { if (fail) { fail = false; throw new Error("down") } return w.subscribe(c, l) } }
+  })
+  await assert.rejects(hub.subscribe("m", () => {}))
+  const heard: string[] = []
+  await hub.subscribe("m", (x) => heard.push(x))
+  await hub.publish("m", "v2")
+  assert.deepEqual(heard, ["v2"])
+})
+
+test("a failed unsubscribe is handled, never an unhandled rejection", async () => {
+  const r = fakeRedis()
+  const hub = makeHub(async () => ({ ...(await r.connect()), unsubscribe: async () => { throw new Error("gone") } }))
+  let unhandled = 0
+  const onUnhandled = () => { unhandled++ }
+  process.on("unhandledRejection", onUnhandled)
+  const stop = await hub.subscribe("m", () => {})
+  stop()
+  await new Promise((done) => setTimeout(done, 20))
+  process.off("unhandledRejection", onUnhandled)
+  assert.equal(unhandled, 0)
+})

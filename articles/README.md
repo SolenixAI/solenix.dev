@@ -49,6 +49,8 @@ Everything every page shares, from one place (`lib/site-page.ts`), so a page can
 
 * dark from the first byte (`color-scheme`), the design tokens (`/tokens.css`), "Title · Solenix" in the tab
 * the nav, from `lib/site-nav.ts`: the same links and Solenix platform button as every page. Give a section an `id` and `data-nav="Label"` and it becomes a link in the nav, with a reading line.
+* the mark alone: write `<!--site:mark-->` (the site's svg, no link).
+* the sun's light: write `<!--site:sun-->` inside your svg's `<defs>` and fill with `url(#site-sun)`; never copy the gradient.
 * tab icons, link-preview tags from the page's own title and description, PostHog (on solenix.dev only) and Speed Insights
 
 A page written without `<html>` (an artifact draft) is wrapped in a document automatically. `npm run check` also fails if a copy of the nav appears anywhere outside `lib/site-nav.ts` (`scripts/sot-check.ts`).

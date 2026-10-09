@@ -1,7 +1,7 @@
 // One source of truth per thing: fail when a copy of something that has an owner appears elsewhere.
 // Run by scripts/check.sh before every commit. Add a row when a new thing gets one owner.
 import { execFileSync } from "node:child_process"
-import { readFileSync } from "node:fs"
+import { existsSync, readFileSync } from "node:fs"
 
 const RULES = [
   {
@@ -14,7 +14,8 @@ const RULES = [
 
 const files = execFileSync("git", ["ls-files", "-co", "--exclude-standard"], { encoding: "utf8" })
   .split("\n")
-  .filter((f) => /\.(m?[jt]sx?|html|css|py)$/.test(f) && !f.startsWith("public/") && !f.startsWith("scripts/sot-check"))
+  // A tracked file deleted in the working tree is still listed by git: it has no text to check.
+  .filter((f) => existsSync(f) && /\.(m?[jt]sx?|html|css|py)$/.test(f) && !f.startsWith("public/") && !f.startsWith("scripts/sot-check"))
 
 let bad = 0
 for (const r of RULES)

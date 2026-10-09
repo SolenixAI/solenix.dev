@@ -1,11 +1,11 @@
 import { Mail } from "lucide-react"
 import { Lockup } from "@/components/brand/mark"
-import { NAV, footerLinks, siteNav } from "@/lib/site-nav"
+import { SiteNav } from "@/components/site/nav"
+import { NAV, footerLinks } from "@/lib/site-nav"
 
 // The nav and the footer links come from lib/site-nav.ts, the one source for every page.
 export function SiteHeader() {
-  // The nav's own script marks the current page before React loads; React leaves it as it is.
-  return <div suppressHydrationWarning dangerouslySetInnerHTML={{ __html: siteNav() }} />
+  return <div><SiteNav /></div>
 }
 
 export function SiteFooter() {

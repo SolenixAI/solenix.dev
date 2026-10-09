@@ -12,7 +12,8 @@ import { SLUG, articleProblems } from "@/lib/article-rules"
 
 const DIR = path.join(process.cwd(), "articles")
 
-export type Article = { slug: string; title: string; description: string; date: string; path: string; cover?: string }
+// The stills: a 1x picture for each screen, and its 2x (retina) version where one exists (scripts/article-covers.ts).
+export type Article = { slug: string; title: string; description: string; date: string; path: string; cover?: string; hero?: string; hero2x?: string; heroPhone?: string; heroPhone2x?: string }
 
 export async function articleSlugs(): Promise<string[]> {
   const entries = await readdir(DIR, { withFileTypes: true }).catch(() => [])
@@ -27,6 +28,8 @@ export async function readArticle(slug: string): Promise<{ meta: Article; html: 
   const problems = articleProblems(slug, html)
   if (problems.length) throw new Error(`articles/${slug}:\n  - ${problems.join("\n  - ")}`)
   const pick = (re: RegExp) => html.match(re)?.[1]?.trim() ?? ""
+  // The file's URL if it exists, else undefined.
+  const still = (file: string) => existsSync(path.join(process.cwd(), "public/articles", slug, file)) ? `/articles/${slug}/${file}` : undefined
   const meta: Article = {
     slug,
     title: pick(/<title>([^<]*)<\/title>/) || slug,
@@ -34,7 +37,11 @@ export async function readArticle(slug: string): Promise<{ meta: Article; html: 
     date: pick(/<meta name="article:published_time" content="([^"]*)"/),
     path: `/articles/${slug}`,
     // From npm run article-covers; also the share image.
-    cover: existsSync(path.join(process.cwd(), "public/articles", slug, "cover.png")) ? `/articles/${slug}/cover.png` : undefined,
+    cover: still("cover.png"),
+    hero: still("hero.png"),
+    hero2x: still("hero@2x.webp"),
+    heroPhone: still("hero-phone.png"),
+    heroPhone2x: still("hero-phone@2x.webp"),
   }
   return { meta, html }
 }

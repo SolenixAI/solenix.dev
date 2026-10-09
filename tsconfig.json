@@ -25,6 +25,9 @@
     "paths": {
       "@/*": [
         "./*"
+      ],
+      "solenix-space": [
+        "./lib/space/engine.ts"
       ]
     },
     "allowImportingTsExtensions": true,

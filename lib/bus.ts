@@ -26,14 +26,21 @@ export function makeHub(connect: () => Promise<Wire>) {
       if (!set) {
         const fresh = new Set<Listener>()
         listeners.set(channel, (set = fresh))
-        await (await open()).subscribe(channel, (m) => fresh.forEach((l) => l(m)))
+        try {
+          // One listener throwing (a closed stream) must not stop the others hearing the message.
+          await (await open()).subscribe(channel, (m) => fresh.forEach((l) => { try { l(m) } catch (e) { console.error(`bus: listener on ${channel}: ${(e as Error).message}`) } }))
+        } catch (e) {
+          // A failed subscribe forgets the channel, so the next page subscribes for real instead of joining a deaf set.
+          if (listeners.get(channel) === fresh) listeners.delete(channel)
+          throw e
+        }
       }
       set.add(listener)
       return () => {
         set.delete(listener)
         if (set.size === 0 && listeners.get(channel) === set) {
           listeners.delete(channel)
-          open().then((w) => w.unsubscribe(channel), () => {})
+          open().then((w) => w.unsubscribe(channel)).catch((e: Error) => console.error(`bus: unsubscribe ${channel}: ${e.message}`))
         }
       }
     },

@@ -229,7 +229,7 @@
   --fs-body: 1rem;
   --fs-sm: 0.92rem;
   --fs-xs: 0.8rem;
-  --fs-2xs: 0.72rem;                  /* badges, floor — never below this */
+  --fs-2xs: 0.75rem;                  /* badges, floor: 12px, never below this (Impeccable craft floor) */
 
   /* Weight. 650 is the brand's lockup weight; 800 is --fs-statement only. */
   --fw-regular: 400;

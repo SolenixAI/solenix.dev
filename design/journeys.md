@@ -215,27 +215,97 @@ What would raise the low steps:
 
 Pages: /agents, /articles/rss.xml
 
+Three people use this surface. Each one has a diagram, scored for how it feels **today**, from screenshots at 1440 and 390 wide taken 2026-10-09. Plus the agent-facing files: /llms.txt and /agents/worlds.json.
+
+### 5a. The small-business owner, in ChatGPT or Claude
+
 ```mermaid
 journey
-  title Setting up a world, today
+  title Owner in ChatGPT or Claude, today
   section Find it
-    Finds Agents Marketplace in the nav or footer: 4: Person
-    Sees what each world does for them, in plain words: 5: Person
+    Sees Agents Marketplace in the top bar on a phone: 2: Owner
+    Finds Agents Marketplace in the footer: 3: Owner
+    Reads the hero line about the makers way: 3: Owner
+    Sees the orbit of Vercel and Skills: 3: Owner
+  section Pick a world
+    Sees counts like 3.9M per week and 16.4K: 2: Owner
+    Opens Vercel and the card grows out of its orbit: 4: Owner
+    Reads what Vercel does for them in plain words: 5: Owner
+    Reads the orbit labels API, Command line and Connector: 2: Owner
   section Set up
-    Opens a world; it grows out of its card: 5: Person
-    Copies the one sentence for their AI: 5: Person
-    Pastes it; the AI installs the makers' own tools: 5: Person, Agent
-    Signs in once; the AI proves it works: 4: Person, Agent
-  section Machine reading
-    An agent reads worlds.json and the world skill in the repo: 5: Agent
-    An agent follows the RSS feed of articles: 4: Agent
+    Sees the main button Copy for your AI: 4: Owner
+    Reads the sentence with npx skills add in it: 2: Owner
+    Pastes it into a chat window with no terminal: 1: Owner, AI
+    Pastes it into an AI that has a terminal: 3: Owner, AI
+    Signs in once and sees the AI prove it works: 3: Owner, AI
   section Next
-    Suggests a world through a GitHub issue: 4: Person
-    Looks for a way to talk to Solenix: 2: Person
+    Looks for a way to talk to Solenix: 2: Owner
+    Suggests a world through the Suggest a world link: 3: Owner
 ```
 
-What would raise the low steps:
-- **Talk to Solenix (2):** one line with Book a call.
+Lowest steps to raise:
+- **Pasting into a chat with no terminal (1):** the sentence in the Vercel world card runs `npx skills add`. ChatGPT and Claude chat cannot run it. Under the sentence, add one plain line: "Chat only? Book a call and we set it up." The line links to Book a call.
+- **Top bar on a phone (2):** the header at 390 px shows Articles and Platform only. Keep Agents Marketplace in the top bar at phone width.
+- **Orbit labels (2):** the Vercel orbit in the world card shows API, Command line and Connector with version numbers. Add one plain line under each label, for example: "Command line: runs commands on your computer."
+- **Counts (2):** the world cards show 3.9M per week and 16.4K stars. Add a plain word beside each number, or move the numbers into the card details.
+- **Talk to Solenix (2):** the /agents page has no Book a call. Add it in the page header, beside the Solenix platform link.
+
+### 5b. The developer
+
+```mermaid
+journey
+  title Developer on Agents Marketplace, today
+  section Arrive
+    Lands on Agents Marketplace from GitHub or docs: 4: Developer
+    Sees live stars, forks and last update on the Vercel card: 5: Developer
+    Sees Apache-2.0 and the repo link: 5: Developer
+  section Inspect
+    Opens the Skills piece and reads its 33 skill names: 4: Developer
+    Opens The steps your AI follows, linked to SKILL.md: 4: Developer
+    Follows a link to one skill, ai-sdk: 1: Developer
+    Reads the ring of 33 unlabelled dots: 2: Developer
+  section Set up
+    Copies the one sentence: 5: Developer
+    Runs npx skills add in a terminal: 4: Developer
+    Checks the setup file on GitHub: 4: Developer
+  section Next
+    Suggests a world through the GitHub issue link: 4: Developer
+    Reads the same card on a phone, full height: 4: Developer
+```
+
+Lowest steps to raise:
+- **The ai-sdk link (1):** the URL `?world=vercel&piece=skills&part=ai-sdk` opens the Skills list. The ai-sdk part does not open. Make each part link open its own item, with its name and blurb.
+- **The ring of 33 dots (2):** in the Skills view, the dots have no labels. Label each dot with its skill name, or remove the ring and keep the chips.
+
+### 5c. The AI agent, reading the page or the files
+
+```mermaid
+journey
+  title AI agent reading solenix.dev, today
+  section Find the catalog
+    Reads llms.txt and finds the Agents Marketplace list: 5: Agent
+    Follows the link to worlds.json: 5: Agent
+  section Read a world
+    Reads the Vercel part with its one sentence and setup link: 5: Agent
+    Reads the Skills piece with skill names and blurbs: 4: Agent
+    Opens the ai-sdk part from the page: 1: Agent
+    Reads a world sentence from the /agents HTML: 3: Agent
+  section Act
+    Runs the one sentence in a terminal: 4: Agent
+    Reads the setup SKILL.md on GitHub: 4: Agent
+    Follows the RSS feed of articles: 4: Agent
+```
+
+Lowest steps to raise:
+- **The ai-sdk link (1):** an agent cannot address one skill. Give each part its own URL, and list that URL on its entry in worlds.json.
+- **The sentence in HTML (3):** the Vercel sentence appears only after `?world=vercel` opens. Render the sentence in the card's first HTML, so an agent reads it without a click.
+
+### Not yet checked
+
+- The sign-in and "the AI proves it works" step has not been run, so its score is a guess.
+- The sentence was not run in a terminal. The command matches llms.txt and worlds.json.
+- The Copy for your AI click was not tested.
+
 
 ## 6. The article creator
 

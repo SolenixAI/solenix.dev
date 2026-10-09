@@ -4,15 +4,25 @@
 // any link in it is a way in. Entering opens the page at once and grows the window toward the full
 // screen while it loads; the browser's page-to-page cross-fade takes over from wherever the grow has
 // reached when the page is ready. No waiting on a timer.
+//
+// The page inside loads once its still is decoded (a hero: after two more frames, so the still shows first, alone)
+// or as it nears the screen (a card). It is display:none until it is on screen and loaded, so nothing in it runs
+// while it is not shown. Then it runs for three frames under its still, so it has drawn what it shows, and the
+// still gives way without a jump. Once it scrolls away, its own observers stop its loops.
 export {}
 
 const rootStyle = getComputedStyle(document.documentElement)
 const token = (name: string) => rootStyle.getPropertyValue(name).trim()
 const ms = (v: string) => parseFloat(v) * (v.endsWith("ms") ? 1 : 1000)
 
+// The page renders at the width of its still (the picture it replaces), so the still and the live page
+// are the same picture scaled by the same amount. Until the still has loaded, the screen's width stands in.
+// Its height is the still's too: the page's first screen is sized from its own box, so a page laid out at
+// the still's size is the still's picture, and the window shows the top of it, as the still does.
+const layout = (c: HTMLElement) => c.querySelector<HTMLImageElement>(":scope > picture img, :scope > img")
 const box = (c: HTMLElement) => {
-  const r = c.getBoundingClientRect(), w = innerWidth, s = r.width / w
-  return { r, w, s, h: r.height / s }
+  const r = c.getBoundingClientRect(), still = layout(c), w = still?.naturalWidth || innerWidth, s = r.width / w
+  return { r, w, s, h: still?.naturalHeight || r.height / s }
 }
 const fit = () => {
   for (const c of document.querySelectorAll<HTMLElement>(".live")) {
@@ -24,6 +34,7 @@ const fit = () => {
 }
 fit()
 addEventListener("resize", fit)
+for (const img of document.querySelectorAll<HTMLImageElement>(".live :is(picture img, img)")) img.addEventListener("load", fit)
 new ResizeObserver(fit).observe(document.body)
 
 function enter(c: HTMLElement, href: string) {
@@ -43,26 +54,67 @@ function enter(c: HTMLElement, href: string) {
   location.assign(href)
 }
 
-for (const frame of document.querySelectorAll<HTMLIFrameElement>(".live iframe")) {
+// Runs fn once n more frames have been drawn.
+function frames(n: number, fn: () => void) {
+  if (n > 0) requestAnimationFrame(() => frames(n - 1, fn))
+  else fn()
+}
+
+// A play window: the page's own links take you in, and the page reacts to a touch.
+function touch(frame: HTMLIFrameElement, c: HTMLElement) {
+  if (!c.classList.contains("play")) return
+  try {
+    const doc = frame.contentDocument
+    if (!doc) return
+    doc.documentElement.style.overflow = "hidden"
+    doc.addEventListener("click", (e) => {
+      const a = (e.target as Element).closest<HTMLAnchorElement>("a[href]")
+      if (!a || e.defaultPrevented) return
+      e.preventDefault()
+      enter(c, a.href)
+    }, true)
+    doc.addEventListener("pointerdown", () => c.closest("[data-hero]")?.classList.add("touched"), { once: true })
+  } catch { /* another origin: the window stays a picture */ }
+}
+
+// Reduced motion draws the page once, when it loads, from its box: that page must be laid out at load.
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches
+
+for (const frame of document.querySelectorAll<HTMLIFrameElement>(".live iframe[data-src]")) {
   const c = frame.parentElement as HTMLElement
-  const ready = () => {
-    c.classList.add("ready")
-    if (!c.classList.contains("play")) return
-    try {
-      const doc = frame.contentDocument
-      if (!doc) return
-      doc.documentElement.style.overflow = "hidden"
-      doc.addEventListener("click", (e) => {
-        const a = (e.target as Element).closest<HTMLAnchorElement>("a[href]")
-        if (!a || e.defaultPrevented) return
-        e.preventDefault()
-        enter(c, a.href)
-      }, true)
-      doc.addEventListener("pointerdown", () => c.closest("[data-hero]")?.classList.add("touched"), { once: true })
-    } catch { /* another origin: the window stays a picture */ }
+  const hero = c.closest("[data-hero]") !== null
+  let loaded = false, onScreen = false, shown = false
+  if (reduced) frame.hidden = false
+  const show = () => {
+    if (shown || !loaded || !onScreen) return
+    shown = true
+    frame.hidden = false
+    frames(3, () => c.classList.add("ready"))
   }
-  frame.addEventListener("load", ready)
-  try { if (frame.contentDocument?.readyState === "complete" && frame.contentDocument.URL !== "about:blank") ready() } catch { /* not loaded */ }
+  // The page loads once its still is decoded, so the still's size (which the page is laid out at) is final. A hero
+  // waits two more frames too: its still shows first, alone.
+  const load = () => {
+    const img = c.querySelector<HTMLImageElement>("img")
+    const go = () => { fit(); frames(hero ? 2 : 0, () => { frame.src = frame.dataset.src ?? "" }) }
+    if (img) img.decode().then(go, go)
+    else go()
+  }
+  if (hero) load()
+  else new IntersectionObserver((entries, io) => {
+    if (!entries[0]?.isIntersecting) return
+    io.disconnect()
+    load()
+  }, { rootMargin: "200px" }).observe(c)
+  new IntersectionObserver((entries) => {
+    onScreen = entries[0]?.isIntersecting ?? false
+    show()
+  }).observe(c)
+  frame.addEventListener("load", () => {
+    if (frame.contentDocument?.URL === "about:blank") return // the empty page an iframe starts with
+    loaded = true
+    touch(frame, c)
+    show()
+  })
 }
 
 document.addEventListener("click", (e) => {

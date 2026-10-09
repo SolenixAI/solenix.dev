@@ -45,6 +45,16 @@ The gap Solenix closes, in everything it builds: on one side, all the best techn
 - Clients use the Solenix platform (`/app`): status, approvals, projects, tech, billing through Stripe.
 - Open source: the Agents Marketplace (SolenixAI/agents-marketplace) holds the worlds we stand behind; one sentence in any AI sets one up, the makers' way. solenix.dev/agents renders it live.
 
+## Goals
+
+Each surface, and each section inside it, has its own purpose, value and impact, measured by its own number. Calls come first when goals pull apart. (Jager, 2026-10-09)
+
+| Surface | Purpose | Success measured as | Target |
+|---|---|---|---|
+| Homepage `/` | Sell AI and websites to small-business owners, from Solenix as their AI and software consultant: everything is possible almost instantly with AI and the right foundation | Booked calls per week (Book a call clicks, then booked calls): the money goal | not set yet |
+| Articles | Show what AI makes possible, so people read it and pass it on | Reads and shares per article | not set yet |
+| Agents Marketplace `/agents` | Set up any tool's world in any AI with one copy-paste | Copies, installs and downloads per world: the reach goal | not set yet |
+
 ## Capabilities and Constraints
 
 - The site is dark; the platform follows the device.
@@ -73,6 +83,7 @@ The gap Solenix closes, in everything it builds: on one side, all the best techn
 3. One source for everything; no copy can drift.
 4. Every first screen is a complete, designed hero on any screen.
 5. Ready to publish at every step.
+6. Visitors see outcomes in their own words, never the machinery. No command, repo path, file name or tool jargon shows on screen. The machinery travels in what they copy, and an expert can open it on request.
 
 ## Accessibility & Inclusion
 

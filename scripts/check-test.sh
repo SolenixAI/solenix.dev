@@ -12,6 +12,8 @@ pass=0; fail=0
 fresh() {
   rm -rf "$tmp/r"; git clone -q --local "$root" "$tmp/r"
   (cd "$root" && git ls-files -co --exclude-standard) | rsync -a --files-from=- "$root/" "$tmp/r/"
+  # A file deleted in the working tree is still in the commit the clone came from: remove it from the copy too.
+  (cd "$root" && git ls-files) | while read -r f; do [ -e "$root/$f" ] || rm -f "$tmp/r/$f"; done
 }
 expect() { # expect <pass|fail> <name>
   if (cd "$tmp/r" && bash scripts/check.sh >/dev/null 2>&1); then got=pass; else got=fail; fi
@@ -32,8 +34,8 @@ expect fail "a hand-written inline script on the homepage"
 fresh; sed -i '' 's#</body>#<a>Tools we use</a></body>#' "$tmp/r/design/home.html"
 expect fail "old label \"Tools we use\""
 
-fresh; mkdir -p "$tmp/r/app/(site)"; echo 'export default function P(){return null}' > "$tmp/r/app/(site)/page.tsx"
-expect fail "a second homepage (app/(site)/page.tsx)"
+fresh; echo 'export default function P(){return null}' > "$tmp/r/app/route.ts"
+expect fail "a second homepage (app/route.ts)"
 
 fresh; awk 'BEGIN{s=0} /^\[auth\]$/{s=1} /^\[/{if($0!="[auth]")s=0} s&&/^enable_signup/{print "enable_signup = true"; next} {print}' "$tmp/r/supabase/config.toml" > "$tmp/c" && mv "$tmp/c" "$tmp/r/supabase/config.toml"
 expect fail "self sign-up switched on"
@@ -41,14 +43,20 @@ expect fail "self sign-up switched on"
 fresh; awk 'BEGIN{s=0} /^\[auth\.email\]$/{s=1} /^\[/{if($0!="[auth.email]")s=0} s&&/^enable_signup/{print "enable_signup = false"; next} {print}' "$tmp/r/supabase/config.toml" > "$tmp/c" && mv "$tmp/c" "$tmp/r/supabase/config.toml"
 expect fail "email sign-in switched off"
 
-fresh; sed -i '' 's/POSTHOG_SNIPPET/NO_SNIPPET/g' "$tmp/r/app/route.ts"
+fresh; sed -i '' 's|<Analytics />||' "$tmp/r/app/(site)/layout.tsx"
 expect fail "homepage analytics removed"
+
+fresh; sed -i '' 's|<SpaceWorld />||' "$tmp/r/app/(site)/layout.tsx"
+expect fail "the 3D world not mounted in the layout"
 
 fresh; echo "- Dark only. There is no light theme." >> "$tmp/r/AGENTS.md"
 expect fail "the old 'dark only' rule comes back"
 
-fresh; echo '{}' > "$tmp/r/design/ghost.html.artifact.json"
-expect fail "orphaned Open Design sidecar"
+imp_plugin=$(python3 -c 'import json,os;p=json.load(open(os.path.expanduser("~/.claude/plugins/installed_plugins.json")))["plugins"].get("impeccable@impeccable") or [{}];print(p[0].get("installPath",""))' 2>/dev/null)
+if [ -x "${IMPECCABLE:-$imp_plugin/skills/impeccable/scripts/impeccable}" ]; then
+  fresh; for i in 1 2 3 4 5 6; do sed -i '' 's|</body>|<div style="box-shadow: 0 0 40px #f59e0b"></div></body>|' "$tmp/r/design/home.html"; done
+  expect fail "homepage design findings above the Impeccable baseline"
+else echo "skip  Impeccable not installed; the design-findings baseline test did not run"; fi
 
 fresh; rm "$tmp/r/design/approved.md"
 expect fail "a source of truth goes missing"
@@ -62,6 +70,9 @@ expect fail "an industry page (app/(site)/law)"
 
 fresh; sed -i '' 's#</body>#<p>Care plans from $199/month</p></body>#' "$tmp/r/design/home.html"
 expect fail "a public price on the homepage"
+
+fresh; printf "import * as THREE from 'three'\nexport const world = THREE\n" > "$tmp/r/lib/second-world.ts"
+expect fail "a second 3D world outside lib/space (an import of three)"
 
 # The pre-commit hook refuses a staged secret (a made-up key in a known key format).
 fresh; printf 'const key = "sk_live_%s"\n' "51Hq3bWd9ExampleOnlyNotARealKeyZx7Tn2Lm8Pq4Rs6Uv0Wy" > "$tmp/r/lib/leak.ts"

@@ -25,7 +25,7 @@ The system behind solenix.dev. Solenix is one tech expert for small businesses i
 
 ## Decisions (Jager's, binding on every page; his latest word wins)
 
-- Homepage base: Open Design version 19, which he restored on 2026-10-01 as the best so far (git tag `approved-baseline`). Never fall below it. Changes go through Open Design, one named change per run, and he judges each before the next.
+- Homepage base: the approved baseline, git tag `approved-baseline` (restored 2026-10-01 as the best so far). Never fall below it. Changes go through Impeccable, one named change at a time, and Jager judges each before the next.
 - The hero opens with "Your business is a three-body problem", and a small-business owner must understand in seconds what Solenix does and want to call.
 - The six tool examples stay as they are for now; he will iterate on them after the site is deployed. No live runs.
 - Keep "From one call to a stable orbit": five stops, slow enough to read, visuals over text, steps never overlapping.
@@ -66,7 +66,7 @@ The system behind solenix.dev. Solenix is one tech expert for small businesses i
 
 ### Messaging pillars
 - You don't need to be an expert anymore — not in Excel, not in Shopify, not in ads. The owner brings the intent and the judgement; the AI, connected to their tools, brings the expertise. ("Just say what you want." / "Stop learning ten tools. Talk to one.")
-- The offer: one AI at the center of your business. We set up Claude or ChatGPT for your team and connect it to the tools you already use (shop, books, ads, email, files), so you just ask and it gets done in those systems — then we teach you to use it. The tools are the bodies pulling on each other; the AI at the center is what makes the orbit stable. For owners who have barely used AI: plain words only. Along the way we cut the tools they pay for but barely use, move them off outdated, expensive software, and bring scattered information into one place they can just ask.
+- The offer: one AI at the centre of your business. We set up Claude or ChatGPT for your team and connect it to the tools you already use (shop, books, ads, email, files), so you just ask and it gets done in those systems — then we teach you to use it. The tools are the bodies pulling on each other; the AI at the centre is what makes the orbit stable. For owners who have barely used AI: plain words only. Along the way we cut the tools they pay for but barely use, move them off outdated, expensive software, and bring scattered information into one place they can just ask.
 - Every claim lands on one of three things an owner cares about: **time saved, money saved, or money made** (cost × latency). Say which one, in their numbers where we have them.
 - Your business is a three-body problem: a dozen tools pulling on each other. We find the stable orbit and keep it there.
 - One tech expert for small businesses in Newfoundland & Labrador — one AI at the centre of the tools you already use, the unused tools cut, your team taught, your website built.

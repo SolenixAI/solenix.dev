@@ -1,5 +1,5 @@
-// One PostHog setup for the whole public site: the homepage (design/home.html,
-// served by app/route.ts) and every React page. Only the live site sends
+// One PostHog setup for the whole public site: the homepage (design/home.html, through
+// app/(site)/page.tsx) and every React page. Only the live site sends
 // events; previews, localhost and pages shown inside a frame (the live
 // preview on an article card) would inflate the numbers.
 // The project token is public by design (it only allows sending events).

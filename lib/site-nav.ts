@@ -11,9 +11,11 @@ import { CLIENT } from "./client.generated.ts"
 
 export const NAV = {
   home: { href: "/", label: "Solenix", aria: "Solenix home" },
+  // app: the app router serves the page, so next/link moves there and the nav stays mounted. No app: a raw
+  // page, a plain link (the browser loads it).
   links: [
     { href: "/articles", label: "Articles" },
-    { href: "/agents", label: "Agents Marketplace", wide: true },
+    { href: "/agents", label: "Agents Marketplace", wide: true, app: true },
   ],
   platform: { href: "/app", label: "Solenix platform", short: "Platform", aria: "Solenix platform: sign in" },
   contact: { href: "mailto:hello@solenix.dev", label: "hello@solenix.dev" },
@@ -30,9 +32,11 @@ export const markShapes = (fill: string) =>
 export const sunGradient = (id: string) =>
   `<radialGradient id="${id}" cx=".42" cy=".38" r=".62"><stop offset="0" stop-color="var(--sun1)"/><stop offset="1" stop-color="var(--sun2)"/></radialGradient>`
 
+/** The mark's drawing, for an svg that carries its own sun gradient (`id`). */
+export const markInner = (id = "snav-sun") => `<defs>${sunGradient(id)}</defs>${markShapes(`url(#${id})`)}`
+
 /** The mark as a standalone SVG, with its own sun gradient. */
-export const markSvg = (id = "snav-sun") =>
-  `<svg viewBox="0 0 32 32" aria-hidden="true"><defs>${sunGradient(id)}</defs>${markShapes(`url(#${id})`)}</svg>`
+export const markSvg = (id = "snav-sun") => `<svg viewBox="0 0 32 32" aria-hidden="true">${markInner(id)}</svg>`
 
 /** Section links an article declares: <section id="x" data-nav="Label">. */
 export type Section = { id: string; label: string }
@@ -52,22 +56,10 @@ export const footerLinks = () => [NAV.platform, ...NAV.links, NAV.contact]
 // The two bars share one shape: a glass pill, floating 12px from the top, as wide as the page.
 const BAR = `position:fixed;z-index:var(--z-nav);top:calc(12px + env(safe-area-inset-top,0px));left:50%;box-sizing:border-box;width:min(calc(100% - 24px),var(--container-wide));height:calc(var(--nav-height) - 12px);display:flex;align-items:center;gap:var(--space-1);margin:0;border-radius:var(--radius-pill);background:color-mix(in srgb,var(--surface-solid) 62%,transparent);backdrop-filter:blur(var(--glass-blur)) saturate(140%);-webkit-backdrop-filter:blur(var(--glass-blur)) saturate(140%);border:1px solid var(--line);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-lg);color:var(--text);font:500 var(--fs-sm)/1 var(--font-text);letter-spacing:normal;text-align:left`
 
-// Moving between pages: the browser keeps the old page on screen until the new one can paint (no blank
-// frame between them), the nav stays exactly where it is, and the page beneath it cross-fades. The
-// cross-fade is the browser's own: its blend keeps old + new at full strength in every frame, so the
-// backdrop never shows through. (A custom fade-out and fade-in drift apart and let it show: measured,
-// a white flash on every move.) Both pages must opt in, so every page with this nav does.
-const MOTION = `
-@view-transition{navigation:auto}
-::view-transition{background-color:var(--bg)}
-.snav{view-transition-name:snav}
-::view-transition-group(*){animation-duration:var(--dur-slow);animation-timing-function:var(--ease-out)}
-::view-transition-old(*),::view-transition-new(*){animation-duration:var(--dur-slow)}
-@media (prefers-reduced-motion:reduce){::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}}
-`.trim()
+// Moving between pages is plain browser navigation: no cross-fade, no snapshot. Each added transition layer made
+// flashes; the native move had none.
 
-const CSS = `
-${MOTION}
+export const NAV_CSS = `
 html{scroll-padding-top:var(--nav-height)}
 .snav{${BAR};transform:translateX(-50%);padding:0 var(--space-2) 0 var(--space-4)}
 .snav[data-local]{position:absolute}
@@ -125,28 +117,32 @@ html{scroll-padding-top:var(--nav-height)}
 @media (prefers-reduced-motion:reduce){.snav-orb i{animation:none;transform:rotate(45deg)}}
 `.trim()
 
-// The nav's and the article bar's behaviour live in client/site-nav.ts and client/article-bar.ts
-// (TypeScript), compiled by scripts/build-client.ts and inlined right after their markup, so they run
-// before the first paint.
+// The nav's behaviour lives in client/site-fit.ts (fit and scroll state, every page with the nav) and, on
+// the raw pages only, client/site-nav.ts (the current page). The article bar's is client/article-bar.ts.
+// They are TypeScript, compiled by scripts/build-client.ts and inlined right after their markup, so they
+// run before the first paint.
 const CHEVRON = `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`
 const SHARE = `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v8M5 5l3-3 3 3M3.5 8.5V14h9V8.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`
 
 // The next page is fetched as soon as a pointer rests on its link (or a finger goes down), so the
 // move is near instant. Fetch only: nothing runs until the visitor really goes. The platform and
 // analytics paths are left out.
-const PREFETCH = JSON.stringify({ prefetch: [{ where: { and: [{ href_matches: "/*" }, { not: { href_matches: ["/app", "/app/*", "/lumen/*", "/api/*"] } }] }, eagerness: "moderate" }] })
+export const NAV_PREFETCH = JSON.stringify({ prefetch: [{ where: { and: [{ href_matches: "/*" }, { not: { href_matches: ["/app", "/app/*", "/lumen/*", "/api/*"] } }] }, eagerness: "moderate" }] })
+
+/** The fit and scroll script every page with the nav runs, right after the markup (client/site-fit.ts). */
+export const NAV_FIT = CLIENT["site-fit"]
 
 /** The site nav: style, markup and script, ready to place first in <body>. `local`: the page has its own bar. */
 export function siteNav({ local = false } = {}) {
   const links = NAV.links.map((l) => `<a${l.wide ? ` class="wide"` : ""} href="${l.href}">${esc(l.label)}</a>`).join("")
   const p = NAV.platform
   return (
-    `<style>${CSS}</style>` +
+    `<style>${NAV_CSS}</style>` +
     `<header class="snav" data-snav${local ? " data-local" : ""}>` +
     `<a class="snav-brand" href="${NAV.home.href}" aria-label="${esc(NAV.home.aria)}">${markSvg()}<span>${esc(NAV.home.label)}</span></a>` +
     `<nav class="snav-links" aria-label="Main">${links}</nav>` +
     `<a class="snav-act" href="${p.href}" aria-label="${esc(p.aria)}"><span class="snav-orb" aria-hidden="true"><i></i></span><span class="long">${esc(p.label)}</span><span class="short">${esc(p.short)}</span></a>` +
-    `</header><script>${CLIENT["site-nav"]}</script><script type="speculationrules">${PREFETCH}</script>`
+    `</header><script>${NAV_FIT}</script><script>${CLIENT["site-nav"]}</script><script type="speculationrules">${NAV_PREFETCH}</script>`
   )
 }
 
@@ -168,15 +164,24 @@ export function localNav(title: string, sections: Section[]) {
 
 /**
  * Add the site chrome to a raw HTML page: the nav first in <body> (after a skip link, if any),
- * and the markers a page may use: <!--site:brand--> (the mark and name, linked home) and
- * <!--site:footer-links--> (the footer links as <li> items).
+ * and the markers a page may use: <!--site:brand--> (the mark and name, linked home),
+ * <!--site:footer-links--> (the footer links as <li> items), <!--site:mark--> (the mark alone) and <!--site:sun--> (the sun's
+ * light, id "site-sun").
  */
 export function withSiteNav(html: string): string {
   const sections = pageSections(html)
   const title = (html.match(/<title>([^<]*)<\/title>/)?.[1] ?? "").replace(/\s*·\s*Solenix$/, "")
   const nav = siteNav({ local: sections.length > 0 }) + (sections.length ? localNav(title, sections) : "")
+  return fillSiteMarkers(html.replace(/(<body[^>]*>\s*(?:<a class="skip"[^>]*>[^<]*<\/a>)?)/i, `$1${nav}`))
+}
+
+/** The markers a page's markup may hold: <!--site:brand--> (the mark and name, linked home), <!--site:footer-links--> (the footer
+ * links), <!--site:mark--> (the mark alone, no link) and <!--site:sun--> (the sun's light as a gradient with id "site-sun",
+ * for a page's own svg <defs>). */
+export function fillSiteMarkers(html: string): string {
   return html
-    .replace(/(<body[^>]*>\s*(?:<a class="skip"[^>]*>[^<]*<\/a>)?)/i, `$1${nav}`)
     .replaceAll("<!--site:brand-->", `<a class="brand" href="${NAV.home.href}" aria-label="${esc(NAV.home.aria)}">${markSvg("site-mark")}${esc(NAV.home.label)}</a>`)
     .replaceAll("<!--site:footer-links-->", footerLinks().map((l) => `<li><a href="${l.href}">${esc(l.label)}</a></li>`).join(""))
+    .replaceAll("<!--site:sun-->", sunGradient("site-sun"))
+    .replaceAll("<!--site:mark-->", markSvg("site-mark-solo"))
 }
