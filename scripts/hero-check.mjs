@@ -28,7 +28,7 @@ if (!(await up())) {
 }
 
 const measure = () => {
-  const hero = document.querySelector("[data-hero]")
+  const hero = [...document.querySelectorAll("[data-hero]")].find((e) => e.getClientRects().length) // the one shown
   if (!hero) return ["has no [data-hero] element (mark the first screen)"]
   const out = []
   const r = hero.getBoundingClientRect(), H = innerHeight, W = innerWidth
