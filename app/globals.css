@@ -240,13 +240,7 @@
     box-shadow: var(--shadow-lg), var(--glass-inset); overflow: hidden;
   }
 
-  /* Scroll reveal: hidden only once script says motion is allowed. */
-  .js .reveal {
-    opacity: 0; translate: 0 var(--reveal-rise);
-    transition: opacity var(--dur-reveal) var(--ease-out), translate var(--dur-reveal) var(--ease-out);
-    transition-delay: calc(var(--i, 0) * var(--stagger));
-  }
-  .js .reveal.in { opacity: 1; translate: 0 0; }
+  /* .reveal content is never hidden on first paint (a hide-then-fade flashes); motion may start from a visible state. */
 
   /* The light sweep: once, never on a loop. */
   .sweepable { position: relative; overflow: hidden; }

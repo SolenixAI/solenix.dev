@@ -2,8 +2,7 @@ import { ArrowUpRight, BarChart3, ChevronRight, CreditCard, Triangle } from "luc
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 
-// The portal's recurring shapes, from design/app.html. Every one is built from
-// tokens via Tailwind and shadcn primitives.
+// The portal's recurring shapes. Every one is built from tokens via Tailwind and shadcn primitives.
 
 export function PageHead({
   eyebrow,

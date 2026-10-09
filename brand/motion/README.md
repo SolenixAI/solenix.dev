@@ -8,7 +8,7 @@ A 20-second vertical video (1080×1920, 30 fps, with sound) for Reels, TikTok an
 
 - `index.html`: the composition. One canvas, and every frame is a pure function of time (`window.renderFrame(t)`). The physics and camera are baked at load.
 - `sound.py`: the soundtrack and sound effects, synthesized in D and synced to the timeline.
-- `render.mjs`: draws each frame in the GPU browser (`scripts/browser.mjs`).
+- `render.ts`: draws each frame in the GPU browser (`scripts/browser.ts`).
 - `logos.json`: the six tool logos, taken from `design/home.html`.
 - `make.sh`: builds `out/solenix-three-body.mp4` and its cover image. The `out/` folder is not committed. Requires node, python3 and ffmpeg.
 

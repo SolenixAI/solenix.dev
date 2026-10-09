@@ -6,19 +6,23 @@ cd "$(git rev-parse --show-toplevel)"
 fail=0
 bad() { echo "check: $1"; fail=1; }
 
+# The page scripts are compiled from client/*.ts first: lib/site-nav.ts and the checks below import the result
+# (lib/client.generated.ts, gitignored), so a fresh checkout (CI) must build it before anything reads it.
+node --no-warnings scripts/build-client.ts >/dev/null || bad "client scripts do not compile (scripts/build-client.ts)"
+
 # One version of everything: no versioned file names.
 git ls-files --cached --others --exclude-standard \
   | grep -E '(^|/)[^/]*[-_.]v[0-9]+(\.|$)' \
   | while read -r f; do echo "check: versioned file name: $f"; done | grep . && fail=1
 
 # No version labels in the design system or code (AGENTS.md quotes them as examples).
-grep -rn -E '· v[0-9]|\(v[0-9]\)|/\* v[0-9]|\bv[0-9] ·' design/DESIGN.md design/tokens.css app components lib 2>/dev/null \
+grep -rn -E '· v[0-9]|\(v[0-9]\)|/\* v[0-9]|\bv[0-9] ·' DESIGN.md design/tokens.css app components lib 2>/dev/null \
   | while read -r l; do echo "check: version label: $l"; done | grep . && fail=1
 
 # The public site is dark; only the portal ([data-portal]) may follow the device.
 grep -q '^\[data-portal\]:not(\[data-theme\]) { color-scheme: light dark; }' design/tokens.css || bad "tokens.css: the portal must follow the device ([data-portal] color-scheme: light dark)"
 grep -q 'data-portal' 'app/(portal)/layout.tsx' || bad "portal layout must set data-portal"
-grep -s -n -i -E 'dark only|no light theme' AGENTS.md design/DESIGN.md \
+grep -s -n -i -E 'dark only|no light theme' AGENTS.md DESIGN.md \
   | while read -r l; do echo "check: contradicts the theme decision (site dark, portal follows the device): ${l:0:80}"; done | grep . && fail=1
 
 # No on-page Motion switch; the OS reduced-motion setting is the control.
@@ -27,24 +31,81 @@ grep -n -E 'motion-toggle|class="word">Motion<' design/*.html 2>/dev/null \
 
 # The portal is invite-only: self sign-up stays off.
 # ([auth] enable_signup must be false; [auth.email] enable_signup must stay true, or email sign-in is disabled.)
-awk '/^\[auth\]$/{s="auth"} /^\[auth\.email\]$/{s="email"} /^\[/{if($0!="[auth]"&&$0!="[auth.email]")s=""} /^enable_signup/{print s": "$0}' supabase/config.toml > /tmp/solenix-signup.txt
-grep -qx 'auth: enable_signup = false' /tmp/solenix-signup.txt || bad "self sign-up is on: [auth] enable_signup must be false (portal is invite-only)"
-grep -qx 'email: enable_signup = true' /tmp/solenix-signup.txt || bad "[auth.email] enable_signup must be true, or email sign-in is disabled"
+signup=$(mktemp)
+awk '/^\[auth\]$/{s="auth"} /^\[auth\.email\]$/{s="email"} /^\[/{if($0!="[auth]"&&$0!="[auth.email]")s=""} /^enable_signup/{print s": "$0}' supabase/config.toml > "$signup"
+grep -qx 'auth: enable_signup = false' "$signup" || bad "self sign-up is on: [auth] enable_signup must be false (portal is invite-only)"
+grep -qx 'email: enable_signup = true' "$signup" || bad "[auth.email] enable_signup must be true, or email sign-in is disabled"
 
-# The homepage is measured: analytics are injected where it is served.
-grep -q 'POSTHOG_SNIPPET' app/route.ts && grep -q 'capture_pageleave' lib/analytics.ts || bad "homepage has no analytics (app/route.ts + lib/analytics.ts)"
+# Every page is measured: the site layout mounts one analytics component for all its pages, the homepage among them
+# (app/(site)/page.tsx). The raw pages (Articles) keep the inline snippet (lib/site-page.ts).
+grep -q '<Analytics />' 'app/(site)/layout.tsx' && grep -q 'posthog.init' 'app/(site)/analytics.tsx' && grep -q 'capture_pageleave' lib/analytics.ts || bad "homepage has no analytics (app/(site)/layout.tsx → analytics.tsx → lib/analytics.ts)"
+grep -q 'POSTHOG_SNIPPET' lib/site-page.ts || bad "raw pages have no analytics (lib/site-page.ts)"
 
 # The agents page is called "Agents Marketplace" everywhere.
 grep -rn ">Tools we use<" app components design/*.html 2>/dev/null | while read -r l; do echo "check: say \"Agents Marketplace\", not \"Tools we use\": ${l:0:80}"; done | grep . && fail=1
 
-# Copy follows the Voice rules: no banned words (the list lives in design/DESIGN.md).
-python3 scripts/voice-check.py design/home.html design/app.html || fail=1
+# Every article passes the article rules (lib/article-rules.ts; the build enforces the same rules).
+node scripts/article-check.ts || fail=1
+node scripts/sot-check.ts || fail=1
+node scripts/journey-check.ts || fail=1
+node scripts/origin-check.ts || fail=1
+# TypeScript only: no JavaScript file outside scripts/js-allowlist.txt (a list that may only shrink).
+git ls-files -co --exclude-standard | grep -E '\.(js|jsx|mjs|cjs)$' | grep -v '^public/' | grep -vxFf <(grep -v '^#' scripts/js-allowlist.txt) \
+  | while read -r f; do echo "check: JavaScript file $f (the repo is TypeScript; see scripts/js-allowlist.txt)"; done | grep . && fail=1
+# Page scripts are TypeScript in client/*.ts, compiled and inlined where the page holds a
+# <!--client:name--> marker (lib/client-script.ts). The homepage and the articles hold no hand-written
+# inline <script>, except: the one-line "js" class (it must run before the first paint), importmaps,
+# JSON data (ld+json) and speculation rules. ALLOWED is the explicit list of pages that still hold their
+# own script: it may only shrink (move the script to client/, then delete its line). An entry whose page
+# no longer holds an inline script is a failure too, so the list cannot go stale.
+python3 - <<'PY' || fail=1
+import glob, re, sys
+ALLOWED = ["articles/proof-flood/index.html"]
+JS_CLASS = "document.documentElement.classList.add('js')"
+TYPES = {"importmap", "application/ld+json", "speculationrules"}
+bad = 0
+for f in ["design/home.html"] + sorted(glob.glob("articles/*/index.html")):
+    text = re.sub(r"<!--.*?-->", lambda m: re.sub(r"[^\n]", " ", m.group()), open(f).read(), flags=re.S)  # comments, keeping line numbers
+    inline = []
+    for m in re.finditer(r"<script\b([^>]*)>(.*?)</script>", text, re.S | re.I):
+        attrs, body = m.group(1), m.group(2).strip()
+        kind = re.search(r"""\btype\s*=\s*["']?([^"'\s>]+)""", attrs)
+        if re.search(r"\bsrc\s*=", attrs) or (kind and kind.group(1).lower() in TYPES) or body == JS_CLASS:
+            continue
+        inline.append(text[:m.start()].count("\n") + 1)
+    if f in ALLOWED and not inline:
+        print(f"check: {f} is in the inline-script list in scripts/check.sh but holds no inline script: delete it from the list"); bad = 1
+    if f not in ALLOWED:
+        for line in inline:
+            print(f"check: {f}:{line} hand-written inline <script>: put it in client/<name>.ts and mark the spot with <!--client:<name>--> (lib/client-script.ts)"); bad = 1
+sys.exit(bad)
+PY
+# CI workflows: valid (actionlint) and safe (zizmor: pinned actions, least privilege), where installed.
+if command -v actionlint >/dev/null; then actionlint .github/workflows/*.yml || fail=1; fi
+if command -v zizmor >/dev/null; then zizmor --offline -q .github/workflows/ >/dev/null 2>&1 || { zizmor --offline .github/workflows/; fail=1; }; fi
+# One 3D world: only lib/space imports three (the space engine, lib/space/engine.ts). A page that shows 3D imports
+# 'solenix-space' instead, so there is never a second world beside the first.
+git ls-files -co --exclude-standard -- '*.ts' '*.tsx' '*.html' | grep -v '^lib/space/' | xargs -r grep -n -E "(from|import)[[:space:]]*\(?[[:space:]]*['\"]three(/[^'\"]*)?['\"]" \
+  | while read -r l; do echo "check: only lib/space may import three (one 3D world; import 'solenix-space' instead): ${l:0:120}"; done | grep . && fail=1
+# Types: the compiler checks the whole repo (the page scripts were compiled at the top).
+npx tsc --noEmit || fail=1
+# Unit tests, next to the module they test (lib/**/*.test.ts, any depth), with Node's own test runner.
+node --test 'lib/**/*.test.ts' >/dev/null 2>&1 || { node --test 'lib/**/*.test.ts'; fail=1; }
+# The hero fit check opens pages in a browser, so locally it runs when something that shapes a first
+# screen changes; in CI it always runs.
+if [ -n "${CI:-}" ] || git diff --cached --name-only | grep -qE '^(articles/|app/\(site\)/|app/articles/|components/(home|site|space)/|design/(home\.html|tokens\.css|viewports\.json)|lib/(home|space)/|lib/site-(nav|hero|page)|scripts/hero-check)'; then
+  node scripts/hero-check.ts || fail=1
+fi
+node scripts/brand-images.ts --check || fail=1
 
-# No industry pages: the site speaks to every small business (design/DESIGN.md Decisions).
+# Copy follows the Voice rules: no banned words (the list lives in DESIGN.md).
+python3 scripts/voice-check.py design/home.html || fail=1
+
+# No industry pages: the site speaks to every small business (DESIGN.md Decisions).
 find "app/(site)" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | grep -i -E '/(law|legal|lawyers?|dental|dentists?|clinic|medical|realty|real-estate|restaurants?|trades?|accountants?|accounting)$' \
   | while read -r d; do echo "check: industry page $d (no industry pages; one site for every small business)"; done | grep . && fail=1
 
-# No public prices: both numbers are agreed on the call (design/DESIGN.md Pricing).
+# No public prices: both numbers are agreed on the call (DESIGN.md Pricing).
 python3 - design/home.html <<'PY' || fail=1
 import re, sys, importlib.util as u
 s = u.spec_from_file_location("v", "scripts/voice-check.py"); v = u.module_from_spec(s); s.loader.exec_module(v)
@@ -64,24 +125,40 @@ for m in missing: print(f"check: approved by Jager but missing from the homepage
 sys.exit(1 if missing else 0)
 PY
 
-# Open Design's own anti-slop linter: no P0 findings on the homepage.
-if command -v od >/dev/null && curl -s -m 2 http://127.0.0.1:55666 >/dev/null; then
-  OD_DAEMON_URL=http://127.0.0.1:55666 od lint design/home.html --fail-on p0 >/dev/null 2>&1 || bad "od lint: P0 design finding in design/home.html (run: od lint design/home.html)"
+# Impeccable's detector on the homepage. Findings may not rise above the baseline
+# (30 on 2026-10-09). Fix findings and lower the baseline; never raise it.
+# The launcher ships inside the installed plugin, whose path changes with each version: read it live.
+imp_plugin=$(python3 -c 'import json,os;p=json.load(open(os.path.expanduser("~/.claude/plugins/installed_plugins.json")))["plugins"].get("impeccable@impeccable") or [{}];print(p[0].get("installPath",""))' 2>/dev/null)
+IMP=${IMPECCABLE:-$imp_plugin/skills/impeccable/scripts/impeccable}
+IMPECCABLE_BASELINE=30
+if [ -x "$IMP" ]; then
+  det=$(mktemp)
+  "$IMP" detect --json --no-advisory design/home.html >"$det" 2>/dev/null; rc=$?
+  if [ "$rc" -gt 2 ]; then bad "impeccable detect failed on design/home.html (exit $rc)"
+  else python3 - "$det" "$IMPECCABLE_BASELINE" <<'PYEOF' || fail=1
+import json, sys
+found, base = json.load(open(sys.argv[1])), int(sys.argv[2])
+if len(found) > base:
+    for x in found: print(f"check: impeccable {x['antipattern']} on design/home.html:{x['line']}: {x['snippet']}")
+    print(f"check: impeccable found {len(found)} findings on design/home.html, above the baseline of {base} (scripts/check.sh)")
+    sys.exit(1)
+PYEOF
+  fi
+  rm -f "$det"
+else
+  echo "skip: impeccable is not installed (set IMPECCABLE=path); the homepage design detector did not run" >&2
 fi
 
 # Every source of truth named in AGENTS.md exists.
-for f in design/DESIGN.md design/tokens.css design/home.html design/app.html design/approved.md supabase/config.toml; do
+for f in DESIGN.md design/tokens.css design/home.html design/approved.md supabase/config.toml; do
   [ -f "$f" ] || bad "missing source of truth: $f"
 done
 
-# No orphaned Open Design sidecars.
-for s in design/*.artifact.json; do
-  [ -e "$s" ] || continue
-  [ -f "${s%.artifact.json}" ] || bad "orphaned sidecar: $s"
-done
-
-# The homepage is served from design/home.html, not a second React page.
-[ -f "app/(site)/page.tsx" ] && bad "second homepage: app/(site)/page.tsx (/ is design/home.html)"
+# The homepage is app/(site)/page.tsx, which reads design/home.html. No second route may serve "/".
+[ -f app/route.ts ] && bad "second homepage: app/route.ts (/ is app/(site)/page.tsx, which reads design/home.html)"
+grep -q 'homeSource' 'app/(site)/page.tsx' && grep -q '"design/home.html"' lib/home/source.ts || bad "the homepage must render design/home.html through lib/home/source.ts (app/(site)/page.tsx)"
+# One 3D world, mounted once by the site layout; the homepage binds to it (lib/space/world.ts).
+grep -q '<SpaceWorld />' 'app/(site)/layout.tsx' && grep -q 'HomeBinding' 'app/(site)/page.tsx' || bad "the 3D world must be mounted in app/(site)/layout.tsx, and the homepage must bind to it (app/(site)/page.tsx)"
 
 # The page Jager looks at must load. When a local server is up, / answers 200.
 # (A dev server that restarts onto a stale build cache serves 404 for every page.)

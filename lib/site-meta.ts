@@ -1,5 +1,5 @@
 // Tab icons and link-preview tags, one definition for the Next.js pages (app/layout.tsx)
-// and for the homepage, which is served as raw HTML (app/route.ts).
+// and for the pages served as raw HTML (the articles).
 // The images come from `npm run share-images` (public/favicon.ico, public/og.png).
 
 export const SITE_URL = "https://solenix.dev"
@@ -23,11 +23,11 @@ export const ICONS = {
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;")
 
 /** The same icons and preview tags as <head> markup, for a page Next.js does not render. */
-export function headTags(page: { title: string; description: string; path: string }) {
+export function headTags(page: { title: string; description: string; path: string; image?: string }) {
   const icons = ICONS.icon
     .map((i) => `<link rel="icon" href="${i.url}"${"sizes" in i ? ` sizes="${i.sizes}"` : ""}${"type" in i ? ` type="${i.type}"` : ""}${"media" in i ? ` media="${i.media}"` : ""}>`)
     .join("")
-  const img = SITE_URL + OG_IMAGE.url
+  const img = SITE_URL + (page.image ?? OG_IMAGE.url)
   return (
     icons +
     `<link rel="apple-touch-icon" href="${ICONS.apple}">` +
@@ -39,7 +39,7 @@ export function headTags(page: { title: string; description: string; path: strin
     `<meta property="og:image" content="${img}">` +
     `<meta property="og:image:width" content="${OG_IMAGE.width}">` +
     `<meta property="og:image:height" content="${OG_IMAGE.height}">` +
-    `<meta property="og:image:alt" content="${esc(OG_IMAGE.alt)}">` +
+    `<meta property="og:image:alt" content="${esc(page.image ? page.title : OG_IMAGE.alt)}">` +
     `<meta name="twitter:card" content="summary_large_image">` +
     `<meta name="twitter:image" content="${img}">`
   )

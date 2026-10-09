@@ -1,6 +1,6 @@
 # Site playbook: the movie homepage
 
-Research of 2026-09-30. Every change goes through Open Design, never by hand-editing `design/home.html`. Every impact below is a target or estimate against an unmeasured baseline (PostHog shows 0 solenix.dev pageviews in 30 days), so rule 11 ships first.
+Research of 2026-09-30. Every change goes through Impeccable, one named change at a time, and Jager judges each before the next. Every impact below is a target or estimate against an unmeasured baseline (PostHog shows 0 solenix.dev pageviews in 30 days), so rule 11 ships first.
 
 ## Decisions for the homepage
 

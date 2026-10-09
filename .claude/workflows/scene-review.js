@@ -5,14 +5,14 @@ export const meta = {
   phases: [
     { title: 'Judge', detail: 'one judge per scene reads its screenshots (motion on and off)' },
     { title: 'Verify', detail: 'a skeptic tries to refute each claimed failure' },
-    { title: 'Decide', detail: 'ship to Jager or write the next Open Design brief' },
+    { title: 'Decide', detail: 'ship to Jager or write the next Impeccable brief' },
   ],
 }
 
 // Run after `npm run shots -- http://localhost:3000/ <shotsDir>` (ONLY=pane is enough).
 // args: { shotsDir: absolute path to that folder, repo?: absolute repo path }
 const SHOTS = args.shotsDir
-const REPO = args.repo || '/Users/jagercooper/SolenixAI/solenix.dev'
+const REPO = args.repo || '.'
 phase('Judge')
 const SCENES = (await agent(`Read ${SHOTS}/index.json (a list of {file, viewport, motion, scene, id, step, of}). Group the entries with viewport "pane" by id, keeping the page order of first appearance. For each id return {id, label: a short description of the scene from its id and scene type, files: every file name for that id (motion and reduced)}. Return {scenes: [...]}.`, { label: 'list scenes', phase: 'Judge', schema: { type: 'object', properties: { scenes: { type: 'array', items: { type: 'object', properties: { id: { type: 'string' }, label: { type: 'string' }, files: { type: 'array', items: { type: 'string' } } }, required: ['id', 'label', 'files'] } } }, required: ['scenes'] } })).scenes
 log(`${SCENES.length} scenes to judge`)
@@ -26,7 +26,7 @@ const BAR = `You are reviewing the solenix.dev homepage the way its founder, Jag
 - Nothing static or dead. The races play under Reduce Motion too.
 - The stable orbit is wide and calm, not cramped.
 - Nothing overlaps or is cut off. Labels are legible.
-Also read ${REPO}/design/research/site-playbook.md ("Decisions for the homepage" and "The six examples") and the "## Decisions" section of ${REPO}/design/DESIGN.md. Hold the scene to them.`
+Also read ${REPO}/design/research/site-playbook.md ("Decisions for the homepage" and "The six examples") and the "## Decisions" section of ${REPO}/DESIGN.md. Hold the scene to them.`
 
 const JUDGED = {
   type: 'object',
@@ -71,6 +71,6 @@ const majors = ok.flatMap((r) => r.confirmed.filter((f) => f.severity === 'major
 log(`page: ${JSON.stringify(page)}; confirmed blockers ${blockers.length}, majors ${majors.length}`)
 
 phase('Decide')
-const decision = await agent(`You decide whether the solenix.dev homepage is ready to show its founder, from a verified scene review.\n\nRule: ready only if there are 0 confirmed blockers, at most 2 confirmed majors, and every page dimension averages 85 or more. Otherwise write the next Open Design brief.\n\nThe brief style is strict. Open Design works best with a short verdict plus intent: under 180 words, no feature lists, and no CSS or code. Group the confirmed failures by the underlying cause (e.g. "the races are still panels"), not one line per failure. Lead with the founder's standard and end with "Before you finish, check every scene at 872×837 with motion on and off."\n\nPage averages: ${JSON.stringify(page)}\nConfirmed blockers: ${JSON.stringify(blockers)}\nConfirmed majors: ${JSON.stringify(majors)}\nBest things per scene (keep these): ${JSON.stringify(ok.map((r) => ({ scene: r.scene, best: r.best_thing })))}\nBiggest lift per scene (build the brief from these, grouped by cause, when failures are few): ${JSON.stringify(ok.map((r) => ({ scene: r.scene, lowest: Object.entries(r.scores).sort((a, b) => a[1] - b[1])[0], lift: r.biggest_lift })))}\n\nReturn JSON: {ready: boolean, reason: string, brief: string (empty if ready)}.`, { label: 'decide', phase: 'Decide', schema: { type: 'object', properties: { ready: { type: 'boolean' }, reason: { type: 'string' }, brief: { type: 'string' } }, required: ['ready', 'reason', 'brief'] } })
+const decision = await agent(`You decide whether the solenix.dev homepage is ready to show its founder, from a verified scene review.\n\nRule: ready only if there are 0 confirmed blockers, at most 2 confirmed majors, and every page dimension averages 85 or more. Otherwise write the next Impeccable brief.\n\nThe brief style is strict. Impeccable works best with a short verdict plus intent: under 180 words, no feature lists, and no CSS or code. Group the confirmed failures by the underlying cause (e.g. "the races are still panels"), not one line per failure. Lead with the founder's standard and end with "Before you finish, check every scene at 872×837 with motion on and off."\n\nPage averages: ${JSON.stringify(page)}\nConfirmed blockers: ${JSON.stringify(blockers)}\nConfirmed majors: ${JSON.stringify(majors)}\nBest things per scene (keep these): ${JSON.stringify(ok.map((r) => ({ scene: r.scene, best: r.best_thing })))}\nBiggest lift per scene (build the brief from these, grouped by cause, when failures are few): ${JSON.stringify(ok.map((r) => ({ scene: r.scene, lowest: Object.entries(r.scores).sort((a, b) => a[1] - b[1])[0], lift: r.biggest_lift })))}\n\nReturn JSON: {ready: boolean, reason: string, brief: string (empty if ready)}.`, { label: 'decide', phase: 'Decide', schema: { type: 'object', properties: { ready: { type: 'boolean' }, reason: { type: 'string' }, brief: { type: 'string' } }, required: ['ready', 'reason', 'brief'] } })
 
 return { page, decision, scenes: ok.map((r) => ({ scene: r.scene, scores: r.scores, confirmed: r.confirmed, refuted: (r.refuted || []).length, minor: r.minor.length, best: r.best_thing, lift: r.biggest_lift })) }

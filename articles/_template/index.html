@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- Required by the article rules (lib/article-rules.ts): title 3–70 characters,
+     description 50–200 characters, date YYYY-MM-DD. The site builds the share tags from these. -->
+<title>Article title</title>
+<meta name="description" content="One sentence a busy owner reads in a feed and wants to open: what this shows and why it matters.">
+<meta name="article:published_time" content="2026-01-01">
+<!-- The site adds the rest: dark from the first byte, the design tokens (design/tokens.css: use only
+     their var(--…) names, never a raw colour), the nav, share tags and measurement (lib/site-page.ts).
+     The nav lists each element that has an id and data-nav="Label" as a link on this page. -->
+<style>
+*{box-sizing:border-box}
+html { background: var(--bg); }
+
+body{margin:0;background:radial-gradient(ellipse 90% 60% at 78% -10%,color-mix(in srgb,var(--sun2) 14%,transparent),transparent 60%),var(--bg);color:var(--text);font:17px/1.6 ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;background-image:linear-gradient(var(--grid-line) 1px,transparent 1px),linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);background-size:32px 32px}
+.wrap{position:relative;max-width:var(--container);margin:0 auto;padding:0 20px 96px}
+.btn{display:inline-flex;align-items:center;min-height:44px;padding:0 20px;border-radius:999px;font-weight:600;text-decoration:none;color:var(--text);border:1px solid var(--line-strong)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.eyebrow{font:600 .8rem/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+h1{font:700 clamp(2.6rem,1.9rem + 3vw,5rem)/.98 Sora,ui-sans-serif,sans-serif;letter-spacing:-.045em;margin:16px 0;text-wrap:balance}
+h1 .grad{background:var(--grad-headline);-webkit-background-clip:text;background-clip:text;color:transparent}
+h2{font:700 clamp(2rem,1.6rem + 2vw,3.2rem)/1.04 Sora,ui-sans-serif,sans-serif;letter-spacing:-.03em;margin:0;text-wrap:balance}
+.lede{color:var(--muted);font-size:clamp(1.05rem,2.6vw,1.25rem);max-width:34rem}
+section{padding-top:72px;display:grid;gap:20px}
+.card{padding:28px;border-radius:20px;background:var(--glass-bg);border:1px solid var(--line);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-md)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <!-- The hero: exactly one screen on any device (the site's hero frame, lib/site-hero.ts).
+       Contract: a kicker, a concrete headline of 12 words or fewer (never animated), one sentence
+       ending in an open question, one action, the live thing itself, and the scroll cue.
+       npm run hero-check proves it fits every real and edge screen size. -->
+  <header class="sx-hero" data-hero>
+   <div class="sx-hero-in">
+    <div class="sx-hero-text">
+     <div class="sx-kicker">Topic · Month Year</div>
+     <h1>The headline with one <span class="grad">glowing</span> word</h1>
+     <p class="sx-sub">One plain sentence of what happened, then the open question it raises?</p>
+     <div><a class="btn primary" href="#idea">The one first step →</a></div>
+    </div>
+    <div class="card">The live thing itself: a playground, a simulation, the data you can touch.</div>
+   </div>
+   <a class="sx-cue" href="#idea">The idea ↓</a>
+  </header>
+
+  <section id="idea" data-nav="The idea">
+    <h2>One section, one idea</h2>
+    <div class="card">Replace with the real thing: a playground, a picture, a map. Show before you tell.</div>
+  </section>
+
+  <section>
+    <div class="card" style="display:grid;gap:14px">
+      <div class="eyebrow">From Solenix</div>
+      <h2>Tie the story to what Solenix does for a business.</h2>
+      <p class="lede">One AI at the centre of the tools you already use, set up and taught. A fixed price, in writing.</p>
+      <div><a class="btn primary" href="/book">Book a call</a></div>
+    </div>
+  </section>
+
+  <section id="sources" data-nav="Sources">
+    <h2>Sources</h2>
+    <ol><li>Every fact links to its source, newest first, with its date.</li></ol>
+  </section>
+</div>
+</body>
+</html>
