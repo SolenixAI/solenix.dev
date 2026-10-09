@@ -28,14 +28,13 @@ function card(a: Article, feature = false) {
 }
 
 // Runs on /articles. Every size and time is read live: the screen, the box, the tokens.
-// A live window shows a real page at a real screen width (data-vw: a width, or "square" to lay it out
-// as a square no smaller than its box; else your screen's), scaled into its box and
+// A live window shows a real page at a real screen width (data-vw, or your screen's), scaled into its box and
 // as tall as the box allows: no gaps, no crop. A window with "play" takes touches: the page inside
 // reacts in place, and any link in it is a way in. Entering grows the window to the full screen, then
 // the browser opens the page, which paints the same pixels.
 const LIVE_JS = `(()=>{const css=getComputedStyle(document.documentElement),tok=n=>css.getPropertyValue(n).trim();
 const ms=v=>parseFloat(v)*(v.endsWith("ms")?1:1000);
-const box=c=>{const r=c.getBoundingClientRect(),v=c.dataset.vw,w=v=="square"?Math.max(r.width,760):+v||innerWidth,s=r.width/w;return{r,w,s,h:r.height/s}};
+const box=c=>{const r=c.getBoundingClientRect(),w=+c.dataset.vw||innerWidth,s=r.width/w;return{r,w,s,h:r.height/s}};
 function fit(){document.querySelectorAll(".live").forEach(c=>{const b=box(c);c.style.setProperty("--s",b.s);c.style.setProperty("--vw",b.w+"px");c.style.setProperty("--fh",b.h+"px")})}
 fit();addEventListener("resize",fit);new ResizeObserver(fit).observe(document.body);
 function enter(c,href){const f=c.querySelector("iframe"),b=box(c),cs=getComputedStyle(c),rad=parseFloat(cs.borderTopLeftRadius)||0,card=c.closest("[data-live-scope]");
@@ -52,9 +51,9 @@ document.addEventListener("click",e=>{const a=e.target.closest("a[href]"),scope=
 addEventListener("pageshow",e=>{if(!e.persisted)return;document.querySelectorAll(".live iframe").forEach(f=>{f.getAnimations().forEach(x=>x.cancel());f.style.cssText=""});document.querySelectorAll("[data-live-scope]").forEach(c=>c.style.cssText="");fit()});
 })()`
 
-// Three heroes to compare live (?hero=orbit, phone or window). Each leads with the newest article,
+// Two heroes to compare live (?hero=phone or window). Each leads with the newest article,
 // playable in place. The chosen one stays; the others go.
-const HEROES = ["orbit", "phone", "window"] as const
+const HEROES = ["phone", "window"] as const
 const PICK_JS = `(()=>{const v=new URLSearchParams(location.search).get("hero");document.documentElement.dataset.hv=${JSON.stringify(HEROES)}.includes(v)?v:"${HEROES[0]}"})()`
 
 function heroes(a: Article, more: number) {
@@ -64,27 +63,11 @@ function heroes(a: Article, more: number) {
   const enter = `<a class="enter" href="${a.path}">Enter ${t}<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>`
   const cue = `<a class="sx-cue" href="#more">${more ? "More articles" : "About Solenix"} ↓</a>`
   return `
-<header class="sx-hero hv hv-orbit" data-hero data-live-scope>
- <div class="sx-hero-in">
-  <div class="sx-hero-text">
-   <h1>Pages you can <em>play with</em></h1>
-   <p class="sx-sub">Touch the live article. Then step inside.</p>
-   <div>${enter}</div>
-  </div>
-  <div class="orbit"><div class="orbit-disc">
-   <svg class="orbit-ring" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="49" /></svg>
-   <span class="orbit-dot" aria-hidden="true"><i></i></span>
-   ${live("square")}
-   <span class="orbit-tag"><b>New</b> ${t}</span>
-  </div></div>
- </div>
- ${cue}
-</header>
 <header class="sx-hero hv hv-phone" data-hero data-live-scope>
  <div class="sx-hero-in">
   <div class="sx-hero-text">
    <h1>Pages you can <em>play with</em></h1>
-   <p class="sx-sub">Made for the phone in your hand. Tap a square.</p>
+   <p class="sx-sub">Made for the phone in your hand. Try it right here.</p>
    <div>${enter}</div>
   </div>
   <div class="phone">
@@ -126,22 +109,12 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background-im
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 ::selection{background:var(--accent);color:var(--accent-ink)}
 /* The heroes being compared: only the picked one shows. */
-html:not([data-hv="orbit"]) .hv-orbit,html:not([data-hv="phone"]) .hv-phone,html:not([data-hv="window"]) .hv-window{display:none}
+html:not([data-hv="phone"]) .hv-phone,html:not([data-hv="window"]) .hv-window{display:none}
 .hv h1 em{font-style:normal;color:var(--accent-text)}
 .enter{display:inline-flex;align-items:center;gap:10px;min-height:var(--tap-min);padding:0 20px 0 22px;border-radius:var(--radius-pill);background:var(--accent);color:var(--accent-ink);font:600 clamp(.9rem,2cqmin,1.05rem)/1 var(--font-text);text-decoration:none;white-space:nowrap;box-shadow:0 8px 24px -8px color-mix(in srgb,var(--accent) 60%,transparent);transition:background .2s,transform .2s}
 .enter:hover{background:var(--accent-hover);transform:translateY(-1px)}
 .enter svg{width:16px;height:16px}
 .live.play iframe{pointer-events:auto}
-/* Orbit: the article is the sun, seen through a round window, with the mark's ring and agent dot. */
-.orbit{height:100%;width:100%;container-type:size;display:grid;place-items:center}
-.orbit-disc{position:relative;width:calc(min(100cqw,100cqh) - 24px);aspect-ratio:1;display:grid;place-items:center}
-.orbit .live{width:86%;aspect-ratio:1;border-radius:50%;box-shadow:0 0 0 1px var(--line-strong),0 30px 80px -20px color-mix(in srgb,var(--sun2) 45%,transparent),0 0 120px color-mix(in srgb,var(--sun2) 18%,transparent)}
-.orbit-ring{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
-.orbit-ring circle{fill:none;stroke:var(--ring);stroke-opacity:.35;stroke-width:.3}
-.orbit-dot{position:absolute;inset:0;animation:snav-orbit 90s linear infinite;pointer-events:none}
-.orbit-dot i{position:absolute;top:calc(.7% - 6px);left:50%;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:var(--ring);box-shadow:0 0 14px var(--sun1)}
-.orbit-tag{position:absolute;bottom:2%;left:50%;transform:translateX(-50%);z-index:3;padding:.55em 1em;border-radius:var(--radius-pill);background:color-mix(in srgb,var(--surface-solid) 86%,transparent);border:1px solid var(--line);font:500 clamp(.68rem,1.6cqmin,.9rem)/1 var(--font-mono);letter-spacing:.06em;color:var(--muted);white-space:nowrap}
-.orbit-tag b,.win-cap b{color:var(--accent-text);font-weight:600;margin-right:.5em}
 /* Phone: the article on the screen it was made for, at true size, beside the words. */
 .phone{height:100%;width:100%;container-type:size;display:grid;place-items:center}
 .phone-body{position:relative;box-sizing:border-box;height:min(100cqh,calc(100cqw * 844 / 390));aspect-ratio:390/844;padding:10px;border-radius:clamp(28px,6cqh,52px);background:var(--surface-solid);box-shadow:inset 0 1px 0 var(--glass-edge),0 0 0 1px var(--line-strong),0 40px 90px -30px color-mix(in srgb,var(--sun2) 40%,transparent)}
