@@ -6,6 +6,10 @@ cd "$(git rev-parse --show-toplevel)"
 fail=0
 bad() { echo "check: $1"; fail=1; }
 
+# The page scripts are compiled from client/*.ts first: lib/site-nav.ts and the checks below import the result
+# (lib/client.generated.ts, gitignored), so a fresh checkout (CI) must build it before anything reads it.
+node --no-warnings scripts/build-client.ts >/dev/null || bad "client scripts do not compile (scripts/build-client.ts)"
+
 # One version of everything: no versioned file names.
 git ls-files --cached --others --exclude-standard \
   | grep -E '(^|/)[^/]*[-_.]v[0-9]+(\.|$)' \
@@ -83,8 +87,7 @@ if command -v zizmor >/dev/null; then zizmor --offline -q .github/workflows/ >/d
 # 'solenix-space' instead, so there is never a second world beside the first.
 git ls-files -co --exclude-standard -- '*.ts' '*.tsx' '*.html' | grep -v '^lib/space/' | xargs -r grep -n -E "(from|import)[[:space:]]*\(?[[:space:]]*['\"]three(/[^'\"]*)?['\"]" \
   | while read -r l; do echo "check: only lib/space may import three (one 3D world; import 'solenix-space' instead): ${l:0:120}"; done | grep . && fail=1
-# Types: the page scripts are compiled from client/*.ts first, then the compiler checks the whole repo.
-node --no-warnings scripts/build-client.ts >/dev/null || fail=1
+# Types: the compiler checks the whole repo (the page scripts were compiled at the top).
 npx tsc --noEmit || fail=1
 # Unit tests, next to the module they test (lib/**/*.test.ts, any depth), with Node's own test runner.
 node --test 'lib/**/*.test.ts' >/dev/null 2>&1 || { node --test 'lib/**/*.test.ts'; fail=1; }
