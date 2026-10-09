@@ -2,8 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 import { ICONS, OG_IMAGE } from "@/lib/site-meta";
-import { FONT_CSS, FONT_PRELOAD } from "@/lib/site-fonts.mjs";
-import { sunGradient } from "@/lib/site-nav.mjs";
+import { FONT_CSS, FONT_PRELOAD } from "@/lib/site-fonts";
+import { sunGradient } from "@/lib/site-nav";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://solenix.dev"),
@@ -22,7 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en-CA" suppressHydrationWarning>
       <head>
-        {/* Sora, per DESIGN.md §2: served from the site itself (lib/site-fonts.mjs); never swaps. */}
+        {/* Sora, per DESIGN.md §2: served from the site itself (lib/site-fonts.ts); never swaps. */}
         <link rel="preload" href={FONT_PRELOAD} as="font" type="font/woff2" crossOrigin="" />
         <link rel="stylesheet" href={FONT_CSS} />
         {/* Before first paint: mark the page as scripted (so reveals can hide safely)

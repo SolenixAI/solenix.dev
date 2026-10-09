@@ -50,7 +50,7 @@ The gap Solenix closes, in everything it builds: on one side, all the best techn
 
 ## Brand Commitments
 
-- Name: Solenix. Mark: a sun, one orbit ring, one agent dot (lib/site-nav.mjs).
+- Name: Solenix. Mark: a sun, one orbit ring, one agent dot (lib/site-nav.ts).
 - Phrases that stay word for word on the homepage: design/approved.md.
 - Voice: plain words, short sentences, claims that land on time or money; banned words in DESIGN.md (Voice).
 - "Agents Marketplace", never "Tools we use". "Solenix platform" for the client sign-in.

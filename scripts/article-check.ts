@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-// Commit gate for articles/: runs the same rules as the build (lib/article-rules.mjs).
+// Commit gate for articles/: runs the same rules as the build (lib/article-rules.ts).
 // Folders that start with "_" (the template) are not articles and are skipped.
 import { readdir, readFile } from "node:fs/promises"
-import { articleProblems } from "../lib/article-rules.mjs"
+import { articleProblems } from "../lib/article-rules.ts"
 
 let fail = 0
 for (const e of await readdir("articles", { withFileTypes: true }).catch(() => [])) {

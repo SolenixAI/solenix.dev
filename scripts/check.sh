@@ -37,11 +37,14 @@ grep -q 'servePage' app/route.ts && grep -q 'POSTHOG_SNIPPET' lib/site-page.ts &
 # The agents page is called "Agents Marketplace" everywhere.
 grep -rn ">Tools we use<" app components design/*.html 2>/dev/null | while read -r l; do echo "check: say \"Agents Marketplace\", not \"Tools we use\": ${l:0:80}"; done | grep . && fail=1
 
-# Every article passes the article rules (lib/article-rules.mjs; the build enforces the same rules).
-node scripts/article-check.mjs || fail=1
-node scripts/sot-check.mjs || fail=1
-node scripts/journey-check.mjs || fail=1
-node scripts/origin-check.mjs || fail=1
+# Every article passes the article rules (lib/article-rules.ts; the build enforces the same rules).
+node scripts/article-check.ts || fail=1
+node scripts/sot-check.ts || fail=1
+node scripts/journey-check.ts || fail=1
+node scripts/origin-check.ts || fail=1
+# TypeScript only: no JavaScript file outside scripts/js-allowlist.txt (a list that may only shrink).
+git ls-files -co --exclude-standard | grep -E '\.(js|jsx|mjs|cjs)$' | grep -v '^public/' | grep -vxFf <(grep -v '^#' scripts/js-allowlist.txt) \
+  | while read -r f; do echo "check: JavaScript file $f (the repo is TypeScript; see scripts/js-allowlist.txt)"; done | grep . && fail=1
 # CI workflows: valid (actionlint) and safe (zizmor: pinned actions, least privilege), where installed.
 if command -v actionlint >/dev/null; then actionlint .github/workflows/*.yml || fail=1; fi
 if command -v zizmor >/dev/null; then zizmor --offline -q .github/workflows/ >/dev/null 2>&1 || { zizmor --offline .github/workflows/; fail=1; }; fi
@@ -50,9 +53,9 @@ npx tsc --noEmit || fail=1
 # The hero fit check opens pages in a browser, so locally it runs when something that shapes a first
 # screen changes; in CI it always runs.
 if [ -n "${CI:-}" ] || git diff --cached --name-only | grep -qE '^(articles/|design/(home\.html|tokens\.css|viewports\.json)|app/articles/|lib/site-(nav|hero|page)|scripts/hero-check)'; then
-  node scripts/hero-check.mjs || fail=1
+  node scripts/hero-check.ts || fail=1
 fi
-node scripts/brand-images.mjs --check || fail=1
+node scripts/brand-images.ts --check || fail=1
 
 # Copy follows the Voice rules: no banned words (the list lives in DESIGN.md).
 python3 scripts/voice-check.py design/home.html || fail=1

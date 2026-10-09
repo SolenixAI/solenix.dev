@@ -2,7 +2,7 @@ import { existsSync } from "node:fs"
 import { readdir, readFile } from "node:fs/promises"
 import path from "node:path"
 import { servePage } from "@/lib/site-page"
-import { SLUG, articleProblems } from "@/lib/article-rules.mjs"
+import { SLUG, articleProblems } from "@/lib/article-rules"
 
 // Articles are self-contained interactive pages: one folder per article in articles/,
 // holding index.html and whatever data it loads. Adding an article = adding a folder.

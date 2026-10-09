@@ -9,8 +9,8 @@ import { OG_IMAGE } from "@/lib/site-meta"
 import { Cmd } from "./tools"
 import { AgentsHero, type HeroTool, type HeroVariant } from "./hero"
 import { AGENTS_HERO_CSS } from "./hero-css"
-import { HERO_CSS } from "@/lib/site-hero.mjs"
-import { markShapes, sunGradient } from "@/lib/site-nav.mjs"
+import { HERO_CSS } from "@/lib/site-hero"
+import { markShapes, sunGradient } from "@/lib/site-nav"
 
 export const metadata: Metadata = {
   title: "Agents Marketplace",

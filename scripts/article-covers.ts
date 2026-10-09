@@ -2,7 +2,7 @@
 // The same image is the card on /articles and the share image of the article.
 // Run with the dev server up, after an article's top changes:   npm run article-covers [-- <origin>]
 import { mkdir, readdir } from "node:fs/promises"
-import { launch } from "./browser.mjs"
+import { launch } from "./browser.ts"
 
 const ORIGIN = process.argv[2] ?? "http://localhost:3000"
 const slugs = (await readdir("articles", { withFileTypes: true })).filter((e) => e.isDirectory() && !e.name.startsWith("_")).map((e) => e.name)

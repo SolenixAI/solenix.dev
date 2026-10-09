@@ -6,9 +6,9 @@ import { readFileSync } from "node:fs"
 const RULES = [
   {
     what: "the site nav, the mark or the sun's light",
-    owner: "lib/site-nav.mjs",
+    owner: "lib/site-nav.ts",
     re: /Solenix platform|Client sign in|class="f?nav"|<header class="snav"|cx="27" cy="9"|cx=\{27\}|cx="\.42" cy="\.38"/,
-    allow: [],
+    allow: [] as string[],
   },
 ]
 

@@ -1,8 +1,8 @@
 # Solenix brand images
 
-The logos, the org avatar, the touch icon and the GitHub banners in `public/brand/out/` are drawn by `scripts/brand-images.mjs` from the one source of each part:
+The logos, the org avatar, the touch icon and the GitHub banners in `public/brand/out/` are drawn by `scripts/brand-images.ts` from the one source of each part:
 
-- the mark and the sun's light: `lib/site-nav.mjs`
+- the mark and the sun's light: `lib/site-nav.ts`
 - colours and type: `design/tokens.css` (the dark and light values of each token)
 
 Never edit a file in `public/brand/out/` by hand. Change the source, then run `npm run brand`. `npm run check` fails if a file differs from what the sources draw.

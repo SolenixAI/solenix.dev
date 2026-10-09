@@ -1,4 +1,4 @@
-// The site's fonts, served from the site itself (scripts/vendor.mjs copies them from npm).
+// The site's fonts, served from the site itself (scripts/vendor.ts copies them from npm).
 // One source for every page: raw HTML pages get fontHead() from lib/site-page.ts, React pages
 // render the same links in app/layout.tsx. The main face is preloaded, so it is almost always
 // there before the first paint; if it is late, font-display: optional keeps the system face.

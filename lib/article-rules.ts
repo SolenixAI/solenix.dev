@@ -1,4 +1,4 @@
-import { NAV } from "./site-nav.mjs"
+import { NAV } from "./site-nav.ts"
 
 // The rules every article must pass, in one place. Two gates use them:
 // the build (lib/articles.ts refuses a failing page) and the commit check (scripts/check.sh).
@@ -7,7 +7,7 @@ export const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 const MAX_BYTES = 8 * 1024 * 1024
 
 // Things that must never reach a public page.
-const PRIVATE = [
+const PRIVATE: [RegExp, string][] = [
   [/\/Users\/[a-z]/i, "a local file path"],
   [/\bjdcooper\b|jagerdcooper@|jagerabe@/i, "a private email or inbox name"],
   [/\b(?:localhost|127\.0\.0\.1):\d+/i, "a localhost link"],
@@ -16,9 +16,9 @@ const PRIVATE = [
 ]
 
 /** Problems with one article page; empty means it passes. */
-export function articleProblems(slug, html) {
-  const out = []
-  const pick = (re) => html.match(re)?.[1]?.trim() ?? ""
+export function articleProblems(slug: string, html: string): string[] {
+  const out: string[] = []
+  const pick = (re: RegExp) => html.match(re)?.[1]?.trim() ?? ""
   if (!SLUG.test(slug)) out.push(`folder name "${slug}" must be lower-case words joined by hyphens`)
   const title = pick(/<title>([^<]*)<\/title>/)
   if (title.length < 3 || title.length > 70) out.push(`<title> must be 3–70 characters (now ${title.length})`)
@@ -28,7 +28,7 @@ export function articleProblems(slug, html) {
     out.push(`<meta name="article:published_time" content="YYYY-MM-DD"> is missing or not a date`)
   if (!/<meta name="viewport"[^>]*width=device-width/i.test(html)) out.push(`<meta name="viewport" content="width=device-width, initial-scale=1"> is missing`)
   if (Buffer.byteLength(html) > MAX_BYTES) out.push(`page is larger than 8 MB`)
-  // The site adds the nav (lib/site-nav.mjs); a page that brings its own would show two.
+  // The site adds the nav (lib/site-nav.ts); a page that brings its own would show two.
   if (/<nav\b|class="f?nav"/i.test(html) || html.includes(NAV.platform.label))
     out.push(`holds its own nav: remove it; the site adds one, and lists each id + data-nav="Label" as a link`)
   // The first screen is a hero that the site can check and derive the card and share image from.

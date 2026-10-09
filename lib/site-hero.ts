@@ -6,7 +6,7 @@
 //   .sx-hero-text   kicker, headline, one sentence, one action, centred without ever rising under the nav
 //   .sx-kicker .sx-sub .sx-cue   the kicker line, the sentence, and the scroll cue
 // The contract and the research behind it: design/journeys.md ("First landing") and
-// scripts/hero-check.mjs, which proves the fit at every real and edge screen size.
+// scripts/hero-check.ts, which proves the fit at every real and edge screen size.
 
 export const HERO_CSS = `
 .sx-hero{position:relative;box-sizing:border-box;height:100svh;width:100vw;margin-inline:calc(50% - 50vw);--cue-gap:max(6px,1.6svh);
@@ -27,4 +27,4 @@ export const HERO_CSS = `
 `.trim()
 
 /** Add the hero frame's style to a page that uses it. */
-export const withHero = (html) => (/class="[^"]*\bsx-hero\b/.test(html) ? html.replace("</head>", `<style>${HERO_CSS}</style></head>`) : html)
+export const withHero = (html: string): string => (/class="[^"]*\bsx-hero\b/.test(html) ? html.replace("</head>", `<style>${HERO_CSS}</style></head>`) : html)

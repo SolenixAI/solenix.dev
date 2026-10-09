@@ -9,7 +9,7 @@
 //          Reduce Motion on, because reduced motion stops camera movement, not
 //          the demonstration.
 import os from "node:os"
-import { launch } from "./browser.mjs"
+import { launch } from "./browser.ts"
 
 const URL = process.argv[2] ?? "http://localhost:3000/"
 const MIN_WORLD = Number(process.env.MIN_WORLD ?? 60)
@@ -30,11 +30,11 @@ const worldShare = () => {
     const cs = getComputedStyle(c)
     return cs.visibility !== "hidden" && cs.display !== "none" && Number(cs.opacity) > 0.2 && c.offsetParent !== null
   })
-  const inCanvas = (x, y) => canvases.some((c) => {
+  const inCanvas = (x: number, y: number) => canvases.some((c) => {
     const r = c.getBoundingClientRect()
     return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom
   })
-  const covers = (e) => {
+  const covers = (e: Element) => {
     const cs = getComputedStyle(e)
     const m = cs.backgroundColor.match(/rgba?\(([^)]+)\)/)
     const alpha = m ? Number(m[1].split(",")[3] ?? 1) : 0
@@ -68,14 +68,15 @@ let failed = 0, flaky = 0
 const rows = []
 for (const [vpName, viewport] of Object.entries(VIEWPORTS)) {
   if (ONLY && vpName !== ONLY) continue
-  for (const motion of ["no-preference", "reduce"]) {
+  for (const motion of ["no-preference", "reduce"] as const) {
     const page = await browser.newPage({ viewport, deviceScaleFactor: 2, reducedMotion: motion })
     await page.goto(URL, { waitUntil: "networkidle" })
-    const scenes = await page.$$eval("[data-scene]", (els) => els.map((e) => ({ id: e.id, scene: e.dataset.scene })))
+    const scenes = await page.$$eval("[data-scene]", (els) => els.map((e) => ({ id: e.id, scene: (e as HTMLElement).dataset.scene ?? "" })))
     // One measurement of a scene: average world share over its screens, and whether anything moved.
-    const measure = async (id) => {
+    const measure = async (id: string) => {
       const box = await page.locator(`#${id}`).boundingBox()
-      const top = await page.evaluate((sel) => document.querySelector(sel).getBoundingClientRect().top + scrollY, `#${id}`)
+      const top = await page.evaluate((sel) => document.querySelector(sel)!.getBoundingClientRect().top + scrollY, `#${id}`)
+      if (!box) throw new Error(`scene ${id} has no box`)
       const steps = Math.max(1, Math.round(box.height / viewport.height))
       let world = 0, alive = false
       for (let k = 0; k < steps; k++) {
@@ -92,7 +93,7 @@ for (const [vpName, viewport] of Object.entries(VIEWPORTS)) {
     }
     for (const { id, scene } of scenes) {
       const needAlive = motion === "no-preference" || DEMO_SCENES.includes(scene)
-      const problemsOf = (m) => [m.world < MIN_WORLD && `world ${m.world}% < ${MIN_WORLD}%`, needAlive && !m.alive && "frozen"].filter(Boolean)
+      const problemsOf = (m: { world: number; alive: boolean }) => [m.world < MIN_WORLD && `world ${m.world}% < ${MIN_WORLD}%`, needAlive && !m.alive && "frozen"].filter(Boolean)
       let m = await measure(id)
       let problems = problemsOf(m)
       let status = problems.length ? "FAIL" : "ok  "
@@ -107,9 +108,9 @@ for (const [vpName, viewport] of Object.entries(VIEWPORTS)) {
     for (const { id } of scenes) {
       if (!(await page.evaluate((id) => !!document.querySelector(`#${id} [data-state]`), id))) continue
       await page.evaluate(() => scrollTo(0, 0)); await page.waitForTimeout(300)
-      await page.evaluate((id) => document.getElementById(id).scrollIntoView(), id)
+      await page.evaluate((id) => document.getElementById(id)!.scrollIntoView(), id)
       const t0 = Date.now()
-      const ok = await page.waitForFunction((id) => document.getElementById(id).classList.contains("is-won"), id, { timeout: (MAX_PAYOFF_S + 5) * 1000 }).then(() => true, () => false)
+      const ok = await page.waitForFunction((id) => document.getElementById(id)!.classList.contains("is-won"), id, { timeout: (MAX_PAYOFF_S + 5) * 1000 }).then(() => true, () => false)
       const secs = (Date.now() - t0) / 1000
       const slow = !ok || secs > MAX_PAYOFF_S
       if (slow) failed++

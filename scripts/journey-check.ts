@@ -8,8 +8,8 @@ const DOC = "design/journeys.md"
 const problems = []
 
 // Pages, from the code.
-const pages = new Set()
-const walk = (dir) => {
+const pages = new Set<string>()
+const walk = (dir: string) => {
   for (const name of readdirSync(dir)) {
     const file = path.join(dir, name)
     if (statSync(file).isDirectory()) walk(file)

@@ -8,7 +8,7 @@
 //   npm run hero-check [-- <base url>]   (starts the dev server itself when none is running)
 import { execFileSync, spawn } from "node:child_process"
 import { readdirSync, readFileSync, statSync } from "node:fs"
-import { launch } from "./browser.mjs"
+import { launch } from "./browser.ts"
 
 const sizes = (() => {
   const v = JSON.parse(readFileSync("design/viewports.json", "utf8"))
@@ -18,7 +18,7 @@ const sizes = (() => {
 // Every public page, found from the routes (never a hand-kept list): app/**/route.ts and page.tsx,
 // route groups dropped, the client platform under /app and non-page routes (feeds, files, dynamic
 // segments) left out; each article from articles/.
-const routes = (dir, at = "") => readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
+const routes = (dir: string, at = ""): string[] => readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
   if (e.isDirectory()) return /^\[|^\(portal\)$|^api$|\./.test(e.name) ? [] : routes(`${dir}/${e.name}`, /^\(.*\)$/.test(e.name) ? at : `${at}/${e.name}`)
   return /^(route\.ts|page\.tsx)$/.test(e.name) ? [at || "/"] : []
 })
@@ -29,7 +29,7 @@ const up = () => fetch(base).then((r) => r.ok, () => false)
 let server
 if (!(await up())) {
   base = "http://localhost:3123"
-  execFileSync("node", ["scripts/vendor.mjs"]) // what predev does for npm run dev
+  execFileSync("node", ["scripts/vendor.ts"]) // what predev does for npm run dev
   server = spawn("npx", ["next", "dev", "-p", "3123"], { stdio: "ignore" })
   for (let i = 0; i < 120 && !(await up()); i++) await new Promise((r) => setTimeout(r, 500))
 }
@@ -42,7 +42,7 @@ const measure = () => {
   if (Math.abs(r.top) > 1) out.push(`hero starts ${Math.round(r.top)}px from the top`)
   if (Math.abs(r.height - H) > 1) out.push(`hero is ${Math.round(r.height)}px tall; the screen is ${H}px`)
   if (document.documentElement.scrollWidth > W + 1) out.push(`page scrolls sideways (${document.documentElement.scrollWidth}px wide)`)
-  const clipped = (el) => {
+  const clipped = (el: Element) => {
     for (let p = el.parentElement; p && p !== hero; p = p.parentElement) if (getComputedStyle(p).overflow !== "visible") return true
     return false
   }
@@ -55,7 +55,7 @@ const measure = () => {
     }
   }
   // Nothing in the hero hides under a bar that floats over it: a fixed bar, or the site nav, which
-  // scrolls away with an article (lib/site-nav.mjs). A bar not shown yet (hidden) covers nothing.
+  // scrolls away with an article (lib/site-nav.ts). A bar not shown yet (hidden) covers nothing.
   const bars = [...document.querySelectorAll("body *")].filter((e) => {
     const cs = getComputedStyle(e)
     return (cs.position === "fixed" || e.matches("[data-snav]")) && cs.visibility !== "hidden" && !hero.contains(e)
@@ -71,7 +71,7 @@ const measure = () => {
   // Text never sits on top of other text, except an overlay meant to float (data-overlay).
   const texts = [...hero.querySelectorAll("*")].filter((el) => {
     if (el.closest("[data-overlay]") || getComputedStyle(el).visibility === "hidden") return false
-    return [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim())
+    return [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent?.trim())
   }).map((el) => ({ el, b: el.getBoundingClientRect() })).filter(({ b }) => b.width && b.height)
   overlap: for (let i = 0; i < texts.length; i++)
     for (let j = i + 1; j < texts.length; j++) {
@@ -99,7 +99,7 @@ try {
       await page.goto(base + path, { waitUntil: "load" })
       await page.evaluate(() => document.fonts.ready)
       // Judge the settled first screen: wait for one-off animations (not endless ones) to end.
-      await page.waitForFunction(() => document.getAnimations().every((a) => a.playState !== "running" || a.effect.getComputedTiming().endTime === Infinity), null, { timeout: 10000 }).catch(() => {})
+      await page.waitForFunction(() => document.getAnimations().every((a) => a.playState !== "running" || a.effect?.getComputedTiming().endTime === Infinity), null, { timeout: 10000 }).catch(() => {})
       for (const p of await page.evaluate(measure)) {
         console.log(`hero: ${path} at ${w}×${h}: ${p}`)
         bad++

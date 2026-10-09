@@ -4,7 +4,7 @@ title: "User journeys"
 description: "Every person who uses solenix.dev, what they want, and how each step feels today, scored 1 to 5."
 tags: [ux, journeys, solenix.dev]
 sources:
-  - lib/site-nav.mjs, lib/site-page.ts (nav and shared page parts)
+  - lib/site-nav.ts, lib/site-page.ts (nav and shared page parts)
   - design/home.html (homepage)
   - app/articles/route.ts, articles/ (articles)
   - app/(site)/agents/page.tsx (Agents Marketplace)
@@ -20,7 +20,7 @@ stale_after: 2026-11-08
 
 Every page on solenix.dev exists for a person who wants something. Each journey below is that person's story, then every step, scored for how it feels **today**: 1 is bad, 5 is great. A step at 3 or less is the next thing to fix. A step with no value is removed.
 
-`npm run check` fails if a page on the site belongs to no journey (`scripts/journey-check.mjs`). Add or change a page: add or change its journey here first.
+`npm run check` fails if a page on the site belongs to no journey (`scripts/journey-check.ts`). Add or change a page: add or change its journey here first.
 
 ## The whole map
 

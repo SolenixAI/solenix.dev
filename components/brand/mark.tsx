@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils"
-import { NAV, markShapes } from "@/lib/site-nav.mjs"
+import { NAV, markShapes } from "@/lib/site-nav"
 
-/** The mark (DESIGN.md §12), drawn from lib/site-nav.mjs. Uses the shared #sun gradient. */
+/** The mark (DESIGN.md §12), drawn from lib/site-nav.ts. Uses the shared #sun gradient. */
 export function Mark({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 32 32" aria-hidden="true" className={cn("size-[26px] shrink-0", className)} dangerouslySetInnerHTML={{ __html: markShapes("url(#sun)") }} />

@@ -3,7 +3,7 @@
 //   public/og.png       the live homepage hero at 1200x630, the size link previews use
 // Run with the dev server up, after the hero changes:   npm run share-images [-- <url>]
 import { readFile, writeFile } from "node:fs/promises"
-import { launch } from "./browser.mjs"
+import { launch } from "./browser.ts"
 
 const URL = process.argv[2] ?? "http://localhost:3000/"
 const browser = await launch()
@@ -12,7 +12,7 @@ try {
   // Favicon: one .ico holding PNG images (every current browser reads PNG inside .ico).
   const svg = await readFile("public/brand/out/avatar.svg", "utf8")
   const sizes = [32, 48, 256]
-  const pngs = []
+  const pngs: Buffer[] = []
   for (const s of sizes) {
     const page = await browser.newPage({ viewport: { width: s, height: s }, deviceScaleFactor: 1 })
     await page.setContent(`<style>html,body{margin:0;background:transparent}svg{display:block;width:${s}px;height:${s}px}</style>${svg}`)
@@ -26,8 +26,9 @@ try {
     const e = 6 + 16 * i
     header.writeUInt8(s >= 256 ? 0 : s, e); header.writeUInt8(s >= 256 ? 0 : s, e + 1)
     header.writeUInt16LE(1, e + 4); header.writeUInt16LE(32, e + 6)
-    header.writeUInt32LE(pngs[i].length, e + 8); header.writeUInt32LE(offset, e + 12)
-    offset += pngs[i].length
+    const png = pngs[i]!
+    header.writeUInt32LE(png.length, e + 8); header.writeUInt32LE(offset, e + 12)
+    offset += png.length
   })
   await writeFile("public/favicon.ico", Buffer.concat([header, ...pngs]))
 

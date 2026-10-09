@@ -1,14 +1,14 @@
 import { POSTHOG_SNIPPET, SPEED_INSIGHTS_SNIPPET } from "@/lib/analytics"
 import { headTags } from "@/lib/site-meta"
-import { fontHead } from "@/lib/site-fonts.mjs"
-import { withHero } from "@/lib/site-hero.mjs"
-import { withSiteNav } from "@/lib/site-nav.mjs"
+import { fontHead } from "@/lib/site-fonts"
+import { withHero } from "@/lib/site-hero"
+import { withSiteNav } from "@/lib/site-nav"
 
 // Every page served as raw HTML (the homepage, Articles, each article) goes out through here,
 // so each one gets the same things and no page has to remember them:
 //   dark from the first byte, the design tokens, the fonts (from the site itself), "Title · Solenix" in the tab,
-//   tab icons and link-preview tags, measurement, the site nav (lib/site-nav.mjs) and, for a page
-//   that uses it, the hero frame (lib/site-hero.mjs).
+//   tab icons and link-preview tags, measurement, the site nav (lib/site-nav.ts) and, for a page
+//   that uses it, the hero frame (lib/site-hero.ts).
 
 export type PageMeta = { title: string; description: string; path: string; cover?: string }
 

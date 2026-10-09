@@ -5,7 +5,7 @@
 // The links, the mark, the platform button and the footer links all come from NAV below.
 // An article gets its own bar too (localNav): its title, its sections and Share. The sections come from
 // the page: each element with id and data-nav="Label". The site nav stays the same on every page.
-// scripts/sot-check.mjs fails the commit if any nav copy appears anywhere else.
+// scripts/sot-check.ts fails the commit if any nav copy appears anywhere else.
 
 export const NAV = {
   home: { href: "/", label: "Solenix", aria: "Solenix home" },
@@ -17,15 +17,15 @@ export const NAV = {
   contact: { href: "mailto:hello@solenix.dev", label: "hello@solenix.dev" },
 }
 
-const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;")
+const esc = (s: unknown) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;")
 
 /** The mark's shapes (DESIGN.md §12): sun, one orbit ring, one agent dot. `fill` paints the sun. */
-export const markShapes = (fill) =>
+export const markShapes = (fill: string) =>
   `<circle cx="16" cy="16" r="14" fill="none" stroke="var(--ring)" stroke-opacity=".45" stroke-width="1.5"/>` +
   `<circle cx="16" cy="16" r="8" fill="${fill}"/><circle cx="27" cy="9" r="2.2" fill="var(--ring)"/>`
 
 /** The sun's light: warm at the upper left, deeper at the edge. */
-export const sunGradient = (id) =>
+export const sunGradient = (id: string) =>
   `<radialGradient id="${id}" cx=".42" cy=".38" r=".62"><stop offset="0" stop-color="var(--sun1)"/><stop offset="1" stop-color="var(--sun2)"/></radialGradient>`
 
 /** The mark as a standalone SVG, with its own sun gradient. */
@@ -33,7 +33,9 @@ export const markSvg = (id = "snav-sun") =>
   `<svg viewBox="0 0 32 32" aria-hidden="true"><defs>${sunGradient(id)}</defs>${markShapes(`url(#${id})`)}</svg>`
 
 /** Section links an article declares: <section id="x" data-nav="Label">. */
-export function pageSections(html) {
+export type Section = { id: string; label: string }
+
+export function pageSections(html: string): Section[] {
   const out = []
   for (const m of html.matchAll(/<[a-z][a-z0-9]*\b[^>]*\bdata-nav="([^"]+)"[^>]*>/gi)) {
     const id = m[0].match(/\bid="([^"]+)"/)?.[1]
@@ -174,7 +176,7 @@ export function siteNav({ local = false } = {}) {
 }
 
 /** An article's own bar: its title, its sections, Share. Placed after the site nav. */
-export function localNav(title, sections) {
+export function localNav(title: string, sections: Section[]) {
   const items = sections.map((s) => `<a href="#${esc(s.id)}">${esc(s.label)}</a>`).join("")
   return (
     `<header class="lnav" data-lnav>` +
@@ -194,7 +196,7 @@ export function localNav(title, sections) {
  * and the markers a page may use: <!--site:brand--> (the mark and name, linked home) and
  * <!--site:footer-links--> (the footer links as <li> items).
  */
-export function withSiteNav(html) {
+export function withSiteNav(html: string): string {
   const sections = pageSections(html)
   const title = (html.match(/<title>([^<]*)<\/title>/)?.[1] ?? "").replace(/\s*·\s*Solenix$/, "")
   const nav = siteNav({ local: sections.length > 0 }) + (sections.length ? localNav(title, sections) : "")
