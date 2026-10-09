@@ -30,6 +30,8 @@ Marketing and selling are the point of every surface: work that nobody knows exi
 
 ## Positioning
 
+The gap Solenix closes, in everything it builds: on one side, all the best technology that already exists for a problem; on the other, the people who need it. Solenix closes the gap by design: minimum effort for them, maximum value. It builds only the experience and stands on proven open-source tools and services for everything underneath. (Jager, 2026-10-09)
+
 "Your business is a three-body problem." Revenue, costs and time pull apart across a dozen tools; Solenix finds the stable orbit with one AI at the centre. The proof is the work itself: live, interactive pages built with AI, shown rather than described.
 
 ## Operating Context

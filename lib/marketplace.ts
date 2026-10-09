@@ -19,7 +19,7 @@ export type Tool = {
   category: string
   /** The repo or folder the plugin lives in. */
   source: string
-  /** "owner/name" of the tool's own GitHub repo (the entry's `repository`), or null when it has none. */
+  /** "owner/name" of the tool's own GitHub repo (its `repository`, or its unshared source repo), or null. */
   repo: string | null
   stats: RepoStats | null
 }
@@ -28,8 +28,8 @@ type RawPlugin = { name?: unknown; description?: unknown; category?: unknown; re
 
 const str = (v: unknown) => (typeof v === "string" ? v : "")
 
-// Stars come only from the entry's own `repository`, never from the repo the
-// plugin happens to be hosted in (a directory's stars aren't the tool's).
+// A tool's stars are its own repo's: the entry's `repository`, or else the repo its source lives in,
+// unless several tools share that source repo (a directory, whose stars aren't any one tool's).
 const githubRepo = (u: unknown) => /^https:\/\/github\.com\/([\w.-]+\/[\w.-]+?)(?:\.git)?\/?$/.exec(str(u))?.[1] ?? null
 
 function sourceUrl(src: RawPlugin["source"]) {
@@ -67,7 +67,10 @@ export async function getTools(): Promise<Tool[] | null> {
   } catch {
     return null
   }
-  const tools = plugins.map((p) => ({ name: str(p.name), description: str(p.description), category: str(p.category) || "Plugin", source: sourceUrl(p.source), repo: githubRepo(p.repository) }))
+  const hosts = plugins.map((p) => githubRepo(p.source?.url))
+  const shared = new Set(hosts.filter((h, i) => h && hosts.indexOf(h) !== i))
+  const ownRepo = (p: RawPlugin, host: string | null) => githubRepo(p.repository) ?? (host && !shared.has(host) ? host : null)
+  const tools = plugins.map((p, i) => ({ name: str(p.name), description: str(p.description), category: str(p.category) || "Plugin", source: sourceUrl(p.source), repo: ownRepo(p, hosts[i]) }))
   const repos = [...new Set(tools.map((t) => t.repo).filter((r): r is string => !!r))]
   const stats = new Map(await Promise.all(repos.map(async (r) => [r, await repoStats(r)] as const)))
   return tools.map((t) => ({ ...t, stats: t.repo ? stats.get(t.repo) ?? null : null }))

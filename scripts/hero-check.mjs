@@ -15,7 +15,14 @@ const sizes = (() => {
   const all = [...v.real.sizes, ...v.edges].map(({ w, h }) => ({ w, h }))
   return all.filter((s, i) => all.findIndex((t) => t.w === s.w && t.h === s.h) === i)
 })()
-const pages = ["/", "/articles", ...readdirSync("articles").filter((a) => !a.startsWith("_") && statSync(`articles/${a}`).isDirectory()).map((a) => `/articles/${a}`)]
+// Every public page, found from the routes (never a hand-kept list): app/**/route.ts and page.tsx,
+// route groups dropped, the client platform under /app and non-page routes (feeds, files, dynamic
+// segments) left out; each article from articles/.
+const routes = (dir, at = "") => readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
+  if (e.isDirectory()) return /^\[|^\(portal\)$|^api$|\./.test(e.name) ? [] : routes(`${dir}/${e.name}`, /^\(.*\)$/.test(e.name) ? at : `${at}/${e.name}`)
+  return /^(route\.ts|page\.tsx)$/.test(e.name) ? [at || "/"] : []
+})
+const pages = [...new Set([...routes("app"), ...readdirSync("articles").filter((a) => !a.startsWith("_") && statSync(`articles/${a}`).isDirectory()).map((a) => `/articles/${a}`)])]
 
 let base = process.argv[2] ?? "http://localhost:3000"
 const up = () => fetch(base).then((r) => r.ok, () => false)

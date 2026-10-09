@@ -1,6 +1,5 @@
 import type { Metadata } from "next"
 import { GithubIcon } from "@/components/brand/github-icon"
-import { HeroSky, lightStyle } from "@/components/site/sky"
 import { Button } from "@/components/ui/button"
 import { Card, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -8,6 +7,10 @@ import { ago, count } from "@/lib/format"
 import { getTools, MARKETPLACE_FILE, MARKETPLACE_REPO as REPO, type Tool } from "@/lib/marketplace"
 import { OG_IMAGE } from "@/lib/site-meta"
 import { Cmd } from "./tools"
+import { AgentsHero, type HeroTool, type HeroVariant } from "./hero"
+import { AGENTS_HERO_CSS } from "./hero-css"
+import { HERO_CSS } from "@/lib/site-hero.mjs"
+import { markShapes, sunGradient } from "@/lib/site-nav.mjs"
 
 export const metadata: Metadata = {
   title: "Agents Marketplace",
@@ -74,34 +77,18 @@ function Head({ id, title, lede }: { id: string; title: string; lede: React.Reac
   )
 }
 
-export const revalidate = 3600
+const VARIANTS = ["orbit", "command", "wall"] as const
 
-export default async function Agents() {
+export default async function Agents({ searchParams }: { searchParams: Promise<{ hero?: string }> }) {
   const tools = await getTools()
+  const asked = (await searchParams).hero
+  const variant: HeroVariant = VARIANTS.find((v) => v === asked) ?? "orbit"
+  const heroTools: HeroTool[] = (tools ?? []).map((t) => ({ name: t.name, category: t.category, description: t.description, stars: t.stats?.stars ?? null }))
+  const sun = `<defs>${sunGradient("ah-sun")}</defs>${markShapes("url(#ah-sun)")}`
   return (
     <>
-      <section className="lit pt-(--space-hero) pb-(--space-section)" style={lightStyle({ x: "84%", y: "-10%", size: "26rem", strength: 0.45, orbit: "56rem" })}>
-        <HeroSky />
-        <div className="texture" aria-hidden="true" />
-        <div className="content relative mx-auto w-full max-w-wide px-(--gutter)">
-          <p className="eyebrow">Open source · Agents Marketplace</p>
-          <h1 className="mt-4 mb-5 max-w-[22ch] font-display text-display leading-display font-bold tracking-display">
-            Agent tools that install in <em className="lit-text">one line.</em>
-          </h1>
-          <p className="max-w-measure text-lede text-muted-foreground">
-            Agents and tools that work with any AI, from all over. Add our marketplace once, then install any of them with your
-            agent&apos;s own plugin system. Each tool is its vendor&apos;s own plugin, maintained by the vendor.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Button asChild>
-              <a href={REPO}><GithubIcon />View on GitHub</a>
-            </Button>
-            <Button asChild variant="ghost">
-              <a href={`${REPO}/issues/new?template=2-suggest-a-tool.yml`}>Suggest a tool</a>
-            </Button>
-          </div>
-        </div>
-      </section>
+      <style dangerouslySetInnerHTML={{ __html: HERO_CSS + AGENTS_HERO_CSS }} />
+      <AgentsHero tools={heroTools} variant={variant} sun={sun} />
 
       <div className="mx-auto flex w-full max-w-wide flex-col gap-(--space-section) px-(--gutter) pb-(--space-section)">
         <section aria-labelledby="toolkit">
@@ -151,6 +138,14 @@ export default async function Agents() {
             lede={<>Each tool is its vendor&apos;s own plugin. This list and each tool&apos;s GitHub stars are read live from the <a className="text-ember-text" href={MARKETPLACE_FILE}>marketplace file</a>.</>}
           />
           <Tools tools={tools} />
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Button asChild variant="ghost">
+              <a href={REPO}><GithubIcon />View on GitHub</a>
+            </Button>
+            <Button asChild variant="ghost">
+              <a href={`${REPO}/issues/new?template=2-suggest-a-tool.yml`}>Suggest a tool</a>
+            </Button>
+          </div>
         </section>
       </div>
     </>
