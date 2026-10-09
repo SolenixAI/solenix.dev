@@ -209,34 +209,32 @@ What would raise the low steps:
 - **One-tap remove (2):** an undo, or a confirm.
 - **Invoices (3):** raise them from the platform, or link straight to them.
 
-## 5. The developer or AI agent
+## 5. Anyone setting up their AI (and the AI itself)
 
-**As** a developer or an AI agent, **I want** to add the Solenix marketplace and install a tool in one line, **so that** my agent can use it today.
+**As** someone who uses AI, developer or not, **I want** to set up a tool the way its makers intended with one copy-paste, **so that** my AI can do real work with it today, without me learning what a skill, connector or CLI is.
 
 Pages: /agents, /articles/rss.xml
 
 ```mermaid
 journey
-  title The developer or AI agent, today
+  title Setting up a world, today
   section Find it
-    Finds Agents Marketplace in the nav or footer: 4: Developer
-    Reads tools that install in one line: 5: Developer
+    Finds Agents Marketplace in the nav or footer: 4: Person
+    Sees what each world does for them, in plain words: 5: Person
   section Set up
-    Copies the one sentence that sets everything up: 5: Developer, Agent
-    Copies the add-the-marketplace command: 5: Developer, Agent
-  section Choose
-    Scans tools with stars, last update and licence: 4: Developer
-    Copies one install command: 5: Developer, Agent
+    Opens a world; it grows out of its card: 5: Person
+    Copies the one sentence for their AI: 5: Person
+    Pastes it; the AI installs the makers' own tools: 5: Person, Agent
+    Signs in once; the AI proves it works: 4: Person, Agent
   section Machine reading
-    An agent reads the page as plain HTML: 2: Agent
+    An agent reads worlds.json and the world skill in the repo: 5: Agent
     An agent follows the RSS feed of articles: 4: Agent
   section Next
-    Suggests a tool through a GitHub issue: 4: Developer
-    Looks for a way to talk to Solenix: 2: Developer
+    Suggests a world through a GitHub issue: 4: Person
+    Looks for a way to talk to Solenix: 2: Person
 ```
 
 What would raise the low steps:
-- **Machine reading (2):** an `/llms.txt` that points to the setup guide and the marketplace file.
 - **Talk to Solenix (2):** one line with Book a call.
 
 ## 6. The article creator

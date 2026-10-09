@@ -79,6 +79,8 @@ if command -v zizmor >/dev/null; then zizmor --offline -q .github/workflows/ >/d
 # Types: the page scripts are compiled from client/*.ts first, then the compiler checks the whole repo.
 node --no-warnings scripts/build-client.ts >/dev/null || fail=1
 npx tsc --noEmit || fail=1
+# Unit tests, next to the module they test (lib/*.test.ts), with Node's own test runner.
+node --test lib/*.test.ts >/dev/null 2>&1 || { node --test lib/*.test.ts; fail=1; }
 # The hero fit check opens pages in a browser, so locally it runs when something that shapes a first
 # screen changes; in CI it always runs.
 if [ -n "${CI:-}" ] || git diff --cached --name-only | grep -qE '^(articles/|design/(home\.html|tokens\.css|viewports\.json)|app/articles/|lib/site-(nav|hero|page)|scripts/hero-check)'; then

@@ -1,151 +1,107 @@
 import type { Metadata } from "next"
+import { Suspense } from "react"
 import { GithubIcon } from "@/components/brand/github-icon"
-import { Button } from "@/components/ui/button"
-import { Card, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { ago, count } from "@/lib/format"
-import { getTools, MARKETPLACE_FILE, MARKETPLACE_REPO as REPO, type Tool } from "@/lib/marketplace"
+import { count } from "@/lib/format"
+import { getCatalog, MARKETPLACE_REPO, orbit, type Entry } from "@/lib/marketplace"
 import { OG_IMAGE } from "@/lib/site-meta"
-import { Cmd } from "./tools"
-import { AgentsHero, type HeroTool, type HeroVariant } from "./hero"
-import { AGENTS_HERO_CSS } from "./hero-css"
 import { HERO_CSS } from "@/lib/site-hero"
-import { markShapes, sunGradient } from "@/lib/site-nav"
+import { DownIcon, MiniOrbit, StarIcon, System } from "./system"
+import { Worlds, type Card } from "./worlds"
+import { WORLDS_CSS } from "./worlds-css"
+
+// solenix.dev/agents: the core toolkit and the worlds Solenix stands behind. The catalog is read live
+// from the marketplace (SolenixAI/agents-marketplace, worlds.json) on every visit, so a world added
+// there appears here on the next load with no change to this page. Each world's system (its maker
+// and pieces, with their live numbers) streams in as its sources answer; it never holds up the page.
+
+async function Glance({ entry }: { entry: Entry }) {
+  const o = await orbit(entry)
+  // A world shows its maker's stars; the toolkit, how many people installed its tools last week.
+  const weekly = o.planets.reduce((sum, p) => sum + (p.weekly ?? 0), 0)
+  const lead = entry.part === "toolkit"
+    ? weekly > 0 && <span><DownIcon />{count(weekly)}</span>
+    : o.sun.repo?.stars != null && <span><StarIcon />{count(o.sun.repo.stars)}</span>
+  return (
+    <>
+      <MiniOrbit orbit={o} />
+      <span className="wd-stat">
+        {lead}
+        <span>{entry.part === "toolkit" ? "installs a week" : "stars"}</span>
+      </span>
+    </>
+  )
+}
+async function Inside({ entry, piece }: { entry: Entry; piece: string | null }) {
+  return <System orbit={await orbit(entry)} world={entry.id} initial={piece} />
+}
+// While a world's sources answer, its place is held by the bare ring, so nothing jumps when they land.
+const Ring = ({ big }: { big?: boolean }) => (
+  <span className={big ? "sy-map sy-wait" : "sy-mini sy-wait"} aria-hidden="true">
+    <svg viewBox="0 0 100 100"><circle className="sy-ring" cx="50" cy="50" r={big ? 36 : 38} /></svg>
+  </span>
+)
 
 export const metadata: Metadata = {
   title: "Agents Marketplace",
-  description:
-    "Agents and tools that work with any AI, each the vendor's own plugin. Add the Solenix marketplace once, then install any of them.",
+  description: "Set up your AI the makers' way: one sentence installs everything a tool's makers built for AI, in any agent.",
   openGraph: {
     title: "Agents Marketplace · Solenix",
-    description: "Agents and tools that work with any AI. Add one marketplace, install any of them.",
+    description: "One sentence sets up everything a tool's makers built for AI, in any agent.",
     url: "https://solenix.dev/agents",
     images: [OG_IMAGE],
   },
 }
 
-/** Stars, last update and licence, read live from the tool's GitHub repo. */
-function Signals({ tool }: { tool: Tool }) {
-  const s = tool.stats
-  if (!s || !tool.repo) return null
-  return (
-    <p className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
-      <a className="text-foreground" href={`https://github.com/${tool.repo}/stargazers`} title={`Stars on ${tool.repo}`}>
-        ★ {count(s.stars)}
-      </a>
-      {s.pushedAt > 0 && <span>Updated {ago(s.pushedAt)}</span>}
-      {s.license && <span>{s.license}</span>}
-      {s.archived && <span>Archived</span>}
-    </p>
-  )
-}
+const SPEC_NAMES: Record<string, string> = { skills: "Agent Skills", mcp: "Model Context Protocol", plugin: "Agent Plugins" }
 
-function Tools({ tools }: { tools: Tool[] | null }) {
-  if (!tools || tools.length === 0) {
-    return (
-      <Card className="items-start border-dashed bg-sunken shadow-none">
-        <CardTitle>{tools ? "No tools listed yet" : "We could not load the list"}</CardTitle>
-        <a className="text-sm text-ember-text" href={MARKETPLACE_FILE}>See it on GitHub →</a>
-      </Card>
-    )
-  }
-  return (
-    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-      {tools.map((t, i) => (
-        <Card key={t.name + i}>
-          <Badge variant="plain">{t.category}</Badge>
-          <CardTitle>{t.name}</CardTitle>
-          <Signals tool={t} />
-          <p className="text-sm text-muted-foreground">{t.description}</p>
-          <p className="label">Claude Code</p>
-          <Cmd text={`/plugin install ${t.name}@solenix`} />
-          <p className="label">Codex / ChatGPT</p>
-          <Cmd text={`codex plugin add ${t.name}@solenix`} />
-          <a className="mt-auto text-sm text-ember-text" href={t.source}>Source →</a>
-        </Card>
-      ))}
-    </div>
-  )
-}
-
-function Head({ id, title, lede }: { id: string; title: string; lede: React.ReactNode }) {
-  return (
-    <div className="mb-6 flex flex-col gap-2">
-      <h2 id={id} className="font-display text-h2 font-brand">{title}</h2>
-      <p className="max-w-measure text-sm text-muted-foreground">{lede}</p>
-    </div>
-  )
-}
-
-const VARIANTS = ["orbit", "command", "wall"] as const
-
-export default async function Agents({ searchParams }: { searchParams: Promise<{ hero?: string }> }) {
-  const tools = await getTools()
-  const asked = (await searchParams).hero
-  const variant: HeroVariant = VARIANTS.find((v) => v === asked) ?? "orbit"
-  const heroTools: HeroTool[] = (tools ?? []).map((t) => ({ name: t.name, category: t.category, description: t.description, stars: t.stats?.stars ?? null }))
-  const sun = `<defs>${sunGradient("ah-sun")}</defs>${markShapes("url(#ah-sun)")}`
+export default async function Agents({ searchParams }: { searchParams: Promise<{ world?: string; piece?: string }> }) {
+  const [catalog, { world, piece }] = await Promise.all([getCatalog(), searchParams])
+  const card = (entry: Entry): Card => ({
+    entry,
+    glance: <Suspense fallback={<Ring />}><Glance entry={entry} /></Suspense>,
+    inside: <Suspense fallback={<Ring big />}><Inside entry={entry} piece={entry.id === world ? piece ?? null : null} /></Suspense>,
+  })
+  const specs = Object.entries(catalog?.[0]?.specs ?? {})
   return (
     <>
-      <style dangerouslySetInnerHTML={{ __html: HERO_CSS + AGENTS_HERO_CSS }} />
-      <AgentsHero tools={heroTools} variant={variant} sun={sun} />
+      <style dangerouslySetInnerHTML={{ __html: HERO_CSS + WORLDS_CSS }} />
+      <header className="sx-hero wd-hero" data-hero>
+        <div className="sx-hero-in">
+          <div className="sx-hero-text">
+            <h1>Your AI, set up <em>the makers&apos; way.</em></h1>
+            <p className="sx-sub">Paste one sentence. Your AI installs everything a tool&apos;s makers built for it.</p>
+          </div>
+          {catalog && catalog.length > 0 ? (
+            <Worlds cards={catalog.map(card)} initial={world ?? null} />
+          ) : (
+            <div className="wd-grid">
+              <a className="wd-card" href={MARKETPLACE_REPO}>
+                <span className="wd-for">{catalog ? "The first world is on its way." : "We couldn't load the worlds just now."}</span>
+                <span className="wd-name">See them on GitHub</span>
+              </a>
+            </div>
+          )}
+        </div>
+        <a className="sx-cue" href="#how">How it works ↓</a>
+      </header>
 
       <div className="mx-auto flex w-full max-w-wide flex-col gap-(--space-section) px-(--gutter) pb-(--space-section)">
-        <section aria-labelledby="toolkit">
-          <Head
-            id="toolkit"
-            title="Our toolkit, set up by any agent"
-            lede="Give this sentence to any agent, in any app, with no other context. It sets up the tools our agents use, walks you through the sign-ins, and proves each one works."
-          />
-          <Card>
-            <Cmd text={`Read ${REPO}/blob/main/SETUP.md and install and set up everything in it.`} />
-            <a className="text-sm text-ember-text" href={`${REPO}/blob/main/SETUP.md`}>Read SETUP.md →</a>
-          </Card>
+        <section id="how" aria-labelledby="how-title">
+          <h2 id="how-title" className="mb-8 font-display text-h2 font-brand">How it works</h2>
+          <ol className="wd-steps">
+            <li><b>Paste</b><span>one sentence into any AI that can run a command</span></li>
+            <li><b>Install</b><span>the makers&apos; own plugin, skills, connector and tools</span></li>
+            <li><b>Prove</b><span>it signs you in and shows you it works</span></li>
+          </ol>
         </section>
-
-        <section aria-labelledby="add">
-          <Head id="add" title="Add the marketplace" lede="Add it once, then install any tool below from inside your agent." />
-          <div className="grid gap-4 md:grid-cols-3">
-            <Card>
-              <CardTitle><a className="text-ember-text" href="https://code.claude.com/docs/en/plugin-marketplaces">Claude Code</a></CardTitle>
-              <p className="label">Add</p>
-              <Cmd text="/plugin marketplace add SolenixAI/agents-marketplace" />
-              <p className="label">Remove</p>
-              <Cmd text="/plugin marketplace remove solenix" />
-            </Card>
-            <Card>
-              <CardTitle><a className="text-ember-text" href="https://developers.openai.com/plugins/build/plugins">Codex / ChatGPT</a></CardTitle>
-              <p className="label">Add</p>
-              <Cmd text="codex plugin marketplace add SolenixAI/agents-marketplace" />
-              <p className="label">Remove</p>
-              <Cmd text="codex plugin marketplace remove solenix" />
-            </Card>
-            <Card>
-              <CardTitle>Other agents</CardTitle>
-              <p className="text-sm text-muted-foreground">
-                The marketplace is one open <a className="text-ember-text" href="https://agent-plugins.org/specification">Agent Plugins</a> file.
-                Agents that read that format can add <strong className="text-foreground">SolenixAI/agents-marketplace</strong> the same way.
-              </p>
-              <a className="text-sm text-ember-text" href={MARKETPLACE_FILE}>The marketplace file →</a>
-            </Card>
-          </div>
-        </section>
-
-        <section aria-labelledby="tools-title">
-          <Head
-            id="tools-title"
-            title="Tools"
-            lede={<>Each tool is its vendor&apos;s own plugin. This list and each tool&apos;s GitHub stars are read live from the <a className="text-ember-text" href={MARKETPLACE_FILE}>marketplace file</a>.</>}
-          />
-          <Tools tools={tools} />
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Button asChild variant="ghost">
-              <a href={REPO}><GithubIcon />View on GitHub</a>
-            </Button>
-            <Button asChild variant="ghost">
-              <a href={`${REPO}/issues/new?template=2-suggest-a-tool.yml`}>Suggest a tool</a>
-            </Button>
-          </div>
+        <section aria-label="Open standards and source" className="wd-foot">
+          {specs.length > 0 && (
+            <p><span>Built on open standards</span>{specs.map(([k, href]) => <a key={k} href={href}>{SPEC_NAMES[k] ?? k}</a>)}</p>
+          )}
+          <p>
+            <a className="wd-gh" href={MARKETPLACE_REPO}><GithubIcon />The marketplace on GitHub</a>
+            <a href={`${MARKETPLACE_REPO}/issues/new?template=2-suggest-a-world.yml`}>Suggest a world</a>
+          </p>
         </section>
       </div>
     </>

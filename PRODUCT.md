@@ -23,7 +23,7 @@ Each surface serves its own person, with its own purpose; each page gets its own
 |---|---|---|
 | Homepage `/` | A small-business owner in Newfoundland and Labrador | Understand in seconds what Solenix would change in their week, and book a call |
 | Articles `/articles` and each article | A curious reader from a social post, often on a phone, who knows nothing about the topic | Get what happened and play with it, then remember who made it |
-| Agents Marketplace `/agents` | A developer, or an AI agent | Add the marketplace and install a tool in one line |
+| Agents Marketplace `/agents` | Anyone who uses AI, developer or not, and AI agents themselves | Set up a tool's whole world in their AI with one copy-paste: everything its makers built for AI |
 | Solenix platform `/app` | A client, and Jager as operator | See that everything runs, answer what waits, pay, and run clients |
 
 ## Product Purpose
@@ -43,7 +43,7 @@ The gap Solenix closes, in everything it builds: on one side, all the best techn
 - A call first: "From one call to a stable orbit." Book a call opens a real booking page.
 - Price: "A fixed price, in writing. Agreed on the call. No surprise invoice." No public prices; value-based per initiative.
 - Clients use the Solenix platform (`/app`): status, approvals, projects, tech, billing through Stripe.
-- Open source: the Agents Marketplace lists tools that install with one line, for any AI.
+- Open source: the Agents Marketplace (SolenixAI/agents-marketplace) holds the worlds we stand behind; one sentence in any AI sets one up, the makers' way. solenix.dev/agents renders it live.
 
 ## Capabilities and Constraints
 

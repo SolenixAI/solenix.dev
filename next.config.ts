@@ -4,6 +4,8 @@ import { POSTHOG_ASSETS_HOST, POSTHOG_HOST, POSTHOG_PROXY } from "./lib/analytic
 const nextConfig: NextConfig = {
   // PostHog through the site's own domain (lib/analytics.ts). Its API paths end in slashes.
   skipTrailingSlashRedirect: true,
+  // Makers' GitHub avatars on /agents, served through the site's own image optimiser.
+  images: { remotePatterns: [{ protocol: "https", hostname: "avatars.githubusercontent.com", pathname: "/u/**" }] },
   async rewrites() {
     return [
       { source: `${POSTHOG_PROXY}/static/:path*`, destination: `${POSTHOG_ASSETS_HOST}/static/:path*` },
