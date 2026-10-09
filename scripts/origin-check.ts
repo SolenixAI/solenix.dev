@@ -16,7 +16,7 @@ const LOADS: [RegExp, string][] = [
 ]
 const MAP = /<script\b[^>]*type=["']importmap["'][^>]*>([\s\S]*?)<\/script>/gi
 
-const files = execFileSync("git", ["ls-files", "-co", "--exclude-standard", "app", "components", "lib", "articles", "design/home.html", "design/tokens.css", "brand/motion"], { encoding: "utf8" })
+const files = execFileSync("git", ["ls-files", "-co", "--exclude-standard", "app", "components", "lib", "client", "articles", "design/home.html", "design/tokens.css", "brand/motion"], { encoding: "utf8" })
   .split("\n").filter((f) => /\.(m?[jt]sx?|html|css)$/.test(f))
 
 let bad = 0

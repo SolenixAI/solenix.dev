@@ -1,9 +1,9 @@
 // Files the pages load, copied from the installed npm packages into public/vendor, so the site
 // depends on nothing outside itself. package.json is the one source of each version.
 // Generated on every `npm run dev` and `npm run build` (predev, prebuild); never committed.
-//   three.js: the core, plus every add-on the homepage imports, following each file's imports
+//   three.js: the core, plus every add-on the page scripts (client/*.ts) import, following each file's imports
 //   fonts:    Sora and JetBrains Mono variable fonts, with @font-face rules in /vendor/fonts.css
-import { copyFileSync, mkdirSync, readFileSync, rmSync, writeFileSync, existsSync } from "node:fs"
+import { copyFileSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync, existsSync } from "node:fs"
 import path from "node:path"
 
 const OUT = "public/vendor"
@@ -13,10 +13,10 @@ const put = (from: string, to: string) => {
   copyFileSync(from, to)
 }
 
-// three.js: the entry points come from the homepage's own imports.
+// three.js: the entry points come from the page scripts' own imports.
 const THREE = "node_modules/three"
-const home = readFileSync("design/home.html", "utf8")
-const queue = ["build/three.module.js", ...[...home.matchAll(/from ['"]three\/addons\/([^'"]+)['"]/g)].map((m) => `examples/jsm/${m[1]}`)]
+const pages = readdirSync("client").filter((f) => f.endsWith(".ts") && !f.endsWith(".d.ts")).map((f) => readFileSync(`client/${f}`, "utf8")).join("\n")
+const queue = ["build/three.module.js", ...[...pages.matchAll(/from ['"]three\/addons\/([^'"]+)['"]/g)].map((m) => `examples/jsm/${m[1]}`)]
 const seen = new Set<string>()
 for (let rel = queue.shift(); rel !== undefined; rel = queue.shift()) {
   if (seen.has(rel)) continue

@@ -26,6 +26,9 @@ expect fail "versioned file name (design/home-v2.html)"
 fresh; sed -i '' 's#</body>#<p>Get started</p></body>#' "$tmp/r/design/home.html"
 expect fail "banned word on the page (\"Get started\")"
 
+fresh; sed -i '' 's#</body>#<script>console.log(1)</script></body>#' "$tmp/r/design/home.html"
+expect fail "a hand-written inline script on the homepage"
+
 fresh; sed -i '' 's#</body>#<a>Tools we use</a></body>#' "$tmp/r/design/home.html"
 expect fail "old label \"Tools we use\""
 

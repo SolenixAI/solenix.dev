@@ -24,7 +24,7 @@ const routes = (dir: string, at = ""): string[] => readdirSync(dir, { withFileTy
 })
 const pages = [...new Set([...routes("app"), ...readdirSync("articles").filter((a) => !a.startsWith("_") && statSync(`articles/${a}`).isDirectory()).map((a) => `/articles/${a}`)])]
 
-let base = process.argv[2] ?? "http://localhost:3000"
+let base = process.argv[2] ?? process.env.SITE_URL?.replace(/\/$/, "") ?? "http://localhost:3000" // SITE_URL: the same variable scripts/check.sh uses
 const up = () => fetch(base).then((r) => r.ok, () => false)
 let server
 if (!(await up())) {

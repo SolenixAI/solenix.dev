@@ -3,12 +3,14 @@ import { headTags } from "@/lib/site-meta"
 import { fontHead } from "@/lib/site-fonts"
 import { withHero } from "@/lib/site-hero"
 import { withSiteNav } from "@/lib/site-nav"
+import { withClientScripts } from "@/lib/client-script"
 
 // Every page served as raw HTML (the homepage, Articles, each article) goes out through here,
 // so each one gets the same things and no page has to remember them:
 //   dark from the first byte, the design tokens, the fonts (from the site itself), "Title · Solenix" in the tab,
-//   tab icons and link-preview tags, measurement, the site nav (lib/site-nav.ts) and, for a page
-//   that uses it, the hero frame (lib/site-hero.ts).
+//   tab icons and link-preview tags, measurement, the site nav (lib/site-nav.ts), for a page
+//   that uses it the hero frame (lib/site-hero.ts), and the page's own scripts: each
+//   <!--client:name--> marker becomes the compiled client/name.ts (lib/client-script.ts).
 
 export type PageMeta = { title: string; description: string; path: string; cover?: string }
 
@@ -22,5 +24,5 @@ export function servePage(html: string, meta: PageMeta) {
     .replace(/<head>/i, `<head>${first}`)
     .replace(/<title>([^<]*)<\/title>/, (t, x: string) => (x.includes("Solenix") ? t : `<title>${x} · Solenix</title>`))
     .replace("</head>", `${headTags({ ...meta, image: meta.cover })}${POSTHOG_SNIPPET}${SPEED_INSIGHTS_SNIPPET}</head>`)
-  return new Response(withSiteNav(withHero(page)), { headers: { "content-type": "text/html; charset=utf-8" } })
+  return new Response(withClientScripts(withSiteNav(withHero(page))), { headers: { "content-type": "text/html; charset=utf-8" } })
 }
