@@ -28,13 +28,13 @@ function card(a: Article, feature = false) {
 }
 
 // Runs on /articles. Every size and time is read live: the screen, the box, the tokens.
-// A live window shows a real page at a real screen width (data-vw, or your screen's), scaled into its box and
+// A live window shows a real page at your screen's width, scaled into its box and
 // as tall as the box allows: no gaps, no crop. A window with "play" takes touches: the page inside
 // reacts in place, and any link in it is a way in. Entering grows the window to the full screen, then
 // the browser opens the page, which paints the same pixels.
 const LIVE_JS = `(()=>{const css=getComputedStyle(document.documentElement),tok=n=>css.getPropertyValue(n).trim();
 const ms=v=>parseFloat(v)*(v.endsWith("ms")?1:1000);
-const box=c=>{const r=c.getBoundingClientRect(),w=+c.dataset.vw||innerWidth,s=r.width/w;return{r,w,s,h:r.height/s}};
+const box=c=>{const r=c.getBoundingClientRect(),w=innerWidth,s=r.width/w;return{r,w,s,h:r.height/s}};
 function fit(){document.querySelectorAll(".live").forEach(c=>{const b=box(c);c.style.setProperty("--s",b.s);c.style.setProperty("--vw",b.w+"px");c.style.setProperty("--fh",b.h+"px")})}
 fit();addEventListener("resize",fit);new ResizeObserver(fit).observe(document.body);
 function enter(c,href){const f=c.querySelector("iframe"),b=box(c),cs=getComputedStyle(c),rad=parseFloat(cs.borderTopLeftRadius)||0,card=c.closest("[data-live-scope]");
@@ -51,35 +51,19 @@ document.addEventListener("click",e=>{const a=e.target.closest("a[href]"),scope=
 addEventListener("pageshow",e=>{if(!e.persisted)return;document.querySelectorAll(".live iframe").forEach(f=>{f.getAnimations().forEach(x=>x.cancel());f.style.cssText=""});document.querySelectorAll("[data-live-scope]").forEach(c=>c.style.cssText="");fit()});
 })()`
 
-// Two heroes to compare live (?hero=phone or window). Each leads with the newest article,
-// playable in place. The chosen one stays; the others go.
-const HEROES = ["phone", "window"] as const
-const PICK_JS = `(()=>{const v=new URLSearchParams(location.search).get("hero");document.documentElement.dataset.hv=${JSON.stringify(HEROES)}.includes(v)?v:"${HEROES[0]}"})()`
-
-function heroes(a: Article, more: number) {
+// The hero is the newest article itself, live and playable in place, with no words laid over it but
+// a bar that names it and lets you in.
+function newestHero(a: Article, more: number) {
   const t = esc(a.title)
   const still = a.cover ? `<img src="${a.cover}" alt="" width="1200" height="630">` : `<div class="noimg" aria-hidden="true"></div>`
-  const live = (vw = "") => `<div class="cover live play"${vw ? ` data-vw="${vw}"` : ""}>${still}<iframe src="${a.path}" tabindex="-1" aria-hidden="true" title=""></iframe></div>`
-  const enter = `<a class="enter" href="${a.path}">Enter ${t}<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>`
+  const live = `<div class="cover live play">${still}<iframe src="${a.path}" tabindex="-1" aria-hidden="true" title=""></iframe></div>`
+  const enter = `<a class="enter" href="${a.path}" aria-label="Enter ${t}">Enter<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>`
   const cue = `<a class="sx-cue" href="#more">${more ? "More articles" : "About Solenix"} ↓</a>`
   return `
-<header class="sx-hero hv hv-phone" data-hero data-live-scope>
- <div class="sx-hero-in">
-  <div class="sx-hero-text">
-   <h1>Pages you can <em>play with</em></h1>
-   <p class="sx-sub">Made for the phone in your hand. Try it right here.</p>
-   <div>${enter}</div>
-  </div>
-  <div class="phone">
-   <div class="phone-body">${live("390")}<span class="tap" aria-hidden="true"></span></div>
-  </div>
- </div>
- ${cue}
-</header>
-<header class="sx-hero hv hv-window" data-hero data-live-scope>
+<header class="sx-hero ar-hero" data-hero data-live-scope>
  <h1 class="sr">Articles: pages you can play with</h1>
  <div class="win">
-  ${live()}
+  ${live}
   <div class="win-bar"><span class="win-cap"><b>New</b> ${t}<span class="win-hint">Tap anything. Links take you in.</span></span>${enter}</div>
  </div>
  ${cue}
@@ -91,13 +75,13 @@ export async function GET() {
   const title = "Articles"
   const description = "Explorable stories about what AI can do now. Each one is a page you can play with."
   const hero = first
-    ? heroes(first, rest.length)
-    : `<header class="sx-hero" data-hero><div class="sx-hero-in"><div class="sx-hero-text"><h1>Pages you can <em>play with</em>, on their way</h1><p class="sx-sub">The first one is almost ready.</p></div></div></header>`
+    ? newestHero(first, rest.length)
+    : `<header class="sx-hero" data-hero><div class="sx-hero-in"><div class="sx-hero-text"><h1>Pages you can play with, on their way</h1><p class="sx-sub">The first one is almost ready.</p></div></div></header>`
   const list = rest.length ? `<div class="grid">${rest.map((a) => card(a)).join("")}</div>` : ""
   const html = `<!doctype html>
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>${title}</title><script>${PICK_JS}</script><meta name="description" content="${esc(description)}">
+<title>${title}</title><meta name="description" content="${esc(description)}">
 <style>
 *{box-sizing:border-box}
 html { background: var(--bg); }body{margin:0;background:radial-gradient(ellipse 90% 60% at 78% -10%,color-mix(in srgb,var(--sun2) 16%,transparent),transparent 60%),var(--bg);color:var(--text);font:17px/1.6 ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;min-height:100vh}
@@ -108,23 +92,13 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background-im
 .wrap{position:relative;max-width:var(--container);margin:0 auto;padding:24px 20px 96px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 ::selection{background:var(--accent);color:var(--accent-ink)}
-/* The heroes being compared: only the picked one shows. */
-html:not([data-hv="phone"]) .hv-phone,html:not([data-hv="window"]) .hv-window{display:none}
-.hv h1 em{font-style:normal;color:var(--accent-text)}
 .enter{display:inline-flex;align-items:center;gap:10px;min-height:var(--tap-min);padding:0 20px 0 22px;border-radius:var(--radius-pill);background:var(--accent);color:var(--accent-ink);font:600 clamp(.9rem,2cqmin,1.05rem)/1 var(--font-text);text-decoration:none;white-space:nowrap;box-shadow:0 8px 24px -8px color-mix(in srgb,var(--accent) 60%,transparent);transition:background .2s,transform .2s}
 .enter:hover{background:var(--accent-hover);transform:translateY(-1px)}
 .enter svg{width:16px;height:16px}
 .live.play iframe{pointer-events:auto}
-/* Phone: the article on the screen it was made for, at true size, beside the words. */
-.phone{height:100%;width:100%;container-type:size;display:grid;place-items:center}
-.phone-body{position:relative;box-sizing:border-box;height:min(100cqh,calc(100cqw * 844 / 390));aspect-ratio:390/844;padding:10px;border-radius:clamp(28px,6cqh,52px);background:var(--surface-solid);box-shadow:inset 0 1px 0 var(--glass-edge),0 0 0 1px var(--line-strong),0 40px 90px -30px color-mix(in srgb,var(--sun2) 40%,transparent)}
-.phone .live{width:100%;height:100%;aspect-ratio:auto;border-radius:clamp(20px,5cqh,42px)}
-.tap{position:absolute;left:50%;top:62%;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;border:2px solid var(--accent);pointer-events:none;animation:tap 1.8s var(--ease-out) infinite}
-@keyframes tap{0%{transform:scale(.5);opacity:1}100%{transform:scale(1.6);opacity:0}}
-.touched .tap,.touched .win-hint{display:none}
-@container (aspect-ratio <= 1.15){.hv-phone .sx-hero-text{align-items:center;text-align:center}.hv-phone .sx-sub{margin-inline:auto}}
 /* Window: no words above it. The live article fills the first screen; a bar names it and lets you in. */
-.hv-window{padding-top:var(--nav-height)}
+.ar-hero{padding-top:var(--nav-height)}
+.touched .win-hint{display:none}
 .win{position:relative;height:100%;border-radius:var(--radius-2xl);overflow:hidden;box-shadow:inset 0 1px 0 var(--glass-edge),0 0 0 1px var(--line-strong),var(--shadow-lg)}
 .win .live{position:absolute;inset:0;aspect-ratio:auto}
 .win-bar{position:absolute;left:12px;right:12px;bottom:12px;z-index:3;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;padding:8px 8px 8px 18px;border-radius:var(--radius-pill);background:color-mix(in srgb,var(--surface-solid) 88%,transparent);backdrop-filter:blur(var(--glass-blur));-webkit-backdrop-filter:blur(var(--glass-blur));border:1px solid var(--line)}
