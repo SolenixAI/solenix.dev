@@ -22,7 +22,7 @@ const routes = (dir: string, at = ""): string[] => readdirSync(dir, { withFileTy
   if (e.isDirectory()) return /^\[|^\(portal\)$|^api$|\./.test(e.name) ? [] : routes(`${dir}/${e.name}`, /^\(.*\)$/.test(e.name) ? at : `${at}/${e.name}`)
   return /^(route\.ts|page\.tsx)$/.test(e.name) ? [at || "/"] : []
 })
-const pages = [...new Set([...routes("app"), ...readdirSync("articles").filter((a) => !a.startsWith("_") && statSync(`articles/${a}`).isDirectory()).map((a) => `/articles/${a}`)])]
+const candidates = [...new Set([...routes("app"), ...readdirSync("articles").filter((a) => !a.startsWith("_") && statSync(`articles/${a}`).isDirectory()).map((a) => `/articles/${a}`)])]
 
 let base = process.argv[2] ?? process.env.SITE_URL?.replace(/\/$/, "") ?? "http://localhost:3000" // SITE_URL: the same variable scripts/check.sh uses
 const up = () => fetch(base).then((r) => r.ok, () => false)
@@ -33,6 +33,16 @@ if (!(await up())) {
   server = spawn("npx", ["next", "dev", "-p", "3123"], { stdio: "ignore" })
   for (let i = 0; i < 120 && !(await up()); i++) await new Promise((r) => setTimeout(r, 500))
 }
+
+// A page is whatever answers with HTML: a route that streams events, JSON or text is not one, so a new
+// API-like route can never stall the check. Only the response headers are read.
+const isPage = async (path: string) => {
+  const stop = new AbortController()
+  const type = await fetch(base + path, { signal: stop.signal }).then((r) => r.headers.get("content-type") ?? "", () => "")
+  stop.abort()
+  return type.startsWith("text/html")
+}
+const pages = (await Promise.all(candidates.map(async (p) => ((await isPage(p)) ? p : null)))).filter((p): p is string => p !== null)
 
 const measure = () => {
   const hero = [...document.querySelectorAll("[data-hero]")].find((e) => e.getClientRects().length) // the one shown

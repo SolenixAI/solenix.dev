@@ -14,7 +14,8 @@ import { github, githubHeaders } from "@/lib/github"
 export const MARKETPLACE_SLUG = "SolenixAI/agents-marketplace"
 export const MARKETPLACE_REPO = `https://github.com/${MARKETPLACE_SLUG}`
 // The branch the page reads. main in production; a preview can point at a branch under review.
-const REF = process.env.MARKETPLACE_REF ?? "main"
+export const MARKETPLACE_REF = process.env.MARKETPLACE_REF ?? "main"
+const REF = MARKETPLACE_REF
 const HOUR = 3600
 const MCP_REGISTRY = "https://registry.modelcontextprotocol.io"
 
@@ -79,9 +80,13 @@ export type Orbit = { sun: Source; planets: Source[] }
 const sentence = (name: string, skill: string) =>
   `Set up ${name} for me. Run \`npx skills add ${MARKETPLACE_SLUG} --skill ${skill}\`, then follow the ${skill} skill.`
 
+const catalogFile = (ref: string) => github<{ content?: string; sha?: string }>(`repos/${MARKETPLACE_SLUG}/contents/worlds.json?ref=${ref}`)
+/** Which version of the catalog a branch holds right now (its file's git hash); null when unreadable. */
+export const catalogVersion = async (ref = REF) => (await catalogFile(ref))?.sha ?? null
+
 /** The catalog as it is right now; null when it can't be read. */
 export async function getCatalog(): Promise<Entry[] | null> {
-  const file = await github<{ content?: string }>(`repos/${MARKETPLACE_SLUG}/contents/worlds.json?ref=${REF}`)
+  const file = await catalogFile(REF)
   let d: { toolkit?: { for: string; tools: ToolSource[] }; worlds?: WorldSource[]; specs?: Specs }
   try { d = JSON.parse(Buffer.from(file?.content ?? "", "base64").toString("utf8")) } catch { return null }
   if (!Array.isArray(d.worlds)) return null

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react"
 import { flushSync } from "react-dom"
+import { useRouter } from "next/navigation"
 import type { Entry } from "@/lib/marketplace"
 
 // The toolkit and the worlds as cards. A card opens into its world (a native dialog: Escape, focus
@@ -18,11 +19,20 @@ const transition = (update: () => void) => {
 
 const Arrow = () => <svg viewBox="0 0 24 24" aria-hidden="true" className="wd-arrow"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
 
-export function Worlds({ cards, initial }: { cards: Card[]; initial: string | null }) {
+export function Worlds({ cards, initial, version }: { cards: Card[]; initial: string | null; version: string | null }) {
   const [open, setOpen] = useState<string | null>(initial && cards.some((c) => c.entry.id === initial) ? initial : null)
   const dialog = useRef<HTMLDialogElement>(null)
   const card = cards.find((c) => c.entry.id === open) ?? null
   const world = card?.entry ?? null
+
+  // Live: the page hears which catalog is current (app/(site)/agents/live). When it differs from the
+  // one this page shows, the page re-reads in place: the open world, scroll and focus all stay.
+  const router = useRouter()
+  useEffect(() => {
+    const live = new EventSource("/agents/live")
+    live.addEventListener("version", (e) => { if ((e as MessageEvent<string>).data !== version) router.refresh() })
+    return () => live.close()
+  }, [version, router])
 
   // The dialog follows the address (?world=id), so Back closes it and a shared link opens it.
   useEffect(() => {

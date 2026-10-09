@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { Suspense } from "react"
 import { GithubIcon } from "@/components/brand/github-icon"
 import { count } from "@/lib/format"
-import { getCatalog, MARKETPLACE_REPO, orbit, type Entry } from "@/lib/marketplace"
+import { catalogVersion, getCatalog, MARKETPLACE_REPO, orbit, type Entry } from "@/lib/marketplace"
 import { OG_IMAGE } from "@/lib/site-meta"
 import { HERO_CSS } from "@/lib/site-hero"
 import { DownIcon, MiniOrbit, StarIcon, System } from "./system"
@@ -58,7 +58,7 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
 const SPEC_NAMES: Record<string, string> = { skills: "Agent Skills", mcp: "Model Context Protocol", plugin: "Agent Plugins" }
 
 export default async function Agents({ searchParams }: { searchParams: Promise<{ world?: string; piece?: string }> }) {
-  const [catalog, { world, piece }] = await Promise.all([getCatalog(), searchParams])
+  const [catalog, version, { world, piece }] = await Promise.all([getCatalog(), catalogVersion(), searchParams])
   const card = (entry: Entry): Card => ({
     entry,
     glance: <Suspense fallback={<Ring />}><Glance entry={entry} /></Suspense>,
@@ -75,7 +75,7 @@ export default async function Agents({ searchParams }: { searchParams: Promise<{
             <p className="sx-sub">Paste one sentence. Your AI installs everything a tool&apos;s makers built for it.</p>
           </div>
           {catalog && catalog.length > 0 ? (
-            <Worlds cards={catalog.map(card)} initial={world ?? null} />
+            <Worlds cards={catalog.map(card)} initial={world ?? null} version={version} />
           ) : (
             <div className="wd-grid">
               <a className="wd-card" href={MARKETPLACE_REPO}>
