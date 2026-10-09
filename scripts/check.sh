@@ -42,8 +42,14 @@ node scripts/article-check.mjs || fail=1
 node scripts/sot-check.mjs || fail=1
 node scripts/journey-check.mjs || fail=1
 node scripts/origin-check.mjs || fail=1
-# The hero fit check opens pages in a browser, so it runs when something that shapes a first screen changes.
-if git diff --cached --name-only | grep -qE '^(articles/|design/(home\.html|tokens\.css|viewports\.json)|app/articles/|lib/site-(nav|hero|page)|scripts/hero-check)'; then
+# CI workflows: valid (actionlint) and safe (zizmor: pinned actions, least privilege), where installed.
+if command -v actionlint >/dev/null; then actionlint .github/workflows/*.yml || fail=1; fi
+if command -v zizmor >/dev/null; then zizmor --offline -q .github/workflows/ >/dev/null 2>&1 || { zizmor --offline .github/workflows/; fail=1; }; fi
+# Types: the TypeScript compiler, strict, over the whole repo.
+npx tsc --noEmit || fail=1
+# The hero fit check opens pages in a browser, so locally it runs when something that shapes a first
+# screen changes; in CI it always runs.
+if [ -n "${CI:-}" ] || git diff --cached --name-only | grep -qE '^(articles/|design/(home\.html|tokens\.css|viewports\.json)|app/articles/|lib/site-(nav|hero|page)|scripts/hero-check)'; then
   node scripts/hero-check.mjs || fail=1
 fi
 node scripts/brand-images.mjs --check || fail=1
