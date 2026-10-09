@@ -188,6 +188,14 @@ async function tool(t: ToolSource, specs: Specs): Promise<Source> {
     refs: [{ label: new URL(t.site).host, href: t.site }, gitHub(t.starsRepo), ...(t.cli ? [{ label: "Docs", href: t.cli.docs }, npmPage(t.cli.npm)] : []), ...spec(specs, "skills", "Agent Skills spec")] }
 }
 
+// Each source is named once: the repo already links itself (owner/name), so its links never repeat
+// it or each other, whatever the catalog says.
+const key = (href: string) => href.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "").toLowerCase()
+function once(s: Source): Source {
+  const seen = new Set(s.repo ? [key(`https://github.com/${s.repo.slug}`)] : [])
+  return { ...s, refs: s.refs.filter((r) => !seen.has(key(r.href)) && !!seen.add(key(r.href))) }
+}
+
 /** A world as a system: its maker at the centre, every piece around it, each read live from its own source. */
 export const orbit = cache(async (e: Entry): Promise<Orbit> => {
   const sunFacts = e.starsRepo ? repoFacts(e.starsRepo) : null
@@ -204,5 +212,5 @@ export const orbit = cache(async (e: Entry): Promise<Orbit> => {
     ...blank({ id: "maker", kind: "maker", name: e.maker, href: e.site }), blurb: f?.blurb ?? null, repo: f && asRepo(f), updated: f?.pushed ?? null,
     refs: [{ label: new URL(e.site).host + (new URL(e.site).pathname.length > 1 ? new URL(e.site).pathname : ""), href: e.site }, ...(f ? [gitHub(f.slug)] : []), { label: "The steps your AI follows", href: e.setup }],
   }
-  return { sun, planets: list }
+  return { sun: once(sun), planets: list.map(once) }
 })
