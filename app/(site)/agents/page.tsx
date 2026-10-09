@@ -41,15 +41,18 @@ const Ring = ({ big }: { big?: boolean }) => (
   </span>
 )
 
-export const metadata: Metadata = {
-  title: "Agents Marketplace",
-  description: "Set up your AI the makers' way: one sentence installs everything a tool's makers built for AI, in any AI agent.",
-  openGraph: {
-    title: "Agents Marketplace · Solenix",
-    description: "One sentence sets up everything a tool's makers built for AI, in any AI agent.",
-    url: "https://solenix.dev/agents",
-    images: [OG_IMAGE],
-  },
+// A shared world link (?world=vercel) previews that world: its name and its one line, read live.
+export async function generateMetadata({ searchParams }: { searchParams: Promise<{ world?: string }> }): Promise<Metadata> {
+  const { world } = await searchParams
+  const entry = world ? (await getCatalog())?.find((e) => e.id === world) : undefined
+  const title = entry ? `${entry.name} for your AI` : "Agents Marketplace"
+  const description = entry ? `${entry.for} One sentence sets it up in any AI agent, the makers' way.` : "Set up your AI the makers' way: one sentence installs everything a tool's makers built for AI, in any AI agent."
+  const url = `https://solenix.dev/agents${entry ? `?world=${entry.id}` : ""}`
+  return {
+    title, description,
+    alternates: { canonical: url, types: { "application/json": "/agents/worlds.json" } },
+    openGraph: { title: `${title} · Solenix`, description, url, images: [OG_IMAGE] },
+  }
 }
 
 const SPEC_NAMES: Record<string, string> = { skills: "Agent Skills", mcp: "Model Context Protocol", plugin: "Agent Plugins" }

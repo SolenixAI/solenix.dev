@@ -2,14 +2,14 @@ import { createHmac, createSign, timingSafeEqual } from "node:crypto"
 import { fresh } from "./fresh.ts"
 
 /**
- * GitHub, as the site's own GitHub App ("Solenix Agents Marketplace", installed on the marketplace
- * repo). The app signs a short JWT with its private key, trades it for an installation token that
+ * GitHub, as SolenixAI: the org's own GitHub App, one app for everything Solenix builds, installed
+ * on the org. The app signs a short JWT with its private key, trades it for an installation token that
  * lasts an hour, and renews it before it runs out: 5,000 reads an hour, free 304s, tied to no
  * person. Set up once with `node scripts/github-app.ts`. Without the app's keys it falls back to
  * GITHUB_TOKEN, then to no key at all (60 reads an hour).
  */
 export type Get = (url: string, init: RequestInit) => Promise<Response>
-type App = { id: string; key: string; repo: string }
+type App = { id: string; key: string; org: string }
 const API = "https://api.github.com"
 const BASE = { accept: "application/vnd.github+json", "x-github-api-version": "2022-11-28" }
 
@@ -29,7 +29,7 @@ export function makeToken(app: App, get: Get, now = () => Date.now()) {
   let pending: Promise<string | null> | null = null
   const mint = async () => {
     const auth = { ...BASE, authorization: `Bearer ${appJwt(app.id, app.key, now())}` }
-    const inst = await get(`${API}/repos/${app.repo}/installation`, { headers: auth, cache: "no-store" })
+    const inst = await get(`${API}/orgs/${app.org}/installation`, { headers: auth, cache: "no-store" })
     if (!inst.ok) return null
     const { id } = (await inst.json()) as { id: number }
     const res = await get(`${API}/app/installations/${id}/access_tokens`, { method: "POST", headers: auth, cache: "no-store" })
@@ -47,7 +47,7 @@ export function makeToken(app: App, get: Get, now = () => Date.now()) {
 
 const env = process.env
 const app = env.GITHUB_APP_ID && env.GITHUB_APP_PRIVATE_KEY
-  ? makeToken({ id: env.GITHUB_APP_ID, key: env.GITHUB_APP_PRIVATE_KEY.replace(/\\n/g, "\n"), repo: "SolenixAI/agents-marketplace" }, (u, i) => fetch(u, i))
+  ? makeToken({ id: env.GITHUB_APP_ID, key: env.GITHUB_APP_PRIVATE_KEY.replace(/\\n/g, "\n"), org: "SolenixAI" }, (u, i) => fetch(u, i))
   : null
 
 /** The headers every GitHub read carries: the API version, and the best key the site has. */

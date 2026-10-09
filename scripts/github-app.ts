@@ -1,24 +1,25 @@
-// One-time setup of the site's GitHub App, the native way (GitHub's App Manifest flow):
-//   node scripts/github-app.ts
+// One-time setup of SolenixAI, the org's own GitHub App, the native way (GitHub's App Manifest flow).
+// One app for everything Solenix builds: install it on the org once, add permissions as new uses need them.
+//   node scripts/github-app.ts            (--no-open: don't open a browser; visit the address yourself)
 // 1. Opens a local page; you click Create, and GitHub makes the app from the manifest below.
 // 2. GitHub hands back a one-hour code; this trades it for the app's id, private key and webhook
 //    secret, and stores them straight into Vercel (production and preview, as sensitive values)
 //    and .env.local (this machine). They are never printed.
-// 3. Opens GitHub's install page: choose SolenixAI/agents-marketplace.
+// 3. Opens GitHub's install page: install it on the SolenixAI org.
 import { spawnSync } from "node:child_process"
 import { randomBytes } from "node:crypto"
 import { existsSync, readFileSync, writeFileSync } from "node:fs"
 import { createServer } from "node:http"
 
-const PORT = 8765
+const PORT = 8799
 const ORG = "SolenixAI"
 const SITE = "https://solenix.dev"
 const state = randomBytes(16).toString("hex")
 const manifest = {
-  name: "Solenix Agents Marketplace",
-  url: `${SITE}/agents`,
-  description: "Reads the Agents Marketplace for solenix.dev/agents and tells the site the moment it changes.",
-  hook_attributes: { url: `${SITE}/api/marketplace/hook`, active: true },
+  name: "Solenix",
+  url: SITE,
+  description: "Solenix's own GitHub App: how Solenix's sites and agents read and react to its repositories.",
+  hook_attributes: { url: `${SITE}/api/github`, active: true },
   redirect_url: `http://127.0.0.1:${PORT}/done`,
   public: false,
   default_permissions: { contents: "read", metadata: "read" },
@@ -41,14 +42,14 @@ function toEnvLocal(vars: Record<string, string>) {
   const file = ".env.local"
   const keep = (existsSync(file) ? readFileSync(file, "utf8") : "").split("\n").filter((l) => !Object.keys(vars).some((k) => l.startsWith(`${k}=`)))
   const add = Object.entries(vars).map(([k, v]) => `${k}="${v.replace(/\n/g, "\\n")}"`)
-  writeFileSync(file, [...keep.filter((l, i, a) => l || i < a.length - 1), "", "# The site's GitHub App (scripts/github-app.ts)", ...add, ""].join("\n"), { mode: 0o600 })
+  writeFileSync(file, [...keep.filter((l, i, a) => l || i < a.length - 1), "", "# SolenixAI, the org's GitHub App (scripts/github-app.ts)", ...add, ""].join("\n"), { mode: 0o600 })
 }
 
 const server = createServer(async (req, res) => {
   const url = new URL(req.url ?? "/", `http://127.0.0.1:${PORT}`)
   if (url.pathname === "/") {
-    res.writeHead(200, { "content-type": "text/html" }).end(page(`<h1>Create the site's GitHub App</h1>
-<p>It can read repositories and hears every push to the marketplace. Nothing else. GitHub shows you everything before you confirm.</p>
+    res.writeHead(200, { "content-type": "text/html" }).end(page(`<h1>Create Solenix, the org's GitHub App</h1>
+<p>One app for everything Solenix builds. It starts able to read repositories and hear pushes, nothing else; add permissions when a new use needs them. GitHub shows you everything before you confirm.</p>
 <form method="post" action="https://github.com/organizations/${ORG}/settings/apps/new?state=${state}"><input type="hidden" name="manifest" value="${esc(JSON.stringify(manifest))}"><button>Create on GitHub</button></form>`))
     return
   }
@@ -65,7 +66,7 @@ const server = createServer(async (req, res) => {
     const install = `${app.html_url}/installations/new`
     res.writeHead(302, { location: install }).end()
     console.log(`github-app: created ${app.slug} (id ${app.id}); keys stored in Vercel (production, preview) and .env.local.`)
-    console.log(`github-app: last step, in the page that opened: install it on ${ORG}/agents-marketplace.`)
+    console.log(`github-app: last step, in the page that opened: install it on the ${ORG} org.`)
   } catch (e) {
     res.writeHead(500).end(page(`<h1>Setup stopped.</h1><p>${esc(String((e as Error).message))}</p>`))
     console.error(`github-app: ${(e as Error).message}`)
@@ -76,5 +77,5 @@ const server = createServer(async (req, res) => {
 
 server.listen(PORT, "127.0.0.1", () => {
   console.log(`github-app: opening http://127.0.0.1:${PORT} — click Create on GitHub.`)
-  spawnSync("open", [`http://127.0.0.1:${PORT}`])
+  if (!process.argv.includes("--no-open")) spawnSync("open", [`http://127.0.0.1:${PORT}`])
 })

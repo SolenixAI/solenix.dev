@@ -24,7 +24,7 @@ test("one installation token serves every read until five minutes before it expi
     minted++
     return json({ token: `tok${minted}`, expires_at: new Date(t + 60 * 60_000).toISOString() })
   }
-  const token = makeToken({ id: "1", key: privateKey, repo: "o/r" }, get, () => t)
+  const token = makeToken({ id: "1", key: privateKey, org: "o" }, get, () => t)
   assert.equal(await token(), "tok1")
   t = 54 * 60_000
   assert.equal(await token(), "tok1", "still inside its hour, less five minutes")
@@ -34,13 +34,13 @@ test("one installation token serves every read until five minutes before it expi
 
 test("reads at the same moment share one mint, and a failed mint gives null", async () => {
   let calls = 0
-  const token = makeToken({ id: "1", key: privateKey, repo: "o/r" }, async (url) => {
+  const token = makeToken({ id: "1", key: privateKey, org: "o" }, async (url) => {
     calls++
     return url.endsWith("/installation") ? json({ id: 7 }) : json({ token: "x", expires_at: new Date(Date.now() + 3600_000).toISOString() })
   })
   await Promise.all([token(), token(), token()])
   assert.equal(calls, 2, "one installation lookup and one token, not three of each")
-  const broken = makeToken({ id: "1", key: privateKey, repo: "o/r" }, async () => json({ message: "Not Found" }, 404))
+  const broken = makeToken({ id: "1", key: privateKey, org: "o" }, async () => json({ message: "Not Found" }, 404))
   assert.equal(await broken(), null)
 })
 
