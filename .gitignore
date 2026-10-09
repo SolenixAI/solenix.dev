@@ -13,3 +13,7 @@ design/research/3d-refs/
 brag-output*/
 brand/motion/out/
 public/vendor/
+
+# Impeccable review captures (regenerated, never committed)
+.impeccable/review/
+.impeccable/mocks/

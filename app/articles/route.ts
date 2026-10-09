@@ -51,8 +51,8 @@ document.addEventListener("click",e=>{const a=e.target.closest("a[href]"),scope=
 addEventListener("pageshow",e=>{if(!e.persisted)return;document.querySelectorAll(".live iframe").forEach(f=>{f.getAnimations().forEach(x=>x.cancel());f.style.cssText=""});document.querySelectorAll("[data-live-scope]").forEach(c=>c.style.cssText="");fit()});
 })()`
 
-// The hero is the newest article itself, live and playable in place, with no words laid over it but
-// a bar that names it and lets you in.
+// The hero is the newest article itself, live and playable in place, in a window whose bottom edge
+// names it and lets you in. Nothing covers the article.
 function newestHero(a: Article, more: number) {
   const t = esc(a.title)
   const still = a.cover ? `<img src="${a.cover}" alt="" width="1200" height="630">` : `<div class="noimg" aria-hidden="true"></div>`
@@ -99,9 +99,9 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background-im
 /* Window: no words above it. The live article fills the first screen; a bar names it and lets you in. */
 .ar-hero{padding-top:var(--nav-height)}
 .touched .win-hint{display:none}
-.win{position:relative;height:100%;border-radius:var(--radius-2xl);overflow:hidden;box-shadow:inset 0 1px 0 var(--glass-edge),0 0 0 1px var(--line-strong),var(--shadow-lg)}
-.win .live{position:absolute;inset:0;aspect-ratio:auto}
-.win-bar{position:absolute;left:12px;right:12px;bottom:12px;z-index:3;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;padding:8px 8px 8px 18px;border-radius:var(--radius-pill);background:color-mix(in srgb,var(--surface-solid) 88%,transparent);backdrop-filter:blur(var(--glass-blur));-webkit-backdrop-filter:blur(var(--glass-blur));border:1px solid var(--line)}
+.win{position:relative;height:100%;display:flex;flex-direction:column;border-radius:var(--radius-2xl);overflow:hidden;background:var(--surface-solid);box-shadow:inset 0 1px 0 var(--glass-edge),0 0 0 1px var(--line-strong),var(--shadow-lg)}
+.win .live{flex:1;min-height:0;aspect-ratio:auto}
+.win-bar{flex:none;display:flex;gap:10px 16px;align-items:center;justify-content:space-between;padding:8px 8px 8px 20px;border-top:1px solid var(--line)}
 .win-cap{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline;font:600 clamp(.85rem,2.2cqmin,1.05rem)/1.2 var(--font-display);color:var(--text)}
 .win-cap b{font:500 .8rem/1 var(--font-mono);letter-spacing:.06em}
 .win-hint{font:400 .9rem/1.2 var(--font-text);color:var(--muted)}
