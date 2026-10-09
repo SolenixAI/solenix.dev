@@ -30,18 +30,20 @@ function card(a: Article, feature = false) {
 // Runs on /articles. Every size and time is read live: the screen, the box, the tokens.
 // A live window shows a real page at your screen's width, scaled into its box and
 // as tall as the box allows: no gaps, no crop. A window with "play" takes touches: the page inside
-// reacts in place, and any link in it is a way in. Entering grows the window to the full screen, then
-// the browser opens the page, which paints the same pixels.
+// reacts in place, and any link in it is a way in. Entering opens the page at once and grows the window
+// toward the full screen while it loads.
 const LIVE_JS = `(()=>{const css=getComputedStyle(document.documentElement),tok=n=>css.getPropertyValue(n).trim();
 const ms=v=>parseFloat(v)*(v.endsWith("ms")?1:1000);
 const box=c=>{const r=c.getBoundingClientRect(),w=innerWidth,s=r.width/w;return{r,w,s,h:r.height/s}};
 function fit(){document.querySelectorAll(".live").forEach(c=>{const b=box(c);c.style.setProperty("--s",b.s);c.style.setProperty("--vw",b.w+"px");c.style.setProperty("--fh",b.h+"px")})}
 fit();addEventListener("resize",fit);new ResizeObserver(fit).observe(document.body);
+// The page starts loading on the click; the window grows while it does, and the browser's page-to-page
+// cross-fade takes over from wherever the grow has reached when the page is ready. No waiting on a timer.
 function enter(c,href){const f=c.querySelector("iframe"),b=box(c),cs=getComputedStyle(c),rad=parseFloat(cs.borderTopLeftRadius)||0,card=c.closest("[data-live-scope]");
  if(card){card.style.transition="none";card.style.transform="none"}
  f.style.cssText="position:fixed;left:0;top:0;z-index:calc(var(--z-nav) - 1);transform-origin:0 0;visibility:visible;pointer-events:none";
  f.animate([{transform:"translate("+b.r.left+"px,"+b.r.top+"px) scale("+b.s+")",width:b.w+"px",height:b.h+"px",borderRadius:Math.min(rad,b.r.width/2)/b.s+"px"},{transform:"none",width:innerWidth+"px",height:innerHeight+"px",borderRadius:"0px"}],
-  {duration:ms(tok("--dur-slow")),easing:tok("--ease-out"),fill:"forwards"}).finished.then(()=>location.assign(href))}
+  {duration:ms(tok("--dur-slow")),easing:tok("--ease-out"),fill:"forwards"});location.assign(href)}
 document.querySelectorAll(".live iframe").forEach(f=>{const c=f.parentElement;function on(){c.classList.add("ready");if(!c.classList.contains("play"))return;try{const d=f.contentDocument;d.documentElement.style.overflow="hidden";
   d.addEventListener("click",e=>{const a=e.target.closest("a[href]");if(!a||e.defaultPrevented)return;e.preventDefault();enter(c,a.href)},true);
   d.addEventListener("pointerdown",()=>c.closest("[data-hero]")?.classList.add("touched"),{once:true})}catch(e){}}

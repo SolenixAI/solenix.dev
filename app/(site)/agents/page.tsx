@@ -84,15 +84,15 @@ export default async function Agents() {
         <HeroSky />
         <div className="texture" aria-hidden="true" />
         <div className="content relative mx-auto w-full max-w-wide px-(--gutter)">
-          <p className="eyebrow reveal" style={{ "--i": 0 } as React.CSSProperties}>Open source · Agents Marketplace</p>
-          <h1 className="reveal mt-4 mb-5 max-w-[22ch] font-display text-display leading-display font-bold tracking-display" style={{ "--i": 1 } as React.CSSProperties}>
+          <p className="eyebrow">Open source · Agents Marketplace</p>
+          <h1 className="mt-4 mb-5 max-w-[22ch] font-display text-display leading-display font-bold tracking-display">
             Agent tools that install in <em className="lit-text">one line.</em>
           </h1>
-          <p className="reveal max-w-measure text-lede text-muted-foreground" style={{ "--i": 2 } as React.CSSProperties}>
+          <p className="max-w-measure text-lede text-muted-foreground">
             Agents and tools that work with any AI, from all over. Add our marketplace once, then install any of them with your
             agent&apos;s own plugin system. Each tool is its vendor&apos;s own plugin, maintained by the vendor.
           </p>
-          <div className="reveal mt-8 flex flex-wrap gap-3" style={{ "--i": 3 } as React.CSSProperties}>
+          <div className="mt-8 flex flex-wrap gap-3">
             <Button asChild>
               <a href={REPO}><GithubIcon />View on GitHub</a>
             </Button>
