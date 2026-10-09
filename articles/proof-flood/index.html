@@ -8,7 +8,7 @@
   /* Every value derives from /tokens.css, the one design source. */
   color-scheme:dark;
   --paper:var(--glass-bg); --paper-solid:var(--surface-solid); --grid:var(--grid-line);
-  --ink:var(--text); --on-accent:var(--accent-ink); --accent-soft:var(--accent-quiet); --hi:color-mix(in srgb,var(--accent) 38%,transparent);
+  --ink:var(--text); --on-accent:var(--accent-ink); --accent-soft:var(--accent-quiet);
   --bad:var(--down); --ok-soft:color-mix(in srgb,var(--ok) 12%,transparent); --warn-soft:color-mix(in srgb,var(--warn) 12%,transparent); --bad-soft:color-mix(in srgb,var(--down) 12%,transparent);
   --edge:inset 0 1px 0 var(--glass-edge); --shadow:var(--shadow-md);
   --f-display:var(--font-display); --f-body:var(--font-text); --f-mono:var(--font-mono);
@@ -33,7 +33,7 @@ p{margin:0}
 .mono{font-family:var(--f-mono)}
 .eyebrow{font:600 .8rem/1 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
 .muted{color:var(--muted)}
-mark{background:linear-gradient(transparent 62%,var(--hi) 62%);color:inherit;padding:0 2px}
+mark{background:none;color:var(--text);font-weight:600}
 a{color:var(--accent)}
 button{font:inherit;color:inherit;cursor:pointer}
 :focus-visible{outline:2px solid var(--accent);outline-offset:3px}

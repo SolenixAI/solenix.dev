@@ -47,8 +47,12 @@ const measure = () => {
       break
     }
   }
-  // Nothing in the hero hides under a fixed bar such as the nav.
-  const bars = [...document.querySelectorAll("body *")].filter((e) => getComputedStyle(e).position === "fixed" && !hero.contains(e))
+  // Nothing in the hero hides under a bar that floats over it: a fixed bar, or the site nav, which
+  // scrolls away with an article (lib/site-nav.mjs). A bar not shown yet (hidden) covers nothing.
+  const bars = [...document.querySelectorAll("body *")].filter((e) => {
+    const cs = getComputedStyle(e)
+    return (cs.position === "fixed" || e.matches("[data-snav]")) && cs.visibility !== "hidden" && !hero.contains(e)
+  })
     .map((e) => e.getBoundingClientRect()).filter((b) => b.width > W / 2 && b.height && b.height < H / 3)
   for (const el of hero.querySelectorAll("h1,h2,p,a,button,.eyebrow,[role=button]")) {
     const b = el.getBoundingClientRect()
