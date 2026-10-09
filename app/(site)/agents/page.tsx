@@ -43,10 +43,10 @@ const Ring = ({ big }: { big?: boolean }) => (
 
 export const metadata: Metadata = {
   title: "Agents Marketplace",
-  description: "Set up your AI the makers' way: one sentence installs everything a tool's makers built for AI, in any agent.",
+  description: "Set up your AI the makers' way: one sentence installs everything a tool's makers built for AI, in any AI agent.",
   openGraph: {
     title: "Agents Marketplace · Solenix",
-    description: "One sentence sets up everything a tool's makers built for AI, in any agent.",
+    description: "One sentence sets up everything a tool's makers built for AI, in any AI agent.",
     url: "https://solenix.dev/agents",
     images: [OG_IMAGE],
   },
@@ -89,7 +89,7 @@ export default async function Agents({ searchParams }: { searchParams: Promise<{
         <section id="how" aria-labelledby="how-title">
           <h2 id="how-title" className="mb-8 font-display text-h2 font-brand">How it works</h2>
           <ol className="wd-steps">
-            <li><b>Paste</b><span>one sentence into any AI that can run a command</span></li>
+            <li><b>Paste</b><span>one sentence into any AI agent</span></li>
             <li><b>Install</b><span>the makers&apos; own plugin, skills, connector and tools</span></li>
             <li><b>Prove</b><span>it signs you in and shows you it works</span></li>
           </ol>

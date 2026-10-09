@@ -38,11 +38,3 @@ export function makeFresh(get: Get) {
 
 /** The live reader the site uses. */
 export const fresh = makeFresh((url, init) => fetch(url, init))
-
-/** GitHub's REST API, authenticated when GITHUB_TOKEN is set (needed for free 304s and 5,000 reads an hour). */
-export const github = <T = unknown>(path: string) =>
-  fresh<T>(`https://api.github.com/${path}`, {
-    accept: "application/vnd.github+json",
-    "x-github-api-version": "2022-11-28",
-    ...(process.env.GITHUB_TOKEN ? { authorization: `Bearer ${process.env.GITHUB_TOKEN}` } : {}),
-  })

@@ -1,6 +1,6 @@
 import "server-only"
 import { cache } from "react"
-import { github } from "@/lib/fresh"
+import { github, githubHeaders } from "@/lib/github"
 
 /**
  * The Agents Marketplace: the core toolkit and the worlds Solenix stands behind.
@@ -100,12 +100,7 @@ export async function getCatalog(): Promise<Entry[] | null> {
 // Other people's facts: hourly at most, never in the catalog's way.
 const hourly = (url: string, headers: Record<string, string> = {}) =>
   fetch(url, { headers, next: { revalidate: HOUR } }).then((r) => (r.ok ? r.json() : null), () => null)
-const gh = (path: string) =>
-  hourly(`https://api.github.com/${path}`, {
-    accept: "application/vnd.github+json",
-    "x-github-api-version": "2022-11-28",
-    ...(process.env.GITHUB_TOKEN ? { authorization: `Bearer ${process.env.GITHUB_TOKEN}` } : {}),
-  })
+const gh = async (path: string) => hourly(`https://api.github.com/${path}`, await githubHeaders())
 
 type RepoFacts = { slug: string; blurb: string | null; stars: number | null; forks: number | null; license: string | null; avatar: string | null; pushed: string | null; homepage: string | null }
 const repoFacts = async (slug: string): Promise<RepoFacts> => {
