@@ -21,7 +21,7 @@ grep -rn -E '· v[0-9]|\(v[0-9]\)|/\* v[0-9]|\bv[0-9] ·' DESIGN.md design/token
 
 # The site is dark only: the root layout declares dark before first paint, and nothing follows the device.
 grep -q 'colorScheme: "dark"' app/layout.tsx || bad "app/layout.tsx: the root viewport must declare colorScheme \"dark\" (the site is dark only)"
-grep -rn -E 'light dark|data-portal' app components lib design/tokens.css 2>/dev/null \
+grep -rn -E 'light dark|light-dark\(|data-portal' app components lib client articles design/home.html design/tokens.css 2>/dev/null \
   | while read -r l; do echo "check: the site is dark only, nothing follows the device: ${l:0:80}"; done | grep . && fail=1
 
 # No on-page Motion switch; the OS reduced-motion setting is the control.

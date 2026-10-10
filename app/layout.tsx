@@ -25,8 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Sora, per DESIGN.md §2: served from the site itself (lib/site-fonts.ts); never swaps. */}
         <link rel="preload" href={FONT_PRELOAD} as="font" type="font/woff2" crossOrigin="" />
         <link rel="stylesheet" href={FONT_CSS} />
-        {/* Before first paint: mark the page as scripted (so reveals can hide safely)
-            and apply a saved light/dark choice, so there is no flash. */}
+        {/* Before first paint: mark the page as scripted, so reveals can hide safely. */}
         <script
           dangerouslySetInnerHTML={{
             __html:
