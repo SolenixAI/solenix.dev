@@ -1,0 +1,32 @@
+name: Bug report
+description: Something on solenix.dev looks or works wrong.
+labels: ["bug"]
+body:
+  - type: input
+    id: page
+    attributes:
+      label: Page
+      description: The page path where you saw it.
+      placeholder: "/articles/..."
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you saw. A screenshot helps most.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Browser and device
+      placeholder: "Safari 26, iPhone 16"
+    validations:
+      required: true
