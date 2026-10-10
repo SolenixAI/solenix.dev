@@ -99,3 +99,44 @@ The system behind solenix.dev. Solenix is one tech expert for small businesses i
 - 44px minimum tap target on every control; focus is 2px solid ember at a 3px offset on :focus-visible. Hover never greys text — glow grows, lift -1px (buttons) or -3px (cards).
 - Motion explains, then stops: the three-body world settling into its orbit, one light sweep, first-time reveals, count-ups. No on-page Motion switch; the operating system's prefers-reduced-motion setting freezes everything with every value still on screen.
 - Numbers you don't have yet are a dashed 'to confirm' chip; sample data wears an Example tag; a missing photo is a dashed 'Photo to come' circle.
+
+## Components
+
+Each entry is what ships, read from its source file. Change the source, then this section.
+
+### Buttons
+Confident pills that lift toward you; one solid ember per screen, everything else ghost.
+- **Shape:** a full pill (--radius-pill); 44px minimum target (--tap-min); the homepage's own button is 52px tall.
+- **Primary (action ember):** the ember gradient (--grad-ember) with ink text (--accent-ink), semibold; the one solid fill per screen (Book a call; Copy for your AI on the marketplace). Source: components/ui/button.tsx (default), design/home.html (.btn-primary).
+- **Hover / Focus:** hover turns solid --accent-hover, lifts 1px and grows the glow; focus is 2px solid ember at a 3px offset.
+- **Ghost / Outline:** transparent, a --line-strong border, --text label; it never competes with the ember.
+
+### Chips
+Quiet mono tags that count what a thing is made of.
+- **Style:** a pill with a 1px --line border, mono at 0.78rem, --muted text, tabular numbers; an icon in --accent-text leads. Source: app/(site)/agents/worlds-css.ts (.wd-chips).
+- **State:** read-only; a chip never acts.
+
+### Cards / Containers
+Glass over the night sky, lit along the top edge.
+- **Corner Style:** --radius-xl for cards, --radius-2xl for panels and windows.
+- **Background:** --glass-bg (Glass at 84%) with an 18px blur; --surface-solid when nothing moves behind.
+- **Shadow Strategy:** the lit inset edge (--glass-edge) plus --shadow-md at rest, --shadow-lg and a soft sun glow on hover.
+- **Border:** 1px --line; on hover the border warms to ember.
+- **Behaviour:** hover lifts 3px with one light sweep across the card; reduced motion removes the sweep. Source: app/articles/route.ts (.card).
+
+### Navigation
+One floating glass pill on every page, held still while pages cross-fade beneath it.
+- **Style:** --glass-bg with an 18px blur, 12px from the top, as wide as the page; Sora wordmark with the mark. Source: lib/site-nav.ts.
+- **States:** links rest in --muted, hover on a --line wash, and the current page reads --accent-text on --accent-quiet; "Solenix platform" ("Platform" on phones) carries a small orbiting dot.
+- **Articles:** an article's own bar slides in as the site nav leaves and names the section being read (client/article-bar.ts).
+
+### Copy for your AI (signature)
+The marketplace's one action: a sentence a visitor copies and pastes into their AI agent.
+- **Shape and colour:** the primary button's ember pill.
+- **States:** idle; "Copied. Paste it into your AI" for 3 seconds; when copying fails, the sentence is selected and the page says how to copy it by hand. Source: lib/copy-for-ai.ts.
+- **Sentence:** one renderer (Sentence in app/(site)/agents/worlds.tsx) shows commands in code, never breaking inside a word or between a flag and its value.
+
+### Live article window (signature)
+The articles page's first screen: the newest article itself, live, in a window with the visitor's own screen shape.
+- **Shape:** --radius-2xl glass window with a bar at its foot (a New pill, the title, a hint, and a ghost Read it); a narrow window keeps only the action.
+- **Behaviour:** the article is laid out at the visitor's screen size and scaled into the window, so its whole first screen shows; a wheel over it scrolls the page; Read it grows the same picture to full screen. Source: app/articles/route.ts, client/articles-live.ts.
