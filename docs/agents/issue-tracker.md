@@ -7,7 +7,13 @@ sources:
   - id: setup-skill-section-a
     resource: https://github.com/mattpocock/skills/blob/main/skills/engineering/setup-matt-pocock-skills/SKILL.md
     title: Setup skill, Section A (Other = one freeform paragraph)
-generated: { by: anthropic/claude-haiku-5-5, at: 2026-10-09T16:37:49-02:30 }
+  - id: wayfinder-skill
+    resource: https://github.com/mattpocock/skills/blob/main/skills/engineering/wayfinder/SKILL.md
+    title: Wayfinder skill (assignee is the claim; unassigned is unclaimed)
+  - id: linear-assigning-issues
+    resource: https://linear.app/docs/assigning-issues
+    title: Linear docs, assigning issues (assignee is optional at create)
+generated: { by: anthropic/claude-opus-5-5, at: 2026-10-10T18:33-02:30 }
 status: current
 stale_after: 2026-11-09
 ---
@@ -18,8 +24,8 @@ Work for this repo is tracked in Linear, in the Solenix workspace. The engineeri
 
 The repo is public. Never write Linear issue IDs, internal names or private notes into repo files or commit messages. Put a public link to the repo in the Linear issue instead.
 
-New issues come from the team template "Default issue", with an explicit assignee: yourself when the work is yours, none for an unclaimed wayfinder ticket. Pass no description, because it replaces the template body; fill each `{…}` slot afterwards with a patch edit.
+New issues start from the team template "Default issue": `save_issue` with `template` "Default issue" (MCP), or `issueCreate` with `teamId` and `templateId` (GraphQL). Set the assignee: `me` when the work is yours, `null` for an unclaimed wayfinder ticket. A description replaces the template body, so pass none. Then fill each `{…}` slot: update the issue with `save_issue` (set `id`) and a `patch`.
 
 ## Wayfinding operations
 
-Used by `/wayfinder`. The rules (map, ticket labels, claim, blocking, frontier, resolve) live in one place for every repo: the Linear team skill **Wayfinder on Linear**. Read it with the Linear tools (`list_agent_skills`, then `get_agent_skill`) before you chart or work a map.
+Used by `/wayfinder`. The rules live in one place for every repo: the Linear team skill **Wayfinder on Linear**. Read it with the Linear tools (`list_agent_skills`, then `get_agent_skill`) before you chart or work a map.
