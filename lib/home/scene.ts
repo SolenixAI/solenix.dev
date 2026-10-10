@@ -40,7 +40,7 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
   // dimmed behind reading text, and step apart if two suns pass close together. On the journey the step is the
   // subject, so the tags step back until the orbit holds.
   let tagShow = 1, tagW = [90, 90, 90];
-  // The hero box runs from the eyebrow to the button, as wide as the widest line, so no tag lands on any of it.
+  // The hero box runs from the headline to the button, as wide as the widest line, so no tag lands on any of it.
   const heroBeat = document.querySelector<HTMLElement>('.sky .beat'), heroBeatH = heroBeat && heroBeat.querySelector<HTMLElement>('.beat-h'), heroBlocks = [...document.querySelectorAll<HTMLElement>('.hero-copy .wrap > *')], readBlocks: Record<string, HTMLElement[]> = { '#guide': [...document.querySelectorAll<HTMLElement>('#guide .jr-head, #guide .guide-say')], '#close': [...document.querySelectorAll<HTMLElement>('#close .close-in > *')] };
   let heroBox = [0, 0, 0, 0], readBox: Record<string, number[][]> = {}, heroBoxDirty = true;
   const markDirty = () => { heroBoxDirty = true; };

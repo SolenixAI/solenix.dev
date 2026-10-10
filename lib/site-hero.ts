@@ -4,8 +4,8 @@
 //   .sx-hero        the first screen: exactly one screen tall, sized from its own box (container units)
 //   .sx-hero-in     the content: one column when tall, two when wide, wider text when very wide and short;
 //                   text alone (no live thing beside it) is centred in the whole screen
-//   .sx-hero-text   kicker, headline, one sentence, one action, centred without ever rising under the nav
-//   .sx-kicker .sx-sub .sx-cue   the kicker line, the sentence, and the scroll cue
+//   .sx-hero-text   headline, one sentence, one action, centred without ever rising under the nav (no kicker: banned)
+//   .sx-sub .sx-cue   the sentence and the scroll cue
 // The contract and the research behind it: design/journeys.md ("First landing") and
 // scripts/hero-check.ts, which proves the fit at every real and edge screen size.
 
@@ -20,7 +20,6 @@ export const HERO_CSS = `
 .sx-hero-text{display:flex;flex-direction:column;justify-content:safe center;gap:clamp(.4rem,2.2cqh,1.4rem)}
 .sx-hero-text h1{font-family:var(--font-display);font-size:clamp(1.8rem,min(8cqh,13cqw),7rem);font-weight:700;letter-spacing:-.045em;line-height:.98;margin:0;text-wrap:balance}
 @container (aspect-ratio > 1.15){.sx-hero-text h1{font-size:clamp(1.8rem,min(13cqh,7.5cqw),9rem)}}
-.sx-kicker{font:600 clamp(.62rem,1.7cqmin,1rem)/1.25 var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--accent-text)}
 .sx-sub{font-size:clamp(.92rem,min(3cqh,4.4cqw),1.7rem);line-height:1.5;max-width:34ch;margin:0;color:var(--muted)}
 @container (aspect-ratio > 1.8){.sx-sub{max-width:none}}
 .sx-cue{position:absolute;right:max(16px,4vw);bottom:var(--cue-gap);min-height:var(--tap-min);display:inline-flex;align-items:center;

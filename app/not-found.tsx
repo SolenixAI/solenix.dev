@@ -18,7 +18,6 @@ export default function NotFound() {
         <header className="sx-hero" data-hero>
           <div className="sx-hero-in">
             <div className="sx-hero-text">
-              <p className="sx-kicker">404</p>
               <h1>This page doesn&rsquo;t exist.</h1>
               <p className="sx-sub">The link may be old, or a letter may be off. These two pages are here.</p>
               <div className="flex flex-wrap gap-3">

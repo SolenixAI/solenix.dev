@@ -149,15 +149,6 @@
 /* ── Signature visuals (DESIGN.md §4, §9, §10) ────────────────────────────── */
 @layer components {
   /* Type roles */
-  .eyebrow {
-    display: inline-flex; align-items: center; gap: var(--space-2);
-    font-family: var(--font-mono); font-size: var(--fs-xs); font-weight: var(--fw-semibold);
-    letter-spacing: var(--track-eyebrow); text-transform: uppercase; color: var(--accent);
-  }
-  .eyebrow::before {
-    content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor;
-    box-shadow: 0 0 0 4px color-mix(in srgb, currentColor 18%, transparent);
-  }
   .label {
     font-family: var(--font-mono); font-size: var(--fs-xs); font-weight: var(--fw-semibold);
     letter-spacing: var(--track-label); text-transform: uppercase; color: var(--faint);

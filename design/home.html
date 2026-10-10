@@ -35,8 +35,6 @@ img, svg { display: block; }
 .skip:focus { top: var(--space-4); }
 .wrap { max-width: var(--container-wide); margin-inline: auto; padding-inline: var(--gutter); }
 
-.eyebrow { font: var(--fw-semibold) var(--fs-xs)/1 var(--font-mono); letter-spacing: var(--track-eyebrow); text-transform: uppercase; color: var(--accent); display: inline-flex; align-items: center; gap: var(--space-3); }
-.eyebrow::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; box-shadow: 0 0 10px currentColor; }
 .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
 .label { font: var(--fw-semibold) var(--fs-2xs)/1.2 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--muted); }
 .h2 { font-size: var(--fs-display); font-weight: var(--fw-bold); letter-spacing: var(--track-display); line-height: var(--lh-display); }
@@ -89,7 +87,6 @@ footer { position: relative; z-index: 2; }
 .stop-mk.cur span { opacity: 1; }
 @media (max-width: 720px) { .stop-mk { width: 28px; height: 28px; margin: -14px 0 0 -14px; } .stop-mk span { display: none; } }
 .hero-copy { position: absolute; left: 0; right: 0; bottom: clamp(1rem, 9svh, 6.5rem); }
-.hero-copy .eyebrow { color: var(--accent-text); margin-bottom: min(var(--space-5), 2.5svh); }
 .h1 { font-size: var(--fs-hero); font-weight: var(--fw-bold); letter-spacing: var(--track-hero); line-height: 0.98; max-width: 12.5ch; }
 /* Very wide and short screens (a phone held sideways): the headline takes the width it has, so it wraps less and the hero fits. */
 @media (min-aspect-ratio: 9/5) { .h1 { max-width: none; } }
@@ -98,6 +95,8 @@ footer { position: relative; z-index: 2; }
 .h1 .g > span { background: var(--grad-headline); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .hero-sub { margin-top: min(var(--space-5), 2.5svh); font-size: var(--fs-lede); color: var(--muted); max-width: 30rem; }
 .hero-sub strong { color: var(--text); font-weight: var(--fw-semibold); }
+/* A very short hero (a phone held sideways) keeps the headline and the action; the sentence steps aside. */
+@media (max-height: 420px) { .hero-sub { display: none; } }
 .hero-ctas { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: min(var(--space-6), 3svh); }
 
 /* The story, scrubbed by scroll: a three-stop rail, then headlines that build word by word. */
@@ -588,8 +587,6 @@ html.js[data-motion="on"] .hb.arm:not(.play) .hw > span { transform: translateY(
 .tm-note { font-size: var(--fs-xs); color: var(--faint); flex-basis: 100%; }
 /* ── The flybys: the same job run twice, side by side, in real time. Bare type hangs either side of each tool's world:
    one clicks through the tool by hand, one types the ask. No times are stated; the two clocks show it. ── */
-.eyebrow.toolname::before { display: none; }
-.eyebrow.toolname .lg { width: 20px; height: 20px; color: var(--text); }
 .race { position: relative; height: 240vh; height: 240svh; }
 .race-pin { position: sticky; top: 0; height: 100vh; height: 100svh; }
 .race-in { height: 100%; max-width: 78rem; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: var(--space-5); padding-top: calc(var(--nav-height) + clamp(1rem, 4vh, 2.5rem)); padding-bottom: clamp(1rem, 3vh, 2rem); }
@@ -810,7 +807,6 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
   <div class="stage" data-hero>
     <div class="hero-copy">
         <div class="wrap">
-          <p class="eyebrow">Solenix · St. John's, NL</p>
           <h1 class="h1"><span class="w" style="--i:0"><span>Your</span></span> <span class="w" style="--i:1"><span>business</span></span> <span class="w" style="--i:2"><span>is</span></span> <span class="w" style="--i:3"><span>a</span></span> <span class="w g" style="--i:4"><span>three&#8209;body</span></span> <span class="w g" style="--i:5"><span>problem.</span></span></h1>
           <p class="hero-sub">Revenue, costs and time, pulled apart by a dozen tools. We put one AI at the centre of the tools you already use. <strong>Hours back, every week.</strong></p>
           <div class="hero-ctas">
@@ -830,7 +826,6 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
   <div class="jr-pin">
     <div class="wrap jr-in">
       <div class="jr-head">
-        <p class="eyebrow">One AI at the centre</p>
         <h2 class="h2">You don't need to be an expert <br>in <span class="hw tool-swap" aria-hidden="true" data-tools="Shopify|QuickBooks|Excel|Meta Ads|HubSpot"><span style="--i:8">Shopify</span></span> <br><em>anymore.</em></h2>
       </div>
       <div class="guide-say rv">
@@ -914,7 +909,6 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
   <div class="race-pin">
     <div class="wrap race-in">
       <header class="race-head">
-        <p class="eyebrow toolname"><svg class="lg" aria-hidden="true"><use href="#lg-quickbooks"/></svg>QuickBooks</p>
         <h2 class="h2">Know who owes you. <em>The invoice is ready.</em></h2>
         <p class="sr-race">By hand: Open Reports. Open the report of who owes you. Read down the list and decide who to chase. Now open a new invoice, a separate screen. Fill in the customer, the item, the amount and the date. Or just ask: “Show me who owes us, flag anyone over 60 days, and send Harbour Dental an invoice for the retainer”</p>
       </header>
@@ -949,7 +943,6 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
   <div class="race-pin">
     <div class="wrap race-in">
       <header class="race-head">
-        <p class="eyebrow toolname"><svg class="lg" aria-hidden="true"><use href="#lg-gmail"/></svg>Gmail and Calendar</p>
         <h2 class="h2">Your inbox sorted, <em>the invite ready to send.</em></h2>
         <p class="sr-race">By hand: Open the inbox. Open the first email and read it. Decide: reply today, later, or junk. Back to the inbox. Then the next one, and the next. Or just ask: “Group today's inbox into needs a reply today, can wait, and junk. Then find 30 minutes next week with Harbour Dental and send the invite.”</p>
       </header>
@@ -984,7 +977,6 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
   <div class="race-pin">
     <div class="wrap race-in">
       <header class="race-head">
-        <p class="eyebrow toolname"><svg class="lg" aria-hidden="true"><use href="#lg-microsoftexcel"/></svg>Excel</p>
         <h2 class="h2">The sales workbook, <em>updated for you.</em></h2>
         <p class="sr-race">By hand: Open the sales workbook. Select all of the sales data. Insert a pivot table. Set up each field, then build the chart. Or just ask: “Add a pivot table of revenue by category this month vs. last, with a bar chart”</p>
       </header>
@@ -1016,7 +1008,6 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
   <div class="race-pin">
     <div class="wrap race-in">
       <header class="race-head">
-        <p class="eyebrow toolname"><svg class="lg" aria-hidden="true"><use href="#lg-hubspot"/></svg>HubSpot</p>
         <h2 class="h2">The deals that went quiet, <em>followed up.</em></h2>
         <p class="sr-race">By hand: Open the deals list. Filter by last activity date, then sort. Open the first stalled deal and reread it. Write a follow-up by hand. Back to the list. Next deal, same again. Or just ask: “Show every deal with no activity in 14 days and draft a follow-up for each”</p>
       </header>
@@ -1069,7 +1060,6 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
   <div class="jr-pin">
     <div class="wrap jr-in">
       <div class="jr-head">
-        <p class="eyebrow">What we put in writing</p>
         <h2 class="h2">Four promises, <em>on paper.</em></h2>
       </div>
       <ol class="jr-steps" data-promises>
