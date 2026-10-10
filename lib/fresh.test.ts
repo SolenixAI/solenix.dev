@@ -47,6 +47,11 @@ test("a failing source gives null and never throws", async () => {
   assert.equal(await fresh("https://x/error"), null)
 })
 
+test("a source whose request throws before it starts gives null and never throws", async () => {
+  const fresh = makeFresh(() => { throw new Error("offline") })
+  assert.equal(await fresh("https://x/throws"), null)
+})
+
 test("a source that fails after answering once gives its last answer, not nothing", async () => {
   let up = true
   const fresh = makeFresh(async () => { if (!up) return answer(403); return answer(200, { worlds: 2 }) })

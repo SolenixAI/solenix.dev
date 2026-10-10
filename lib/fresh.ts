@@ -27,7 +27,8 @@ export function makeFresh(get: Get) {
     const init = cached
       ? { headers, next: { tags: cached.tags, revalidate: cached.revalidate } } as RequestInit
       : { headers: last?.etag ? { ...headers, "if-none-match": last.etag } : headers, cache: "no-store" as const }
-    const read = get(url, init)
+    // A get that throws, not just rejects, is a failed read too: the executor turns the throw into a rejection.
+    const read = new Promise<Response>((resolve) => resolve(get(url, init)))
       .then(async (r) => {
         if (r.status === 304 && last) return last.body
         if (!r.ok) return fallback()
