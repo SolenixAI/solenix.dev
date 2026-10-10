@@ -1,6 +1,6 @@
 import { listArticles } from "@/lib/articles"
 import { getCatalog, MARKETPLACE_REPO } from "@/lib/marketplace"
-import { SITE_URL } from "@/lib/site-meta"
+import { MARKETPLACE_SLUG, SITE_URL } from "@/lib/site-meta"
 
 // llms.txt (https://llmstxt.org): the site, for AI agents, in Markdown. Derived live from the same
 // sources the pages read, so it lists every world and article the moment they exist.
@@ -15,7 +15,7 @@ export async function GET() {
     "## Agents Marketplace",
     "",
     `- [Catalog as JSON](${SITE_URL}/agents/worlds.json): every part, its one-sentence setup, and live facts for each piece`,
-    `- [Source](${MARKETPLACE_REPO}): install with \`npx skills add SolenixAI/agents-marketplace\``,
+    `- [Source](${MARKETPLACE_REPO}): install with \`npx skills add ${MARKETPLACE_SLUG}\``,
     ...worlds,
     "",
     "## Articles",

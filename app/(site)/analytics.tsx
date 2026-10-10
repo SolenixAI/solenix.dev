@@ -1,15 +1,16 @@
 "use client";
 
 import { useEffect } from "react";
-import { LIVE_HOST, POSTHOG_KEY, POSTHOG_OPTIONS } from "@/lib/analytics";
+import { POSTHOG_KEY, POSTHOG_OPTIONS } from "@/lib/analytics";
 
 // Measurement for every page of the public site (one setup, lib/analytics.ts): PostHog on the live site, and Vercel
 // Speed Insights, as the homepage loaded them when it was served as raw HTML. Only the top window measures, so a page
 // shown inside a frame (a live preview on an article card) does not inflate the numbers.
-export function Analytics() {
+// `host` is the live site's host, derived on the server (SITE_HOST): a browser bundle cannot read Vercel's variable.
+export function Analytics({ host }: { host: string }) {
   useEffect(() => {
     if (window.top !== window.self) return;
-    if (location.hostname === LIVE_HOST) {
+    if (location.hostname === host) {
       import("posthog-js").then(({ default: posthog }) => {
         posthog.init(POSTHOG_KEY, { ...POSTHOG_OPTIONS });
       });
@@ -24,6 +25,6 @@ export function Analytics() {
     s.defer = true;
     s.src = src;
     document.head.appendChild(s);
-  }, []);
+  }, [host]);
   return null;
 }

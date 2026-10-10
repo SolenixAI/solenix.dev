@@ -30,7 +30,7 @@ grep -n -E 'motion-toggle|class="word">Motion<' design/*.html 2>/dev/null \
 
 # Every page is measured: the site layout mounts one analytics component for all its pages, the homepage among them
 # (app/(site)/page.tsx). The raw pages (Articles) keep the inline snippet (lib/site-page.ts).
-grep -q '<Analytics />' 'app/(site)/layout.tsx' && grep -q 'posthog.init' 'app/(site)/analytics.tsx' && grep -q 'capture_pageleave' lib/analytics.ts || bad "homepage has no analytics (app/(site)/layout.tsx → analytics.tsx → lib/analytics.ts)"
+grep -qF '<Analytics host={SITE_HOST} />' 'app/(site)/layout.tsx' && grep -q 'posthog.init' 'app/(site)/analytics.tsx' && grep -q 'capture_pageleave' lib/analytics.ts || bad "homepage has no analytics (app/(site)/layout.tsx → analytics.tsx → lib/analytics.ts)"
 grep -q 'POSTHOG_SNIPPET' lib/site-page.ts || bad "raw pages have no analytics (lib/site-page.ts)"
 
 # The agents page is called "Agents Marketplace" everywhere.

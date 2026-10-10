@@ -2,6 +2,7 @@ import { Reveals } from "@/components/brand/motion"
 import { SpaceWorld } from "@/components/space/world"
 import { FooterSlot } from "@/components/site/footer-slot"
 import { SiteFooter, SiteHeader } from "@/components/site/chrome"
+import { SITE_HOST } from "@/lib/site-meta"
 import { Analytics } from "./analytics"
 
 // Solenix is dark only (declared once, in app/layout.tsx): space is the brand. The 3D world (components/space/world.tsx) is mounted
@@ -25,7 +26,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
         <SiteFooter />
       </FooterSlot>
       <Reveals />
-      <Analytics />
+      <Analytics host={SITE_HOST} />
     </div>
   )
 }

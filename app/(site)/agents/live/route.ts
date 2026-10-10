@@ -1,5 +1,5 @@
 import { bus } from "@/lib/bus"
-import { catalogVersion, MARKETPLACE_REF } from "@/lib/marketplace"
+import { catalogKey, catalogVersion, MARKETPLACE_REF } from "@/lib/marketplace"
 
 // An open /agents page listens here (Server-Sent Events, same origin). It first hears which catalog
 // is current, so a page that was away (asleep, offline, reconnecting) catches up at once; then it
@@ -18,7 +18,7 @@ export async function GET(req: Request) {
     async start(c) {
       c.enqueue(new TextEncoder().encode("retry: 1000\n\n"))
       if (version) c.enqueue(encode(version))
-      try { stop = await hub.subscribe(`marketplace:${MARKETPLACE_REF}`, (v) => c.enqueue(encode(v))) }
+      try { stop = await hub.subscribe(catalogKey(MARKETPLACE_REF), (v) => c.enqueue(encode(v))) }
       catch (e) { console.error(`bus: ${(e as Error).message}`); c.close(); return } // the browser retries
       req.signal.addEventListener("abort", () => { stop(); try { c.close() } catch {} })
     },

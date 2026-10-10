@@ -5,8 +5,11 @@
 // own path (lib/analytics.ts).
 import { execFileSync } from "node:child_process"
 import { readFileSync } from "node:fs"
+import { SITE_HOST } from "../lib/site-meta.ts"
 
-const OWN = /^https:\/\/(www\.)?solenix\.dev\b/
+// The site's own host, with or without www. Derived from SITE_HOST (lib/site-meta.ts), so a domain change is one edit.
+const HOST = SITE_HOST.replace(/\./g, "\\.")
+const OWN = new RegExp(`^https://(www\\.)?${HOST}\\b`)
 const LOADS: [RegExp, string][] = [
   [/<script\b[^>]*\bsrc=["'](https?:)?\/\/[^"']+/gi, "a script"],
   [/<link\b(?=[^>]*\brel=["'](?:stylesheet|preconnect|preload|modulepreload|dns-prefetch|prefetch|icon|manifest)["'])[^>]*\bhref=["'](https?:)?\/\/[^"']+/gi, "a stylesheet, font or preload"],

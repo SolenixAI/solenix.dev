@@ -1,9 +1,10 @@
 import { revalidateTag } from "next/cache"
 import { bus } from "@/lib/bus"
 import { signedByGitHub } from "@/lib/github"
-import { catalogTag, catalogVersion, FACTS_TAG, MARKETPLACE_SLUG } from "@/lib/marketplace"
+import { catalogKey, catalogVersion, FACTS_TAG } from "@/lib/marketplace"
+import { MARKETPLACE_SLUG } from "@/lib/site-meta"
 
-// Every event from SolenixAI (the org's GitHub App) arrives here, one address for every use. Only a
+// Every event from the org's GitHub App arrives here, one address for every use. Only a
 // body signed with the app's webhook secret is accepted; each event is then routed by its repository.
 export async function POST(req: Request) {
   const secret = process.env.GITHUB_WEBHOOK_SECRET
@@ -18,13 +19,13 @@ export async function POST(req: Request) {
   // on them, it shows them as they were and they refresh behind it.
   const branch = ref?.replace("refs/heads/", "")
   if (repository?.full_name === MARKETPLACE_SLUG && branch) {
-    revalidateTag(catalogTag(branch), { expire: 0 })
+    revalidateTag(catalogKey(branch), { expire: 0 })
     revalidateTag(FACTS_TAG, "max")
     // Tell every open page on that branch which catalog it now holds. A push that leaves worlds.json alone
     // carries the same version, so no page reloads for nothing.
     const version = await catalogVersion(branch)
     // A bus that is down costs only the live update; GitHub still gets its answer, and pages read on load.
-    if (version && bus) await bus.publish(`marketplace:${branch}`, version).catch((e: Error) => console.error(`bus: ${e.message}`))
+    if (version && bus) await bus.publish(catalogKey(branch), version).catch((e: Error) => console.error(`bus: ${e.message}`))
     console.log(`marketplace: push to ${branch} (${after?.slice(0, 7)}), catalog ${version?.slice(0, 7)}`)
   }
   return new Response(null, { status: 204 })
