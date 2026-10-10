@@ -22,3 +22,5 @@ reviews:
       instructions: Changes only dependency versions or lock files.
     - label: accessibility
       instructions: Changes keyboard, screen-reader, contrast or motion behaviour.
+  mutually_exclusive_groups:
+    change_type: [bug, enhancement, documentation, dependencies]
