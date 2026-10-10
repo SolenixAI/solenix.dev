@@ -45,7 +45,8 @@ node scripts/origin-check.ts || fail=1
 grep -rlE '^disable-model-invocation:[[:space:]]*true|allow_implicit_invocation:[[:space:]]*false' .agents/skills 2>/dev/null \
   | while read -r f; do echo "check: locked skill $f (run scripts/unlock-skills.sh)"; done | grep . && fail=1
 # TypeScript only: no JavaScript file outside scripts/js-allowlist.txt (a list that may only shrink).
-git ls-files -co --exclude-standard | grep -E '\.(js|jsx|mjs|cjs)$' | grep -v '^public/' | grep -vxFf <(grep -v '^#' scripts/js-allowlist.txt) \
+# Installed skills are vendor code, like public/: their installers own them (Impeccable's live mode injects its JS into the page).
+git ls-files -co --exclude-standard | grep -E '\.(js|jsx|mjs|cjs)$' | grep -vE '^(public/|\.(agents|claude|cursor|github|grok)/skills/)' | grep -vxFf <(grep -v '^#' scripts/js-allowlist.txt) \
   | while read -r f; do echo "check: JavaScript file $f (the repo is TypeScript; see scripts/js-allowlist.txt)"; done | grep . && fail=1
 # Page scripts are TypeScript in client/*.ts, compiled and inlined where the page holds a
 # <!--client:name--> marker (lib/client-script.ts). The homepage and the articles hold no hand-written
