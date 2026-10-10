@@ -50,6 +50,7 @@ grep -n -E 'motion-toggle|class="word">Motion<' design/*.html 2>/dev/null \
 # (app/(site)/page.tsx). The raw pages (Articles) keep the inline snippet (lib/site-page.ts).
 grep -qF '<Analytics host={SITE_HOST} />' 'app/(site)/layout.tsx' && grep -q 'posthog.init' 'app/(site)/analytics.tsx' && grep -q 'capture_pageleave' lib/analytics.ts || bad "homepage has no analytics (app/(site)/layout.tsx → analytics.tsx → lib/analytics.ts)"
 grep -q 'POSTHOG_SNIPPET' lib/site-page.ts || bad "raw pages have no analytics (lib/site-page.ts)"
+grep -qF 'posthog.register(POSTHOG_PROPERTIES)' 'app/(site)/analytics.tsx' && grep -qF 'posthog.register(${JSON.stringify(POSTHOG_PROPERTIES)})' lib/analytics.ts || bad "an analytics loader does not tag events with app (lib/analytics.ts POSTHOG_PROPERTIES)"
 
 # The agents page is called "Agents Marketplace" everywhere.
 grep -rn ">Tools we use<" app components design/*.html 2>/dev/null | while read -r l; do echo "check: say \"Agents Marketplace\", not \"Tools we use\": ${l:0:80}"; done | grep . && fail=1
