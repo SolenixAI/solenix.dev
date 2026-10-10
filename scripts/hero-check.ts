@@ -7,14 +7,11 @@
 // without being listed here. Runs against a local server only: nothing outside the repo.
 //   npm run hero-check [-- <base url>]   (starts the dev server itself when none is running)
 import { execFileSync, spawn } from "node:child_process"
-import { readdirSync, readFileSync, statSync } from "node:fs"
+import { readdirSync, statSync } from "node:fs"
 import { launch } from "./browser.ts"
+import { loadViewports } from "../lib/viewports.ts"
 
-const sizes = (() => {
-  const v = JSON.parse(readFileSync("design/viewports.json", "utf8"))
-  const all = [...v.real.sizes, ...v.edges].map(({ w, h }) => ({ w, h }))
-  return all.filter((s, i) => all.findIndex((t) => t.w === s.w && t.h === s.h) === i)
-})()
+const sizes = loadViewports().hero
 // Every public page, found from the routes (never a hand-kept list): app/**/route.ts and page.tsx,
 // route groups dropped, non-page routes (feeds, files, dynamic
 // segments) left out; each article from articles/.
@@ -104,14 +101,14 @@ const browser = await launch()
 let bad = 0
 try {
   for (const path of pages)
-    for (const { w, h } of sizes) {
-      const page = await browser.newPage({ viewport: { width: w, height: h } })
+    for (const viewport of sizes) {
+      const page = await browser.newPage({ viewport })
       await page.goto(base + path, { waitUntil: "load" })
       await page.evaluate(() => document.fonts.ready)
       // Judge the settled first screen: wait for one-off animations (not endless ones) to end.
       await page.waitForFunction(() => document.getAnimations().every((a) => a.playState !== "running" || a.effect?.getComputedTiming().endTime === Infinity), null, { timeout: 10000 }).catch(() => {})
       for (const p of await page.evaluate(measure)) {
-        console.log(`hero: ${path} at ${w}×${h}: ${p}`)
+        console.log(`hero: ${path} at ${viewport.width}×${viewport.height}: ${p}`)
         bad++
       }
       await page.close()

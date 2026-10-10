@@ -12,6 +12,7 @@
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs"
 import path from "node:path"
 import { launch } from "./browser.ts"
+import { loadViewports } from "../lib/viewports.ts"
 
 type Pair = [canvas: number, dom: number]
 interface Run { viewport: string; motion: string; width: number; height: number; max: number; motionFlag: boolean | null; engine: boolean; errors: string[]; points: { y: number; frames: Pair[] }[] }
@@ -25,7 +26,8 @@ declare global {
   }
 }
 
-const VIEWPORTS: Record<string, { width: number; height: number }> = { desktop: { width: 1440, height: 900 }, phone: { width: 390, height: 844 } }
+const { desktop, phone } = loadViewports()
+const VIEWPORTS: Record<string, { width: number; height: number }> = { desktop, phone }
 const MOTIONS = ["motion", "reduce"]
 const SEED = 12345
 const STEP_MS = 1000 / 60

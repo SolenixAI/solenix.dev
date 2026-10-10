@@ -5,14 +5,16 @@
 import { mkdir, writeFile } from "node:fs/promises"
 import path from "node:path"
 import { launch } from "./browser.ts"
+import { loadViewports } from "../lib/viewports.ts"
 
 const URL = process.argv[2] ?? "http://localhost:3000/"
 const OUT = process.argv[3] ?? "shots"
-// "pane" is the size Jager reviews in (the Claude app browser pane). He resizes it, so measure the
-// real tab first (innerWidth x innerHeight) and pass it: PANE=668x837. Reviewing at a stale size hid
+// "pane" is the size Jager reviews in (the Claude app browser pane, design/viewports.json). He resizes it, so
+// measure the real tab first (innerWidth x innerHeight) and pass it: PANE=WxH. Reviewing at a stale size hid
 // empty scenes from review on 2026-10-01.
-const [paneW, paneH] = (process.env.PANE ?? "668x837").split("x").map(Number)
-const VIEWPORTS = { pane: { width: paneW, height: paneH }, desktop: { width: 1440, height: 900 }, phone: { width: 390, height: 844 } }
+const { pane, desktop, phone } = loadViewports()
+const [paneW, paneH] = process.env.PANE?.split("x").map(Number) ?? [pane.width, pane.height]
+const VIEWPORTS = { pane: { width: paneW, height: paneH }, desktop, phone }
 const PLAY_MS = Number(process.env.PLAY_MS ?? 2500)
 const ONLY = process.env.ONLY?.split(",") // e.g. ONLY=pane
 
