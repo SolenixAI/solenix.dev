@@ -148,6 +148,8 @@ fi
 for f in DESIGN.md design/tokens.css design/home.html design/approved.md; do
   [ -f "$f" ] || bad "missing source of truth: $f"
 done
+# The marketing context is a real file, not a link to PRODUCT.md: every marketing skill reads it, and sot-check.ts keeps its one-liner and audience equal to PRODUCT.md's.
+[ -f .agents/product-marketing.md ] && [ ! -L .agents/product-marketing.md ] || bad ".agents/product-marketing.md must be a real file, not a link (sot-check.ts compares it with PRODUCT.md)"
 
 # The homepage is app/(site)/page.tsx, which reads design/home.html. No second route may serve "/".
 [ -f app/route.ts ] && bad "second homepage: app/route.ts (/ is app/(site)/page.tsx, which reads design/home.html)"

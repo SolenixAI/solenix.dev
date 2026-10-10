@@ -29,4 +29,34 @@ for (const r of RULES)
       bad++
     }
   }
+
+// The marketing context (.agents/product-marketing.md, read by every marketing skill) copies two facts that PRODUCT.md owns.
+// Each copy must appear word for word in PRODUCT.md, so an edit to one side alone fails here.
+const CONTEXT = ".agents/product-marketing.md"
+const OWNER = "PRODUCT.md"
+const COPIES = [
+  { what: "the one-liner", label: "**One-liner:**" },
+  { what: "the audience", label: "**Target companies:**" },
+]
+if (!existsSync(CONTEXT) || !existsSync(OWNER)) {
+  console.log(`sot: ${CONTEXT} and ${OWNER} must both exist`)
+  bad++
+} else {
+  const owner = readFileSync(OWNER, "utf8").replace(/\s+/g, " ")
+  const lines = readFileSync(CONTEXT, "utf8").split("\n")
+  for (const c of COPIES) {
+    const line = lines.find((l) => l.startsWith(c.label))
+    if (line === undefined) {
+      console.log(`sot: ${CONTEXT} has no "${c.label}" line (${c.what}). ${OWNER} owns it.`)
+      bad++
+      continue
+    }
+    const value = line.slice(c.label.length).trim().replace(/\.$/, "")
+    if (!owner.includes(value)) {
+      console.log(`sot: ${CONTEXT} copies ${c.what} ("${value}"), but ${OWNER} does not say it word for word. Change both, or derive the copy from ${OWNER}.`)
+      bad++
+    }
+  }
+}
+
 process.exit(bad ? 1 : 0)
