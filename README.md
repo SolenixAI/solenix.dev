@@ -15,7 +15,7 @@ npm run dev
 
 `npm run dev` prints the address to open, usually http://localhost:3000.
 
-To build for production, run `npm run build`.
+To build for production, run `npm run build` (`next build`).
 
 ## Check your change
 
@@ -23,7 +23,7 @@ To build for production, run `npm run build`.
 npm run check
 ```
 
-`npm run check` runs `scripts/check.sh`, which checks the rules in [AGENTS.md](AGENTS.md). CI runs the same checks on every pull request.
+`npm run check` runs `scripts/check.sh`, which checks the site against the rules in [DESIGN.md](DESIGN.md), [PRODUCT.md](PRODUCT.md) and [design/approved.md](design/approved.md). CI runs the same checks on every pull request.
 
 Each commit runs the checks too. `npm install` points git at `.githooks`. The pre-commit hook needs [gitleaks](https://github.com/gitleaks/gitleaks), which scans for secrets. Install it first, for example with `brew install gitleaks` on macOS.
 
