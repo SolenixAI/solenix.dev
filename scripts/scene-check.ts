@@ -10,6 +10,7 @@
 //          the demonstration.
 import os from "node:os"
 import { launch } from "./browser.ts"
+import { loadViewports } from "../lib/viewports.ts"
 
 const URL = process.argv[2] ?? "http://localhost:3000/"
 const MIN_WORLD = Number(process.env.MIN_WORLD ?? 60)
@@ -19,8 +20,9 @@ const ONLY = process.env.ONLY // e.g. ONLY=pane to check one viewport
 // many seconds of coming into view. Not data-state="done": that waits for the by-hand side too.
 // most visitors leave a screen within 10 to 20 s (design/research/site-playbook.md).
 const MAX_PAYOFF_S = Number(process.env.MAX_PAYOFF_S ?? 15)
-// "pane" is the size Jager reviews in (the Claude app browser pane).
-const VIEWPORTS = { pane: { width: 872, height: 837 }, desktop: { width: 1440, height: 900 }, phone: { width: 390, height: 844 } }
+// The sizes are in design/viewports.json. "pane" is the size Jager reviews in (the Claude app browser pane).
+const { pane, desktop, phone } = loadViewports()
+const VIEWPORTS = { pane, desktop, phone }
 
 // Runs in the page: share of a 10x9 grid of points that fall inside a visible
 // 3D canvas with nothing opaque or blurred on top. The canvas ignores the

@@ -7,6 +7,8 @@ export const WORLDS_CSS = `
 /* A command's flag never splits from its value. */
 .wd-nowrap{white-space:nowrap}
 .wd-hero h1{font-size:clamp(2.6rem,1.9rem + 3vw,5rem)}
+/* A very short hero (a phone held sideways) keeps the headline and the action; the sentence steps aside. */
+@container (max-height:420px){.wd-hero .sx-sub{display:none}}
 
 /* The hero's light: one warm source where the sky's sun sits, a 32px hairline grid, and a sparse starfield on the right.
    The mask fades it out before the words, so the text always sits on the dark. The glow breathes; reduced motion stops it. */
@@ -60,6 +62,8 @@ export const WORLDS_CSS = `
 .wd-quiet-bar{width:min(100%,22rem);height:.9em;margin-block:.3em}
 
 /* The sky: a square the width of the column, in the reading order after the headline. */
+/* It measures itself in every layout (one column or two), so the small-sky rules below hold on a short wide screen too. */
+.wd-hero-sky{container:heroSky / size;align-self:stretch;min-height:0;display:grid;place-items:center}
 @container heroSky (min-height: 0px){.wd-hero-sky>.sk{width:min(100%,100cqh)}}
 @container heroSky (max-height: 159px){.wd-hero-sky>.sk{display:none}}
 /* A small sky keeps its names for screen readers only: its name tags would run past the sky's edge and be cut. */

@@ -1,8 +1,12 @@
 {
-  "about": "Screen sizes every page's first screen (its hero) must fit. scripts/hero-check.ts reads only this file. 'real' is refreshed from the site's own analytics by npm run viewports; 'edges' are the outer limits from published standards and device classes.",
+  "about": "The screen sizes the scripts capture and check at. lib/viewports.ts is the only reader of this file. 'pane', 'desktop', 'phone' and 'preview' are the sizes the review and capture scripts use. 'real' is a snapshot of the site's PostHog viewport sizes, taken on the date in 'taken'; no script refreshes it. 'edges' are the outer limits from published standards and device classes. scripts/hero-check.ts checks that each page's first screen fits every size in 'real', 'edges' and 'preview'.",
+  "pane": { "w": 720, "h": 837, "why": "Jager's browser pane, measured from his tab (innerWidth x innerHeight) on 2026-10-10; he resizes it, so measure again before a review; shots and scene-check review at it" },
+  "desktop": { "w": 1440, "h": 900, "why": "desktop review size used by scene-check, shots, space-frames and article covers" },
+  "phone": { "w": 390, "h": 844, "why": "phone review size used by scene-check, shots, space-frames and article covers" },
+  "preview": { "w": 1200, "h": 630, "why": "link preview and live card frame; article covers and share images are captured at it" },
   "real": {
     "source": "PostHog, $pageview events, $viewport_width x $viewport_height, last 180 days",
-    "refreshed": "2026-10-08T18:10-02:30",
+    "taken": "2026-10-08T18:10-02:30",
     "sizes": [
       { "w": 636, "h": 710, "views": 13 },
       { "w": 1454, "h": 754, "views": 7 },
@@ -14,7 +18,6 @@
     { "w": 375, "h": 812, "why": "common phone, tall" },
     { "w": 667, "h": 300, "why": "phone held sideways, toolbars showing" },
     { "w": 640, "h": 360, "why": "a 1280x720 laptop at 200% zoom" },
-    { "w": 1200, "h": 630, "why": "link preview and live card frame" },
     { "w": 1280, "h": 800, "why": "common laptop" },
     { "w": 3440, "h": 1440, "why": "ultrawide desktop" }
   ]

@@ -57,7 +57,7 @@ Each surface, and each section inside it, has its own purpose, value and impact,
 
 ## Capabilities and Constraints
 
-- The site is dark; the platform follows the device.
+- The site is dark only.
 - Every page fits any screen, loads nothing from another host, and derives its values live from one source (scripts/check.sh enforces it).
 - The repo is public: everything in it is written to be published.
 - Undecided: a public "from" price; client results to show.

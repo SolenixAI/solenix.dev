@@ -41,14 +41,14 @@ function newestHero(a: Article, more: number) {
     ? `<picture><source media="(max-width:760px)" srcset="${srcset(a.heroPhone, a.heroPhone2x)}" width="390" height="844"><img src="${a.hero}" srcset="${srcset(a.hero, a.hero2x)}" alt="" width="1440" height="900" decoding="sync" fetchpriority="high"></picture>`
     : a.cover ? `<img src="${a.cover}" alt="" width="1200" height="630">` : `<div class="noimg" aria-hidden="true"></div>`
   const live = `<div class="cover live play">${still}<iframe data-src="${a.path}" hidden tabindex="-1" aria-hidden="true" title=""></iframe></div>`
-  const enter = `<a class="enter" href="${a.path}" aria-label="Enter ${t}">Enter<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>`
+  const enter = `<a class="enter" href="${a.path}" aria-label="Read ${t}">Read it<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>`
   const cue = `<a class="sx-cue" href="#more">${more ? "More articles" : "About Solenix"} ↓</a>`
   return `
 <header class="sx-hero ar-hero" data-hero data-live-scope>
  <h1 class="sr">Articles: pages you can play with</h1>
  <div class="win">
   ${live}
-  <div class="win-bar"><span class="win-cap"><b>New</b><span class="win-name">${t}</span><span class="win-hint">Tap anything. Links take you in.</span></span>${enter}</div>
+  <div class="win-bar"><span class="win-cap"><b>New</b><span class="win-name">${t}</span><span class="win-hint">Try it right here.</span></span>${enter}</div>
  </div>
  ${cue}
 </header>`
@@ -57,7 +57,7 @@ function newestHero(a: Article, more: number) {
 export async function GET() {
   const [first, ...rest] = await listArticles()
   const title = "Articles"
-  const description = "Explorable stories about what AI can do now. Each one is a page you can play with."
+  const description = "Stories about what AI can do now, told as pages you can play with."
   const hero = first
     ? newestHero(first, rest.length)
     : `<header class="sx-hero" data-hero><div class="sx-hero-in"><div class="sx-hero-text"><h1>Pages you can play with, on their way</h1><p class="sx-sub">The first one is almost ready.</p></div></div></header>`
@@ -81,20 +81,23 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background-im
 .wrap{position:relative;max-width:var(--container);margin:0 auto;padding:24px 20px 96px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 ::selection{background:var(--accent);color:var(--accent-ink)}
-.enter{display:inline-flex;align-items:center;gap:10px;min-height:var(--tap-min);padding:0 20px 0 22px;border-radius:var(--radius-pill);background:var(--accent);color:var(--accent-ink);font:600 clamp(.9rem,2cqmin,1.05rem)/1 var(--font-text);text-decoration:none;white-space:nowrap;box-shadow:0 8px 24px -8px color-mix(in srgb,var(--accent) 60%,transparent);transition:background .2s,transform .2s}
-.enter:hover{background:var(--accent-hover);transform:translateY(-1px)}
+/* Enter is the ghost button: the article in the window holds the screen's one solid ember. */
+.enter{display:inline-flex;align-items:center;gap:10px;min-height:var(--tap-min);padding:0 20px 0 22px;border-radius:var(--radius-pill);border:1px solid var(--line-strong);background:transparent;color:var(--text);font:600 clamp(.9rem,2cqmin,1.05rem)/1 var(--font-text);text-decoration:none;white-space:nowrap;transition:border-color .2s,color .2s,transform .2s}
+.enter:hover{border-color:var(--accent);color:var(--accent-text);transform:translateY(-1px)}
 .enter svg{width:16px;height:16px}
 .live.play iframe{pointer-events:auto}
 /* Window: no words above it. The live article fills the first screen; a bar names it and lets you in. */
 .ar-hero{padding-top:var(--nav-height)}
 .touched .win-hint{display:none}
-.win{position:relative;height:100%;display:flex;flex-direction:column;border-radius:var(--radius-2xl);overflow:hidden;background:var(--surface-solid);box-shadow:inset 0 1px 0 var(--glass-edge),0 0 0 1px var(--line-strong),var(--shadow-lg)}
+.win{container:win/inline-size;position:relative;height:100%;max-width:100%;margin-inline:auto;display:flex;flex-direction:column;border-radius:var(--radius-2xl);overflow:hidden;background:var(--surface-solid);box-shadow:inset 0 1px 0 var(--glass-edge),0 0 0 1px var(--line-strong),var(--shadow-lg)}
 .win .live{flex:1;min-height:0;aspect-ratio:auto}
 .win-bar{flex:none;display:flex;gap:10px 16px;align-items:center;justify-content:space-between;padding:8px 8px 8px 20px;border-top:1px solid var(--line)}
-.win-cap{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;min-width:0;color:var(--text)}
-.win-name{font:650 clamp(1rem,3.2cqmin,1.4rem)/1.15 var(--font-display);letter-spacing:-.01em}
+.win-cap{flex:1;display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;min-width:0;color:var(--text)}
+.win-name{min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:650 clamp(1rem,3.2cqmin,1.4rem)/1.15 var(--font-display);letter-spacing:-.01em}
 .win-cap b{display:inline-flex;align-items:center;gap:7px;padding:6px 9px;border-radius:999px;border:1px solid color-mix(in srgb,var(--accent) 40%,transparent);background:color-mix(in srgb,var(--accent) 14%,transparent);font:600 .72rem/1 var(--font-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent-text)}
 .win-cap b::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent)}
+/* A narrow window (a small or short screen): the article shows its own title right above, so the bar keeps only the action. */
+@container win (max-width:440px){.win-cap{display:none}.win-bar{padding:8px}.enter{flex:1;justify-content:center}}
 .win-hint{font:400 .9rem/1.2 var(--font-text);color:var(--muted)}
 @container (max-width:480px){.win-hint{display:none}}
 .card{position:relative;display:grid;grid-template-rows:auto 1fr;border-radius:var(--radius-xl);overflow:hidden;background:var(--glass-bg);border:1px solid var(--line);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-md);color:var(--text);text-decoration:none;transition:transform .4s var(--ease-out),border-color .4s var(--ease-out),box-shadow .4s var(--ease-out)}
@@ -142,7 +145,7 @@ footer p{margin:0;color:var(--muted);max-width:34rem}
 ${hero}
 <div class="wrap" id="more">
 ${list}
-<footer><p>Solenix sets up one AI at the centre of the tools your business already uses, cuts the ones you don't, and teaches your team. A fixed price, in writing.</p><a class="btn primary" href="/book">Book a call</a></footer>
+<footer><p>Solenix built these pages with AI. For your business, we put one AI at the centre of the tools you already use, cut the ones you don't, and teach your team. A fixed price, in writing.</p><a class="btn primary" href="/book">Book a call</a></footer>
 </div><script>${CLIENT["articles-live"]}</script></body></html>`
   return servePage(html, { title, description, path: "/articles" })
 }

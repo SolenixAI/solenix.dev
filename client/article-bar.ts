@@ -42,10 +42,13 @@ else if (bar) {
     bar.style.setProperty("--ly", offset + "px")
     bar.classList.toggle("is-on", offset > -height)
 
+    // The section being read is the last one whose top has passed a reading line a quarter of the way
+    // down the screen below the bar: a heading in view names its section, not the one before it.
+    const line = height + (innerHeight - height) / 4
     let section: string | null = null
     for (const id of ids) {
       const el = document.getElementById(id)
-      if (el && el.getBoundingClientRect().top <= height) section = id
+      if (el && el.getBoundingClientRect().top <= line) section = id
     }
     if (section !== shown) {
       shown = section
