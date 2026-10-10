@@ -223,7 +223,7 @@ function SubWorld({ s, onPart }: { s: Source; onPart?: (x: Part, el: HTMLElement
   const stats = [
     s.repo?.stars != null && <li key="s"><StarIcon />{count(s.repo.stars)}<span>stars</span></li>,
     s.repo?.forks != null && <li key="f"><ForkIcon />{count(s.repo.forks)}<span>forks</span></li>,
-    s.weekly != null && <li key="w"><DownIcon />{count(s.weekly)}<span>installs last week</span></li>,
+    s.weekly != null && <li key="w"><DownIcon />{count(s.weekly)}<span>npm downloads last week</span></li>,
     s.updated && <li key="u"><ClockIcon /><span>updated</span><Ago iso={s.updated} /></li>,
     s.repo?.license && <li key="l"><ScaleIcon />{s.repo.license}</li>,
   ].filter(Boolean)
