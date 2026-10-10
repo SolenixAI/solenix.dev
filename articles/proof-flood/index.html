@@ -25,13 +25,14 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
   background-size:32px 32px,32px 32px,100% 100%,100% 100%,100% 100%,100% 100%,100% 100%,100% 100%}
 .wrap{position:relative;z-index:2}
 p{text-wrap:pretty}
-.wrap{max-width:1080px;margin:0 auto;padding-inline:20px;padding-block:0 80px}
+.wrap{max-width:1080px;margin:0 auto;padding-inline:var(--gutter);padding-block:0 80px}
 h1,h2,h3{font-family:var(--f-display);text-wrap:balance;line-height:1.04;margin:0;letter-spacing:-.015em}
 h2{font-size:clamp(2.2rem,1.7rem + 2.2vw,3.4rem);font-weight:700;letter-spacing:-.03em}
 h3{font-size:1.2rem;font-weight:650}
 p{margin:0}
 .mono{font-family:var(--f-mono)}
-.eyebrow{font:600 .8rem/1 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+/* a label names a list or a value; never a heading (eyebrows are banned) */
+.label{font:600 .8rem/1 var(--f-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
 .muted{color:var(--muted)}
 mark{background:none;color:var(--text);font-weight:600}
 a{color:var(--accent)}
@@ -694,7 +695,6 @@ abbr.g{text-decoration:underline dotted var(--accent);text-underline-offset:3px;
 <header class="hero sx-hero" id="top" data-hero>
  <div class="sx-hero-in">
   <div class="sx-hero-text">
-    <div class="sx-kicker">AI × mathematics · Updated 8 October 2026</div>
     <h1>The Proof <span class="grad">Flood</span></h1>
     <p class="sx-sub"><mark>372 open math problems.</mark> One AI. Every answer, in plain words. Which one touches your life?</p>
     <div class="btns"><a class="btn primary" href="#atlas" style="text-decoration:none">Explore all 372 →</a></div>
@@ -719,7 +719,6 @@ abbr.g{text-decoration:underline dotted var(--accent);text-underline-offset:3px;
 
 <!-- FLOOD -->
 <section id="flood" data-nav="The flood">
-  <div class="eyebrow">The numbers</div>
   <h2>From 4,000 questions to 372 results</h2>
   <p class="flood-hint">Tap a stage to see what it means. Bars show each share of the 4,000. The dotted line is compute time.</p>
   <div class="funnel" id="funnel"></div>
@@ -792,7 +791,6 @@ abbr.g{text-decoration:underline dotted var(--accent);text-underline-offset:3px;
 <!-- TIMELINE -->
 <section id="timeline" data-nav="Timeline">
   <div class="tl-head">
-    <div class="eyebrow">How we got here</div>
     <h2>Five months, from one problem to hundreds</h2>
   </div>
   <div class="tl-track">
@@ -811,7 +809,6 @@ abbr.g{text-decoration:underline dotted var(--accent);text-underline-offset:3px;
 
 <!-- TRUST -->
 <section id="trust" data-nav="How sure?">
-  <div class="eyebrow">How sure is anyone?</div>
   <h2>Each claim is only as sure as its check</h2>
   <p class="lede">A math result is trusted when it is checked: by a <abbr class="g" data-g="lean">Lean</abbr> computer check of every step, or by human experts who read it.</p>
   <p class="tcap">Five claims, strongest first. Each meter has five bars, and each status is named in words.</p>
@@ -821,7 +818,6 @@ abbr.g{text-decoration:underline dotted var(--accent);text-underline-offset:3px;
 
 <!-- PLAY: ERDOS -->
 <section id="play" data-nav="Play: Erdős">
-  <div class="eyebrow">Touch a real problem</div>
   <h2>Erdős's dots: how many pairs are exactly 1 apart?</h2>
   <p class="lede">Place n dots on a flat page. Count every pair that is exactly 1 unit apart. Try the two simple patterns yourself.</p>
   <div class="play">
@@ -930,7 +926,6 @@ abbr.g{text-decoration:underline dotted var(--accent);text-underline-offset:3px;
 
 <!-- DEBATE -->
 <section id="debate" data-nav="The fight">
-  <div class="eyebrow">The fight</div>
   <h2>Mathematicians do not agree on what this is</h2>
   <p class="lede">Tap a name to see where they stand, from worried to excited.</p>
   <div class="dbt">
@@ -1148,7 +1143,7 @@ const showT=i=>{
   tlBtns().forEach((b,j)=>{b.setAttribute("aria-pressed",j==tlI);b.tabIndex=j==tlI?0:-1});
   tl.style.setProperty("--f",tlI/(tlN-1));
   $("#tlCount").textContent=`${tlI+1} / ${tlN}`;
-  td.innerHTML=`<div class="tl-fig"><div class="big">${t.big}</div><div class="mono muted tl-cap">${t.cap}</div></div><div class="tl-txt"><span class="eyebrow">${t.d}</span><h3>${t.t}</h3><p>${t.x}</p></div>`;
+  td.innerHTML=`<div class="tl-fig"><div class="big">${t.big}</div><div class="mono muted tl-cap">${t.cap}</div></div><div class="tl-txt"><h3>${t.t}</h3><span class="label tl-date">${t.d}</span><p>${t.x}</p></div>`;
   tlAnn.textContent=`${t.d}: ${t.t}`;
 };
 const tlStop=()=>{clearInterval(tlTimer);tlTimer=null;tlPlay.textContent="Play";tlPlay.setAttribute("aria-label","Play the story");tlPlay.classList.remove("is-on")};
@@ -1533,7 +1528,7 @@ function openD(i,fromHist){const wasOpen=dr.classList.contains("on");if(!wasOpen
   <div class="chiprow">${(a.lf||[]).map(x=>`<span class="pill p-acc">${esc(x)}</span>`).join("")}</div>
   <div class="pvi"><div><i>◎</i><span><b>Purpose</b>${esc(a.pu)}</span></div><div><i>◆</i><span><b>Value</b>${esc(a.va)}</span></div><div><i>↗</i><span><b>Impact</b>${esc(a.im)}</span></div></div>
   <div class="meters"><div>Fame of the question ${pips(a.fm,5)}</div><div>Real-world reach ${pips(a.r,3)}</div></div>
-  <div style="display:grid;gap:6px"><span class="eyebrow">Papers (${a.pp.length})</span><ol class="papers">${a.pp.map(p=>`<li><a href="${esc(p[1])}" target="_blank" rel="noopener">${esc(p[0])}</a></li>`).join("")}</ol></div>
+  <div style="display:grid;gap:6px"><span class="label">Papers (${a.pp.length})</span><ol class="papers">${a.pp.map(p=>`<li><a href="${esc(p[1])}" target="_blank" rel="noopener">${esc(p[0])}</a></li>`).join("")}</ol></div>
   <details class="tech"><summary>Official technical summary</summary><p>${esc(a.d)}</p></details>`;
  requestAnimationFrame(()=>picMount($("#dPic"),a.pc,tok("--g"+a.G)));
  dr.classList.add("on");scrim.classList.add("on");dr.setAttribute("aria-hidden","false");$("#dBody").scrollTop=0;setTimeout(()=>$("#dClose").focus({preventScroll:true}),50);
