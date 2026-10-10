@@ -18,13 +18,13 @@ export const WORLDS_CSS = `
           mask-image:radial-gradient(closest-side at var(--hero-light),#000 22%,transparent 100%);
   animation:wd-light 7s ease-in-out infinite alternate}
 .wd-hero::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
-  background:radial-gradient(1px 1px at 61% 14%,rgb(244 242 238/.7),transparent),
-    radial-gradient(1px 1px at 84% 9%,rgb(244 242 238/.5),transparent),
-    radial-gradient(1.5px 1.5px at 93% 31%,rgb(251 191 36/.8),transparent),
-    radial-gradient(1px 1px at 68% 83%,rgb(244 242 238/.55),transparent),
-    radial-gradient(1px 1px at 88% 74%,rgb(244 242 238/.45),transparent),
-    radial-gradient(1px 1px at 79% 46%,rgb(244 242 238/.35),transparent),
-    radial-gradient(1px 1px at 57% 93%,rgb(244 242 238/.4),transparent)}
+  background:radial-gradient(1px 1px at 61% 14%,color-mix(in srgb,var(--text) 70%,transparent),transparent),
+    radial-gradient(1px 1px at 84% 9%,color-mix(in srgb,var(--text) 50%,transparent),transparent),
+    radial-gradient(1.5px 1.5px at 93% 31%,color-mix(in srgb,var(--sun1) 80%,transparent),transparent),
+    radial-gradient(1px 1px at 68% 83%,color-mix(in srgb,var(--text) 55%,transparent),transparent),
+    radial-gradient(1px 1px at 88% 74%,color-mix(in srgb,var(--text) 45%,transparent),transparent),
+    radial-gradient(1px 1px at 79% 46%,color-mix(in srgb,var(--text) 35%,transparent),transparent),
+    radial-gradient(1px 1px at 57% 93%,color-mix(in srgb,var(--text) 40%,transparent),transparent)}
 .wd-hero .sx-cue{z-index:2}
 
 /* Motion starts from what is already on screen and never hides it (a fade-in from dim read as a flash on every visit).

@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { Button } from "@/components/ui/button"
 import { SiteHeader } from "@/components/site/chrome"
 import { HERO_CSS } from "@/lib/site-hero"
+import { GROUND_CSS } from "@/lib/site-ground"
 
 // Any address the site does not have: one screen, in the site's own sky and nav, that says so in plain words
 // and offers the two places most people were looking for.
@@ -10,7 +11,7 @@ export const metadata: Metadata = { title: "Page not found", robots: { index: fa
 export default function NotFound() {
   return (
     <div data-theme="dark" className="min-h-dvh bg-background text-foreground">
-      <style href="site-ground" precedence="high">{"html,body{background:#0b0d12;color-scheme:dark}"}</style>
+      <style href="site-ground" precedence="high">{GROUND_CSS}</style>
       <style dangerouslySetInnerHTML={{ __html: HERO_CSS }} />
       <SiteHeader />
       <main id="content">
