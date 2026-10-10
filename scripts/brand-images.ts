@@ -1,25 +1,28 @@
 // The brand images (logos, avatar, banners), drawn from the one source of each part:
 //   the mark and the sun's light   lib/site-nav.ts
-//   colours and the type face       design/tokens.css (dark and light values of light-dark())
+//   colours and the type face       design/tokens.css (one value per token; the site is dark only)
+//   colours on a light surface      brand/on-light.ts (logo-light.svg, banner-*-light.svg)
 // Writes public/brand/out/, which the site serves at /brand/out/ and GitHub profiles copy.
 //   npm run brand           write the SVGs, then render avatar.png and apple-touch-icon.png
-//   npm run brand -- --check  fail if any file differs from what the sources draw now (the commit check runs this)
+//   npm run brand -- --check  fail if a file differs from what the sources draw now, or no source draws it (the commit check runs this)
 import { createHash } from "node:crypto"
-import { readFileSync, writeFileSync, existsSync } from "node:fs"
+import { readdirSync, readFileSync, writeFileSync, existsSync } from "node:fs"
 import { NAV, markShapes, sunGradient } from "../lib/site-nav.ts"
+import { ON_LIGHT } from "../brand/on-light.ts"
 
 const OUT = "public/brand/out"
 const CSS = readFileSync("design/tokens.css", "utf8")
 
-/** A token's value in one mode, with var() and light-dark() resolved. */
+/** dark: the site. light: a surface outside it, such as a light browser tab bar or GitHub in light mode. */
 type Mode = "dark" | "light"
+const isOnLight = (name: string): name is keyof typeof ON_LIGHT => Object.hasOwn(ON_LIGHT, name)
 
+/** A token's value, with var() resolved. A light surface takes the brand's own colour where brand/on-light.ts has one. */
 function token(name: string, mode: Mode): string {
+  if (mode === "light" && isOnLight(name)) return ON_LIGHT[name]
   const m = CSS.match(new RegExp(`--${name}:\\s*([^;]+);`))
   if (!m) throw new Error(`design/tokens.css has no --${name}`)
   let v = (m[1] ?? "").replace(/\/\*.*?\*\//g, "").replace(/\s+/g, " ").trim()
-  const ld = v.match(/^light-dark\(\s*([^,]+?)\s*,\s*(.+?)\s*\)$/)
-  if (ld) v = (mode === "light" ? ld[1] : ld[2]) ?? v
   return v.replace(/var\(--([a-z0-9-]+)\)/g, (_, n: string) => token(n, mode))
 }
 const resolve = (svg: string, mode: Mode) => svg.replace(/var\(--([a-z0-9-]+)\)/g, (_, n: string) => token(n, mode))
@@ -90,10 +93,12 @@ const sha = (s: string) => createHash("sha256").update(s).digest("hex")
 if (process.argv.includes("--check")) {
   const stale = Object.entries(files).filter(([n, svg]) => !existsSync(`${OUT}/${n}`) || readFileSync(`${OUT}/${n}`, "utf8") !== svg).map(([n]) => n)
   if (!existsSync(PNG_SOURCE) || readFileSync(PNG_SOURCE, "utf8").trim() !== sha(files["avatar.svg"] ?? "")) stale.push("avatar.png, apple-touch-icon.png")
-  if (stale.length) {
-    console.log(`brand: ${stale.join(", ")} differ from what the sources draw now. Run: npm run brand`)
-    process.exit(1)
-  }
+  // A file in OUT that no source draws cannot be regenerated, so it fails too. Dotfiles belong to the OS (.DS_Store).
+  const drawn = new Set([...Object.keys(files), "avatar.png", "apple-touch-icon.png", "png-source.sha256"])
+  const unsourced = readdirSync(OUT).filter((n) => !n.startsWith(".") && !drawn.has(n))
+  if (unsourced.length) console.log(`brand: ${unsourced.join(", ")} has no source: no line of this script draws it. Delete it, or add its source.`)
+  if (stale.length) console.log(`brand: ${stale.join(", ")} differ from what the sources draw now. Run: npm run brand`)
+  if (stale.length || unsourced.length) process.exit(1)
 } else {
   for (const [n, svg] of Object.entries(files)) writeFileSync(`${OUT}/${n}`, svg)
   const { launch } = await import("./browser.ts")
