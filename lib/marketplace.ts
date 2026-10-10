@@ -2,6 +2,7 @@ import "server-only"
 import { cache } from "react"
 import { githubHeaders } from "@/lib/github"
 import { fresh } from "@/lib/fresh"
+import { makeDescriber, type Part } from "@/lib/marketplace/parts"
 
 /**
  * The Agents Marketplace: the core toolkit and the worlds Solenix stands behind.
@@ -59,8 +60,7 @@ export type Entry = {
 }
 
 export type Kind = "maker" | "plugin" | "skills" | "connector" | "cli" | "api" | "tool"
-/** One thing inside a piece (a skill, agent or command), described by its own file. */
-export type Part = { id: string; kind: "skill" | "agent" | "command"; name: string; blurb: string | null; href: string }
+export type { Part }
 export type Link = { label: string; href: string }
 /** One body in a world's orbit, with everything its own source says about it right now. */
 export type Source = {
@@ -140,49 +140,12 @@ const treeOf = async (slug: string): Promise<{ sha: string | null; paths: string
   const t = await gh(`repos/${slug}/git/trees/HEAD?recursive=1`)
   return { sha: t?.sha ?? null, paths: Array.isArray(t?.tree) ? (t.tree as { path: string }[]).map((f) => f.path) : [] }
 }
-const tree = async (slug: string) => (await treeOf(slug)).paths
 
-/** A Markdown file's frontmatter name and description (YAML, including folded > and | blocks). */
-export function frontmatter(text: string): { name?: string; description?: string } {
-  const m = /^---\r?\n([\s\S]*?)\r?\n---/.exec(text)
-  if (!m) return {}
-  const lines = m[1].split(/\r?\n/), out: Record<string, string> = {}
-  lines.forEach((line, i) => {
-    const kv = /^(name|description):\s*(.*)$/.exec(line)
-    if (!kv) return
-    let v = kv[2].trim()
-    if (/^[>|][+-]?$/.test(v)) { const block: string[] = []; for (let j = i + 1; j < lines.length && /^\s+\S/.test(lines[j]); j++) block.push(lines[j].trim()); v = block.join(" ") }
-    out[kv[1]] = v.replace(/^(["'])(.*)\1$/, "$2")
-  })
-  return out
-}
-
-// The parts of a repo, each described by its own file. All the files come in one GraphQL request,
-// remembered by the repo's tree hash: a new commit is a new hash, so a description is never stale.
-const described = new Map<string, Promise<Part[]>>()
-const PART_FILES: Record<Part["kind"], RegExp> = { skill: /^skills\/([^/]+)\/SKILL\.md$/, agent: /^agents\/([^/]+)\.md$/, command: /^commands\/([^/]+)\.md$/ }
-async function partsOf(slug: string, kinds: Part["kind"][], only?: string[]): Promise<Part[]> {
-  const { sha, paths } = await treeOf(slug)
-  const files = paths.flatMap((path) => kinds.flatMap((kind) => {
-    const id = PART_FILES[kind].exec(path)?.[1]
-    return id && (!only || only.includes(id)) ? [{ kind, id, path }] : []
-  }))
-  if (!sha || files.length === 0) return []
-  const key = `${slug}@${sha}:${kinds}:${only ?? ""}`
-  if (!described.has(key)) described.set(key, (async () => {
-    const [owner, name] = slug.split("/")
-    const fields = files.map((f, i) => `f${i}: object(expression: ${JSON.stringify(`HEAD:${f.path}`)}) { ... on Blob { text } }`).join(" ")
-    const r = await fetch("https://api.github.com/graphql", { method: "POST", headers: await githubHeaders(), body: JSON.stringify({ query: `{ repository(owner: ${JSON.stringify(owner)}, name: ${JSON.stringify(name)}) { ${fields} } }` }) })
-      .then((x) => (x.ok ? x.json() : null), () => null)
-    const repo = r?.data?.repository
-    if (!repo) { described.delete(key); return files.map((f) => ({ id: f.id, kind: f.kind, name: f.id, blurb: null, href: `https://github.com/${slug}/blob/HEAD/${f.path}` })) }
-    return files.map((f, i) => {
-      const fm = frontmatter(repo[`f${i}`]?.text ?? "")
-      return { id: f.id, kind: f.kind, name: fm.name || f.id, blurb: fm.description || null, href: `https://github.com/${slug}/blob/HEAD/${f.path}` }
-    })
-  })())
-  return described.get(key)!
-}
+// The parts of a repo, each described by its own file. makeDescriber (lib/marketplace/parts.ts) reads them with the
+// tree its caller already read, so no read fetches a repo's tree twice. It holds only the newest complete answer per
+// request, and never a failed one. A new commit is a new tree, so its descriptions are read again. The tree itself is
+// as fresh as treeOf: an hour at most, and at once after a push.
+const describeParts = makeDescriber((url, init) => fetch(url, init), githubHeaders)
 const npm = async (name: string) => {
   const [latest, week] = await Promise.all([hourly(`https://registry.npmjs.org/${name}/latest`), hourly(`https://api.npmjs.org/downloads/point/last-week/${name}`)])
   return { version: (latest?.version as string) ?? null, blurb: (latest?.description as string) ?? null, weekly: (week?.downloads as number) ?? null }
@@ -211,7 +174,9 @@ const blank = (s: Pick<Source, "id" | "kind" | "name" | "href">): Source =>
   ({ blurb: null, repo: null, version: null, updated: null, weekly: null, contents: [], items: [], parts: [], gives: null, works: [], refs: [], ...s })
 
 async function plugin(slug: string, specs: Specs, maker: string): Promise<Source> {
-  const [f, paths, parts] = await Promise.all([repoFacts(slug), tree(slug), partsOf(slug, ["agent", "command", "skill"])])
+  const [f, t] = await Promise.all([repoFacts(slug), treeOf(slug)])
+  const parts = await describeParts(slug, t, ["agent", "command", "skill"])
+  const paths = t.paths
   const s = shape(paths)
   const manifest = paths.find((p) => /^\.[a-z]+-plugin\/plugin\.json$/.test(p))
   const m = manifest ? await gh(`repos/${slug}/contents/${manifest}`) : null
@@ -224,8 +189,9 @@ async function plugin(slug: string, specs: Specs, maker: string): Promise<Source
     refs: [gitHub(slug), ...(f.homepage ? [{ label: "Docs", href: f.homepage }] : []), ...spec(specs, "plugin", "Agent Plugins spec")] }
 }
 async function skills(slug: string, specs: Specs, maker: string): Promise<Source> {
-  const [f, paths, parts] = await Promise.all([repoFacts(slug), tree(slug), partsOf(slug, ["skill"])])
-  const s = shape(paths)
+  const [f, t] = await Promise.all([repoFacts(slug), treeOf(slug)])
+  const parts = await describeParts(slug, t, ["skill"])
+  const s = shape(t.paths)
   return { ...blank({ id: "skills", kind: "skills", name: "Skills", href: `https://github.com/${slug}/tree/HEAD/skills` }), blurb: f.blurb, repo: asRepo(f), updated: f.pushed,
     contents: s.skills.length ? [{ label: "skills", n: s.skills.length }] : [], items: s.skills, parts,
     gives: s.skills.length ? `Your AI knows how to do ${s.skills.length} things the way ${maker} does them.` : null,
@@ -251,7 +217,8 @@ async function cli(name: string, docs: string, maker: string): Promise<Source> {
 const api = (docs: string, maker: string): Source => ({ ...blank({ id: "api", kind: "api", name: "API", href: docs }), gives: `Anything else ${maker} can do, your AI can reach directly.`, refs: [{ label: "API reference", href: docs }] })
 
 async function tool(t: ToolSource, specs: Specs): Promise<Source> {
-  const [f, n, release, parts] = await Promise.all([repoFacts(t.starsRepo), t.cli ? npm(t.cli.npm) : null, gh(`repos/${t.starsRepo}/releases/latest`), partsOf(t.install.repo, ["skill"], t.install.skills)])
+  const [f, n, release, tr] = await Promise.all([repoFacts(t.starsRepo), t.cli ? npm(t.cli.npm) : null, gh(`repos/${t.starsRepo}/releases/latest`), treeOf(t.install.repo)])
+  const parts = await describeParts(t.install.repo, tr, ["skill"], t.install.skills)
   return { ...blank({ id: t.id, kind: "tool", name: t.name, href: t.site }), blurb: f.blurb ?? t.for, repo: asRepo(f), parts, gives: t.for,
     version: release?.tag_name ?? n?.version ?? null, updated: release?.published_at ?? f.pushed, weekly: n?.weekly ?? null, items: t.install.skills,
     refs: [{ label: new URL(t.site).host, href: t.site }, gitHub(t.starsRepo), ...(t.cli ? [{ label: "Docs", href: t.cli.docs }, npmPage(t.cli.npm)] : []), ...spec(specs, "skills", "Agent Skills spec")] }
