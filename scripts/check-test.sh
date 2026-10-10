@@ -37,11 +37,8 @@ expect fail "old label \"Tools we use\""
 fresh; echo 'export default function P(){return null}' > "$tmp/r/app/route.ts"
 expect fail "a second homepage (app/route.ts)"
 
-fresh; awk 'BEGIN{s=0} /^\[auth\]$/{s=1} /^\[/{if($0!="[auth]")s=0} s&&/^enable_signup/{print "enable_signup = true"; next} {print}' "$tmp/r/supabase/config.toml" > "$tmp/c" && mv "$tmp/c" "$tmp/r/supabase/config.toml"
-expect fail "self sign-up switched on"
-
-fresh; awk 'BEGIN{s=0} /^\[auth\.email\]$/{s=1} /^\[/{if($0!="[auth.email]")s=0} s&&/^enable_signup/{print "enable_signup = false"; next} {print}' "$tmp/r/supabase/config.toml" > "$tmp/c" && mv "$tmp/c" "$tmp/r/supabase/config.toml"
-expect fail "email sign-in switched off"
+fresh; sed -i '' 's|colorScheme: "dark"|colorScheme: "light dark"|' "$tmp/r/app/layout.tsx"
+expect fail "the root layout follows the device (the site is dark only)"
 
 fresh; sed -i '' 's|<Analytics />||' "$tmp/r/app/(site)/layout.tsx"
 expect fail "homepage analytics removed"
@@ -77,10 +74,6 @@ expect fail "a second 3D world outside lib/space (an import of three)"
 # The pre-commit hook refuses a staged secret (a made-up key in a known key format).
 fresh; printf 'const key = "sk_live_%s"\n' "51Hq3bWd9ExampleOnlyNotARealKeyZx7Tn2Lm8Pq4Rs6Uv0Wy" > "$tmp/r/lib/leak.ts"
 if (cd "$tmp/r" && git add lib/leak.ts && bash .githooks/pre-commit >/dev/null 2>&1); then fail=$((fail + 1)); echo "WRONG a staged secret got past pre-commit"; else pass=$((pass + 1)); echo "ok    a staged secret is refused at commit"; fi
-
-# The sign-in link guard (.claude/hooks/sign-in-link-guard.sh).
-lg() { jq -n --arg c "$1" '{tool_name:"Bash",tool_input:{command:$c}}' | bash "$root/.claude/hooks/sign-in-link-guard.sh" >/dev/null 2>&1; echo $?; }
-if [ "$(lg 'curl -X POST $SUPABASE_URL/auth/v1/admin/generate_link')" = 2 ] && [ "$(lg 'npm run build')" = 0 ]; then pass=$((pass + 1)); echo "ok    sign-in link guard blocks admin link generation, allows the rest"; else fail=$((fail + 1)); echo "WRONG sign-in link guard"; fi
 
 fresh; python3 -c "import re,sys; p=sys.argv[1]; open(p,'w').write(re.sub(r'three.body', 'two-part', open(p).read()))" "$tmp/r/design/home.html"
 expect fail "an approved line (the three-body hero) is removed"

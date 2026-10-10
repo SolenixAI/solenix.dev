@@ -8,7 +8,7 @@ sources:
   - design/home.html (homepage)
   - app/articles/route.ts, articles/ (articles)
   - app/(site)/agents/page.tsx (Agents Marketplace)
-  - app/(portal)/app/ and components/portal/ (portal)
+  - app/(site)/app/page.tsx (Solenix platform: being rebuilt)
   - next.config.ts (/book)
 generated: { by: agent:claude-opus-5-5, at: 2026-10-08T18:00-02:30 }
 verified: { by: reading the code, at: 2026-10-08T18:00-02:30 }
@@ -31,7 +31,6 @@ flowchart LR
     SEA["Search"]
     DIR["A direct link"]
     DEV["GitHub or agent docs"]
-    MAIL_IN["An invite or sign-in email"]
   end
   subgraph SITE["Public site"]
     HOME["Homepage"]
@@ -39,15 +38,11 @@ flowchart LR
     PAGE["An article"]
     AGT["Agents Marketplace"]
   end
-  subgraph PORTAL["Solenix platform"]
-    LOG["Sign in"]
-    OVR["Overview"]
-    WORK["Tech, Projects, Billing"]
-    ADM["Clients (operator)"]
+  subgraph PLAT["Solenix platform"]
+    REB["Being rebuilt"]
   end
   subgraph OUT["Leaves to"]
     BOOK["Book a call"]
-    PAY["Pay an invoice"]
     INSTALL["Install a tool"]
   end
   SOC --> PAGE
@@ -55,14 +50,11 @@ flowchart LR
   SEA --> PAGE
   DIR --> HOME
   DEV --> AGT
-  MAIL_IN --> LOG
   HOME --> ART -->|"the live card grows into the page"| PAGE
   HOME --> AGT
   HOME --> BOOK
   PAGE --> BOOK
-  HOME -->|"Solenix platform"| LOG
-  LOG --> OVR --> WORK --> PAY
-  LOG -->|"operator"| ADM
+  HOME -->|"Solenix platform"| REB --> BOOK
   AGT --> INSTALL
 ```
 
@@ -108,7 +100,7 @@ What would raise the low steps:
 
 **As** a small-business owner looking at Solenix, **I want** to see what would change in my week and what it costs, **so that** I can decide in a few minutes whether to book a call.
 
-Pages: /, /articles, /book
+Pages: /, /articles, /app, /book
 
 ```mermaid
 journey
@@ -124,7 +116,7 @@ journey
   section Trust
     Looks for proof, finds a placeholder photo: 2: Owner
     Looks for a price, finds only fixed price: 2: Owner
-    Taps Solenix platform and meets a sign-in page: 2: Owner
+    Taps Solenix platform: being rebuilt, Book a call: 3: Owner
   section Browse
     Opens Articles: a heading block, cards below: 2: Owner
     Each card shows its article live: 5: Owner
@@ -137,77 +129,17 @@ journey
 What would raise the low steps:
 - **Proof (2):** a real photo and one real client result.
 - **Price (2):** a starting price or a typical range.
-- **Solenix platform (2):** the sign-in page's "New here?" should lead to Book a call, not an email.
+- **Solenix platform (3):** being rebuilt; it opens again with the new platform.
 - **Articles heading (2):** the first screen should be a designed hero, not a block of text.
 - **Calendar (3):** the booking page leaves the Solenix look.
 
 ## 3. The client
 
-**As** a client, **I want** to see that my site is fine, answer what waits for me and pay an invoice, **so that** I never chase anyone or open seven vendor logins.
-
-Pages: /app/login, /app/auth/confirm, /app/auth/finish, /app/welcome, /app, /app/tech, /app/projects, /app/billing, /app/billing/[invoice]
-
-```mermaid
-journey
-  title The client, today
-  section Sign in
-    Opens the platform and meets the sign-in page: 4: Client
-    Types an email and gets a link, no password: 4: Client
-    Taps the link in the email, then Continue: 3: Client
-  section First visit only
-    Fills the welcome form, about ten fields: 3: Client
-    Start here shows step one already done: 3: Client
-  section Check in
-    Reads Everything is running: 5: Client
-    Sees a live preview of the site: 4: Client
-    Finds Waiting on you below three doors: 3: Client
-    Taps Looks right: 5: Client
-    Taps Ask for a change and a mail app opens: 2: Client
-  section Pay
-    Sees the amount with a Pay button: 5: Client
-    Pays on the payment page: 5: Client
-    Downloads the receipt: 4: Client
-  section Look around
-    Reads Your tech with costs and renewals: 4: Client
-    Sees can connect, with nothing to tap: 3: Client
-    Reads Projects with the next step: 4: Client
-```
-
-What would raise the low steps:
-- **Continue (3):** the extra tap stops mail scanners from using the link. Keep it, and say why in one line.
-- **Welcome form (3):** fill in what is already known; ask only what is missing.
-- **Step one done (3):** remove a step that is always done.
-- **Waiting on you (3):** show it first when something waits.
-- **Ask for a change (2):** a box on the page that saves the request.
-- **Can connect (3):** one tap asks for it.
+The old portal was removed on 2026-10-09. This journey returns with the new Solenix platform.
 
 ## 4. The operator
 
-**As** the person who runs Solenix, **I want** to invite clients, see who needs me and update their work, **so that** the platform runs the business and nothing lives in a spreadsheet.
-
-Pages: /app/admin/clients, /app/admin/clients/[id], /app/admin/clients/[id]/manage, /app/admin/clients/[id]/tech, /app/admin/clients/[id]/projects, /app/admin/clients/[id]/billing, /app/admin/clients/[id]/billing/[invoice]
-
-```mermaid
-journey
-  title The operator, today
-  section See who needs me
-    Reads one line: sites down, invoices waiting: 5: Operator
-    Cannot see which client has not answered: 3: Operator
-    Filters clients by typing: 5: Operator
-  section Onboard
-    Invites a client with three fields: 4: Operator
-    Resends an invite to someone not signed in: 4: Operator
-  section Run a client
-    Sees exactly what the client sees: 5: Operator
-    Edits tech, projects and approvals: 4: Operator
-    Removes an item with one tap, no undo: 2: Operator
-    Raises an invoice outside the platform: 3: Operator
-```
-
-What would raise the low steps:
-- **Not answered (3):** a "Waiting on client" badge in the list.
-- **One-tap remove (2):** an undo, or a confirm.
-- **Invoices (3):** raise them from the platform, or link straight to them.
+The old portal was removed on 2026-10-09. This journey returns with the new Solenix platform.
 
 ## 5. Anyone setting up their AI (and the AI itself)
 

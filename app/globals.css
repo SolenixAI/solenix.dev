@@ -1,4 +1,4 @@
-/* One stylesheet for the site and the portal.
+/* One stylesheet for the site.
    design/tokens.css is the single source of truth for every colour, size,
    radius, shadow and motion value. This file only points Tailwind and shadcn
    at those tokens, and holds the few signature visuals (light, orbit, glass)
@@ -9,18 +9,8 @@
 @import "shadcn/tailwind.css";
 @import "../design/tokens.css";
 
-/* shadcn's dark: styles follow the same rule as the tokens: the site is dark;
-   the portal is dark when the person chose dark, or follows a dark device. */
-@custom-variant dark {
-  &:where([data-theme="dark"], [data-theme="dark"] *, :not([data-portal], [data-portal] *)) {
-    @slot;
-  }
-  @media (prefers-color-scheme: dark) {
-    &:where([data-portal]:not([data-theme]), [data-portal]:not([data-theme]) *) {
-      @slot;
-    }
-  }
-}
+/* shadcn's dark: styles follow the same rule as the tokens: the site is dark everywhere. */
+@custom-variant dark (&:where(*));
 
 @theme inline {
   /* shadcn roles → tokens */

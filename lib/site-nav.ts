@@ -17,7 +17,7 @@ export const NAV = {
     { href: "/articles", label: "Articles" },
     { href: "/agents", label: "Agents Marketplace", wide: true, app: true },
   ],
-  platform: { href: "/app", label: "Solenix platform", short: "Platform", aria: "Solenix platform: sign in" },
+  platform: { href: "/app", label: "Solenix platform", short: "Platform", aria: "Solenix platform: being rebuilt" },
   contact: { href: "mailto:hello@solenix.dev", label: "hello@solenix.dev" },
 }
 
@@ -125,9 +125,9 @@ const CHEVRON = `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4
 const SHARE = `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v8M5 5l3-3 3 3M3.5 8.5V14h9V8.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`
 
 // The next page is fetched as soon as a pointer rests on its link (or a finger goes down), so the
-// move is near instant. Fetch only: nothing runs until the visitor really goes. The platform and
-// analytics paths are left out.
-export const NAV_PREFETCH = JSON.stringify({ prefetch: [{ where: { and: [{ href_matches: "/*" }, { not: { href_matches: ["/app", "/app/*", "/lumen/*", "/api/*"] } }] }, eagerness: "moderate" }] })
+// move is near instant. Fetch only: nothing runs until the visitor really goes. The analytics and API
+// paths are left out.
+export const NAV_PREFETCH = JSON.stringify({ prefetch: [{ where: { and: [{ href_matches: "/*" }, { not: { href_matches: ["/lumen/*", "/api/*"] } }] }, eagerness: "moderate" }] })
 
 /** The fit and scroll script every page with the nav runs, right after the markup (client/site-fit.ts). */
 export const NAV_FIT = CLIENT["site-fit"]

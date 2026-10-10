@@ -30,12 +30,6 @@
       "sourceType": "github",
       "skillPath": "skills/redis-security/SKILL.md",
       "computedHash": "34cd6ea1099c4c77ba727a9c64832996f2e6274d459f70060f7c852619978c4b"
-    },
-    "supabase": {
-      "source": "supabase/agent-skills",
-      "sourceType": "github",
-      "skillPath": "skills/supabase/SKILL.md",
-      "computedHash": "17ee0fac5225bb5311e6b7ac9b35b4eb51535146444383a3047d21b191a4f240"
     }
   }
 }
