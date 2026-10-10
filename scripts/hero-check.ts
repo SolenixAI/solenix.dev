@@ -5,8 +5,9 @@
 //   and the headline (its h1) has 12 words or fewer.
 // Pages come from the code (the same list the journey check reads), so a new page is checked
 // without being listed here. Runs against a local server only: nothing outside the repo.
-//   npm run hero-check [-- <base url>]   (starts the dev server itself when none is running)
+//   npm run hero-check [-- <base url>]   (starts its own dev server unless :3000 serves this checkout)
 import { execFileSync, spawn } from "node:child_process"
+import { createServer, type AddressInfo } from "node:net"
 import { readdirSync, statSync } from "node:fs"
 import { launch } from "./browser.ts"
 import { loadViewports } from "../lib/viewports.ts"
@@ -21,13 +22,27 @@ const routes = (dir: string, at = ""): string[] => readdirSync(dir, { withFileTy
 })
 const candidates = [...new Set([...routes("app"), ...readdirSync("articles").filter((a) => !a.startsWith("_") && statSync(`articles/${a}`).isDirectory()).map((a) => `/articles/${a}`)])]
 
-let base = process.argv[2] ?? process.env.SITE_URL?.replace(/\/$/, "") ?? "http://localhost:3000" // SITE_URL: the same variable scripts/check.sh uses
+// The pages measured must be this checkout's. A base URL given by the caller (argument or SITE_URL, the variable
+// scripts/check.sh uses) is used as given. Otherwise the dev server on :3000 is used only when it runs from this
+// checkout: one started from another worktree serves other code. Else this check starts its own, on a free port.
+const given = process.argv[2] ?? process.env.SITE_URL?.replace(/\/$/, "")
+let base = given ?? "http://localhost:3000"
 const up = () => fetch(base).then((r) => r.ok, () => false)
+const servesHere = (port: number) => {
+  try {
+    const pids = execFileSync("lsof", ["-tiTCP:" + port, "-sTCP:LISTEN"], { encoding: "utf8" }).trim().split("\n")
+    return pids.some((pid) => execFileSync("lsof", ["-a", "-p", pid, "-d", "cwd", "-Fn"], { encoding: "utf8" }).split("\n").includes("n" + process.cwd()))
+  } catch { return false }
+}
+const freePort = () => new Promise<number>((resolve) => {
+  const s = createServer().listen(0, () => { const { port } = s.address() as AddressInfo; s.close(() => resolve(port)) })
+})
 let server
-if (!(await up())) {
-  base = "http://localhost:3123"
+if (!(await up()) || (!given && !servesHere(3000))) {
+  const port = await freePort()
+  base = `http://localhost:${port}`
   execFileSync("node", ["scripts/vendor.ts"]); execFileSync("node", ["--no-warnings", "scripts/build-client.ts"]) // what predev does for npm run dev
-  server = spawn("npx", ["next", "dev", "-p", "3123"], { stdio: "ignore" })
+  server = spawn("npx", ["next", "dev", "-p", String(port)], { stdio: "ignore" })
   for (let i = 0; i < 120 && !(await up()); i++) await new Promise((r) => setTimeout(r, 500))
 }
 
