@@ -122,13 +122,6 @@
   --chart-axis: var(--faint);                                       /* tick labels  */
   --chart-track: color-mix(in oklch, var(--text) 10%, transparent); /* unfilled bar */
 
-  /* Sparkline */
-  --spark-line: var(--chart-1);
-  --spark-fill: linear-gradient(to bottom,
-    color-mix(in oklch, var(--chart-1) 26%, transparent),
-    color-mix(in oklch, var(--chart-1) 0%, transparent));
-  --spark-point: var(--chart-1);
-
   /* Trend. Direction only — the judgement is set per instance with
      data-sentiment, because a rise is not always good. */
   --trend-up: var(--ok);

@@ -25,8 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Sora, per DESIGN.md §2: served from the site itself (lib/site-fonts.ts); never swaps. */}
         <link rel="preload" href={FONT_PRELOAD} as="font" type="font/woff2" crossOrigin="" />
         <link rel="stylesheet" href={FONT_CSS} />
-        {/* Before first paint: mark the page as scripted (so reveals can hide safely)
-            and apply a saved light/dark choice, so there is no flash. */}
+        {/* Before first paint: mark the page as scripted, so reveals can hide safely. */}
         <script
           dangerouslySetInnerHTML={{
             __html:
@@ -43,17 +42,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   );
 }
 
-/** Gradients referenced by url(#…) across the site: the mark's sun and the sparkline fill. */
+/** Gradients referenced by url(#…) across the site: the mark's sun. */
 function SharedDefs() {
   return (
     <svg aria-hidden="true" focusable="false" className="absolute size-0 overflow-hidden">
       <defs dangerouslySetInnerHTML={{ __html: sunGradient("sun") }} />
-      <defs>
-        <linearGradient id="sparkfill" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" style={{ stopColor: "var(--spark-line)", stopOpacity: 0.22 }} />
-          <stop offset="1" style={{ stopColor: "var(--spark-line)", stopOpacity: 0 }} />
-        </linearGradient>
-      </defs>
     </svg>
   );
 }
