@@ -1,8 +1,9 @@
 import { createHmac, createSign, timingSafeEqual } from "node:crypto"
 import { fresh } from "./fresh.ts"
+import { GITHUB_ORG } from "./site-meta.ts"
 
 /**
- * GitHub, as SolenixAI: the org's own GitHub App, one app for everything Solenix builds, installed
+ * GitHub, as the Solenix org: its own GitHub App, one app for everything Solenix builds, installed
  * on the org. The app signs a short JWT with its private key, trades it for an installation token that
  * lasts an hour, and renews it before it runs out: 5,000 reads an hour, free 304s, tied to no
  * person. Set up once with `node scripts/github-app.ts`. Without the app's keys it falls back to
@@ -47,7 +48,7 @@ export function makeToken(app: App, get: Get, now = () => Date.now()) {
 
 const env = process.env
 const app = env.GITHUB_APP_ID && env.GITHUB_APP_PRIVATE_KEY
-  ? makeToken({ id: env.GITHUB_APP_ID, key: env.GITHUB_APP_PRIVATE_KEY.replace(/\\n/g, "\n"), org: "SolenixAI" }, (u, i) => fetch(u, i))
+  ? makeToken({ id: env.GITHUB_APP_ID, key: env.GITHUB_APP_PRIVATE_KEY.replace(/\\n/g, "\n"), org: GITHUB_ORG }, (u, i) => fetch(u, i))
   : null
 
 /** The headers every GitHub read carries: the API version, and the best key the site has. */

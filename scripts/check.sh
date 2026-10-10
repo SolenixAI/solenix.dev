@@ -26,6 +26,9 @@ grep -rn -E '· v[0-9]|\(v[0-9]\)|/\* v[0-9]|\bv[0-9] ·' DESIGN.md design/token
   | while read -r l; do echo "check: version label: $l"; done | grep . && fail=1
 
 # The site is dark only: the root layout declares dark before first paint, and nothing follows the device.
+# The first-frame ground (lib/site-ground.ts) is a literal by necessity; it must equal --bg in the tokens.
+ground=$(sed -n 's/^export const GROUND = "\(#[0-9a-fA-F]*\)".*/\1/p' lib/site-ground.ts); bg=$(sed -n 's/^[[:space:]]*--bg:[[:space:]]*\(#[0-9a-fA-F]*\);.*/\1/p' design/tokens.css | head -1)
+[ -n "$ground" ] && [ "$ground" = "$bg" ] || bad "lib/site-ground.ts GROUND ($ground) must equal --bg in design/tokens.css ($bg)"
 grep -q 'colorScheme: "dark"' app/layout.tsx || bad "app/layout.tsx: the root viewport must declare colorScheme \"dark\" (the site is dark only)"
 grep -rn -E 'light dark|light-dark\(|data-portal' app components lib client articles design/home.html design/tokens.css 2>/dev/null \
   | while read -r l; do echo "check: the site is dark only, nothing follows the device: ${l:0:80}"; done | grep . && fail=1
@@ -45,7 +48,7 @@ grep -n -E 'motion-toggle|class="word">Motion<' design/*.html 2>/dev/null \
 
 # Every page is measured: the site layout mounts one analytics component for all its pages, the homepage among them
 # (app/(site)/page.tsx). The raw pages (Articles) keep the inline snippet (lib/site-page.ts).
-grep -q '<Analytics />' 'app/(site)/layout.tsx' && grep -q 'posthog.init' 'app/(site)/analytics.tsx' && grep -q 'capture_pageleave' lib/analytics.ts || bad "homepage has no analytics (app/(site)/layout.tsx → analytics.tsx → lib/analytics.ts)"
+grep -qF '<Analytics host={SITE_HOST} />' 'app/(site)/layout.tsx' && grep -q 'posthog.init' 'app/(site)/analytics.tsx' && grep -q 'capture_pageleave' lib/analytics.ts || bad "homepage has no analytics (app/(site)/layout.tsx → analytics.tsx → lib/analytics.ts)"
 grep -q 'POSTHOG_SNIPPET' lib/site-page.ts || bad "raw pages have no analytics (lib/site-page.ts)"
 
 # The agents page is called "Agents Marketplace" everywhere.

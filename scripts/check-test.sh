@@ -54,7 +54,7 @@ expect fail "a second homepage (app/route.ts)"
 fresh; sed -i '' 's|colorScheme: "dark"|colorScheme: "light dark"|' "$tmp/r/app/layout.tsx"
 expect fail "the root layout follows the device (the site is dark only)"
 
-fresh; sed -i '' 's|<Analytics />||' "$tmp/r/app/(site)/layout.tsx"
+fresh; sed -i '' 's|<Analytics host={SITE_HOST} />||' "$tmp/r/app/(site)/layout.tsx"
 expect fail "homepage analytics removed"
 
 fresh; sed -i '' 's|<SpaceWorld />||' "$tmp/r/app/(site)/layout.tsx"
@@ -149,6 +149,25 @@ expect fail "a public price on the homepage"
 
 fresh; printf "import * as THREE from 'three'\nexport const world = THREE\n" > "$tmp/r/lib/second-world.ts"
 expect fail "a second 3D world outside lib/space (an import of three)"
+
+# One owner per repo fact (scripts/sot-check.ts): a second copy of the site origin, the GitHub org, the marketplace repo
+# or the catalog key fails the check, and the check names the copy. This file is scanned by that same gate, so every
+# planted copy is built here from parts: no line of this file holds a whole copy of a repo fact.
+part_host="solenix" part_tld=".dev" part_org="Solenix" part_ai="AI" part_repo="agents" part_key="catalog"
+printed() { # printed <text the check must print> <name>
+  out=$(cd "$tmp/r" && bash scripts/check.sh 2>&1) # captured first: under pipefail, check's own exit 1 would hide grep's match
+  if grep -qF "$1" <<<"$out"; then pass=$((pass + 1)); echo "ok    $2"; else fail=$((fail + 1)); echo "WRONG $2 (check did not print: $1)"; fi
+}
+fresh; printf 'export const origin = "https://%s%s"\n' "$part_host" "$part_tld" > "$tmp/r/lib/second-origin.ts"
+printed "sot: lib/second-origin.ts:1 copies the site origin" "a second copy of the site origin (lib/second-origin.ts)"
+fresh; printf 'export const org = "%s%s"\n' "$part_org" "$part_ai" > "$tmp/r/lib/second-org.ts"
+printed "sot: lib/second-org.ts:1 copies the GitHub org" "a second copy of the GitHub org (lib/second-org.ts)"
+fresh; printf 'export const slug = "%s%s/%s-marketplace"\n' "$part_org" "$part_ai" "$part_repo" > "$tmp/r/lib/second-repo.ts"
+printed "sot: lib/second-repo.ts:1 copies the marketplace repo" "a literal copy of the marketplace slug (lib/second-repo.ts)"
+fresh; printf 'export const channel = (ref: string) => `%s:${ref}`\n' "$part_key" > "$tmp/r/lib/second-channel.ts"
+printed "sot: lib/second-channel.ts:1 copies the catalog key" "a second copy of the bus channel (lib/second-channel.ts)"
+fresh; printf 'export const channel = (ref: string) => "%s:" + ref\n' "$part_key" > "$tmp/r/lib/second-channel-concat.ts"
+printed "sot: lib/second-channel-concat.ts:1 copies the catalog key" "a quoted concatenation of the bus channel (lib/second-channel-concat.ts)"
 
 # The pre-commit hook refuses a staged secret (a made-up key in a known key format).
 fresh; printf 'const key = "sk_live_%s"\n' "51Hq3bWd9ExampleOnlyNotARealKeyZx7Tn2Lm8Pq4Rs6Uv0Wy" > "$tmp/r/lib/leak.ts"

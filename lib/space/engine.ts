@@ -503,7 +503,7 @@ export function createSpace(env: SpaceEnv): Space {
 
   // ── Pointer ──
   const mouse = { x: 0, y: 0, tx: 0, ty: 0, px: -1, py: -1, lastMove: -99 };
-  let clockT = 0, lastY = scrollY, scrollVel = 0, lockT = -99, armed = true, locked = false;
+  let clockT = 0, shownT = 0, lastY = scrollY, scrollVel = 0, lockT = -99, armed = true, locked = false;
   const onPointerMove = (e: PointerEvent) => { mouse.tx = e.clientX / innerWidth * 2 - 1; mouse.ty = e.clientY / innerHeight * 2 - 1; mouse.px = e.clientX; mouse.py = e.clientY; mouse.lastMove = clockT; };
   const onPointerDown = (e: PointerEvent) => { mouse.px = e.clientX; mouse.py = e.clientY; mouse.lastMove = clockT; };
   addEventListener('pointermove', onPointerMove, { passive: true });
@@ -557,7 +557,7 @@ export function createSpace(env: SpaceEnv): Space {
         bx += (open.x - bx) * open.k; bz += (open.z - bz) * open.k; }
       let r = 0;
       for (let i = 0; i < 3; i++) { const g = 1 - Math.exp(-dtReal * ROAM_RATE[i] * (R ? 0.5 : 1));
-        let wx = bx + sc.rw * Math.sin(clockT * (0.23 + i * 0.05) + i * 2.1), wz = bz + sc.rw * Math.cos(clockT * (0.19 + i * 0.04) + i * 1.3);
+        let wx = bx + sc.rw * Math.sin(shownT * (0.23 + i * 0.05) + i * 2.1), wz = bz + sc.rw * Math.cos(shownT * (0.19 + i * 0.04) + i * 1.3);
         if (fitX < 1) { const side = ((wx - bx) * Math.cos(azr) - (wz - bz) * Math.sin(azr)) * (1 - fitX); wx -= side * Math.cos(azr); wz += side * Math.sin(azr); }
         // In the open band the wander runs along the band, not across it into the rows.
         if (open.k > 0) { const amp = sc.rw + 1e-6, deep = (-(wx - bx) * Math.sin(azr) - (wz - bz) * Math.cos(azr)) * open.k * (1 - Math.min(1, 0.25 * open.deep / amp)), side = ((wx - bx) * Math.cos(azr) - (wz - bz) * Math.sin(azr)) * open.k * (1 - Math.min(1, 0.35 * open.side / (amp * fitX)));
@@ -678,7 +678,7 @@ export function createSpace(env: SpaceEnv): Space {
       m.material.uniforms.uGain.value = (0.2 + 0.1 * fl + 0.28 * near) * (1 - 0.5 * open.stacked * near); m.material.uniforms.uSize.value = (1.5 + 0.5 * near) * (0.8 + 0.2 * TOOL_M[i]); if (!on) return;
       layArc(warcs[i], HUB, m.position, 2.2); warcs[i].mesh.material.uniforms.uAlpha.value = fl * (0.1 + 0.85 * near); });
 
-    timeU.value = clockT; finalPass.uniforms.uTime.value = clockT;
+    timeU.value = shownT; finalPass.uniforms.uTime.value = shownT;
     composer.render();
 
     // The page's own DOM: its labels and markers, placed from this frame. Read-only for the engine.
@@ -713,10 +713,11 @@ export function createSpace(env: SpaceEnv): Space {
     raf = requestAnimationFrame(tick);
     const dt = Math.min((now - last) / 1000 || 0.016, 0.1); last = now;
     const R = !env.motion();
-    clockT += dt * (R ? 0.4 : 1);
+    // clockT is real time, for timing (throttles, the lock moment). shownT drives what moves on screen: reduced motion
+    // freezes it and the bodies (DESIGN.md: every value still). What changes then changes only as the visitor scrolls.
+    clockT += dt; if (!R) shownT += dt;
     scrollVel = lerp(scrollVel, Math.abs(scrollY - lastY) / innerHeight / Math.max(dt, 1e-3), 1 - Math.exp(-dt * 8)); lastY = scrollY;
-    // Reduced motion: the suns keep a slow, steady drift, never sped up by scrolling.
-    advance(Math.min(dt, 1 / 20) * (R ? 0.2 : 0.55 + Math.min(1.4, scrollVel * 1.2)));
+    if (!R) advance(Math.min(dt, 1 / 20) * (0.55 + Math.min(1.4, scrollVel * 1.2)));
     frame(dt);
     // Adaptive quality: drop resolution if frames run long, restore if they recover.
     if (dt > 0.024) { slow++; fast = 0; } else { fast++; slow = Math.max(0, slow - 1); }

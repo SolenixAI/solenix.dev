@@ -4,7 +4,7 @@ import { test } from "node:test"
 import assert from "node:assert/strict"
 import { makeDescriber, type Answer, type Tree } from "./parts.ts"
 
-const SLUG = "SolenixAI/agents-marketplace"
+const SLUG = "example-org/example-repo" // a fake GitHub serves it: no real repo is named
 const skillPath = (id: string) => `skills/${id}/SKILL.md`
 const skill = (name: string, description: string) => `---\nname: ${name}\ndescription: ${description}\n---\n# ${name}\n`
 const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status })

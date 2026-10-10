@@ -53,8 +53,9 @@ export function pageSections(html: string): Section[] {
 /** Platform, then the nav links, then contact: the same list in every footer. */
 export const footerLinks = () => [NAV.platform, ...NAV.links, NAV.contact]
 
-// The two bars share one shape: a glass pill, floating 12px from the top, as wide as the page.
-const BAR = `position:fixed;z-index:var(--z-nav);top:calc(12px + env(safe-area-inset-top,0px));left:50%;box-sizing:border-box;width:min(calc(100% - 24px),var(--container-wide));height:calc(var(--nav-height) - 12px);display:flex;align-items:center;gap:var(--space-1);margin:0;border-radius:var(--radius-pill);background:color-mix(in srgb,var(--surface-solid) 62%,transparent);backdrop-filter:blur(var(--glass-blur)) saturate(140%);-webkit-backdrop-filter:blur(var(--glass-blur)) saturate(140%);border:1px solid var(--line);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-lg);color:var(--text);font:500 var(--fs-sm)/1 var(--font-text);letter-spacing:normal;text-align:left`
+// The two bars share one shape: a glass pill, floating 12px from the top, as wide as the page. Its glass is the
+// design's one glass token (--glass-bg, 84%: the measured minimum for AA text through the panel, DESIGN.md).
+const BAR = `position:fixed;z-index:var(--z-nav);top:calc(12px + env(safe-area-inset-top,0px));left:50%;box-sizing:border-box;width:min(calc(100% - 24px),var(--container-wide));height:calc(var(--nav-height) - 12px);display:flex;align-items:center;gap:var(--space-1);margin:0;border-radius:var(--radius-pill);background:var(--glass-bg);backdrop-filter:blur(var(--glass-blur)) saturate(140%);-webkit-backdrop-filter:blur(var(--glass-blur)) saturate(140%);border:1px solid var(--line);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-lg);color:var(--text);font:500 var(--fs-sm)/1 var(--font-text);letter-spacing:normal;text-align:left`
 
 // Moving between pages is plain browser navigation: no cross-fade, no snapshot. Each added transition layer made
 // flashes; the native move had none.

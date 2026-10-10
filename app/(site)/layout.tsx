@@ -2,16 +2,17 @@ import { Reveals } from "@/components/brand/motion"
 import { SpaceWorld } from "@/components/space/world"
 import { FooterSlot } from "@/components/site/footer-slot"
 import { SiteFooter, SiteHeader } from "@/components/site/chrome"
+import { SITE_HOST } from "@/lib/site-meta"
 import { Analytics } from "./analytics"
+import { GROUND_CSS } from "@/lib/site-ground"
 
 // Solenix is dark only (declared once, in app/layout.tsx): space is the brand. The 3D world (components/space/world.tsx) is mounted
 // here once and kept for the life of the tab; each page binds to it while it is shown.
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
     <div data-theme="dark" className="flex min-h-dvh flex-col overflow-x-clip bg-background text-foreground">
-      {/* The night ground as a literal, hoisted into <head> by React, so even a frame painted before any stylesheet
-          or token resolves is dark: a reload can never flash white. (#0b0d12 = --bg in design/tokens.css) */}
-      <style href="site-ground" precedence="high">{"html,body{background:#0b0d12;color-scheme:dark}"}</style>
+      {/* The night ground, hoisted into <head> by React, so even a frame painted before any stylesheet resolves is dark (lib/site-ground.ts). */}
+      <style href="site-ground" precedence="high">{GROUND_CSS}</style>
       <SpaceWorld />
       <a
         href="#content"
@@ -25,7 +26,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
         <SiteFooter />
       </FooterSlot>
       <Reveals />
-      <Analytics />
+      <Analytics host={SITE_HOST} />
     </div>
   )
 }

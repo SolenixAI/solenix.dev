@@ -1,8 +1,22 @@
+// The one module for the repo facts every absolute URL is built from: the site's origin, the GitHub org and
+// the marketplace repo. Each is written here once; every other file imports it (scripts/sot-check.ts enforces that).
 // Tab icons and link-preview tags, one definition for the Next.js pages (app/layout.tsx)
 // and for the pages served as raw HTML (the articles).
 // The images come from `npm run share-images` (public/favicon.ico, public/og.png).
 
-export const SITE_URL = "https://solenix.dev"
+/**
+ * The site's origin: the host every absolute link is built from. On Vercel it is the production domain, which Vercel
+ * sets on every build and deployment: VERCEL_PROJECT_PRODUCTION_URL, with no protocol
+ * (https://vercel.com/docs/environment-variables/system-environment-variables). Off Vercel (local dev, CI) it is the
+ * one literal below.
+ */
+export const SITE_URL = process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "https://solenix.dev"
+/** The site's host with no protocol: what the live-site checks compare a page's hostname with (lib/analytics.ts, scripts/origin-check.ts). */
+export const SITE_HOST = new URL(SITE_URL).hostname
+/** The GitHub org that owns Solenix's repos, its GitHub App and the Agents Marketplace. */
+export const GITHUB_ORG = "SolenixAI"
+/** The Agents Marketplace repo (owner/name): the catalog the site reads. */
+export const MARKETPLACE_SLUG = `${GITHUB_ORG}/agents-marketplace`
 
 export const OG_IMAGE = {
   url: "/og.png",

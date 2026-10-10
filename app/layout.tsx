@@ -1,12 +1,12 @@
 import type { Metadata, Viewport } from "next";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
-import { ICONS, OG_IMAGE } from "@/lib/site-meta";
+import { ICONS, OG_IMAGE, SITE_URL } from "@/lib/site-meta";
 import { FONT_CSS, FONT_PRELOAD } from "@/lib/site-fonts";
 import { sunGradient } from "@/lib/site-nav";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://solenix.dev"),
+  metadataBase: new URL(SITE_URL),
   title: { default: "Solenix · the tech person your business does not have", template: "%s · Solenix" },
   description:
     "One person who knows which of your tools already talk to each other, sets up AI on them, teaches your team, and keeps it all running. St. John's, Newfoundland.",
