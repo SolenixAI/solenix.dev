@@ -43,6 +43,8 @@ node scripts/journey-check.ts || fail=1
 node scripts/origin-check.ts || fail=1
 # Every skill is model-invocable for every agent; a skills install or update can lock one again (scripts/unlock-skills.sh fixes it).
 bash scripts/unlock-skills.sh --check || fail=1
+# The git guard blocks what destroys work and nothing else: its table of allowed and blocked commands.
+bash .claude/hooks/block-dangerous-git.test.sh || fail=1
 # TypeScript only: no JavaScript file outside scripts/js-allowlist.txt (a list that may only shrink).
 # Installed skills are vendor code, like public/: their installers own them (Impeccable's live mode injects its JS into the page).
 git ls-files -co --exclude-standard | grep -E '\.(js|jsx|mjs|cjs)$' | grep -vE '^(public/|\.(agents|claude|cursor|github|grok)/skills/)' | grep -vxFf <(grep -v '^#' scripts/js-allowlist.txt) \
