@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { Suspense } from "react"
 import { GithubIcon } from "@/components/brand/github-icon"
 import { catalogVersion, getCatalog, MARKETPLACE_REPO, orbit, type Entry } from "@/lib/marketplace"
-import { OG_IMAGE } from "@/lib/site-meta"
+import { OG_IMAGE, SITE_URL } from "@/lib/site-meta"
 import { HERO_CSS } from "@/lib/site-hero"
 import { Sky } from "./sky"
 import { KindIcon, MiniOrbit, StarIcon, System } from "./system"
@@ -10,7 +10,7 @@ import { CopyCard, HeroAsk, SentenceCopy, Worlds, type Card } from "./worlds"
 import { WORLDS_CSS } from "./worlds-css"
 
 // solenix.dev/agents: the core toolkit and the worlds Solenix stands behind. The catalog is read from the
-// marketplace (SolenixAI/agents-marketplace, worlds.json) through Next's data cache, which a push to it
+// marketplace (its worlds.json) through Next's data cache, which a push to it
 // expires (app/api/github): a world added there appears here within a second, with no change to this page.
 // The hero and the steps paint first. Each part that needs the catalog streams in after, into a place that
 // already has its final size, so nothing below the hero moves when it lands.
@@ -86,7 +86,7 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
   const entry = world ? (await getCatalog())?.find((e) => e.id === world) : undefined
   const title = entry ? `${entry.name} for your AI` : "Agents Marketplace"
   const description = entry ? `${entry.for} One sentence sets it up in any AI agent, the makers' way.` : "Set up your AI the makers' way: one sentence installs everything a tool's makers built for AI, in any AI agent."
-  const url = `https://solenix.dev/agents${entry ? `?world=${entry.id}` : ""}`
+  const url = `${SITE_URL}/agents${entry ? `?world=${entry.id}` : ""}`
   return {
     title, description,
     alternates: { canonical: url, types: { "application/json": "/agents/worlds.json" } },

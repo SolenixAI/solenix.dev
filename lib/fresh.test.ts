@@ -63,15 +63,15 @@ test("a source that fails after answering once gives its last answer, not nothin
 test("a cached read is kept by Next under its tags and revalidate time, never sent as no-store", async () => {
   let seen: (RequestInit & { next?: unknown }) | undefined
   const fresh = makeFresh(async (_url, init) => { seen = init; return answer(200, { worlds: 1 }) })
-  assert.deepEqual(await fresh("https://x/cached", {}, { tags: ["marketplace:main"], revalidate: 60 }), { worlds: 1 })
-  assert.deepEqual(seen?.next, { tags: ["marketplace:main"], revalidate: 60 }, "Next's data cache holds it under the tag")
+  assert.deepEqual(await fresh("https://x/cached", {}, { tags: ["fixture-tag"], revalidate: 60 }), { worlds: 1 })
+  assert.deepEqual(seen?.next, { tags: ["fixture-tag"], revalidate: 60 }, "Next's data cache holds it under the tag")
   assert.equal(seen?.cache, undefined, "no-store would switch the cache off, so the tag could never expire it")
 })
 
 test("a cached read that fails after answering keeps its last real answer", async () => {
   let up = true
   const fresh = makeFresh(async () => (up ? answer(200, { sha: "a1" }) : answer(503)))
-  const cached = { tags: ["marketplace:main"], revalidate: 60 }
+  const cached = { tags: ["fixture-tag"], revalidate: 60 }
   assert.deepEqual(await fresh("https://x/catalog", {}, cached), { sha: "a1" })
   up = false
   assert.deepEqual(await fresh("https://x/catalog", {}, cached), { sha: "a1" }, "a bad revalidation never blanks the catalog")

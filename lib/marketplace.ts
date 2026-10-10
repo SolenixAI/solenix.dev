@@ -3,10 +3,11 @@ import { cache } from "react"
 import { githubHeaders } from "@/lib/github"
 import { fresh } from "@/lib/fresh"
 import { makeDescriber, type Part } from "@/lib/marketplace/parts"
+import { MARKETPLACE_SLUG } from "@/lib/site-meta"
 
 /**
  * The Agents Marketplace: the core toolkit and the worlds Solenix stands behind.
- * - The catalog (worlds.json in SolenixAI/agents-marketplace) is read through GitHub's contents API (not
+ * - The catalog (worlds.json in the marketplace repo) is read through GitHub's contents API (not
  *   raw.githubusercontent.com, whose copies can be five minutes old) and kept in Next's data cache under its
  *   branch's tag. A push to that branch expires it (app/api/github), so an open page hears the change within
  *   about a second (app/(site)/agents/live). A missed webhook still heals within a minute.
@@ -14,7 +15,6 @@ import { makeDescriber, type Part } from "@/lib/marketplace/parts"
  *   fact read from the piece's own source (GitHub, the MCP registry, npm). Those change slowly, so
  *   they refresh at most hourly and never hold up the catalog. A source that fails drops only its facts.
  */
-export const MARKETPLACE_SLUG = "SolenixAI/agents-marketplace"
 export const MARKETPLACE_REPO = `https://github.com/${MARKETPLACE_SLUG}`
 // The branch the page reads. main in production; a preview can point at a branch under review.
 export const MARKETPLACE_REF = process.env.MARKETPLACE_REF ?? "main"
@@ -22,8 +22,11 @@ const REF = MARKETPLACE_REF
 const HOUR = 3600
 /** A catalog read is kept at most this long: the backstop for a missed webhook. A push expires it at once. */
 const CATALOG_REVALIDATE = 60
-/** The cache tag of the catalog on one branch. app/api/github expires it when that branch is pushed. */
-export const catalogTag = (ref: string) => `marketplace:${ref}`
+/**
+ * One branch's catalog, by key: its cache tag (a push expires it) and its bus channel (a push announces on it).
+ * The "catalog:" prefix keeps these keys apart from every other tag, so no branch name can equal FACTS_TAG.
+ */
+export const catalogKey = (ref: string) => `catalog:${ref}`
 /** The cache tag of every other source's facts. A push refreshes them behind the page, never in its way. */
 export const FACTS_TAG = "marketplace:facts"
 const MCP_REGISTRY = "https://registry.modelcontextprotocol.io"
@@ -96,7 +99,7 @@ const sentence = (name: string, skill: string) =>
 
 /** worlds.json on one branch, read through Next's data cache: kept until the backstop or a push to that branch. */
 const catalogFile = async (ref: string) =>
-  fresh<{ content?: string; sha?: string }>(`https://api.github.com/repos/${MARKETPLACE_SLUG}/contents/worlds.json?ref=${ref}`, await githubHeaders(), { tags: [catalogTag(ref)], revalidate: CATALOG_REVALIDATE })
+  fresh<{ content?: string; sha?: string }>(`https://api.github.com/repos/${MARKETPLACE_SLUG}/contents/worlds.json?ref=${ref}`, await githubHeaders(), { tags: [catalogKey(ref)], revalidate: CATALOG_REVALIDATE })
 /** Which version of the catalog a branch holds right now (its file's git hash); null when unreadable. */
 export const catalogVersion = async (ref = REF) => (await catalogFile(ref))?.sha ?? null
 
