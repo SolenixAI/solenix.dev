@@ -3,8 +3,9 @@
 INPUT=$(cat)
 COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command')
 
+# Pushing a branch is how work ships (every change is a PR); GitHub's "protect main" ruleset guards
+# main for everyone. This hook keeps what destroys work: local resets and cleans, and force pushes.
 DANGEROUS_PATTERNS=(
-  "git push"
   "git reset --hard"
   "git clean -fd"
   "git clean -f"
@@ -12,6 +13,8 @@ DANGEROUS_PATTERNS=(
   "git checkout \."
   "git restore \."
   "push --force"
+  "push( .*)? -f( |$)"
+  "push( .*)? \+[^ ]"
   "reset --hard"
 )
 
