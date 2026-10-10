@@ -124,11 +124,9 @@
 
   /* ── Gradients. Five named, plus the texture mask. ── */
   --grad-sun: radial-gradient(circle at 42% 38%, var(--sun1), var(--sun2));
-  --grad-sky: radial-gradient(120% 90% at 100% 100%, var(--bg2) 0%, var(--bg) 60%);
   --grad-ember: linear-gradient(135deg, var(--accent-hover), var(--accent));
   --grad-sweep: linear-gradient(100deg,
     transparent 18%, var(--sweep-light) 48%, transparent 78%);
-  --grad-veil: linear-gradient(to bottom, transparent, var(--bg) 72%);
   /* --grad-headline is declared in §1. */
 
   /* ── Glow. Light, not elevation. Shadow says how high; glow says how alive. ── */
@@ -290,14 +288,9 @@
 
   --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);  /* the house curve */
   --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
-  --ease-orbit: linear;               /* easing a loop reads as broken */
 
-  --pulse-period: 4s;                 /* one breath of an ambient glow */
 
   /* Orbit periods — slow enough to read as ambient, not as animation. */
-  --orbit-1: 90s;
-  --orbit-2: 140s;
-  --orbit-3: 200s;
 
   --lift: -1px;                       /* buttons */
   --lift-card: -3px;                  /* cards */
@@ -345,9 +338,6 @@
 
   /* The three suns. CSS and SVG use these. WebGL reads --sun1, --sun2 and
      --ring from computed style and derives the same mixes in script. */
-  --scene-sun-a: color-mix(in oklch, var(--sun1) 65%, var(--sun2));
-  --scene-sun-b: var(--sun2);
-  --scene-sun-c: color-mix(in oklch, var(--sun1) 80%, white);
 
   /* Text over a scene always sits on the veil. Never on the bare canvas. */
   --scene-veil:
@@ -373,9 +363,4 @@
   --example-line: var(--line-strong);
 
   /* Scene motion. Periods in seconds; the sim speed is read by script. */
-  --orbit-eight: 21s;                 /* one lap of a sun on the figure-eight */
-  --agent-lap: 9s;                    /* the agent dot laps faster than the suns */
-  --pulse-live: 2.4s;                 /* the Live dot's ring */
-  --sim-speed: 0.55;                  /* simulation time units per second */
-  --scene-dpr-max: 2;                 /* never render the scene above 2× */
 }
