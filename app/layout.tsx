@@ -15,8 +15,8 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image", images: [OG_IMAGE.url] },
 };
 
-// The portal follows the device; the public site declares dark in its own layout.
-export const viewport: Viewport = { colorScheme: "light dark" };
+// The site is dark only. Declared here, at the root, so every page is dark before first paint.
+export const viewport: Viewport = { colorScheme: "dark" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

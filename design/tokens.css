@@ -35,7 +35,7 @@
 /* Every colour is light-dark(light, dark); color-scheme picks one. The block is
    declared on themed elements too, because a browser resolves light-dark() where
    the variable is declared, not where it is used. */
-:root, [data-portal], [data-theme] {
+:root, [data-theme] {
 
   --bg: light-dark(#fbfaf8, #0b0d12);
   --bg2: light-dark(#f3f1ed, #11141b);
@@ -86,11 +86,9 @@
   --shadow-lg: 0 2px 4px rgba(0, 0, 0, 0.35), 0 24px 56px rgba(0, 0, 0, 0.45);
 }
 
-/* Which theme applies. The public site is dark. The portal follows the
-   device's light or dark setting unless the person picked one (data-theme). */
+/* Which theme applies. The site is dark; data-theme marks a themed element. */
 [data-theme="dark"] { color-scheme: dark; }
 [data-theme="light"] { color-scheme: light; }
-[data-portal]:not([data-theme]) { color-scheme: light dark; }
 
 /* The few non-colour values that differ in light. */
 [data-theme="light"] {
@@ -100,21 +98,12 @@
   --shadow-md: 0 1px 2px rgba(28, 25, 23, 0.04), 0 8px 24px rgba(28, 25, 23, 0.06);
   --shadow-lg: 0 2px 4px rgba(28, 25, 23, 0.05), 0 20px 48px rgba(28, 25, 23, 0.1);
 }
-@media (prefers-color-scheme: light) {
-  [data-portal]:not([data-theme]) {
-    --chart-tint-alpha: 8%;
-    --grad-headline: linear-gradient(96deg, var(--accent-hover), var(--sun2));
-    --shadow-sm: 0 1px 2px rgba(28, 25, 23, 0.05);
-    --shadow-md: 0 1px 2px rgba(28, 25, 23, 0.04), 0 8px 24px rgba(28, 25, 23, 0.06);
-    --shadow-lg: 0 2px 4px rgba(28, 25, 23, 0.05), 0 20px 48px rgba(28, 25, 23, 0.1);
-  }
-}
 
 
 /* ── 2. Derived colour and light ──────────────────────────────────────────── */
 /* Written once. Every value below derives from §1, so it themes itself. */
 
-:root, [data-portal], [data-theme] {
+:root, [data-theme] {
   /* Soft accent and status fills */
   --accent-quiet: color-mix(in oklch, var(--accent) 12%, transparent);
   --ok-tint: color-mix(in oklch, var(--ok) 8%, transparent);
@@ -200,7 +189,7 @@
 
 /* ── 3. Type ──────────────────────────────────────────────────────────────── */
 
-:root, [data-portal], [data-theme] {
+:root, [data-theme] {
   /* Three roles, three faces. Sora carries display — a geometric grotesque
      whose bowls are the same circles as the mark, holding at 96px. Text and
      mono still does real work on every eyebrow,
@@ -261,7 +250,7 @@
 
 /* ── 4. Space and layout ──────────────────────────────────────────────────── */
 
-:root, [data-portal], [data-theme] {
+:root, [data-theme] {
   /* 4px base. Skip no steps; add none. */
   --space-1: 4px;
   --space-2: 8px;
@@ -294,7 +283,7 @@
 
 /* ── 5. Radius ────────────────────────────────────────────────────────────── */
 
-:root, [data-portal], [data-theme] {
+:root, [data-theme] {
   --radius-xs: 8px;
   --radius-sm: 10px;
   --radius-md: 12px;                  /* icon chips, code wells, inputs */
@@ -306,7 +295,7 @@
 
 /* ── 6. Motion ────────────────────────────────────────────────────────────── */
 
-:root, [data-portal], [data-theme] {
+:root, [data-theme] {
   --dur-fast: 120ms;                  /* colour, border */
   --dur-base: 180ms;                  /* lift, shadow, glow */
   --dur-slow: 320ms;                  /* panels, disclosure */
@@ -350,7 +339,7 @@
 
 /* ── 7. Focus ─────────────────────────────────────────────────────────────── */
 
-:root, [data-portal], [data-theme] {
+:root, [data-theme] {
   --focus-width: 2px;
   --focus-offset: 3px;
   --focus-color: var(--accent);
@@ -368,7 +357,7 @@
    --page-bg is resolved here at :root, so inside a night section it still
    holds the reader's page colour — use it for the hand-off at the bottom. */
 
-:root, [data-portal], [data-theme] {
+:root, [data-theme] {
   --page-bg: var(--bg);
 
   /* The three suns. CSS and SVG use these. WebGL reads --sun1, --sun2 and

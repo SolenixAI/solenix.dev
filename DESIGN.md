@@ -20,7 +20,7 @@ colors:
 
 *One tech expert for small businesses in Newfoundland & Labrador. Your business is a three-body problem — we find the stable orbit.*
 
-The system behind solenix.dev. Solenix is one tech expert for small businesses in St. John's, Newfoundland and Labrador: we put one AI at the centre of the tools the business already uses, cut the tools it does not need, teach the team, and build the website. The visual world is a night sky — deep blue-black grounds, one warm light source, orbit lines — and the story is chaos settling into the figure-eight orbit. The marketing site is dark, and its signature is one three.js night-sky scene that runs behind the whole homepage, where three suns settle into a figure-eight. The client portal (Overview, Initiatives, Billing) follows the device, light or dark. Calm, confident, a little expensive-looking. Plain Canadian English.
+The system behind solenix.dev. Solenix is one tech expert for small businesses in St. John's, Newfoundland and Labrador: we put one AI at the centre of the tools the business already uses, cut the tools it does not need, teach the team, and build the website. The visual world is a night sky — deep blue-black grounds, one warm light source, orbit lines — and the story is chaos settling into the figure-eight orbit. The marketing site is dark, and its signature is one three.js night-sky scene that runs behind the whole homepage, where three suns settle into a figure-eight. Calm, confident, a little expensive-looking. Plain Canadian English.
 
 
 ## Decisions (Jager's, binding on every page; his latest word wins)
@@ -32,14 +32,12 @@ The system behind solenix.dev. Solenix is one tech expert for small businesses i
 - The 3D world runs through the page and must get better: never flattened, never panels laid over it.
 - Price line: "A fixed price, in writing. Agreed on the call. No surprise invoice." No public prices; value-based per initiative.
 - No on-page ROI calculator and no "your numbers, not ours".
-- The site is dark. The portal follows the device and has a manual choice.
+- The site is dark only.
 - No Motion switch.
 - Offer: one AI at the centre of the tools they already use; cut unused tools; teach; build the website. Claims land on time or money.
 - "Agents Marketplace" (never "Tools we use"): works with any AI, one copy-paste prompt per tool, GitHub stars for open source.
 - Book a call opens a real booking page, never mailto.
 - Nav: one floating glass pill on every page (homepage, Articles, each article, the React pages), with Articles in it on every screen size. Its one source is `lib/site-nav.ts`; the server adds it to each page and no page holds a copy (`scripts/sot-check.ts` fails a commit that adds one). The sign-in button is "Solenix platform" ("Platform" on phones) with a small orbiting dot. Moving between pages is seamless: no white or black frame, ever. The browser holds the old page until the new one can paint, the nav stays put, and the page beneath cross-fades with the browser's own blend (a hand-made fade-out and fade-in drift apart and flash). Nothing waits on a timer: first-screen content is never hidden for a reveal, and a page starts loading on the click. Every page declares `color-scheme: dark` first. (2026-10-09)
-- Portal words: Initiatives are Solenix's projects with the client; Billing is Solenix billing them, never "your bills". Solenix is client one.
-- Sign-in: passkey, Google, email link. Invite-only. Apple undecided.
 - What Jager approved stays word for word: design/approved.md.
 
 ## Color Palette
@@ -72,7 +70,6 @@ The system behind solenix.dev. Solenix is one tech expert for small businesses i
 - One tech expert for small businesses in Newfoundland & Labrador — one AI at the centre of the tools you already use, the unused tools cut, your team taught, your website built.
 - AI your team actually uses: we set it up inside the tools you already have and teach you and your staff to get real value from it every day.
 - True trust only: fixed price in writing, you own everything, based in St. John's. No invented numbers, no testimonials we don't have, no scarcity.
-- One place to see it all: the client portal — Overview, Initiatives, Billing. Nothing to chase.
 
 ### Vocabulary
 - **Use:** set up, website, we look after it, takes the job off your plate, it's working / it's down, what it costs, talk to us, Book a call, fixed price in writing, you own everything, Live · Building · Down, amount to confirm, colour, centre, licence (Canadian spelling)
@@ -81,7 +78,7 @@ The system behind solenix.dev. Solenix is one tech expert for small businesses i
 ## Imagery
 
 - **Style:** Made of light, not photographs: a night sky with one warm light source, orbit rings, a 32px hairline grid and a sparse starfield, glass panels catching light on their top edge. The signature is the real-physics three.js scene — three plasma suns over a spacetime grid, settling from chaos into the Chenciner–Montgomery figure-eight.
-- **Subjects:** the mark — sun, one orbit ring, one agent dot, the figure-eight orbit drawn from real simulation path data, the three-body night-sky scene (one scene, running behind the whole homepage), real UI of the client portal in settling glass panels, status boards, sparklines and timelines with real or Example-labelled data
+- **Subjects:** the mark — sun, one orbit ring, one agent dot, the figure-eight orbit drawn from real simulation path data, the three-body night-sky scene (one scene, running behind the whole homepage), status boards, sparklines and timelines with real or Example-labelled data
 - **Treatment:** On the homepage the scene is fixed behind every section and text sits directly in it. Keep text readable by shading the scene behind it and keeping bodies and trails out from behind small text, never by laying a panel over the world. Every page may open in chaos but ends settled.
 - **Avoid:** stock photography or stock faces, illustrations of people, gradient blobs and purple AI washes, glassmorphism card grids as decoration, AI sparkle icons, an ∞ glyph or a hand-drawn lemniscate in place of the figure-eight, fake client logos or testimonials, light sections
 

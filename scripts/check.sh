@@ -19,22 +19,14 @@ git ls-files --cached --others --exclude-standard \
 grep -rn -E '· v[0-9]|\(v[0-9]\)|/\* v[0-9]|\bv[0-9] ·' DESIGN.md design/tokens.css app components lib 2>/dev/null \
   | while read -r l; do echo "check: version label: $l"; done | grep . && fail=1
 
-# The public site is dark; only the portal ([data-portal]) may follow the device.
-grep -q '^\[data-portal\]:not(\[data-theme\]) { color-scheme: light dark; }' design/tokens.css || bad "tokens.css: the portal must follow the device ([data-portal] color-scheme: light dark)"
-grep -q 'data-portal' 'app/(portal)/layout.tsx' || bad "portal layout must set data-portal"
-grep -s -n -i -E 'dark only|no light theme' AGENTS.md DESIGN.md \
-  | while read -r l; do echo "check: contradicts the theme decision (site dark, portal follows the device): ${l:0:80}"; done | grep . && fail=1
+# The site is dark only: the root layout declares dark before first paint, and nothing follows the device.
+grep -q 'colorScheme: "dark"' app/layout.tsx || bad "app/layout.tsx: the root viewport must declare colorScheme \"dark\" (the site is dark only)"
+grep -rn -E 'light dark|data-portal' app components lib design/tokens.css 2>/dev/null \
+  | while read -r l; do echo "check: the site is dark only, nothing follows the device: ${l:0:80}"; done | grep . && fail=1
 
 # No on-page Motion switch; the OS reduced-motion setting is the control.
 grep -n -E 'motion-toggle|class="word">Motion<' design/*.html 2>/dev/null \
   | while read -r l; do echo "check: Motion switch (remove it; honour prefers-reduced-motion): ${l:0:80}"; done | grep . && fail=1
-
-# The portal is invite-only: self sign-up stays off.
-# ([auth] enable_signup must be false; [auth.email] enable_signup must stay true, or email sign-in is disabled.)
-signup=$(mktemp)
-awk '/^\[auth\]$/{s="auth"} /^\[auth\.email\]$/{s="email"} /^\[/{if($0!="[auth]"&&$0!="[auth.email]")s=""} /^enable_signup/{print s": "$0}' supabase/config.toml > "$signup"
-grep -qx 'auth: enable_signup = false' "$signup" || bad "self sign-up is on: [auth] enable_signup must be false (portal is invite-only)"
-grep -qx 'email: enable_signup = true' "$signup" || bad "[auth.email] enable_signup must be true, or email sign-in is disabled"
 
 # Every page is measured: the site layout mounts one analytics component for all its pages, the homepage among them
 # (app/(site)/page.tsx). The raw pages (Articles) keep the inline snippet (lib/site-page.ts).
@@ -150,7 +142,7 @@ else
 fi
 
 # Every source of truth named in AGENTS.md exists.
-for f in DESIGN.md design/tokens.css design/home.html design/approved.md supabase/config.toml; do
+for f in DESIGN.md design/tokens.css design/home.html design/approved.md; do
   [ -f "$f" ] || bad "missing source of truth: $f"
 done
 
