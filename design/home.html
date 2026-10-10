@@ -228,9 +228,6 @@ html[data-motion="on"] .pulse::after { animation: pulse 2.4s var(--ease-out) inf
 @keyframes pulse { 0% { transform: scale(.6); opacity: .9; } 100% { transform: scale(2.2); opacity: 0; } }
 .p-stat { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--space-4); position: relative; }
 .p-num { font: var(--fw-bold) var(--fs-stat)/1 var(--font-display); letter-spacing: var(--track-stat); font-variant-numeric: tabular-nums; }
-.spark { width: min(52%, 260px); height: 56px; overflow: visible; color: var(--chart-1); }
-.spark .ln { fill: none; stroke: var(--spark-line); stroke-width: 2; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
-.spark .pt0 { fill: none; stroke: var(--spark-point); stroke-width: 8; stroke-linecap: round; vector-effect: non-scaling-stroke; filter: drop-shadow(0 0 6px currentColor); }
 .p-grid { display: grid; gap: var(--space-4); }
 @media (min-width: 560px) { .p-grid { grid-template-columns: 1.15fr 1fr; } }
 .p-card { border: 1px solid var(--line); border-radius: var(--radius-lg); padding: var(--space-4); display: grid; gap: var(--space-3); align-content: start; }

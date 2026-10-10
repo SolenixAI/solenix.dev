@@ -3,8 +3,6 @@
 # Why each one is still JavaScript:
 #   postcss.config.mjs: PostCSS's config file (whether Next reads postcss.config.ts is unverified)
 #   .claude/workflows/*.js: Claude Code workflow scripts are JavaScript by that tool's format
-#   .agents/skills/resend/...: a vendored third-party skill, kept as its authors ship it
 postcss.config.mjs
 .claude/workflows/design-ab.js
 .claude/workflows/scene-review.js
-.agents/skills/resend/references/fetch-all-templates.mjs

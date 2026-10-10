@@ -247,14 +247,6 @@
   .orbitsys .spin-b { animation-duration: var(--orbit-3); animation-direction: reverse; }
   .orbitsys .node { fill: var(--accent); }
 
-  /* Sparkline: the end point is a zero-length path, so it stays round. */
-  .spark { display: block; width: 100%; overflow: visible; }
-  .spark .line { fill: none; stroke: var(--spark-line); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
-  .spark .area { fill: url(#sparkfill); }
-  .spark .last { fill: none; stroke: var(--spark-point); stroke-width: 7; stroke-linecap: round; vector-effect: non-scaling-stroke; }
-  .spark-sm .line { stroke-width: 1.75; }
-  .spark-sm .last { stroke-width: 5; }
-
   /* Things that breathe */
   .pulse-dot { box-shadow: var(--glow-point); animation: pulse var(--pulse-period) var(--ease-in-out) infinite; }
   .typing i { width: 6px; height: 6px; border-radius: 50%; background: var(--faint); animation: blink 1.2s var(--ease-in-out) infinite; }
