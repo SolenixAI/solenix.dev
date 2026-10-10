@@ -24,12 +24,20 @@ const named = {
   preview: { w: 1200, h: 630 },
 }
 
-test("the file names the pane Jager reviews in, the review sizes and the link preview", () => {
-  const v = loadViewports()
+test("the named sizes come from the file, as width and height", () => {
+  const v = loadViewports(fixture({ ...named, real: { sizes: [] }, edges: [] }))
   assert.deepEqual(v.pane, { width: 668, height: 837 })
   assert.deepEqual(v.desktop, { width: 1440, height: 900 })
   assert.deepEqual(v.phone, { width: 390, height: 844 })
   assert.deepEqual(v.preview, { width: 1200, height: 630 })
+})
+
+// The repo's own file is measured data (the pane is re-measured when Jager resizes it), so it is checked for
+// shape, never for its numbers: a test that copied them would fail on every new measurement.
+test("the repo's file names the pane, the review sizes and the link preview, each a real size", () => {
+  const v = loadViewports()
+  for (const size of [v.pane, v.desktop, v.phone, v.preview])
+    assert.ok(Number.isInteger(size.width) && size.width > 0 && Number.isInteger(size.height) && size.height > 0)
 })
 
 test("the hero list is each real and edge size once, with the link preview", () => {

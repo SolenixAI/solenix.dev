@@ -1,6 +1,6 @@
 {
   "about": "The screen sizes the scripts capture and check at. lib/viewports.ts is the only reader of this file. 'pane', 'desktop', 'phone' and 'preview' are the sizes the review and capture scripts use. 'real' is a snapshot of the site's PostHog viewport sizes, taken on the date in 'taken'; no script refreshes it. 'edges' are the outer limits from published standards and device classes. scripts/hero-check.ts checks that each page's first screen fits every size in 'real', 'edges' and 'preview'.",
-  "pane": { "w": 668, "h": 837, "why": "Jager's browser pane, measured from his tab on 2026-10-01 (commit 5c0e201); shots and scene-check review at it" },
+  "pane": { "w": 720, "h": 837, "why": "Jager's browser pane, measured from his tab (innerWidth x innerHeight) on 2026-10-10; he resizes it, so measure again before a review; shots and scene-check review at it" },
   "desktop": { "w": 1440, "h": 900, "why": "desktop review size used by scene-check, shots, space-frames and article covers" },
   "phone": { "w": 390, "h": 844, "why": "phone review size used by scene-check, shots, space-frames and article covers" },
   "preview": { "w": 1200, "h": 630, "why": "link preview and live card frame; article covers and share images are captured at it" },
