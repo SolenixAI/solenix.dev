@@ -10,20 +10,20 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 # One definition of "locked", used to find, to fix and to check. A trailing comment still counts.
 CLAUDE_LOCK='^disable-model-invocation:[[:space:]]*true([[:space:]]|#|$)'
-CODEX_LOCK='allow_implicit_invocation:[[:space:]]*false'
+CODEX_LOCK='^[[:space:]]*allow_implicit_invocation:[[:space:]]*false'
 # Each agent's skills folder that exists here; grep -r skips the per-agent symlinks to .agents/skills.
 dirs=()
 for d in .agents/skills .claude/skills .cursor/skills .github/skills .grok/skills; do [ -d "$d" ] && dirs+=("$d"); done
 locked() { [ ${#dirs[@]} -eq 0 ] || grep -rlE "$CLAUDE_LOCK|$CODEX_LOCK" "${dirs[@]}" 2>/dev/null || true; }
 
 if [ "${1:-}" = "--check" ]; then
-  left=$(locked)
-  [ -z "$left" ] || { echo "$left" | sed 's/^/locked skill: /'; exit 1; }
+  locked_files=$(locked)
+  [ -z "$locked_files" ] || { echo "$locked_files" | sed 's|.*|check: locked skill & (run scripts/unlock-skills.sh)|'; exit 1; }
   exit 0
 fi
 locked | while IFS= read -r f; do
-  sed -i.bak -E "/$CLAUDE_LOCK/d; s/$CODEX_LOCK/allow_implicit_invocation: true/" "$f" && rm -f "$f.bak"
+  sed -i.bak -E "/$CLAUDE_LOCK/d; s/allow_implicit_invocation:[[:space:]]*false/allow_implicit_invocation: true/" "$f" && rm -f "$f.bak"
 done
-left=$(locked | grep -c . || true)
-echo "locked skills left: $left"
-[ "$left" = "0" ]
+locked_count=$(locked | grep -c . || true)
+echo "locked skills left: $locked_count"
+[ "$locked_count" = "0" ]

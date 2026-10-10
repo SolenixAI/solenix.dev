@@ -46,6 +46,9 @@ expect fail "homepage analytics removed"
 fresh; sed -i '' 's|<SpaceWorld />||' "$tmp/r/app/(site)/layout.tsx"
 expect fail "the 3D world not mounted in the layout"
 
+fresh; f="$tmp/r/.agents/skills/tdd/SKILL.md"; awk 'NR==2{print "disable-model-invocation: true # upstream flag"}1' "$f" > "$f.new" && mv "$f.new" "$f"
+expect fail "a skill locked again by an install or update"
+
 fresh; echo "- Dark only. There is no light theme." >> "$tmp/r/AGENTS.md"
 expect fail "the old 'dark only' rule comes back"
 

@@ -32,4 +32,6 @@ Three engines own the work. For each task, use the engine's skill:
 
 Never use Anthropic's look-alike packs, even when they load: `engineering:*`, `marketing:*`, `product-management:*`, `finance:*`. When two skills have the same name (`code-review`, `seo-audit`), use the engine's skill in `.agents/skills/`.
 
-Every skill is model-invocable for every agent. After any skills install or update, run `scripts/unlock-skills.sh`; `scripts/check.sh` fails while a skill is locked.
+### Skills
+
+Every skill is model-invocable for every agent. After any skills install or update, run `scripts/unlock-skills.sh`.
