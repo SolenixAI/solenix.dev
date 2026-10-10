@@ -57,4 +57,11 @@ jobs:
           gitleaks git --no-banner --redact --exit-code 1 --log-opts="--no-merges $base..HEAD"
       - run: npm ci
       - run: npx playwright install --with-deps chromium
+      # Some checks read the site as it renders (every page's copy against the Voice rules, the local-site check):
+      # start it once, as `npm run dev` does on a laptop, and wait until it answers.
+      - name: Start the site for the checks that read it
+        run: |
+          npm run dev > "$RUNNER_TEMP/dev.log" 2>&1 &
+          for _ in $(seq 1 120); do curl -sf -o /dev/null http://localhost:3000/ && exit 0; sleep 1; done
+          cat "$RUNNER_TEMP/dev.log"; exit 1
       - run: npm run check
