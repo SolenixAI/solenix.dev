@@ -139,8 +139,8 @@ sys.exit(1 if missing else 0)
 PY
 
 # Impeccable's detector on the homepage. Findings may not rise above the baseline
-# (30 on 2026-10-10 in CI; the same file counts 27 on a Mac, a difference not yet explained). Fix findings and
-# lower the baseline; never raise it.
+# (30 on 2026-10-10: the dark-only tokens let the detector resolve three glow colours that light-dark() pairs hid).
+# Fix findings and lower the baseline; never raise it.
 # The launcher ships in this repo (.claude/skills/impeccable); on its first run it downloads its pinned, sha256-checked engine.
 IMP=${IMPECCABLE:-.claude/skills/impeccable/scripts/impeccable}
 IMPECCABLE_BASELINE=30
