@@ -1,6 +1,6 @@
 # Product Marketing Context
 
-**Document version:** v1
+**Document version:** v2
 **Last updated:** 2026-10-10
 
 ## Product Overview
@@ -159,6 +159,17 @@ Reddit post dates are approximate.
 | Hours back for the owner | Not set yet. No client results. |
 | A fixed price in writing | Agreed on each call. No public price. |
 
+## Data Sources
+*Read numbers from the source, through its maker's own tool. Never copy a number into copy or a plan without its source and date.*
+
+| Source | Measures | Access (maker's tool) | Read-only check |
+|--------|----------|-----------------------|-----------------|
+| PostHog, project "Solenix" | Visits, events, funnels, replays, heatmaps. Each site event carries `app = solenix.dev`. | PostHog MCP (posthog.com/docs/model-context-protocol) | 2026-10-10: project settings read; replay and heatmaps on |
+| Vercel, project solenix-dev | Deploys, Speed Insights (Core Web Vitals) | Vercel MCP (vercel.com/docs/mcp), `vercel` CLI | 2026-10-10: latest production deploy READY |
+| GitHub, SolenixAI | Repo stars, Agents Marketplace stars, releases | `gh` CLI | 2026-10-10: agents-marketplace stars read (1) |
+| Stripe | Revenue, later. Sandbox only for now. | Stripe MCP (docs.stripe.com/mcp), `stripe` CLI | 2026-10-10: sandbox products listed with the CLI |
+| Linear, team Solenix | Plans, outcomes, booked-call work | Linear MCP | 2026-10-10: issue read |
+
 ## Goals
 **Business goal:** Booked calls a week (the north star). Target: not set yet.
 **Conversion action:** Book a call.
@@ -166,4 +177,5 @@ Reddit post dates are approximate.
 
 ## Changelog
 *Newest first. One line per revision: what changed and why.*
+- v2 (2026-10-10) — Data Sources: the five places real numbers live, each with its maker's tool and a dated read-only check, so no skill guesses a metric.
 - v1 (2026-10-10) — Initial context. Replaces the link to PRODUCT.md with a full context; facts come from PRODUCT.md and the approved competitor and objection research.
