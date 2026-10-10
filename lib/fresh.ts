@@ -7,8 +7,10 @@
 //     again once `revalidate` seconds pass, or at once when the site expires one of its tags (a GitHub push
 //     does, in app/api/github), so a cached answer is never older than that backstop.
 // Behind both: identical reads in flight share one request; a source that fails gives its last real
-// answer (null before the first); nothing here throws. The memory lives in the server instance (Vercel
+// answer (null before the first) and leaves one log line (lib/failed); nothing here throws. The memory lives in the server instance (Vercel
 // Fluid reuses instances); a cold instance just makes one full read per source.
+
+import { failed } from "./failed.ts"
 
 export type Get = (url: string, init: RequestInit) => Promise<Response>
 export type Cached = { tags: string[]; revalidate: number }
@@ -31,12 +33,12 @@ export function makeFresh(get: Get) {
     const read = new Promise<Response>((resolve) => resolve(get(url, init)))
       .then(async (r) => {
         if (r.status === 304 && last) return last.body
-        if (!r.ok) return fallback()
+        if (!r.ok) { failed(url, `HTTP ${r.status}`); return fallback() }
         const body: unknown = await r.json()
         remembered.set(url, { etag: r.headers.get("etag"), body })
         return body
       })
-      .catch(fallback)
+      .catch((e: unknown) => { failed(url, e); return fallback() })
       .finally(() => inFlight.delete(key))
     inFlight.set(key, read)
     return read as Promise<T | null>

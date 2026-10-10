@@ -167,3 +167,13 @@ test("a repo's part files are read in requests of at most 100 files", async () =
   assert.equal(gh.queries.length, 3, "250 files: requests of 100, 100 and 50")
   for (const q of gh.queries) assert.ok((q.match(/object\(expression:/g) ?? []).length <= 100, "no request names more than 100 files")
 })
+
+test("a failed read of the part files leaves one log line with the repo and the reason", async (t) => {
+  const warn = t.mock.method(console, "warn", () => {})
+  const gh = fakeGitHub({ [skillPath("fetch")]: skill("Fetch", "Get a web page") })
+  gh.reply = () => json({ message: "rate limited" }, 403)
+  const { parts } = describerOver(gh.get)
+  assert.deepEqual(await parts(SLUG, tree("t1", [skillPath("fetch")]), ["skill"]), [bare("fetch")])
+  assert.equal(warn.mock.callCount(), 1)
+  assert.match(String(warn.mock.calls[0].arguments[0]), /example-org\/example-repo.*403/)
+})

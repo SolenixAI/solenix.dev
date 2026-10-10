@@ -1,6 +1,7 @@
 import "server-only"
 import { cache } from "react"
 import { githubHeaders } from "@/lib/github"
+import { failed } from "@/lib/failed"
 import { fresh } from "@/lib/fresh"
 import { makeDescriber, type Part } from "@/lib/marketplace/parts"
 import { MARKETPLACE_SLUG } from "@/lib/site-meta"
@@ -107,8 +108,10 @@ export const catalogVersion = async (ref = REF) => (await catalogFile(ref))?.sha
 export const getCatalog = cache(async (): Promise<Entry[] | null> => {
   const file = await catalogFile(REF)
   let d: { toolkit?: { for: string; tools: ToolSource[] }; worlds?: WorldSource[]; specs?: Specs }
-  try { d = JSON.parse(Buffer.from(file?.content ?? "", "base64").toString("utf8")) } catch { return null }
-  if (!Array.isArray(d.worlds)) return null
+  if (!file) return null // the read failed, and lib/fresh logged it
+  const source = `${MARKETPLACE_SLUG} worlds.json`
+  try { d = JSON.parse(Buffer.from(file.content ?? "", "base64").toString("utf8")) } catch (e) { return failed(source, e) }
+  if (!Array.isArray(d.worlds)) return failed(source, "it holds no worlds list")
   const specs = d.specs ?? {}
   const toolkit = d.toolkit
   const kit: Entry[] = toolkit?.tools?.length
@@ -122,9 +125,11 @@ export const getCatalog = cache(async (): Promise<Entry[] | null> => {
 })
 
 // Other people's facts: hourly at most, tagged so a push refreshes them behind the page. A source that
-// fails, or answers with something that is not JSON, gives null: it drops only its own facts.
+// fails, or answers with something that is not JSON, gives null and logs why: it drops only its own facts.
 const hourly = (url: string, headers: Record<string, string> = {}) =>
-  fetch(url, { headers, next: { revalidate: HOUR, tags: [FACTS_TAG] } }).then((r) => (r.ok ? r.json() : null)).catch(() => null)
+  fetch(url, { headers, next: { revalidate: HOUR, tags: [FACTS_TAG] } })
+    .then((r) => (r.ok ? r.json() : failed(url, `HTTP ${r.status}`)))
+    .catch((e: unknown) => failed(url, e))
 const gh = async (path: string) => hourly(`https://api.github.com/${path}`, await githubHeaders())
 
 type RepoFacts = { slug: string; blurb: string | null; stars: number | null; forks: number | null; license: string | null; avatar: string | null; pushed: string | null; homepage: string | null }
@@ -184,7 +189,7 @@ async function plugin(slug: string, specs: Specs, maker: string): Promise<Source
   const manifest = paths.find((p) => /^\.[a-z]+-plugin\/plugin\.json$/.test(p))
   const m = manifest ? await gh(`repos/${slug}/contents/${manifest}`) : null
   let version: string | null = null
-  try { version = m?.content ? JSON.parse(Buffer.from(m.content, "base64").toString("utf8")).version ?? null : null } catch {}
+  try { version = m?.content ? JSON.parse(Buffer.from(m.content, "base64").toString("utf8")).version ?? null : null } catch (e) { failed(`${slug} ${manifest}`, e) }
   const extra = [...(s.mcp ? [{ label: "connector", n: 1 }] : []), ...(s.hooks ? [{ label: "hooks", n: 1 }] : [])]
   return { ...blank({ id: "plugin", kind: "plugin", name: "Plugin", href: `https://github.com/${slug}` }), blurb: f.blurb, repo: asRepo(f), version, updated: f.pushed,
     contents: [...s.contents, ...extra], works: s.works, parts,
