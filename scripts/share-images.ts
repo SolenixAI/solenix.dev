@@ -1,9 +1,10 @@
 // Renders the images a shared link and a browser tab need, from things that already exist:
 //   public/favicon.ico  the brand avatar (public/brand/out/avatar.svg) at 32, 48 and 256 px
-//   public/og.png       the live homepage hero at 1200x630, the size link previews use
+//   public/og.png       the live homepage hero at the link-preview size (design/viewports.json)
 // Run with the dev server up, after the hero changes:   npm run share-images [-- <url>]
 import { readFile, writeFile } from "node:fs/promises"
 import { launch } from "./browser.ts"
+import { loadViewports } from "../lib/viewports.ts"
 
 const URL = process.argv[2] ?? "http://localhost:3000/"
 const browser = await launch()
@@ -33,7 +34,7 @@ try {
   await writeFile("public/favicon.ico", Buffer.concat([header, ...pngs]))
 
   // Link preview: the real hero, after the scene has had time to settle into frame.
-  const page = await browser.newPage({ viewport: { width: 1200, height: 630 }, deviceScaleFactor: 1 })
+  const page = await browser.newPage({ viewport: loadViewports().preview, deviceScaleFactor: 1 })
   await page.goto(URL, { waitUntil: "networkidle", timeout: 60000 }).catch(() => page.waitForTimeout(3000))
   await page.waitForTimeout(Number(process.env.SETTLE_MS ?? 4000))
   await page.screenshot({ path: "public/og.png" })

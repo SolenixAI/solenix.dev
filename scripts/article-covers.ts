@@ -1,4 +1,4 @@
-// A cover for every article, captured from its own page at 1200x630 (the link-preview size).
+// A cover for every article, captured from its own page at the link-preview size (design/viewports.json).
 // The same image is the card on /articles and the share image of the article.
 // The hero stills are the live page's first frame: each is taken the moment the article starts to draw its suns,
 // which is the moment its live window starts on /articles, so the still and the live page swap without a jump.
@@ -8,8 +8,10 @@
 import { mkdir, readdir, writeFile } from "node:fs/promises"
 import type { Browser, Page } from "playwright"
 import { launch } from "./browser.ts"
+import { loadViewports } from "../lib/viewports.ts"
 
 const ORIGIN = process.argv[2] ?? "http://localhost:3000"
+const { preview, desktop, phone } = loadViewports()
 const slugs = (await readdir("articles", { withFileTypes: true })).filter((e) => e.isDirectory() && !e.name.startsWith("_")).map((e) => e.name)
 const browser = await launch()
 for (const sig of ["SIGINT", "SIGTERM", "SIGHUP"]) process.on(sig, () => browser.close().finally(() => process.exit(130)))
@@ -58,7 +60,7 @@ async function retinaStill(browser: Browser, url: string, viewport: { width: num
 
 try {
   for (const slug of slugs) {
-    const page = await browser.newPage({ viewport: { width: 1200, height: 630 }, deviceScaleFactor: 1, reducedMotion: "no-preference" })
+    const page = await browser.newPage({ viewport: preview, deviceScaleFactor: 1, reducedMotion: "no-preference" })
     await page.goto(`${ORIGIN}/articles/${slug}`, { waitUntil: "load", timeout: 60000 })
     // The cover is the story, not the chrome: hide any nav bar before the shot.
     await page.addStyleTag({ content: ".snav,.lnav{display:none!important}" })
@@ -69,7 +71,7 @@ try {
     console.log(`wrote public/articles/${slug}/cover.png`)
     // The hero window shows the article at the layout width of its still, so the still and the live page
     // are the same picture from the first paint: one desktop and one phone layout, each at 1x and 2x.
-    for (const [name, viewport] of [["hero", { width: 1440, height: 900 }], ["hero-phone", { width: 390, height: 844 }]] as const) {
+    for (const [name, viewport] of [["hero", desktop], ["hero-phone", phone]] as const) {
       const shot = await browser.newPage({ viewport, deviceScaleFactor: 1, reducedMotion: "no-preference" })
       await shot.goto(`${ORIGIN}/articles/${slug}`, { waitUntil: "load", timeout: 60000 })
       await shot.addStyleTag({ content: ".snav,.lnav{display:none!important}" })
