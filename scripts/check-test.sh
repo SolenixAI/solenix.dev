@@ -14,6 +14,8 @@ fresh() {
   (cd "$root" && git ls-files -co --exclude-standard) | rsync -a --files-from=- "$root/" "$tmp/r/"
   # A file deleted in the working tree is still in the commit the clone came from: remove it from the copy too.
   (cd "$root" && git ls-files) | while read -r f; do [ -e "$root/$f" ] || rm -f "$tmp/r/$f"; done
+  # Dependencies are installed in the repo, not in the copy (node_modules is ignored): link them, or tsc fails in every copy.
+  [ -e "$root/node_modules" ] && ln -sfn "$root/node_modules" "$tmp/r/node_modules"
 }
 expect() { # expect <pass|fail> <name>
   if (cd "$tmp/r" && bash scripts/check.sh >/dev/null 2>&1); then got=pass; else got=fail; fi
@@ -74,6 +76,21 @@ kill "$srv" 2>/dev/null
 
 fresh; mkdir -p "$tmp/r/app/(site)/law"
 expect fail "an industry page (app/(site)/law)"
+
+fresh; rm "$tmp/r/.agents/product-marketing.md"; ln -s ../PRODUCT.md "$tmp/r/.agents/product-marketing.md"
+expect fail "the marketing context is a link to PRODUCT.md"
+
+fresh; sed -i '' 's/^\*\*One-liner:\*\*.*/**One-liner:** Solenix is a tech expert for small businesses./' "$tmp/r/.agents/product-marketing.md"
+expect fail "the one-liner in the marketing context differs from PRODUCT.md"
+
+fresh; sed -i '' 's/^\*\*One-liner:\*\*.*/**One-liner:** Solenix is one tech expert for small businesses./' "$tmp/r/.agents/product-marketing.md"
+expect fail "the one-liner in the marketing context is trimmed (drops the location)"
+
+fresh; sed -i '' 's/^\*\*Target companies:\*\*.*/**Target companies:** small businesses./' "$tmp/r/.agents/product-marketing.md"
+expect fail "the audience in the marketing context is trimmed (drops the location)"
+
+fresh; sed -i '' 's/^\*\*Target companies:\*\*.*/**Target companies:** small businesses in Newfoundland./' "$tmp/r/.agents/product-marketing.md"
+expect fail "the audience in the marketing context differs from PRODUCT.md"
 
 fresh; sed -i '' 's#</body>#<p>Care plans from $199/month</p></body>#' "$tmp/r/design/home.html"
 expect fail "a public price on the homepage"
