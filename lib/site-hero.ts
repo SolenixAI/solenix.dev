@@ -2,7 +2,8 @@
 // A page opts in with these classes; lib/site-page.ts adds this style when a page uses them.
 // The page keeps its own look (colours, visual, words); the frame owns the fit:
 //   .sx-hero        the first screen: exactly one screen tall, sized from its own box (container units)
-//   .sx-hero-in     the content: one column when tall, two when wide, wider text when very wide and short
+//   .sx-hero-in     the content: one column when tall, two when wide, wider text when very wide and short;
+//                   text alone (no live thing beside it) is centred in the whole screen
 //   .sx-hero-text   kicker, headline, one sentence, one action, centred without ever rising under the nav
 //   .sx-kicker .sx-sub .sx-cue   the kicker line, the sentence, and the scroll cue
 // The contract and the research behind it: design/journeys.md ("First landing") and
@@ -13,6 +14,7 @@ export const HERO_CSS = `
   padding:calc(var(--nav-height) + 1.5svh) max(16px,4vw) calc(var(--tap-min) + 2 * var(--cue-gap));container-type:size}
 .sx-hero-in{height:100%;max-width:min(100%,max(230cqh,72ch));margin-inline:auto;display:grid;grid-template-rows:auto minmax(0,1fr);gap:3cqmin}
 .sx-hero-in>*{position:relative;z-index:2;min-height:0}
+.sx-hero-in:has(>:only-child){grid-template-rows:minmax(0,1fr)}
 @container (aspect-ratio > 1.15){.sx-hero-in{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr);align-items:safe center}}
 @container (aspect-ratio > 1.8){.sx-hero-in{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}}
 .sx-hero-text{display:flex;flex-direction:column;justify-content:safe center;gap:clamp(.4rem,2.2cqh,1.4rem)}
