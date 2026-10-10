@@ -56,9 +56,11 @@ const server = createServer(async (req, res) => {
   }
   if (url.pathname !== "/done") return void res.writeHead(404).end()
   const code = url.searchParams.get("code")
-  if (!code || url.searchParams.get("state") !== state) return void res.writeHead(400).end(page("<h1>That link didn't come from this setup.</h1><p>Run the command again.</p>"))
+  // The code goes into the API path, so only a plain token passes: no "/", "?" or "..".
+  if (!code || !/^[A-Za-z0-9_-]{1,128}$/.test(code) || url.searchParams.get("state") !== state)
+    return void res.writeHead(400).end(page("<h1>That link didn't come from this setup.</h1><p>Run the command again.</p>"))
   try {
-    const r = await fetch(`https://api.github.com/app-manifests/${code}/conversions`, { method: "POST", headers: { accept: "application/vnd.github+json" } })
+    const r = await fetch(`https://api.github.com/app-manifests/${encodeURIComponent(code)}/conversions`, { method: "POST", headers: { accept: "application/vnd.github+json" } })
     if (!r.ok) throw new Error(`GitHub answered ${r.status} to the code exchange`)
     const app = (await r.json()) as { id: number; slug: string; html_url: string; pem: string; webhook_secret: string }
     const vars = { GITHUB_APP_ID: String(app.id), GITHUB_APP_PRIVATE_KEY: app.pem, GITHUB_WEBHOOK_SECRET: app.webhook_secret }
