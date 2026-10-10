@@ -45,3 +45,6 @@ lib/client.generated.ts
 
 # Impeccable live-mode session scratch (per machine)
 .impeccable/live/
+
+# Impeccable engine binaries: the launcher downloads the pinned, sha256-checked build when missing.
+**/skills/impeccable/scripts/bin/

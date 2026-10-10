@@ -1,0 +1,8 @@
+# The default rules, plus one exception: third-party skills' evals hold fake keys on purpose
+# (they test that a skill refuses a pasted key). Those files are pinned by hash in skills-lock.json.
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Third-party skill evals: fake keys that test refusals"
+paths = ['''^\.agents/skills/[^/]+/evals/''']

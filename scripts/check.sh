@@ -41,8 +41,11 @@ node scripts/article-check.ts || fail=1
 node scripts/sot-check.ts || fail=1
 node scripts/journey-check.ts || fail=1
 node scripts/origin-check.ts || fail=1
+# Every skill is model-invocable for every agent; a skills install or update can lock one again (scripts/unlock-skills.sh fixes it).
+bash scripts/unlock-skills.sh --check || fail=1
 # TypeScript only: no JavaScript file outside scripts/js-allowlist.txt (a list that may only shrink).
-git ls-files -co --exclude-standard | grep -E '\.(js|jsx|mjs|cjs)$' | grep -v '^public/' | grep -vxFf <(grep -v '^#' scripts/js-allowlist.txt) \
+# Installed skills are vendor code, like public/: their installers own them (Impeccable's live mode injects its JS into the page).
+git ls-files -co --exclude-standard | grep -E '\.(js|jsx|mjs|cjs)$' | grep -vE '^(public/|\.(agents|claude|cursor|github|grok)/skills/)' | grep -vxFf <(grep -v '^#' scripts/js-allowlist.txt) \
   | while read -r f; do echo "check: JavaScript file $f (the repo is TypeScript; see scripts/js-allowlist.txt)"; done | grep . && fail=1
 # Page scripts are TypeScript in client/*.ts, compiled and inlined where the page holds a
 # <!--client:name--> marker (lib/client-script.ts). The homepage and the articles hold no hand-written
@@ -145,6 +148,8 @@ fi
 for f in DESIGN.md design/tokens.css design/home.html design/approved.md; do
   [ -f "$f" ] || bad "missing source of truth: $f"
 done
+# The marketing context is a real file, not a link to PRODUCT.md: every marketing skill reads it, and sot-check.ts keeps its one-liner and audience equal to PRODUCT.md's.
+[ -f .agents/product-marketing.md ] && [ ! -L .agents/product-marketing.md ] || bad ".agents/product-marketing.md must be a real file, not a link (sot-check.ts compares it with PRODUCT.md)"
 
 # The homepage is app/(site)/page.tsx, which reads design/home.html. No second route may serve "/".
 [ -f app/route.ts ] && bad "second homepage: app/route.ts (/ is app/(site)/page.tsx, which reads design/home.html)"

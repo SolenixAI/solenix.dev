@@ -14,6 +14,8 @@ fresh() {
   (cd "$root" && git ls-files -co --exclude-standard) | rsync -a --files-from=- "$root/" "$tmp/r/"
   # A file deleted in the working tree is still in the commit the clone came from: remove it from the copy too.
   (cd "$root" && git ls-files) | while read -r f; do [ -e "$root/$f" ] || rm -f "$tmp/r/$f"; done
+  # Dependencies are installed in the repo, not in the copy (node_modules is ignored): link them, or tsc fails in every copy.
+  [ -e "$root/node_modules" ] && ln -sfn "$root/node_modules" "$tmp/r/node_modules"
 }
 expect() { # expect <pass|fail> <name>
   if (cd "$tmp/r" && bash scripts/check.sh >/dev/null 2>&1); then got=pass; else got=fail; fi
@@ -46,6 +48,16 @@ expect fail "homepage analytics removed"
 fresh; sed -i '' 's|<SpaceWorld />||' "$tmp/r/app/(site)/layout.tsx"
 expect fail "the 3D world not mounted in the layout"
 
+# A locked skill: the check must name it (the exit code alone also fails on unrelated rules in a bare clone).
+locked_named() { # locked_named <file> <name>
+  out=$(cd "$tmp/r" && bash scripts/check.sh 2>&1) # captured first: under pipefail, check's own exit 1 would hide grep's match
+  if grep -qF "check: locked skill $1" <<<"$out"; then pass=$((pass + 1)); echo "ok    $2"; else fail=$((fail + 1)); echo "WRONG $2 (check did not name $1)"; fi
+}
+fresh; f="$tmp/r/.agents/skills/tdd/SKILL.md"; awk 'NR==2{print "disable-model-invocation: true # upstream flag"}1' "$f" > "$f.new" && mv "$f.new" "$f"
+locked_named .agents/skills/tdd/SKILL.md "a skill locked again by an install or update (SKILL.md)"
+fresh; printf 'policy:\n  allow_implicit_invocation: false\n' >> "$tmp/r/.agents/skills/tdd/agents/openai.yaml"
+locked_named .agents/skills/tdd/agents/openai.yaml "a skill locked again for Codex (agents/openai.yaml)"
+
 fresh; echo "- Dark only. There is no light theme." >> "$tmp/r/AGENTS.md"
 expect fail "the old 'dark only' rule comes back"
 
@@ -64,6 +76,21 @@ kill "$srv" 2>/dev/null
 
 fresh; mkdir -p "$tmp/r/app/(site)/law"
 expect fail "an industry page (app/(site)/law)"
+
+fresh; rm "$tmp/r/.agents/product-marketing.md"; ln -s ../PRODUCT.md "$tmp/r/.agents/product-marketing.md"
+expect fail "the marketing context is a link to PRODUCT.md"
+
+fresh; sed -i '' 's/^\*\*One-liner:\*\*.*/**One-liner:** Solenix is a tech expert for small businesses./' "$tmp/r/.agents/product-marketing.md"
+expect fail "the one-liner in the marketing context differs from PRODUCT.md"
+
+fresh; sed -i '' 's/^\*\*One-liner:\*\*.*/**One-liner:** Solenix is one tech expert for small businesses./' "$tmp/r/.agents/product-marketing.md"
+expect fail "the one-liner in the marketing context is trimmed (drops the location)"
+
+fresh; sed -i '' 's/^\*\*Target companies:\*\*.*/**Target companies:** small businesses./' "$tmp/r/.agents/product-marketing.md"
+expect fail "the audience in the marketing context is trimmed (drops the location)"
+
+fresh; sed -i '' 's/^\*\*Target companies:\*\*.*/**Target companies:** small businesses in Newfoundland./' "$tmp/r/.agents/product-marketing.md"
+expect fail "the audience in the marketing context differs from PRODUCT.md"
 
 fresh; sed -i '' 's#</body>#<p>Care plans from $199/month</p></body>#' "$tmp/r/design/home.html"
 expect fail "a public price on the homepage"
