@@ -8,7 +8,7 @@ import { readFileSync } from "node:fs"
 import { SITE_HOST } from "../lib/site-meta.ts"
 
 // The site's own host, with or without www. Derived from SITE_HOST (lib/site-meta.ts), so a domain change is one edit.
-const HOST = SITE_HOST.replace(/\./g, "\\.")
+const HOST = SITE_HOST.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") // every regex character escaped, not only dots
 const OWN = new RegExp(`^https://(www\\.)?${HOST}\\b`)
 const LOADS: [RegExp, string][] = [
   [/<script\b[^>]*\bsrc=["'](https?:)?\/\/[^"']+/gi, "a script"],
