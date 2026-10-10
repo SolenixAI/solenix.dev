@@ -3,13 +3,14 @@
 
 Takes the first "- **Avoid:**" list in DESIGN.md (the Voice section)
 and reports every one that appears in the visible text of the pages given as
-arguments. Items that describe a class rather than name a phrase ("any
+arguments: a file in the repo, or a URL (a page as the site renders it). Items that describe a class rather than name a phrase ("any
 scarcity", "or any invented metric") are judgment calls and are skipped;
 "(say you)" style notes are dropped. Exit 1 when anything is found.
 """
 import html
 import re
 import sys
+import urllib.request
 from html.parser import HTMLParser
 from pathlib import Path
 
@@ -64,7 +65,12 @@ def main() -> int:
     phrases = banned_phrases((root / "DESIGN.md").read_text())
     found = 0
     for name in sys.argv[1:]:
-        text = re.sub(r"\s+", " ", visible_text((root / name).read_text()))
+        if name.startswith(("http://", "https://")):
+            with urllib.request.urlopen(name, timeout=30) as r:
+                page = r.read().decode("utf-8", "replace")
+        else:
+            page = (root / name).read_text()
+        text = re.sub(r"\s+", " ", visible_text(page))
         for phrase in phrases:
             pattern = r"(?<![\w-])" + re.escape(phrase).replace(r"\ ", r"\s+") + r"(?![\w-])"
             for m in re.finditer(pattern, text, re.IGNORECASE):
