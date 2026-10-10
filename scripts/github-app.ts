@@ -26,8 +26,10 @@ const manifest = {
   default_events: ["push"],
 }
 
+// The page reads the design tokens themselves, so its colours are the site's, by name.
 const page = (body: string) => `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Solenix GitHub App</title>
-<style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#0b0d12;color:#f4f2ee;font:16px/1.5 ui-sans-serif,system-ui}main{max-width:30rem;padding:24px}h1{font-size:1.6rem;margin:0 0 8px}p{color:#a39e97}button,a.b{display:inline-block;margin-top:16px;padding:12px 22px;border:0;border-radius:999px;background:#f59e0b;color:#1a1206;font-weight:600;font-size:1rem;cursor:pointer;text-decoration:none}</style><main>${body}</main>`
+<style>${readFileSync("design/tokens.css", "utf8")}</style>
+<style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:var(--bg);color:var(--text);font:16px/1.5 ui-sans-serif,system-ui}main{max-width:30rem;padding:24px}h1{font-size:1.6rem;margin:0 0 8px}p{color:var(--muted)}button,a.b{display:inline-block;margin-top:16px;padding:12px 22px;border:0;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-weight:600;font-size:1rem;cursor:pointer;text-decoration:none}</style><main>${body}</main>`
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;")
 
 /** Store one secret in Vercel (production and preview) by stdin, so it never appears on screen. */
