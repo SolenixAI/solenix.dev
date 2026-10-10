@@ -3,9 +3,8 @@
 // scroll. The page keeps everything of its own: the DOM, the story values, the tool worlds' places and the labels.
 // The page sees each frame through env.onFrame and writes its own DOM there.
 //
-// Served to raw pages as /vendor/space/engine.js (scripts/vendor.ts) and imported by page code as 'solenix-space'
-// (the page's importmap; tsconfig paths for tsc). This folder is the only place that imports three:
-// scripts/check.sh enforces it. Everything here is a browser module with no page globals: the page is injected.
+// Page code imports it from lib/space (@/lib/space/... in TypeScript). This folder is the only place that imports
+// three: scripts/check.sh enforces it. Everything here is a browser module with no page globals: the page is injected.
 import { INK0, INK_SPAN } from "./orbit";
 import * as THREE from 'three';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';

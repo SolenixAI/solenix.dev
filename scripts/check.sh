@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# The rules in AGENTS.md, checked. Run by the git pre-commit hook and by
-# Claude Code's Stop hook. Exits non-zero with one line per violation.
+# The repo's rules (DESIGN.md, PRODUCT.md, design/approved.md, one source per fact), checked. Run by the git
+# pre-commit hook and by CI on every pull request. Exits non-zero with one line per violation.
 set -uo pipefail
 cd "$(git rev-parse --show-toplevel)"
 fail=0
@@ -100,9 +100,12 @@ ACTIONLINT=${ACTIONLINT:-actionlint}; ZIZMOR=${ZIZMOR:-zizmor}
 if command -v "$ACTIONLINT" >/dev/null; then "$ACTIONLINT" .github/workflows/*.yml || fail=1; else missing actionlint "the workflow check"; fi
 if command -v "$ZIZMOR" >/dev/null; then "$ZIZMOR" --offline -q .github/workflows/ >/dev/null 2>&1 || { "$ZIZMOR" --offline .github/workflows/; fail=1; }; else missing zizmor "the workflow security check"; fi
 # One 3D world: only lib/space imports three (the space engine, lib/space/engine.ts). A page that shows 3D imports
-# 'solenix-space' instead, so there is never a second world beside the first.
+# lib/space instead, so there is never a second world beside the first.
 git ls-files -co --exclude-standard -- '*.ts' '*.tsx' '*.html' | grep -v '^lib/space/' | xargs -r grep -n -E "(from|import)[[:space:]]*\(?[[:space:]]*['\"]three(/[^'\"]*)?['\"]" \
-  | while read -r l; do echo "check: only lib/space may import three (one 3D world; import 'solenix-space' instead): ${l:0:120}"; done | grep . && fail=1
+  | while read -r l; do echo "check: only lib/space may import three (one 3D world; import lib/space instead): ${l:0:120}"; done | grep . && fail=1
+# Names of code that no longer exists: a comment or message that uses one points at nothing.
+git grep -n -I -E "solenix-space|saved light/dark" -- ':!scripts/check.sh' ':!scripts/check-test.sh' 2>/dev/null \
+  | while read -r l; do echo "check: names removed code (solenix-space, saved light/dark): ${l:0:120}"; done | grep . && fail=1
 # Types: the compiler checks the whole repo (the page scripts were compiled at the top).
 npx tsc --noEmit || fail=1
 # Unit tests, next to the module they test (lib/**/*.test.ts, any depth), with Node's own test runner.
