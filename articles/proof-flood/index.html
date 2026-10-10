@@ -275,6 +275,8 @@ details.more .chiprow:last-child{margin-bottom:0}
 #atlas .mapbox svg{display:block;width:100%;height:auto}
 #atlas .mapbox text{font-family:var(--f-mono);fill:var(--muted);font-size:13.5px}
 #atlas .mapbox .ax{font:700 12.5px var(--f-mono);fill:var(--ink);letter-spacing:.06em}
+/* the map is drawn smaller than its 1000-unit width below 1000px: labels grow in map units so they stay readable (about 10px or more); the row labels then name the side axis, so its rotated title steps out */
+@media (max-width:1000px){#atlas .mapbox text{font-size:16px}#atlas .mapbox .ax{font-size:16px}#atlas .mapbox text[transform*="rotate"]{display:none}}
 #atlas .mapbox circle.d{cursor:pointer;transition:r .15s}
 #atlas .mapbox circle.d:hover{r:8}
 #atlas .mapbox circle.d.off{opacity:.08;pointer-events:none}
@@ -291,6 +293,8 @@ details.more .chiprow:last-child{margin-bottom:0}
 #atlas .atlas-rail span{font-size:15px;line-height:1.5;color:var(--muted)}
 #atlas .starts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
 #atlas .starts > .scard:nth-child(n+5){display:none}
+/* four cards in a row only where each gets a readable line; below that, two by two */
+@media (max-width:1000px){#atlas .starts{grid-template-columns:repeat(2,minmax(0,1fr))}}
 #atlas .scard{text-align:left;background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:14px;display:grid;gap:8px;align-content:start}
 #atlas .scard:hover{transform:translateY(-2px);border-color:var(--line-strong)}
 #atlas .scard canvas.spic{width:100%;height:76px;display:block;border-radius:12px;background:color-mix(in srgb,var(--bg) 50%,transparent)}
@@ -1115,11 +1119,11 @@ document.addEventListener("pointerout",e=>{if(e.target.closest("abbr.g"))tip.hid
 
 /* funnel */
 const F=[
- {n:"4,000",l:"problems posed",p:100,t:"OpenAI gave its unreleased model about <b>4,000 open problems</b>. It kept only results it judged significant. Nobody outside knows how many attempts failed. The advisory group asked OpenAI to publish failure rates."},
- {n:"372",l:"result families",p:9.3,t:"<b>372 result families</b> survived (about 9% of what was posed), across 17 areas of math. They hold <b>722 manuscripts</b> (a <abbr class=\"g\" data-g=\"family\">family</abbr> is one result plus its variants), under an Apache-2.0 license."},
- {n:"235",l:"have a Lean doc",p:5.9,t:"<b>235 of 372 families</b> link a Lean document in the repo's CONTENTS.md. A Lean doc can cover only part of a paper. Its scope section says which part."},
- {n:"127",l:"main result Lean-checked",p:3.2,t:"<b>127 families</b> (162 papers) have a paper whose <b>main result</b> is in the repo's formal catalogue (lean/formalization.yaml). For these, a computer has checked the headline claim step by step. Counted from the repo files on 2026-10-07; the GenAI Works newsletter reports the same 162."},
- {n:"~3 h",l:"compute per result",p:3,t:"An average result used compute equal to about <b>three hours of ChatGPT Pro thinking</b>. A human mathematician can spend years on one such result. That cost gap is the real news."}
+ {n:"4,000",l:"open problems given",p:100,t:"OpenAI gave its unreleased model about <b>4,000 open problems</b>. It kept only results it judged significant. Nobody outside knows how many attempts failed. The advisory group asked OpenAI to publish failure rates."},
+ {n:"372",l:"results kept",p:9.3,t:"<b>372 result families</b> survived (about 9% of what was posed), across 17 areas of math. They hold <b>722 manuscripts</b> (a <abbr class=\"g\" data-g=\"family\">family</abbr> is one result plus its variants), under an Apache-2.0 license."},
+ {n:"235",l:"checked by computer, fully or partly",p:5.9,t:"<b>235 of 372 families</b> link a Lean document in the repo's CONTENTS.md. A Lean doc can cover only part of a paper. Its scope section says which part."},
+ {n:"127",l:"main result checked by computer",p:3.2,t:"<b>127 families</b> (162 papers) have a paper whose <b>main result</b> is in the repo's formal catalogue (lean/formalization.yaml). For these, a computer has checked the headline claim step by step. Counted from the repo files on 2026-10-07; the GenAI Works newsletter reports the same 162."},
+ {n:"~3 h",l:"computer time per result",p:3,t:"An average result used compute equal to about <b>three hours of ChatGPT Pro thinking</b>. A human mathematician can spend years on one such result. That cost gap is the real news."}
 ];
 const fu=$("#funnel");
 F.forEach((f,i)=>{const b=el("button",{class:"stage","aria-pressed":i==0},`<span class="l">${f.l}</span><span class="n">${f.n}</span><span class="bar"><b style="width:${Math.max(f.p,3)}%"></b></span>`);
@@ -1129,7 +1133,7 @@ $("#funnelText").innerHTML=F[0].t;
 /* timeline */
 const T=[
  {d:"May 2026",t:"Erdős #90 falls",big:"1946",cap:"age of the guess",x:"An OpenAI reasoning model found a counterexample to Erdős's unit-distance guess from 1946. Fields Medallist Timothy Gowers said he would recommend it to the <i>Annals of Mathematics</i> without hesitation."},
- {d:"1 Aug 2026",t:"Ten advances",big:"10",cap:"results, Lean-checked",x:"An internal version of OpenAI's next model, <b>Astra</b>, published 10 results on problems stuck for 10+ years. 249 pages, 10 Lean 4 proofs, about <b>$2,000</b> of compute for all ten."},
+ {d:"1 Aug 2026",t:"Ten advances",big:"10",cap:"results, checked by computer",x:"An internal version of OpenAI's next model, <b>Astra</b>, published 10 results on problems stuck for 10+ years. 249 pages, 10 Lean 4 proofs, about <b>$2,000</b> of compute for all ten."},
  {d:"8 Sep 2026",t:"Navier–Stokes claim",big:"88 h",cap:"10,000 agents",x:"OpenAI claimed a proof that a smooth fluid can blow up (speed goes to infinity) in finite time, when pushed by a smooth force. About 10,000 coordinated agents ran for 88 hours. A credit dispute followed. Clay still lists the problem as <b>active</b>."},
  {d:"Sep 2026",t:"Advisory group forms",big:"IAS",cap:"Princeton",x:"An independent group on mathematics and AI, hosted at the Institute for Advanced Study and including Terence Tao, began to advise on how to release results. It says its role is <b>not an endorsement</b>."},
  {d:"6 Oct 2026",t:"The flood",big:"722",cap:"manuscripts",x:"OpenAI put 722 manuscripts in 372 families on GitHub, with the main result Lean-checked for 127 families and reasoning summaries for 10. OpenAI says some unformalized results could have issues."},
@@ -1170,7 +1174,7 @@ showT(4);tlAnn.textContent="";
 const TR=[
  {lv:5,name:"Erdős <span class='nb'>unit-distance</span> (#90)",pill:"Expert-praised",pts:["Gowers: Annals-level","Litt: first AI result he finds interesting in itself","Short, checkable construction"]},
  {lv:4,name:"Astra's ten advances",pill:"Lean-certified",pts:["All 10 have Lean 4 proofs","Public code to rebuild the checks","Human review still ongoing"]},
- {lv:3,name:"The <span class='nb'>372-family</span> release",pill:"Partly checked",pts:["127 main results Lean-checked","108 partly checked, 137 not yet","OpenAI: unformalized results could have issues"]},
+ {lv:3,name:"The <span class='nb'>372-family</span> release",pill:"Partly checked",pts:["127 main results checked by computer","108 partly checked, 137 not yet","OpenAI: unformalized results could have issues"]},
  {lv:2,name:"<span class='nb'>Millennium-adjacent</span> results",pill:"Special cases",pts:["Result 003: no zeta zeros past 7/8 (Lean-checked)","Result 002: exact BSD formula for many curves","Result 032: Hodge for one family. No full $1M solution"]},
  {lv:1,name:"<span class='nb'>Navier–Stokes</span> <span class='nb'>blow-up</span>",pill:"Unverified · disputed",pts:["Clay status: active","Credit dispute with two mathematicians","Covers the forced case, not the force-free one"]}
 ];
@@ -1463,7 +1467,7 @@ const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&g
   b.style.boxShadow="inset -1px 0 0 var(--paper)";b.onclick=()=>{st.field=st.field==f?null:f;st.g=-1;fb.querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b&&st.field));fb.classList.toggle("dim",!!st.field);render();toast(st.field?`${f}: ${counts[f]}`:"All fields")};fb.append(b)});
  const gc=$("#groupChips");const mk=(lab,g,dot)=>{const b=el("button",{class:"chip","aria-pressed":g==-1},dot?`<i class="dot" style="background:${GC(g)}"></i>${lab}`:lab);b.onclick=()=>{st.g=g;st.field=null;fb.classList.remove("dim");gc.querySelectorAll(".chip").forEach(x=>x.setAttribute("aria-pressed",x===b));render()};gc.append(b)};
  mk("All areas",-1);GROUPS.forEach((g,i)=>mk(g,i,1));
- const cc=$("#checkChips");[["Any check",-1],["✓ Lean main result",2],["◐ Partly checked",1],["○ Not yet",0]].forEach(([l,v])=>{const b=el("button",{class:"chip","aria-pressed":v==-1},l);b.onclick=()=>{st.c=v;cc.querySelectorAll(".chip").forEach(x=>x.setAttribute("aria-pressed",x===b));render()};cc.append(b)});
+ const cc=$("#checkChips");[["Any check",-1],["✓ Checked by computer",2],["◐ Partly checked",1],["○ Not yet",0]].forEach(([l,v])=>{const b=el("button",{class:"chip","aria-pressed":v==-1},l);b.onclick=()=>{st.c=v;cc.querySelectorAll(".chip").forEach(x=>x.setAttribute("aria-pressed",x===b));render()};cc.append(b)});
  const kc=$("#kindChips");const mkK=(l,v)=>{const b=el("button",{class:"chip","aria-pressed":v===null},l);b.onclick=()=>{st.k=v;kc.querySelectorAll(".chip").forEach(x=>x.setAttribute("aria-pressed",x===b));render()};kc.append(b)};
  mkK("Every kind",null);KINDS.forEach(k=>mkK(`${k} <span class="muted">${A.filter(a=>a.k==k).length}</span>`,k));})();
 
@@ -1496,7 +1500,7 @@ const MAP={W:1000,H:640,l:150,r:20,t:20,b:70};
 
 function render(){const M=A.map(match),n=M.filter(Boolean).length,sel=A.filter((a,i)=>M[i]);
  document.querySelectorAll("#map circle.d").forEach(c=>c.classList.toggle("off",!M[+c.dataset.i]));
- $("#stats").innerHTML=`<span><b>${n}</b> of 372 shown</span><span><b>${sel.filter(a=>a.c==2).length}</b> Lean main result</span><span><b>${sel.filter(a=>a.c==1).length}</b> partly checked</span><span><b>${sel.filter(a=>a.k=="counterexample").length}</b> conjectures disproved</span><span><b>${sel.filter(a=>a.fm>=4).length}</b> famous questions</span>`;
+ $("#stats").innerHTML=`<span><b>${n}</b> of 372 shown</span><span><b>${sel.filter(a=>a.c==2).length}</b> checked by computer</span><span><b>${sel.filter(a=>a.c==1).length}</b> partly checked</span><span><b>${sel.filter(a=>a.k=="counterexample").length}</b> conjectures disproved</span><span><b>${sel.filter(a=>a.fm>=4).length}</b> famous questions</span>`;
  if(st.view=="cards"){const srt={fame:(x,y)=>y.fm-x.fm||y.r-x.r,reach:(x,y)=>y.r-x.r||y.fm-x.fm,age:(x,y)=>(x.y||9999)-(y.y||9999),id:(x,y)=>x.i.localeCompare(y.i)}[st.sort];
   const L=[...sel].sort(srt);$("#cards").innerHTML=L.slice(0,st.shown).map(a=>`<button class="acard" style="--gc:${GC(a.G)}" data-i="${byId[a.i]}"><span class="top"><span>${a.i} · ${esc(a.F)}</span><span class="ck c${a.c}"><i></i></span></span><h3>${sup(a.h)}</h3><p>${sup(a.q)}</p><p style="color:var(--ink)">${sup(a.an)}</p><span class="pill p-acc">${esc(a.k)}</span></button>`).join("")||`<p class="muted">Nothing matches. Clear a filter or try another word.</p>`;
   $("#moreBtn").hidden=L.length<=st.shown;$("#moreBtn").textContent=`Show more (${L.length-st.shown} left)`}}
