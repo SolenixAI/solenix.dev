@@ -41,8 +41,8 @@ function newestHero(a: Article, more: number) {
     ? `<picture><source media="(max-width:760px)" srcset="${srcset(a.heroPhone, a.heroPhone2x)}" width="390" height="844"><img src="${a.hero}" srcset="${srcset(a.hero, a.hero2x)}" alt="" width="1440" height="900" decoding="sync" fetchpriority="high"></picture>`
     : a.cover ? `<img src="${a.cover}" alt="" width="1200" height="630">` : `<div class="noimg" aria-hidden="true"></div>`
   const live = `<div class="cover live play">${still}<iframe data-src="${a.path}" hidden tabindex="-1" aria-hidden="true" title=""></iframe></div>`
-  const enter = `<a class="enter" href="${a.path}" aria-label="Read ${t}">Read it<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>`
-  const cue = `<a class="sx-cue" href="#more">${more ? "More articles" : "About Solenix"} ↓</a>`
+  const enter = `<a class="enter" href="${a.path}" aria-label="Play with ${t}">Play with it<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>`
+  const cue = `<a class="sx-cue" href="#more">${more ? "More articles" : "Who made these"} ↓</a>`
   return `
 <header class="sx-hero ar-hero" data-hero data-live-scope>
  <h1 class="sr">Articles: pages you can play with</h1>

@@ -139,5 +139,5 @@ The marketplace's one action: a sentence a visitor copies and pastes into their 
 
 ### Live article window (signature)
 The articles page's first screen: the newest article itself, live, in a window with the visitor's own screen shape.
-- **Shape:** --radius-2xl glass window with a bar at its foot (a New pill, the title, a hint, and a ghost Read it); a narrow window keeps only the action.
-- **Behaviour:** the article is laid out at the visitor's screen size and scaled into the window, so its whole first screen shows; a wheel over it scrolls the page; Read it grows the same picture to full screen. Source: app/articles/route.ts, client/articles-live.ts.
+- **Shape:** --radius-2xl glass window with a bar at its foot (a New pill, the title, a hint, and a ghost Play with it); a narrow window keeps only the action.
+- **Behaviour:** the article is laid out at the visitor's screen size and scaled into the window, so its whole first screen shows; a wheel over it scrolls the page; Play with it grows the same picture to full screen. Source: app/articles/route.ts, client/articles-live.ts.

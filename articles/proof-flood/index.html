@@ -1051,7 +1051,7 @@ abbr.g{text-decoration:underline dotted var(--accent);text-underline-offset:3px;
   <p class="src-lede">Open any link to check it.</p>
   <div class="card unknowns">
     <ul>
-      <li><span class="chip">Open</span><p>Whether the results without a Lean-checked main proof are all correct. About 58% of the 372 main results have none. <a href="https://github.com/openai/math" target="_blank" rel="noopener">OpenAI's own notes</a> say some may have problems.</p></li>
+      <li><span class="chip">Open</span><p>Whether the results without a Lean-checked main proof are all correct. <b data-count="unchecked">245</b> of the 372 main results (<span data-count="unchecked-pct">66</span>%) have none. <a href="https://github.com/openai/math" target="_blank" rel="noopener">OpenAI's own notes</a> say some may have problems.</p></li>
       <li><span class="chip">Open</span><p>Whether the Navier–Stokes blow-up proof holds. <a href="https://www.claymath.org/millennium-problems/navier-stokes-equation/" target="_blank" rel="noopener">The Clay Institute still lists the problem as open</a>, and <a href="https://en.wikipedia.org/wiki/Navier%E2%80%93Stokes_priority_controversy" target="_blank" rel="noopener">a credit dispute continues</a>.</p></li>
       <li><span class="chip">Open</span><p>How many attempts failed. <a href="https://github.com/openai/math" target="_blank" rel="noopener">OpenAI posed about 4,000 problems</a> and has not said how the rest went.</p></li>
       <li><span class="chip">Open</span><p>Who can check the work. <a href="https://www.unite.ai/openai-releases-722-math-manuscripts-from-an-unreleased-ai-model/" target="_blank" rel="noopener">The model is unreleased</a>, so nobody outside OpenAI can rerun it.</p></li>
@@ -1493,6 +1493,8 @@ const MAP={W:1000,H:640,l:150,r:20,t:20,b:70};
   tip.style.left=Math.max(8,Math.min(r.left+r.width/2-140,innerWidth-296))+"px";tip.style.top=(r.top-tip.offsetHeight-10<8?r.bottom+10:r.top-tip.offsetHeight-10)+"px"});
  svg.addEventListener("pointerout",e=>{if(e.target.closest("circle.d"))tip.hidden=true})})();
 
+// Counts quoted in the prose are read from the same data as the grid, so the words and the squares never differ.
+document.querySelectorAll("[data-count]").forEach(e=>{const u=A.filter(a=>a.c!=2).length;e.textContent=e.dataset.count=="unchecked"?u:Math.round(u*100/A.length)});
 function render(){const M=A.map(match),n=M.filter(Boolean).length,sel=A.filter((a,i)=>M[i]);
  document.querySelectorAll("#map circle.d").forEach(c=>c.classList.toggle("off",!M[+c.dataset.i]));
  $("#stats").innerHTML=`<span><b>${n}</b> of 372 shown</span><span><b>${sel.filter(a=>a.c==2).length}</b> checked by computer</span><span><b>${sel.filter(a=>a.c==1).length}</b> partly checked</span><span><b>${sel.filter(a=>a.k=="counterexample").length}</b> conjectures disproved</span><span><b>${sel.filter(a=>a.fm>=4).length}</b> famous questions</span>`;
