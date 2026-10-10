@@ -5,6 +5,12 @@ set -uo pipefail
 cd "$(git rev-parse --show-toplevel)"
 fail=0
 bad() { echo "check: $1"; fail=1; }
+# A rule whose tool is not installed. CI installs every tool that scripts/check.sh calls (.github/workflows/ci.yml), so there a
+# missing tool fails the check and no rule skips. On a laptop the rule skips, loudly, and the rest of the check still runs.
+missing() { # missing <tool> <what it checks>
+  if [ -n "${CI:-}" ]; then bad "$1 is not installed: $2 cannot run in CI (see .github/workflows/ci.yml)"
+  else echo "skip: $1 is not installed; $2 did not run here (CI fails when $1 is missing)" >&2; fi
+}
 
 # The page scripts are compiled from client/*.ts first: lib/site-nav.ts and the checks below import the result
 # (lib/client.generated.ts, gitignored), so a fresh checkout (CI) must build it before anything reads it.
@@ -23,6 +29,15 @@ grep -rn -E '· v[0-9]|\(v[0-9]\)|/\* v[0-9]|\bv[0-9] ·' DESIGN.md design/token
 grep -q 'colorScheme: "dark"' app/layout.tsx || bad "app/layout.tsx: the root viewport must declare colorScheme \"dark\" (the site is dark only)"
 grep -rn -E 'light dark|data-portal' app components lib design/tokens.css 2>/dev/null \
   | while read -r l; do echo "check: the site is dark only, nothing follows the device: ${l:0:80}"; done | grep . && fail=1
+# A color-scheme that lists both light and dark follows the device, wherever it is declared (tokens included).
+grep -rn -E 'color-scheme[[:space:]]*:[^;}]*(light[^;}]*dark|dark[^;}]*light)' app components lib design/tokens.css 2>/dev/null \
+  | while read -r l; do echo "check: the site is dark only, nothing follows the device (color-scheme lists light and dark): ${l:0:80}"; done | grep . && fail=1
+# light-dark() pairs are written once, in design/tokens.css (the design's contract); a pair written anywhere else is a second copy of a colour.
+grep -rn -E 'light-dark\(' app components lib 2>/dev/null \
+  | while read -r l; do echo "check: a light-dark() pair outside design/tokens.css (pairs are written once, in the tokens): ${l:0:80}"; done | grep . && fail=1
+# The theme decision is dark only (DESIGN.md): the docs must not say that the portal or the site follows the device.
+grep -n -i -E 'follows? the device' AGENTS.md DESIGN.md 2>/dev/null \
+  | while read -r l; do echo "check: contradicts the theme decision (the site is dark only, DESIGN.md): ${l:0:80}"; done | grep . && fail=1
 
 # No on-page Motion switch; the OS reduced-motion setting is the control.
 grep -n -E 'motion-toggle|class="word">Motion<' design/*.html 2>/dev/null \
@@ -75,9 +90,10 @@ for f in ["design/home.html"] + sorted(glob.glob("articles/*/index.html")):
             print(f"check: {f}:{line} hand-written inline <script>: put it in client/<name>.ts and mark the spot with <!--client:<name>--> (lib/client-script.ts)"); bad = 1
 sys.exit(bad)
 PY
-# CI workflows: valid (actionlint) and safe (zizmor: pinned actions, least privilege), where installed.
-if command -v actionlint >/dev/null; then actionlint .github/workflows/*.yml || fail=1; fi
-if command -v zizmor >/dev/null; then zizmor --offline -q .github/workflows/ >/dev/null 2>&1 || { zizmor --offline .github/workflows/; fail=1; }; fi
+# CI workflows: valid (actionlint) and safe (zizmor: pinned actions, least privilege). ACTIONLINT and ZIZMOR name the binaries.
+ACTIONLINT=${ACTIONLINT:-actionlint}; ZIZMOR=${ZIZMOR:-zizmor}
+if command -v "$ACTIONLINT" >/dev/null; then "$ACTIONLINT" .github/workflows/*.yml || fail=1; else missing actionlint "the workflow check"; fi
+if command -v "$ZIZMOR" >/dev/null; then "$ZIZMOR" --offline -q .github/workflows/ >/dev/null 2>&1 || { "$ZIZMOR" --offline .github/workflows/; fail=1; }; else missing zizmor "the workflow security check"; fi
 # One 3D world: only lib/space imports three (the space engine, lib/space/engine.ts). A page that shows 3D imports
 # 'solenix-space' instead, so there is never a second world beside the first.
 git ls-files -co --exclude-standard -- '*.ts' '*.tsx' '*.html' | grep -v '^lib/space/' | xargs -r grep -n -E "(from|import)[[:space:]]*\(?[[:space:]]*['\"]three(/[^'\"]*)?['\"]" \
@@ -121,11 +137,10 @@ sys.exit(1 if missing else 0)
 PY
 
 # Impeccable's detector on the homepage. Findings may not rise above the baseline
-# (30 on 2026-10-09). Fix findings and lower the baseline; never raise it.
-# The launcher ships inside the installed plugin, whose path changes with each version: read it live.
-imp_plugin=$(python3 -c 'import json,os;p=json.load(open(os.path.expanduser("~/.claude/plugins/installed_plugins.json")))["plugins"].get("impeccable@impeccable") or [{}];print(p[0].get("installPath",""))' 2>/dev/null)
-IMP=${IMPECCABLE:-$imp_plugin/skills/impeccable/scripts/impeccable}
-IMPECCABLE_BASELINE=30
+# (27 on 2026-10-10). Fix findings and lower the baseline; never raise it.
+# The launcher ships in this repo (.claude/skills/impeccable); on its first run it downloads its pinned, sha256-checked engine.
+IMP=${IMPECCABLE:-.claude/skills/impeccable/scripts/impeccable}
+IMPECCABLE_BASELINE=27
 if [ -x "$IMP" ]; then
   det=$(mktemp)
   "$IMP" detect --json --no-advisory design/home.html >"$det" 2>/dev/null; rc=$?
@@ -141,7 +156,7 @@ PYEOF
   fi
   rm -f "$det"
 else
-  echo "skip: impeccable is not installed (set IMPECCABLE=path); the homepage design detector did not run" >&2
+  missing impeccable "the homepage design detector"
 fi
 
 # Every source of truth named in AGENTS.md exists.

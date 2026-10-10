@@ -33,8 +33,10 @@ export function articleProblems(slug: string, html: string): string[] {
     out.push(`holds its own nav: remove it; the site adds one, and lists each id + data-nav="Label" as a link`)
   // The first screen is a hero that the site can check and derive the card and share image from.
   if (!/<[a-z]+\b[^>]*\bdata-hero\b/i.test(html)) out.push(`has no hero: mark the first screen with data-hero (see articles/_template)`)
-  // Colours come from /tokens.css by name, so a brand change reaches every article.
-  const raw = html.match(/[\s:,("'`]#(?:[0-9a-f]{8}|[0-9a-f]{6}|[0-9a-f]{3})\b|rgba?\(\s*(?!0\s*,\s*0\s*,\s*0\b)\d+\s*,/i)
+  // Colours come from /tokens.css by name, so a brand change reaches every article. A raw colour is a hex code, or a colour
+  // function with numbers in it, in the comma or the space syntax: rgb(244 242 238), hsl(), oklch(), color(). Pure black
+  // (rgb(0 0 0), rgba(0,0,0,.5)) stays free: a shadow or a scrim is not a brand colour.
+  const raw = html.match(/[\s:,("'`]#(?:[0-9a-f]{8}|[0-9a-f]{6}|[0-9a-f]{4}|[0-9a-f]{3})\b|\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch|color)\(\s*(?:[a-z][a-z0-9-]*\s+)?(?!0\s*[, ]\s*0\s*[, ]\s*0(?![\d.%]))[+-]?(?:\d|\.\d)[^)\n]{0,40}\)?/i)
   if (raw) out.push(`has a raw colour "${raw[0].trim()}": use a token by name, var(--name), from design/tokens.css`)
   for (const [re, what] of PRIVATE) {
     const m = html.match(re)

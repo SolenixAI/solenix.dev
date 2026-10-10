@@ -21,6 +21,18 @@ expect() { # expect <pass|fail> <name>
   if (cd "$tmp/r" && bash scripts/check.sh >/dev/null 2>&1); then got=pass; else got=fail; fi
   if [ "$got" = "$1" ]; then pass=$((pass + 1)); echo "ok    $2"; else fail=$((fail + 1)); echo "WRONG $2 (expected check to $1, it did $got)"; fi
 }
+# run_check [VAR=value ...]: runs check.sh in the clone with extra environment; its output goes to out, its exit code to rc.
+run_check() { out=$(cd "$tmp/r" && env "$@" bash scripts/check.sh 2>&1); rc=$?; }
+# saw <needle> <name>: the last run failed and printed the needle. A failure for some other reason is not proof.
+saw() {
+  if [ "$rc" -ne 0 ] && grep -qF "$1" <<<"$out"; then pass=$((pass + 1)); echo "ok    $2"
+  else fail=$((fail + 1)); echo "WRONG $2 (check did not fail naming: $1)"; fi
+}
+# saw_pass <needle> <name>: the last run passed and printed the needle (a loud skip, never a silent one).
+saw_pass() {
+  if [ "$rc" -eq 0 ] && grep -qF "$1" <<<"$out"; then pass=$((pass + 1)); echo "ok    $2"
+  else fail=$((fail + 1)); echo "WRONG $2 (check did not pass with: $1)"; fi
+}
 
 fresh; expect pass "untouched repo passes"
 
@@ -50,22 +62,62 @@ expect fail "the 3D world not mounted in the layout"
 
 # A locked skill: the check must name it (the exit code alone also fails on unrelated rules in a bare clone).
 locked_named() { # locked_named <file> <name>
-  out=$(cd "$tmp/r" && bash scripts/check.sh 2>&1) # captured first: under pipefail, check's own exit 1 would hide grep's match
-  if grep -qF "check: locked skill $1" <<<"$out"; then pass=$((pass + 1)); echo "ok    $2"; else fail=$((fail + 1)); echo "WRONG $2 (check did not name $1)"; fi
+  run_check; saw "check: locked skill $1" "$2"
 }
 fresh; f="$tmp/r/.agents/skills/tdd/SKILL.md"; awk 'NR==2{print "disable-model-invocation: true # upstream flag"}1' "$f" > "$f.new" && mv "$f.new" "$f"
 locked_named .agents/skills/tdd/SKILL.md "a skill locked again by an install or update (SKILL.md)"
 fresh; printf 'policy:\n  allow_implicit_invocation: false\n' >> "$tmp/r/.agents/skills/tdd/agents/openai.yaml"
 locked_named .agents/skills/tdd/agents/openai.yaml "a skill locked again for Codex (agents/openai.yaml)"
 
-fresh; echo "- Dark only. There is no light theme." >> "$tmp/r/AGENTS.md"
-expect fail "the old 'dark only' rule comes back"
+# The theme decision is dark only (DESIGN.md). A doc that says the portal follows the device contradicts it.
+fresh; echo "- The portal follows the device (light or dark)." >> "$tmp/r/AGENTS.md"
+run_check; saw "contradicts the theme decision" "AGENTS.md says the portal follows the device (the old theme decision comes back)"
 
-imp_plugin=$(python3 -c 'import json,os;p=json.load(open(os.path.expanduser("~/.claude/plugins/installed_plugins.json")))["plugins"].get("impeccable@impeccable") or [{}];print(p[0].get("installPath",""))' 2>/dev/null)
-if [ -x "${IMPECCABLE:-$imp_plugin/skills/impeccable/scripts/impeccable}" ]; then
-  fresh; for i in 1 2 3 4 5 6; do sed -i '' 's|</body>|<div style="box-shadow: 0 0 40px #f59e0b"></div></body>|' "$tmp/r/design/home.html"; done
-  expect fail "homepage design findings above the Impeccable baseline"
-else echo "skip  Impeccable not installed; the design-findings baseline test did not run"; fi
+# The design-findings baseline runs from the launcher in this repo, on a machine with no Impeccable plugin (CI has none).
+fresh; for i in 1 2 3 4 5 6; do sed -i '' 's|</body>|<div style="box-shadow: 0 0 40px #f59e0b"></div></body>|' "$tmp/r/design/home.html"; done
+run_check HOME="$tmp/nohome" IMPECCABLE_HOME="$HOME/.impeccable"
+saw "check: impeccable found" "homepage design findings above the Impeccable baseline (no plugin on the machine)"
+
+# A tool a rule needs: CI installs every tool scripts/check.sh calls, so a missing one fails the check there.
+# On a laptop the rule skips, loudly, and the rest still runs.
+fresh; rm "$tmp/r/.claude/skills/impeccable/scripts/impeccable"
+run_check CI=1; saw "impeccable is not installed" "the Impeccable launcher missing in CI fails the check (it does not skip)"
+fresh; run_check CI=1 ACTIONLINT=/nonexistent/actionlint
+saw "actionlint is not installed" "actionlint missing in CI fails the check (it does not skip)"
+fresh; run_check CI=1 ZIZMOR=/nonexistent/zizmor
+saw "zizmor is not installed" "zizmor missing in CI fails the check (it does not skip)"
+fresh; run_check ACTIONLINT=/nonexistent/actionlint
+saw_pass "skip: actionlint is not installed" "a laptop without actionlint skips it loudly and the rest still passes"
+
+# The site is dark only: no color-scheme may list both light and dark, and light-dark() pairs are written once, in the tokens.
+fresh; printf 'export const pair = "light-dark(#fff, #000)"\n' > "$tmp/r/lib/pair-probe.ts"
+run_check; saw "a light-dark() pair outside design/tokens.css" "a light-dark() pair written outside the tokens"
+fresh; printf ':root { color-scheme: dark light; }\n' >> "$tmp/r/design/tokens.css"
+run_check; saw "(color-scheme lists light and dark)" "a color-scheme that lists light and dark (the page follows the device)"
+
+# Colours come from the tokens by name, in every syntax; pure black stays free (a shadow or a scrim).
+for c in 'rgb(244 242 238)' 'hsl(40 20% 95%)' 'oklch(0.97 0.01 80)' 'color(display-p3 1 0.5 0)' '#fff8'; do
+  fresh; printf '<p style="color: %s">x</p>\n' "$c" >> "$tmp/r/articles/proof-flood/index.html"
+  run_check; saw "raw colour \"$c\"" "an article with a raw colour, $c"
+done
+fresh; printf '<p style="background: rgb(0 0 0 / 50%%)">x</p>\n' >> "$tmp/r/articles/proof-flood/index.html"
+expect pass "an article with pure black (rgb(0 0 0 / 50%)) still passes"
+
+# Every resource a page loads comes from solenix.dev: images, frames, video, objects, srcset candidates, CSS and module URLs.
+fresh; sed -i '' 's|</body>|<img src="https://cdn.example.test/img.png" alt=""><iframe src="https://cdn.example.test/frame"></iframe><video poster="https://cdn.example.test/poster.jpg"></video><img src="/a.png" srcset="/a.png 1x, https://cdn.example.test/second.png 2x" alt=""><object data="https://cdn.example.test/object.swf"></object></body>|' "$tmp/r/design/home.html"
+run_check
+saw "cdn.example.test/img.png" "an image from another host (img src)"
+saw "cdn.example.test/frame" "a frame from another host (iframe src)"
+saw "cdn.example.test/poster.jpg" "a video poster from another host"
+saw "cdn.example.test/second.png" "a second srcset candidate from another host"
+saw "cdn.example.test/object.swf" "an object from another host (object data)"
+fresh; printf '.probe{background:url(//cdn.example.test/bg.png)}\n' >> "$tmp/r/design/tokens.css"
+printf 'export const mod = import("//cdn.example.test/mod.js")\n' > "$tmp/r/lib/import-probe.ts"
+sed -i '' 's|</body>|<script type="importmap">{"imports":{"probe":"//cdn.example.test/map.js"}}</script></body>|' "$tmp/r/design/home.html"
+run_check
+saw "//cdn.example.test/bg.png" "a protocol-relative CSS url()"
+saw "an ES import from another host" "a protocol-relative ES import"
+saw "//cdn.example.test/map.js" "a protocol-relative import map entry"
 
 fresh; rm "$tmp/r/design/approved.md"
 expect fail "a source of truth goes missing"
