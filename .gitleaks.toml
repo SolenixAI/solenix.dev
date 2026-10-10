@@ -6,3 +6,7 @@ useDefault = true
 [[allowlists]]
 description = "Third-party skill evals: fake keys that test refusals"
 paths = ['''^\.agents/skills/[^/]+/evals/''']
+
+[[allowlists]]
+description = "PostHog project tokens (phc_) are public by design: they only send events. Personal keys (phx_) stay blocked."
+regexes = ['''phc_[A-Za-z0-9]{43}''']

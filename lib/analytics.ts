@@ -2,12 +2,15 @@
 // app/(site)/page.tsx) and every React page. Only the live site sends
 // events; previews, localhost and pages shown inside a frame (the live
 // preview on an article card) would inflate the numbers.
-// The project token is public by design (it only allows sending events).
+// Events go to the PostHog project "Solenix", the one project for every Solenix product; each
+// event carries an `app` property that names the product. The project token is public by
+// design (it only allows sending events), so it lives here once and no env var overrides it.
 
 import { SITE_HOST } from "./site-meta.ts"
 
-export const POSTHOG_KEY = process.env.NEXT_PUBLIC_POSTHOG_KEY ?? "phc_pNXLaGwzrx5ghbpWQKT9SBmv4JNVZzDrdFjCBs2Zo9Ap"
-export const POSTHOG_HOST = process.env.NEXT_PUBLIC_POSTHOG_HOST ?? "https://us.i.posthog.com"
+export const POSTHOG_KEY = "phc_yiiguNiBP8LGF8vrcWnDVMs3CkaEBLPk3gwGNrpqLs5G"
+export const POSTHOG_HOST = "https://us.i.posthog.com"
+export const POSTHOG_PROPERTIES = { app: SITE_HOST } as const
 
 // Analytics travel through the site's own domain (PostHog's documented Next.js reverse proxy,
 // https://posthog.com/docs/advanced/proxy/nextjs), so the page loads nothing from another host
@@ -36,6 +39,7 @@ export const POSTHOG_SNIPPET = `<script>
 if (location.hostname === ${JSON.stringify(SITE_HOST)} && window.top === window.self) {
   !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once unregister opt_out_capturing has_opted_out_capturing opt_in_capturing reset identify alias people.set people.set_once set_config".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
   posthog.init(${JSON.stringify(POSTHOG_KEY)}, ${JSON.stringify(POSTHOG_OPTIONS)});
+  posthog.register(${JSON.stringify(POSTHOG_PROPERTIES)});
 }
 </script>`
 
