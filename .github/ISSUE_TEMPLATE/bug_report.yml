@@ -6,8 +6,8 @@ body:
     id: page
     attributes:
       label: Page
-      description: The full URL where you saw it.
-      placeholder: "https://solenix.dev/..."
+      description: The page path where you saw it.
+      placeholder: "/articles/..."
     validations:
       required: true
   - type: textarea

@@ -4,7 +4,7 @@ Thanks for contributing. Read AGENTS.md first: it holds the rules every change f
 
 ## Issue
 
-<!-- Link the GitHub issue this change answers, if there is one. -->
+<!-- Link the GitHub issue this change answers, if there is one. Accepted work is tracked in Linear; see docs/agents/issue-tracker.md. -->
 
 ## What
 

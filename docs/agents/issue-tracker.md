@@ -23,6 +23,8 @@ stale_after: 2026-11-09
 
 Work for this repo is tracked in Linear, in the Solenix workspace. The engineering skills (`to-spec`, `to-tickets`, `triage`, `wayfinder`, `implement-spec`) create and read issues there with the Linear tools in the agent session. Each issue links to the repo files, pull requests and commits it concerns.
 
+GitHub Issues stay open for public bug reports, through the bug form. A maintainer copies each accepted report into Linear and closes it on GitHub with a link.
+
 The repo is public. Never write Linear issue IDs, internal names or private notes into repo files or commit messages. Put a public link to the repo in the Linear issue instead.
 
 New issues start from the team template "Default issue": `save_issue` with `template` "Default issue" (MCP), or `issueCreate` with `teamId` (from the `teams` query) and `templateId` (from the `templates` query) (GraphQL). Set the assignee: `me` when the work is yours, `null` for an unclaimed wayfinder ticket. A description replaces the template body, so pass none. Then fill each `{…}` slot: call `save_issue` with the issue `id` and its `patch` parameter (one replace per slot).
