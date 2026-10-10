@@ -21,3 +21,13 @@ The five triage roles use the default label names. See `docs/agents/triage-label
 ### Domain docs
 
 Single-context: one `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
+
+### Engines
+
+Three engines own the work. For each task, use the engine's skill:
+
+- Design, any change a person sees: Impeccable (`impeccable`).
+- Engineering: Matt Pocock's skills (`mattpocock/skills`), for example `code-review`, `diagnosing-bugs`, `tdd`, `improve-codebase-architecture`.
+- Selling and being found: Corey Haines' skills (`coreyhaines31/marketingskills`), for example `seo-audit`, `copywriting`, `launch`.
+
+Never use Anthropic's look-alike packs, even when they load: `engineering:*`, `marketing:*`, `product-management:*`, `finance:*`. When two skills have the same name (`code-review`, `seo-audit`), use the engine's skill in `.agents/skills/`.
