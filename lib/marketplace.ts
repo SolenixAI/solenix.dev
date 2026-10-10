@@ -141,11 +141,11 @@ const treeOf = async (slug: string): Promise<{ sha: string | null; paths: string
   return { sha: t?.sha ?? null, paths: Array.isArray(t?.tree) ? (t.tree as { path: string }[]).map((f) => f.path) : [] }
 }
 
-// The parts of a repo, each described by its own file. makeDescriber (lib/marketplace/parts.ts) reads them with the
-// tree its caller already read, so no read fetches a repo's tree twice. It holds only the newest complete answer per
-// request, and never a failed one. A new commit is a new tree, so its descriptions are read again. The tree itself is
-// as fresh as treeOf: an hour at most, and at once after a push.
-const describeParts = makeDescriber((url, init) => fetch(url, init), githubHeaders)
+// The parts of a repo, each described by its own file. makeDescriber (lib/marketplace/parts.ts) reads them as soon as
+// the tree its caller started is in, beside the repo's other reads, so no read fetches a repo's tree twice. It holds
+// only the newest complete answer per request, and never a failed one. A new commit is a new tree, so its descriptions
+// are read again. The tree itself is as fresh as treeOf: an hour at most, and at once after a push.
+const describeParts = makeDescriber((url, init) => fetch(url, init), githubHeaders, new Map())
 const npm = async (name: string) => {
   const [latest, week] = await Promise.all([hourly(`https://registry.npmjs.org/${name}/latest`), hourly(`https://api.npmjs.org/downloads/point/last-week/${name}`)])
   return { version: (latest?.version as string) ?? null, blurb: (latest?.description as string) ?? null, weekly: (week?.downloads as number) ?? null }
@@ -174,8 +174,8 @@ const blank = (s: Pick<Source, "id" | "kind" | "name" | "href">): Source =>
   ({ blurb: null, repo: null, version: null, updated: null, weekly: null, contents: [], items: [], parts: [], gives: null, works: [], refs: [], ...s })
 
 async function plugin(slug: string, specs: Specs, maker: string): Promise<Source> {
-  const [f, t] = await Promise.all([repoFacts(slug), treeOf(slug)])
-  const parts = await describeParts(slug, t, ["agent", "command", "skill"])
+  const tree = treeOf(slug)
+  const [f, parts, t] = await Promise.all([repoFacts(slug), describeParts(slug, tree, ["agent", "command", "skill"]), tree])
   const paths = t.paths
   const s = shape(paths)
   const manifest = paths.find((p) => /^\.[a-z]+-plugin\/plugin\.json$/.test(p))
@@ -189,8 +189,8 @@ async function plugin(slug: string, specs: Specs, maker: string): Promise<Source
     refs: [gitHub(slug), ...(f.homepage ? [{ label: "Docs", href: f.homepage }] : []), ...spec(specs, "plugin", "Agent Plugins spec")] }
 }
 async function skills(slug: string, specs: Specs, maker: string): Promise<Source> {
-  const [f, t] = await Promise.all([repoFacts(slug), treeOf(slug)])
-  const parts = await describeParts(slug, t, ["skill"])
+  const tree = treeOf(slug)
+  const [f, parts, t] = await Promise.all([repoFacts(slug), describeParts(slug, tree, ["skill"]), tree])
   const s = shape(t.paths)
   return { ...blank({ id: "skills", kind: "skills", name: "Skills", href: `https://github.com/${slug}/tree/HEAD/skills` }), blurb: f.blurb, repo: asRepo(f), updated: f.pushed,
     contents: s.skills.length ? [{ label: "skills", n: s.skills.length }] : [], items: s.skills, parts,
@@ -217,8 +217,8 @@ async function cli(name: string, docs: string, maker: string): Promise<Source> {
 const api = (docs: string, maker: string): Source => ({ ...blank({ id: "api", kind: "api", name: "API", href: docs }), gives: `Anything else ${maker} can do, your AI can reach directly.`, refs: [{ label: "API reference", href: docs }] })
 
 async function tool(t: ToolSource, specs: Specs): Promise<Source> {
-  const [f, n, release, tr] = await Promise.all([repoFacts(t.starsRepo), t.cli ? npm(t.cli.npm) : null, gh(`repos/${t.starsRepo}/releases/latest`), treeOf(t.install.repo)])
-  const parts = await describeParts(t.install.repo, tr, ["skill"], t.install.skills)
+  const tree = treeOf(t.install.repo)
+  const [f, n, release, parts] = await Promise.all([repoFacts(t.starsRepo), t.cli ? npm(t.cli.npm) : null, gh(`repos/${t.starsRepo}/releases/latest`), describeParts(t.install.repo, tree, ["skill"], t.install.skills)])
   return { ...blank({ id: t.id, kind: "tool", name: t.name, href: t.site }), blurb: f.blurb ?? t.for, repo: asRepo(f), parts, gives: t.for,
     version: release?.tag_name ?? n?.version ?? null, updated: release?.published_at ?? f.pushed, weekly: n?.weekly ?? null, items: t.install.skills,
     refs: [{ label: new URL(t.site).host, href: t.site }, gitHub(t.starsRepo), ...(t.cli ? [{ label: "Docs", href: t.cli.docs }, npmPage(t.cli.npm)] : []), ...spec(specs, "skills", "Agent Skills spec")] }

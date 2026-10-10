@@ -1,8 +1,9 @@
 // The descriptions of a repo's parts (its skills, agents and commands), each read from its own file.
-// describe(slug, tree, kinds, only?) describes the files of a tree the caller already read. It holds only the
-// newest complete answer per request (slug, kinds, only): a new tree replaces it. A read that fails is never
-// held: it gives the last held answer, else each part's id with no blurb. Pure: the network and the GitHub key
-// are injected (get, headers), so node --test runs it against a fake GitHub (lib/marketplace/parts.test.ts).
+// makeDescriber(get, headers, memo) returns describeParts(slug, tree, kinds, only?), which describes the files of a
+// tree its caller is reading. The describer holds state, so each one is a cache: the memo keeps one complete answer
+// per request (slug, kinds, only), and only the newest tree asked for may fill it. A read that fails is never kept:
+// it gives the last held answer, else each part's id with no blurb. The network, the GitHub key and the memo are
+// injected, so node --test runs the describer against a fake GitHub (lib/marketplace/parts.test.ts).
 import type { Get } from "../fresh.ts"
 
 export type PartKind = "skill" | "agent" | "command"
@@ -10,14 +11,22 @@ export type PartKind = "skill" | "agent" | "command"
 export type Part = { id: string; kind: PartKind; name: string; blurb: string | null; href: string }
 /** A repo's tree at HEAD: its hash and every path. A null sha means the tree could not be read. */
 export type Tree = { sha: string | null; paths: string[] }
+/** The complete answer for one tree, as the memo keeps it. */
+export type Answer = { sha: string; parts: Part[] }
 
 const PART_FILES: Record<PartKind, RegExp> = { skill: /^skills\/([^/]+)\/SKILL\.md$/, agent: /^agents\/([^/]+)\.md$/, command: /^commands\/([^/]+)\.md$/ }
 /** Files per GraphQL request: each request stays the same bounded size, however many files a repo has. */
 const BATCH = 100
 const GRAPHQL = "https://api.github.com/graphql"
 
-type File = { kind: PartKind; id: string; path: string }
+/** A part's file: its kind, its id (the file's name) and its path at HEAD. */
+type PartFile = { kind: PartKind; id: string; path: string }
 const hrefOf = (slug: string, path: string) => `https://github.com/${slug}/blob/HEAD/${path}`
+/** A part from its file. Its text gives the name and blurb from its frontmatter; with no text, it is its id and no blurb. */
+const toPart = (slug: string, f: PartFile, text = ""): Part => {
+  const fm = frontmatter(text)
+  return { id: f.id, kind: f.kind, name: fm.name || f.id, blurb: fm.description || null, href: hrefOf(slug, f.path) }
+}
 
 /** A Markdown file's frontmatter name and description (YAML, including folded > and | blocks). */
 function frontmatter(text: string): { name?: string; description?: string } {
@@ -34,14 +43,15 @@ function frontmatter(text: string): { name?: string; description?: string } {
   return out
 }
 
-export function makeDescriber(get: Get, headers: () => Promise<Record<string, string>> = async () => ({})) {
-  // The newest complete answer per request. One entry per request, however many trees it has seen.
-  const held = new Map<string, { sha: string; parts: Part[] }>()
+/** The describer. The memo is the caller's Map, so a test can count what the describer holds. */
+export function makeDescriber(get: Get, headers: () => Promise<Record<string, string>>, memo: Map<string, Answer>) {
+  // The newest tree asked for per request. Only its complete answer may fill the memo.
+  const newest = new Map<string, string>()
   // Reads in flight, shared by identical requests. Removed once settled, so a failed read is never kept.
   const reading = new Map<string, Promise<Part[]>>()
 
   // The texts of the files, in order; null unless the request succeeded and every file's text came back.
-  async function textsOf(owner: string, name: string, files: File[]): Promise<string[] | null> {
+  async function textsOf(owner: string, name: string, files: PartFile[]): Promise<string[] | null> {
     const fields = files.map((f, i) => `f${i}: object(expression: ${JSON.stringify(`HEAD:${f.path}`)}) { ... on Blob { text } }`).join(" ")
     const query = `{ repository(owner: ${JSON.stringify(owner)}, name: ${JSON.stringify(name)}) { ${fields} } }`
     try {
@@ -54,17 +64,18 @@ export function makeDescriber(get: Get, headers: () => Promise<Record<string, st
     }
   }
 
-  async function describe(slug: string, tree: Tree, kinds: PartKind[], only?: string[]): Promise<Part[]> {
-    const { sha, paths } = tree
+  async function describeParts(slug: string, tree: Promise<Tree>, kinds: PartKind[], only?: string[]): Promise<Part[]> {
+    const { sha, paths } = await tree
     const key = `${slug}|${kinds}|${only ?? ""}`
     // A tree that could not be read gives the last held answer; nothing is read or kept.
-    if (!sha) return held.get(key)?.parts ?? []
-    const files: File[] = paths.flatMap((path) => kinds.flatMap((kind) => {
+    if (!sha) return memo.get(key)?.parts ?? []
+    newest.set(key, sha)
+    const files: PartFile[] = paths.flatMap((path) => kinds.flatMap((kind) => {
       const id = PART_FILES[kind].exec(path)?.[1]
       return id && (!only || only.includes(id)) ? [{ kind, id, path }] : []
     }))
     if (files.length === 0) return []
-    const have = held.get(key)
+    const have = memo.get(key)
     if (have?.sha === sha) return have.parts
     const flight = `${key}@${sha}`
     const inFlight = reading.get(flight)
@@ -75,17 +86,18 @@ export function makeDescriber(get: Get, headers: () => Promise<Record<string, st
       .then((replies): Part[] => {
         const texts = replies.includes(null) ? null : replies.flatMap((r) => r ?? [])
         if (texts) {
-          const parts = files.map((f, i) => { const fm = frontmatter(texts[i]); return { id: f.id, kind: f.kind, name: fm.name || f.id, blurb: fm.description || null, href: hrefOf(slug, f.path) } })
-          held.set(key, { sha, parts })
+          const parts = files.map((f, i) => toPart(slug, f, texts[i]))
+          // An older tree whose read finishes late is not kept: a newer tree was asked for after it.
+          if (newest.get(key) === sha) memo.set(key, { sha, parts })
           return parts
         }
         // A failed read is never kept: the last held answer, else the id fallback.
-        return held.get(key)?.parts ?? files.map((f) => ({ id: f.id, kind: f.kind, name: f.id, blurb: null, href: hrefOf(slug, f.path) }))
+        return memo.get(key)?.parts ?? files.map((f) => toPart(slug, f))
       })
       .finally(() => reading.delete(flight))
     reading.set(flight, read)
     return read
   }
 
-  return Object.assign(describe, { held: () => held.size })
+  return describeParts
 }
