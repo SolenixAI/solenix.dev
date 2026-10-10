@@ -4,8 +4,6 @@ export const WORLDS_CSS = `
 .wd-hero h1 em{font-style:normal;color:var(--accent-text)}
 .wd-hero .sx-hero-in>*{min-width:0}
 .wd-hero :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
-/* A command's flag never splits from its value. */
-.wd-nowrap{white-space:nowrap}
 .wd-hero h1{font-size:clamp(2.6rem,1.9rem + 3vw,5rem)}
 
 /* The hero's light: one warm source where the sky's sun sits, a 32px hairline grid, and a sparse starfield on the right.
@@ -53,8 +51,8 @@ export const WORLDS_CSS = `
 .wd-quiet-toggle{display:inline-flex;align-items:center;min-height:var(--tap-min);margin-left:6px;padding:0 2px;border:0;background:none;cursor:pointer;font:600 .92rem/1 var(--font-text);color:var(--text);text-decoration:underline;text-decoration-color:var(--line-strong);text-underline-offset:3px}
 .wd-quiet-toggle:hover{text-decoration-color:var(--accent-text)}
 .wd-quiet-toggle[aria-expanded="true"]{color:var(--accent-text)}
-.wd-ask-sentence{margin:0;width:min(100%,30rem);box-sizing:border-box;padding:14px 16px;border-radius:12px;border:1px solid var(--line);background:var(--surface-solid);font:500 .92rem/1.6 var(--font-text);color:var(--text);overflow-wrap:anywhere;text-wrap:pretty}
-.wd-ask-sentence code{padding:1px 6px;border-radius:var(--radius-xs);background:var(--surface-solid);border:1px solid var(--line);font:500 .88em/1.6 var(--font-mono);color:var(--accent-text);overflow-wrap:anywhere}
+.wd-ask-sentence{margin:0;width:min(100%,30rem);box-sizing:border-box;padding:14px 16px;border-radius:12px;border:1px solid var(--line);background:var(--surface-solid);font:500 .92rem/1.6 var(--font-text);color:var(--text);text-wrap:pretty}
+.wd-ask-sentence code{padding:1px 6px;border-radius:var(--radius-xs);background:var(--surface-solid);border:1px solid var(--line);font:500 .88em/1.6 var(--font-mono);color:var(--accent-text)}
 .wd-ask-wait{pointer-events:none}
 .wd-ask-bar-act{width:10rem;height:var(--tap-min)}
 .wd-quiet-bar{width:min(100%,22rem);height:.9em;margin-block:.3em}
@@ -145,9 +143,14 @@ export const WORLDS_CSS = `
 .wd-run[open] summary::after{rotate:225deg}
 .wd-run summary:hover{color:var(--text)}
 .wd-run summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:var(--radius-pill)}
-.wd-run-text{margin:8px 0 0;padding:14px 16px;border-radius:var(--radius-lg);background:var(--surface-solid);border:1px solid var(--line);font:500 .95rem/1.7 var(--font-text);color:var(--text);overflow-wrap:anywhere;text-wrap:pretty}
+.wd-run-text{margin:8px 0 0;padding:14px 16px;border-radius:var(--radius-lg);background:var(--surface-solid);border:1px solid var(--line);font:500 .95rem/1.7 var(--font-text);color:var(--text);text-wrap:pretty}
 .wd-copy code{padding:2px 8px;border-radius:var(--radius-xs);background:var(--surface-solid);border:1px solid var(--line);font:500 .86em/1.7 var(--font-mono);font-variant-ligatures:none;color:var(--accent-text);-webkit-box-decoration-break:clone;box-decoration-break:clone}
-.wd-tok{white-space:nowrap}
+/* Command text: a line breaks only at a space between pieces, never inside a word or between a flag and its value
+   (<Sentence> makes each piece one nowrap span). A sentence never widens its column (contain). A piece wider than the
+   column overflows into its paragraph's padding first, then scrolls inside that paragraph: the page never scrolls sideways. */
+.wd-sentence{display:block;contain:inline-size}
+.wd-run-text,.wd-ask-sentence,.wd-say-raw{overflow-x:auto}
+.wd-sentence .wd-tok{white-space:nowrap}
 @media (max-width:560px){.wd-copy .wd-action{flex:1 1 100%}}
 .wd-action{flex:none;min-height:var(--tap-min);padding:0 24px;border:0;border-radius:var(--radius-pill);background:var(--accent);color:var(--accent-ink);font:650 var(--fs-sm)/1 var(--font-text);cursor:pointer;box-shadow:0 8px 24px -10px color-mix(in srgb,var(--accent) 70%,transparent);transition:background var(--dur-base),transform var(--dur-base) var(--ease-out)}
 .wd-action:hover{background:var(--accent-hover);transform:translateY(-1px)}
@@ -224,8 +227,8 @@ export const WORLDS_CSS = `
 .wd-steps li>span:not(.wd-step-orb){max-width:34ch;color:var(--muted);font-size:.95rem;line-height:1.45;text-wrap:pretty}
 @media (max-width: 560px){.wd-steps{grid-template-columns:1fr}.wd-steps li:not(:last-child)::after{top:56px;bottom:calc(-1 * var(--wd-gap) - 22px);left:22px;right:auto;width:0;border-top:0;border-left:1px dashed color-mix(in srgb,var(--text) 22%,transparent)}.wd-steps li{grid-template-columns:44px 1fr;column-gap:16px}.wd-step-orb{grid-row:span 2}}
 .wd-say{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:16px 32px;margin-top:clamp(28px,4vw,40px);padding:clamp(18px,2.6vw,26px) clamp(18px,2.8vw,30px);border-radius:var(--radius-xl);border:1px solid var(--line);background:var(--glass-bg);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-md)}
-.wd-say-text{margin:0;max-width:62ch;font:500 1.02rem/1.55 var(--font-text);color:var(--text);overflow-wrap:anywhere;text-wrap:pretty}
-.wd-say-text code{padding:1px 6px;border-radius:var(--radius-xs);background:var(--surface-solid);border:1px solid var(--line);font:500 .88em/1.6 var(--font-mono);color:var(--accent-text);overflow-wrap:anywhere}
+.wd-say-text{margin:0;max-width:62ch;font:500 1.02rem/1.55 var(--font-text);color:var(--text);text-wrap:pretty}
+.wd-say-text code{padding:1px 6px;border-radius:var(--radius-xs);background:var(--surface-solid);border:1px solid var(--line);font:500 .88em/1.6 var(--font-mono);color:var(--accent-text)}
 .wd-say-copy{justify-self:start;display:inline-flex;align-items:center;gap:8px;min-height:var(--tap-min);padding:0 20px;border-radius:var(--radius-pill);border:1px solid var(--line-strong);background:none;color:var(--text);font:600 var(--fs-sm)/1 var(--font-text);cursor:pointer;transition:border-color var(--dur-base),box-shadow var(--dur-base),transform var(--dur-base) var(--ease-out)}
 .wd-say-copy svg{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .wd-say-copy:hover{border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 16%,transparent);transform:translateY(-1px)}
@@ -239,8 +242,11 @@ export const WORLDS_CSS = `
 .wd-say-more[open] summary::before{transform:translateY(2px) rotate(-135deg)}
 .wd-say-more summary:hover{color:var(--text);text-decoration:underline;text-underline-offset:3px}
 .wd-say-more summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
-.wd-say-raw{margin:10px 0 0;max-width:62ch;font:500 .92rem/1.6 var(--font-text);color:var(--muted);overflow-wrap:anywhere;text-wrap:pretty}
-.wd-say-raw code{padding:1px 6px;border-radius:var(--radius-xs);background:var(--surface-solid);border:1px solid var(--line);font:500 .88em/1.6 var(--font-mono);color:var(--accent-text);overflow-wrap:anywhere}
+.wd-say-raw{margin:10px 0 0;max-width:62ch;font:500 .92rem/1.6 var(--font-text);color:var(--muted);text-wrap:pretty}
+.wd-say-raw code{padding:1px 6px;border-radius:var(--radius-xs);background:var(--surface-solid);border:1px solid var(--line);font:500 .88em/1.6 var(--font-mono);color:var(--accent-text)}
+.wd-say-note{grid-column:1/-1;margin:0;font:500 .9rem/1.4 var(--font-text);color:var(--accent-text);text-wrap:pretty}
+/* A failed copy selects the sentence: the selection takes the site's palette, not the browser's blue. */
+.wd-sentence ::selection{background:color-mix(in srgb,var(--accent) 38%,transparent);color:var(--text)}
 .wd-ask-wait .wd-say-text{min-height:calc(1.55em*2)}
 @media (max-width: 560px){.wd-say{grid-template-columns:minmax(0,1fr)}.wd-say-copy{justify-self:stretch;width:100%;justify-content:center}.wd-ask-wait .wd-say-text{min-height:calc(1.55em*4)}}
 
