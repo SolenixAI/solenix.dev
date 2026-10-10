@@ -184,5 +184,12 @@ site=${SITE_URL:-http://localhost:3000/}
 code=$(curl -s -o /dev/null -m 5 -w '%{http_code}' "$site" 2>/dev/null)
 [ "$code" = "000" ] || [ "$code" = "200" ] \
   || bad "local site is broken: $site answers $code (restart the dev server; if it stays broken, move .next/dev aside)"
+# Copy lives in the homepage source, the React pages, the articles and the metadata: the Voice check reads every page
+# the sitemap lists, as the local site renders it, whenever that site is up.
+if [ "$code" = "200" ]; then
+  pages=$(curl -s -m 20 "${site%/}/sitemap.xml" | grep -o '<loc>[^<]*</loc>' | sed -E 's#<loc>https?://[^/]+##; s#</loc>##' | sort -u)
+  [ -n "$pages" ] || bad "the sitemap lists no pages, so the Voice check could not read them"
+  for page in $pages; do python3 scripts/voice-check.py "${site%/}$page" || fail=1; done
+fi
 
 exit $fail
