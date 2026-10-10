@@ -33,6 +33,8 @@ export function articleProblems(slug: string, html: string): string[] {
     out.push(`holds its own nav: remove it; the site adds one, and lists each id + data-nav="Label" as a link`)
   // The first screen is a hero that the site can check and derive the card and share image from.
   if (!/<[a-z]+\b[^>]*\bdata-hero\b/i.test(html)) out.push(`has no hero: mark the first screen with data-hero (see articles/_template)`)
+  // The page edge is the site's: an article's .wrap reads var(--gutter), so it lines up with the nav and every page.
+  if (/\.wrap\s*\{[^}]*padding-inline\s*:\s*\d/.test(html)) out.push(`sets its own page edge: give .wrap padding-inline:var(--gutter)`)
   // Colours come from /tokens.css by name, so a brand change reaches every article. A raw colour is a hex code, or a colour
   // function with numbers in it, in the comma or the space syntax: rgb(244 242 238), hsl(), oklch(), color(). Pure black
   // (rgb(0 0 0), rgba(0,0,0,.5)) stays free: a shadow or a scrim is not a brand colour.

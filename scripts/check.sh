@@ -106,6 +106,12 @@ git ls-files -co --exclude-standard -- '*.ts' '*.tsx' '*.html' | grep -v '^lib/s
 # Names of code that no longer exists: a comment or message that uses one points at nothing.
 git grep -n -I -E "solenix-space|saved light/dark" -- ':!scripts/check.sh' ':!scripts/check-test.sh' 2>/dev/null \
   | while read -r l; do echo "check: names removed code (solenix-space, saved light/dark): ${l:0:120}"; done | grep . && fail=1
+# A phone lede is never under 1.05rem (DESIGN.md): the floor of --fs-lede in the tokens.
+lede=$(sed -n 's/^[[:space:]]*--fs-lede:[[:space:]]*clamp(\([0-9.]*\)rem.*/\1/p' design/tokens.css)
+python3 -c "import sys; sys.exit(0 if float('${lede:-0}') >= 1.05 else 1)" || bad "design/tokens.css: --fs-lede starts at ${lede:-?}rem; a phone lede is 1.05rem or more"
+# No eyebrow or kicker above a heading (DESIGN.md, Impeccable's ban): no page or template uses the classes.
+git grep -n -I -E 'class(Name)?="[^"]*\b(eyebrow|sx-kicker|kicker)\b' -- app components lib design articles 2>/dev/null \
+  | while read -r l; do echo "check: an eyebrow or kicker above a heading (banned; let the heading speak): ${l:0:120}"; done | grep . && fail=1
 # Types: the compiler checks the whole repo (the page scripts were compiled at the top).
 npx tsc --noEmit || fail=1
 # Unit tests, next to the module they test (lib/**/*.test.ts, any depth), with Node's own test runner.
