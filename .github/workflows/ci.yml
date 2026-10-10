@@ -1,6 +1,7 @@
-# The same checks as the commit hook (scripts/check.sh), on every pull request and on main.
-# The "protect main" ruleset requires this job, so nothing reaches main unless it passes;
-# a skipped local hook (--no-verify) can no longer get through.
+# The same checks as the commit hook, on every pull request and on main: the secret scan (the hook's first check, gitleaks,
+# over the commits this change adds) and scripts/check.sh. Every tool they call is installed below at a pinned version and
+# checked against its sha256, so a missing tool fails the job and no rule skips. The "protect main" ruleset requires this
+# job, so nothing reaches main unless it passes; a skipped local hook (--no-verify) can no longer get through.
 name: ci
 on:
   pull_request:
@@ -19,10 +20,41 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          fetch-depth: 0 # the secret scan reads the commits this change adds
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24
           cache: npm
+      # Each tool comes from its project's GitHub release, at the version named here, and must match the sha256 named here.
+      # actionlint 1.7.12 and gitleaks 8.30.1 publish checksum files (these digests are theirs); zizmor 1.30.1 publishes none,
+      # so its digest was taken from the release asset.
+      - name: Install actionlint, zizmor and gitleaks (pinned, sha256-verified)
+        env:
+          ACTIONLINT_SHA256: 8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8
+          ZIZMOR_SHA256: e65324f4430c2717591937edcec90ccbefaf14c174f8ec9415e03ca875b46e1a
+          GITLEAKS_SHA256: 551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb
+        run: |
+          set -euo pipefail
+          bin="$RUNNER_TEMP/bin"
+          mkdir -p "$bin"
+          install_tool() { # install_tool <url> <sha256> <binary inside the archive>
+            curl -fsSL --retry 3 -o "$RUNNER_TEMP/tool.tar.gz" "$1"
+            echo "$2  $RUNNER_TEMP/tool.tar.gz" | sha256sum -c -
+            tar -xzf "$RUNNER_TEMP/tool.tar.gz" -C "$bin" "$3"
+            rm -f "$RUNNER_TEMP/tool.tar.gz"
+          }
+          install_tool "https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_linux_amd64.tar.gz" "$ACTIONLINT_SHA256" actionlint
+          install_tool "https://github.com/zizmorcore/zizmor/releases/download/v1.30.1/zizmor-x86_64-unknown-linux-gnu.tar.gz" "$ZIZMOR_SHA256" zizmor
+          install_tool "https://github.com/gitleaks/gitleaks/releases/download/v8.30.1/gitleaks_8.30.1_linux_x64.tar.gz" "$GITLEAKS_SHA256" gitleaks
+          echo "$bin" >> "$GITHUB_PATH"
+      - name: Secret scan (the commit hook's first check, over the commits this change adds)
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          set -euo pipefail
+          base=$BASE
+          if [ -z "${base//0/}" ]; then base=HEAD~1; fi # a first push has no earlier commit: scan the last one
+          gitleaks git --no-banner --redact --exit-code 1 --log-opts="--no-merges $base..HEAD"
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: npm run check

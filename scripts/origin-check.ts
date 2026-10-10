@@ -1,4 +1,4 @@
-// The site loads nothing from another host: every script, stylesheet, font, import map entry,
+// The site loads nothing from another host: every script, stylesheet, font, image, frame, video, object, import map entry,
 // CSS url() and ES import is served by solenix.dev itself. An outside host is a failure mode the
 // repo cannot see or fix (it can be slow, down, blocked or changed). Links people click are fine.
 // Vendored packages come from npm through scripts/vendor.ts; analytics go through the site's
@@ -11,10 +11,16 @@ const LOADS: [RegExp, string][] = [
   [/<script\b[^>]*\bsrc=["'](https?:)?\/\/[^"']+/gi, "a script"],
   [/<link\b(?=[^>]*\brel=["'](?:stylesheet|preconnect|preload|modulepreload|dns-prefetch|prefetch|icon|manifest)["'])[^>]*\bhref=["'](https?:)?\/\/[^"']+/gi, "a stylesheet, font or preload"],
   [/@import\s+(?:url\()?["']?(https?:)?\/\/[^"')\s]+/gi, "a CSS import"],
-  [/url\(\s*["']?https?:\/\/[^"')\s]+/gi, "a CSS url()"],
-  [/\b(?:import|from)\s*\(?\s*["']https?:\/\/[^"']+/g, "an ES import"],
+  [/url\(\s*["']?(https?:)?\/\/[^"')\s]+/gi, "a CSS url()"],
+  [/\b(?:import|from)\s*\(?\s*["'](https?:)?\/\/[^"']+/g, "an ES import"],
+  // Media and objects load from the attribute that names their resource: an image, frame, video, audio, source or object.
+  [/<(?:img|iframe|frame|video|audio|source|track|embed|input)\b[^>]*?\s(?:src|poster)=["']?(https?:)?\/\/[^\s"'>]+/gi, "an image, frame, video, audio or source"],
+  [/<object\b[^>]*?\sdata=["']?(https?:)?\/\/[^\s"'>]+/gi, "an object"],
+  [/<(?:image|use)\b[^>]*?\s(?:xlink:)?href=["']?(https?:)?\/\/[^\s"'>]+/gi, "an SVG image"],
 ]
 const MAP = /<script\b[^>]*type=["']importmap["'][^>]*>([\s\S]*?)<\/script>/gi
+// srcset lists "url 1x, url 2x": each candidate is a load of its own.
+const SRCSET = /\ssrcset=["']([^"']*)["']/gi
 
 const files = execFileSync("git", ["ls-files", "-co", "--exclude-standard", "app", "components", "lib", "client", "articles", "design/home.html", "design/tokens.css", "brand/motion"], { encoding: "utf8" })
   .split("\n").filter((f) => /\.(m?[jt]sx?|html|css)$/.test(f))
@@ -28,6 +34,10 @@ const report = (f: string, text: string, at: number, what: string, url: string) 
 for (const f of files) {
   const text = readFileSync(f, "utf8")
   for (const [re, what] of LOADS) for (const m of text.matchAll(re)) report(f, text, m.index ?? 0, what, m[0])
-  for (const m of text.matchAll(MAP)) for (const u of (m[1] ?? "").matchAll(/["'](https?:\/\/[^"']+)["']/g)) report(f, text, m.index ?? 0, "an import map entry", u[1] ?? "")
+  for (const m of text.matchAll(MAP)) for (const u of (m[1] ?? "").matchAll(/["']((?:https?:)?\/\/[^"']+)["']/g)) report(f, text, m.index ?? 0, "an import map entry", u[1] ?? "")
+  for (const m of text.matchAll(SRCSET)) for (const c of (m[1] ?? "").split(",")) {
+    const url = c.trim().split(/\s+/)[0] ?? ""
+    if (/^(https?:)?\/\/\S/.test(url)) report(f, text, m.index ?? 0, "a responsive image", url)
+  }
 }
 process.exit(bad ? 1 : 0)
