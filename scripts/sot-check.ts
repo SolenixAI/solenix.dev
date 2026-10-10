@@ -52,8 +52,9 @@ if (!existsSync(CONTEXT) || !existsSync(OWNER)) {
       continue
     }
     const value = line.slice(c.label.length).trim().replace(/\.$/, "")
-    if (!owner.includes(value)) {
-      console.log(`sot: ${CONTEXT} copies ${c.what} ("${value}"), but ${OWNER} does not say it word for word. Change both, or derive the copy from ${OWNER}.`)
+    // The copy must end where PRODUCT.md's sentence ends: a trimmed copy ("... for small businesses.") is a different copy.
+    if (!owner.includes(value + ".")) {
+      console.log(`sot: ${CONTEXT} copies ${c.what} ("${value}"), but ${OWNER} does not say it word for word, as a whole sentence. Change both, or derive the copy from ${OWNER}.`)
       bad++
     }
   }

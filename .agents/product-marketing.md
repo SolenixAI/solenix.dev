@@ -59,7 +59,7 @@ Sources for the owner's challenges: see Objections and Switching Dynamics.
 **Secondary:** Different solution, same problem. Local web and IT firms.
 - [Newfound Marketing](https://newfoundmarketing.ca): WordPress, SEO, PPC and social. From $1,000 minimum ([Clutch](https://clutch.co)), or $5,000 to start ([Semrush](https://agencies.semrush.com/pl/newfound-marketing/)). Falls short: marketing-led. Solenix is AI-led and builds the site too.
 - [Four Winds Design](https://agencyapp.dmbx.aws.gartner.com/profiles/four-winds-design): web design, branding and retainers. Price not found. Falls short: web-first. Solenix is AI-first, with a fixed price in writing.
-- [Triware Technologies](https://triware.ca): managed IT, web and VoIP, about 400 local clients ([CBC, 2026-03-16](https://www.cbc.ca/news/canada/newfoundland-labrador/the-ai-boom-is-making-electronics-more-expensive-and-n-l-companies-are-feeling-it-9.7124656)). Price not found. Falls short: keeps systems running. Solenix cuts tools and trains the team.
+- [Triware Technologies](https://triware.ca): managed IT, web and VoIP, about 400 local companies ([CBC, 2026-03-16](https://www.cbc.ca/news/canada/newfoundland-labrador/the-ai-boom-is-making-electronics-more-expensive-and-n-l-companies-are-feeling-it-9.7124656)). Price not found. Falls short: keeps systems running. Solenix cuts tools and trains the team.
 - [F12.net](https://f12.net/?p=96973): IT support and cybersecurity. Price not found. Falls short: security-first. Solenix is AI-centred.
 
 **Indirect:** Do it yourself, freelancers and programs.
@@ -97,7 +97,7 @@ Evidence for each objection, in order:
 - Overpaying: [Reddit](https://www.reddit.com/r/SmallBusinessCanada/comments/1uoy41a/ca_looking_for_help_on_it_support_services/). Cost blocks 10.6% of businesses, per [Statistics Canada, 2026-06-11](https://www150.statcan.gc.ca/n1/pub/11-621-m/11-621-m2026010-eng.htm).
 - AI looks cheap: [CBC, 2025-06-10](https://www.cbc.ca/news/canada/newfoundland-labrador/nl-business-ai-art-1.7552744) and [Reddit](https://www.reddit.com/r/newfoundland/comments/1vkfx7p/new_aigenerated_welcome_to_kingston_sign/).
 - Where to start: 40% of businesses say AI is not relevant to them ([Statistics Canada](https://www150.statcan.gc.ca/n1/pub/11-621-m/11-621-m2026010-eng.htm)). Owners think AI means phone bots ([Reddit](https://www.reddit.com/r/SmallBusinessCanada/comments/1tnq1m5/on_ai_usage_by_small_business_owners/)).
-- Accuracy and privacy: [Reddit](https://www.reddit.com/r/canadasmallbusiness/comments/1ip0hac/are_small_business_owners_really_this_resistant/). Privacy blocks 13.4% of businesses, per Statistics Canada.
+- Accuracy and privacy: [Reddit](https://www.reddit.com/r/canadasmallbusiness/comments/1ip0hac/are_small_business_owners_really_this_resistant/). Cybersecurity or privacy concerns block 13.4% of businesses, per [Statistics Canada](https://www150.statcan.gc.ca/n1/pub/11-621-m/11-621-m2026010-eng.htm).
 - Burned by a freelancer: [Reddit](https://www.reddit.com/r/SmallBusinessCanada/comments/1tu3nfv/sk_looking_for_someone_to_help_revamp_my_shopify/) and [Reddit](https://www.reddit.com/r/SmallBusinessCanada/comments/1qn6wfg/bc_looking_for_website_hosting_and_someone_to/).
 - Final price: [Capterra](https://www.capterra.ca/software/1021673/Fiverr).
 - Tech costs: [CBC, 2026-03-16](https://www.cbc.ca/news/canada/newfoundland-labrador/the-ai-boom-is-making-electronics-more-expensive-and-n-l-companies-are-feeling-it-9.7124656).
@@ -160,7 +160,7 @@ Reddit post dates are approximate.
 | A fixed price in writing | Agreed on each call. No public price. |
 
 ## Goals
-**Business goal:** 1 booked call a week.
+**Business goal:** Booked calls a week (the north star). Target: not set yet.
 **Conversion action:** Book a call.
 **Current metrics:** Not set yet. The measure is booked calls per week: Book a call clicks, then booked calls.
 

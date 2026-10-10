@@ -83,6 +83,12 @@ expect fail "the marketing context is a link to PRODUCT.md"
 fresh; sed -i '' 's/^\*\*One-liner:\*\*.*/**One-liner:** Solenix is a tech expert for small businesses./' "$tmp/r/.agents/product-marketing.md"
 expect fail "the one-liner in the marketing context differs from PRODUCT.md"
 
+fresh; sed -i '' 's/^\*\*One-liner:\*\*.*/**One-liner:** Solenix is one tech expert for small businesses./' "$tmp/r/.agents/product-marketing.md"
+expect fail "the one-liner in the marketing context is trimmed (drops the location)"
+
+fresh; sed -i '' 's/^\*\*Target companies:\*\*.*/**Target companies:** small businesses./' "$tmp/r/.agents/product-marketing.md"
+expect fail "the audience in the marketing context is trimmed (drops the location)"
+
 fresh; sed -i '' 's/^\*\*Target companies:\*\*.*/**Target companies:** small businesses in Newfoundland./' "$tmp/r/.agents/product-marketing.md"
 expect fail "the audience in the marketing context differs from PRODUCT.md"
 

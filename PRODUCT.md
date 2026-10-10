@@ -3,8 +3,8 @@
 <!-- impeccable:product-schema 1 -->
 
 The one record of what Solenix is, for every person and agent who designs, builds or markets it.
-Impeccable reads it as PRODUCT.md; Corey Haines' marketing skills read it through
-`.agents/product-marketing.md`, a link to this file. Visual decisions live in DESIGN.md; user journeys
+Impeccable reads it as PRODUCT.md; Corey Haines' marketing skills read their own file,
+`.agents/product-marketing.md`, and the gate (scripts/sot-check.ts) keeps its one-liner and audience equal to this file. Visual decisions live in DESIGN.md; user journeys
 in design/journeys.md. Confirmed with Jager on 2026-10-08; anything not yet decided says so.
 
 ## North star
