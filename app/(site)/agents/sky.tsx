@@ -47,7 +47,6 @@ function Face({ s, size }: { s: Source; size: number }) {
 export function Sky({ bodies }: { bodies: Body[] }) {
   const core = bodies.find((b) => b.entry.part === "toolkit")
   const worlds = bodies.filter((b) => b.entry.part === "world")
-  const weekly = core ? core.orbit.planets.reduce((sum, p) => sum + (p.weekly ?? 0), 0) : 0
   return (
     <div className="sk" role="group" aria-label="The marketplace: the core toolkit and every world">
       <svg className="sk-art" viewBox="0 0 100 100" aria-hidden="true">
@@ -74,7 +73,6 @@ export function Sky({ bodies }: { bodies: Body[] }) {
           <span className="sk-halo" />
           <span className="sk-tag sk-tag-sun">
             <span className="sk-name">{core.entry.name}</span>
-            {weekly > 0 && <span className="sk-num">{compact(weekly)} downloads a week</span>}
           </span>
         </a>
       ) : (

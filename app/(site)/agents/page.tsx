@@ -5,7 +5,7 @@ import { catalogVersion, getCatalog, MARKETPLACE_REPO, orbit, type Entry } from 
 import { OG_IMAGE } from "@/lib/site-meta"
 import { HERO_CSS } from "@/lib/site-hero"
 import { Sky } from "./sky"
-import { DownIcon, KindIcon, MiniOrbit, StarIcon, System } from "./system"
+import { KindIcon, MiniOrbit, StarIcon, System } from "./system"
 import { CopyCard, HeroAsk, SentenceCopy, Worlds, type Card } from "./worlds"
 import { WORLDS_CSS } from "./worlds-css"
 
@@ -15,16 +15,14 @@ import { WORLDS_CSS } from "./worlds-css"
 // The hero and the steps paint first. Each part that needs the catalog streams in after, into a place that
 // already has its final size, so nothing below the hero moves when it lands.
 
-// A card says what its world is made of, piece by piece, each with its live number.
+// A card says what its world is made of, piece by piece. A world's one number is its maker's stars. The core
+// toolkit shows none: a piece's downloads belong to that piece (a CLI's npm count is not the toolkit's).
 const compact = (n: number) => new Intl.NumberFormat("en-CA", { notation: "compact", maximumFractionDigits: 1 }).format(n)
 async function Chips({ entry }: { entry: Entry }) {
   const o = await orbit(entry)
-  const weekly = o.planets.reduce((sum, p) => sum + (p.weekly ?? 0), 0)
   return (
     <>
-      {entry.part === "toolkit"
-        ? weekly > 0 && <span><DownIcon />{compact(weekly)} a week</span>
-        : o.sun.repo?.stars != null && <span><StarIcon />{compact(o.sun.repo.stars)}</span>}
+      {entry.part === "world" && o.sun.repo?.stars != null && <span><StarIcon />{compact(o.sun.repo.stars)}</span>}
       {o.planets.map((p) => (
         <span key={p.id}><KindIcon kind={p.kind} />{p.kind === "skills" && p.parts.length ? `${p.parts.length} skills` : p.name}</span>
       ))}
