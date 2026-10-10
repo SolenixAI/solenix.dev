@@ -41,6 +41,9 @@ node scripts/article-check.ts || fail=1
 node scripts/sot-check.ts || fail=1
 node scripts/journey-check.ts || fail=1
 node scripts/origin-check.ts || fail=1
+# Every skill is model-invocable for every agent; a skills install or update can lock one again (scripts/unlock-skills.sh fixes it).
+grep -rlE '^disable-model-invocation:[[:space:]]*true|allow_implicit_invocation:[[:space:]]*false' .agents/skills 2>/dev/null \
+  | while read -r f; do echo "check: locked skill $f (run scripts/unlock-skills.sh)"; done | grep . && fail=1
 # TypeScript only: no JavaScript file outside scripts/js-allowlist.txt (a list that may only shrink).
 git ls-files -co --exclude-standard | grep -E '\.(js|jsx|mjs|cjs)$' | grep -v '^public/' | grep -vxFf <(grep -v '^#' scripts/js-allowlist.txt) \
   | while read -r f; do echo "check: JavaScript file $f (the repo is TypeScript; see scripts/js-allowlist.txt)"; done | grep . && fail=1
