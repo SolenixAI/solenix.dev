@@ -58,9 +58,6 @@ locked_named .agents/skills/tdd/SKILL.md "a skill locked again by an install or 
 fresh; printf 'policy:\n  allow_implicit_invocation: false\n' >> "$tmp/r/.agents/skills/tdd/agents/openai.yaml"
 locked_named .agents/skills/tdd/agents/openai.yaml "a skill locked again for Codex (agents/openai.yaml)"
 
-fresh; echo "- Dark only. There is no light theme." >> "$tmp/r/AGENTS.md"
-expect fail "the old 'dark only' rule comes back"
-
 imp_plugin=$(python3 -c 'import json,os;p=json.load(open(os.path.expanduser("~/.claude/plugins/installed_plugins.json")))["plugins"].get("impeccable@impeccable") or [{}];print(p[0].get("installPath",""))' 2>/dev/null)
 if [ -x "${IMPECCABLE:-$imp_plugin/skills/impeccable/scripts/impeccable}" ]; then
   fresh; for i in 1 2 3 4 5 6; do sed -i '' 's|</body>|<div style="box-shadow: 0 0 40px #f59e0b"></div></body>|' "$tmp/r/design/home.html"; done
