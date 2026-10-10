@@ -4,6 +4,7 @@
 // per request (slug, kinds, only), and only the newest tree asked for may fill it. A read that fails is never kept:
 // it gives the last held answer, else each part's id with no blurb. The network, the GitHub key and the memo are
 // injected, so node --test runs the describer against a fake GitHub (lib/marketplace/parts.test.ts).
+import { failed } from "../failed.ts"
 import type { Get } from "../fresh.ts"
 
 export type PartKind = "skill" | "agent" | "command"
@@ -54,13 +55,15 @@ export function makeDescriber(get: Get, headers: () => Promise<Record<string, st
   async function textsOf(owner: string, name: string, files: PartFile[]): Promise<string[] | null> {
     const fields = files.map((f, i) => `f${i}: object(expression: ${JSON.stringify(`HEAD:${f.path}`)}) { ... on Blob { text } }`).join(" ")
     const query = `{ repository(owner: ${JSON.stringify(owner)}, name: ${JSON.stringify(name)}) { ${fields} } }`
+    const source = `${owner}/${name} part files`
     try {
       const r = await get(GRAPHQL, { method: "POST", headers: await headers(), body: JSON.stringify({ query }) })
-      const repo = r.ok ? (await r.json())?.data?.repository : null
+      if (!r.ok) return failed(source, `HTTP ${r.status}`)
+      const repo = (await r.json())?.data?.repository
       const texts = files.map((_, i) => repo?.[`f${i}`]?.text)
-      return texts.every((t) => typeof t === "string") ? texts : null
-    } catch {
-      return null
+      return texts.every((t) => typeof t === "string") ? texts : failed(source, "a file's text did not come back")
+    } catch (e) {
+      return failed(source, e)
     }
   }
 

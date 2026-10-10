@@ -1,4 +1,5 @@
 import { createHmac, createSign, timingSafeEqual } from "node:crypto"
+import { failed } from "./failed.ts"
 import { fresh } from "./fresh.ts"
 import { GITHUB_ORG } from "./site-meta.ts"
 
@@ -31,17 +32,17 @@ export function makeToken(app: App, get: Get, now = () => Date.now()) {
   const mint = async () => {
     const auth = { ...BASE, authorization: `Bearer ${appJwt(app.id, app.key, now())}` }
     const inst = await get(`${API}/orgs/${app.org}/installation`, { headers: auth, cache: "no-store" })
-    if (!inst.ok) return null
+    if (!inst.ok) return failed("GitHub App installation", `HTTP ${inst.status}`)
     const { id } = (await inst.json()) as { id: number }
     const res = await get(`${API}/app/installations/${id}/access_tokens`, { method: "POST", headers: auth, cache: "no-store" })
-    if (!res.ok) return null
+    if (!res.ok) return failed("GitHub App token", `HTTP ${res.status}`)
     const { token, expires_at } = (await res.json()) as { token: string; expires_at: string }
     held = { token, until: Date.parse(expires_at) - 5 * 60_000 }
     return token
   }
   return async (): Promise<string | null> => {
     if (held && now() < held.until) return held.token
-    pending ??= mint().catch(() => null).finally(() => { pending = null })
+    pending ??= mint().catch((e: unknown) => failed("GitHub App token", e)).finally(() => { pending = null })
     return pending
   }
 }

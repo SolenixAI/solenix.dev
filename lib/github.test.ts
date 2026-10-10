@@ -52,3 +52,11 @@ test("only a body signed with the shared secret counts as GitHub's", () => {
   assert.equal(signedByGitHub("other", body, sig), false)
   assert.equal(signedByGitHub("s3cret", body, null), false)
 })
+
+test("a token that cannot be minted logs one line with the step and the status, and gives null", async (t) => {
+  const warn = t.mock.method(console, "warn", () => {})
+  const token = makeToken({ id: "1", key: privateKey, org: "o" }, async () => json({ message: "Not Found" }, 404), () => 0)
+  assert.equal(await token(), null)
+  assert.equal(warn.mock.callCount(), 1)
+  assert.match(String(warn.mock.calls[0].arguments[0]), /GitHub App installation.*404/)
+})
