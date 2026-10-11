@@ -12,6 +12,7 @@ test("a plain sentence about the outcome passes", () => {
 test("a commit-type prefix, a lower-case start, a closing full stop and a length out of range each fail", () => {
   assert.match(prTitleProblems("feat: add robots.txt").join(), /type prefix/)
   assert.match(prTitleProblems("fix(nav)!: keep the bar").join(), /type prefix/)
+  assert.match(prTitleProblems("feat:add robots.txt to the site").join(), /type prefix/)
   assert.match(prTitleProblems("crawlers get a robots.txt").join(), /capital/)
   assert.match(prTitleProblems("Crawlers get a robots.txt.").join(), /full stop/)
   assert.match(prTitleProblems("Fix it").join(), /characters/)
