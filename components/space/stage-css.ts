@@ -2,7 +2,8 @@
 // (public/space/poster*.webp) that paints with the page, so the 3D sky fades in over the same picture and never pops
 // in. The canvas stays hidden until its first frame is drawn: an undrawn canvas can composite white. Regenerate the
 // posters when the world's look changes.
-// While the world shows, the page's content and footer sit above it. Rendered by components/space/world.tsx on every page that shows the world.
+// While the world shows, the page's content and footer sit above it. Rendered by components/space/world.tsx on
+// every page that shows the world.
 export const STAGE_CSS = `
 .world { position: fixed; inset: 0; z-index: 0; background: var(--bg); pointer-events: none; }
 .world canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
