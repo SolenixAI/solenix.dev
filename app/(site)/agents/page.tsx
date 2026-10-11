@@ -86,7 +86,8 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
   const entry = world ? (await getCatalog())?.find((e) => e.id === world) : undefined
   const title = entry ? `${entry.name} for your AI` : "Agents Marketplace"
   const description = entry ? `${entry.for} One sentence sets it up in any AI agent, the makers' way.` : "Set up your AI the makers' way: one sentence installs everything a tool's makers built for AI, in any AI agent."
-  const url = `${SITE_URL}/agents${entry ? `?world=${entry.id}` : ""}`
+  // A world's link is a query variant of this page: its canonical is the page itself, so search engines count one page.
+  const url = `${SITE_URL}/agents`
   return {
     title, description,
     alternates: { canonical: url, types: { "application/json": "/agents/worlds.json" } },
