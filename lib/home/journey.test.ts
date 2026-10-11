@@ -53,3 +53,11 @@ test("the plan's five steps are five stops in a row", () => {
   const steps = JOURNEY.map((s) => s.step).filter((s) => s !== undefined)
   assert.deepEqual(steps, [0, 1, 2, 3, 4])
 })
+
+test("the page's stylesheet is whole: every rule opens and closes, so no broken rule swallows the ones after it", () => {
+  for (const css of [...html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)].map((m) => m[1].replace(/\/\*[\s\S]*?\*\//g, ""))) {
+    let depth = 0
+    css.split("\n").forEach((l, i) => { for (const ch of l) { if (ch === "{") depth++; if (ch === "}") depth--; assert.ok(depth >= 0, `a stray } at style line ${i + 1}: ${l.trim().slice(0, 60)}`) } })
+    assert.equal(depth, 0, "a rule is never closed")
+  }
+})
