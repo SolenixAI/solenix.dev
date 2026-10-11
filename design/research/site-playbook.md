@@ -4,6 +4,8 @@ Research of 2026-09-30. Every change goes through Impeccable, one named change a
 
 ## Decisions for the homepage
 
+2026-10-10: the six by-hand versus just-ask races are replaced by one tool picker that shows each tool's finished result at once, beside its steps by hand. Decisions 3, 4 and 6 (race clocks, time tapes, measured run times) no longer apply. Decision 2's race hero is the picker's first tool; its connector point stands. Decision 5 (end on an output, show the approval) lives on in the picker.
+
 Ranked by effect on the founder's three verdicts.
 
 1. **Plan: five equal stops on linear scroll.** Stop 1 holds about 161svh; stops 2 to 4 hold 25 to 29svh each (208 to 248 px on a phone) because the step index follows the eased orbit value. Give each stop 90svh or more, index by linear progress, show 10 words or fewer plus one visual. Metric: PostHog `plan_step_dwell` median 3 s or more per stop; stop 5 reached by 70% of stop 1 viewers. Impact: stops crossed per 500 px flick fall from 2.0 to 2.4 to 0.66. Watch scroll-away: too slow also tires users.
@@ -22,11 +24,13 @@ Constraints. No smooth-scroll library; snap only as `proximity`, after a device 
 
 ## The six examples, rebuilt around purpose, value and impact
 
+Status (2026-10-10): the examples now live in the homepage tool picker as finished results; the race staging below is history. Their jobs, outputs and connector limits still hold.
+
 **Shopify.** Job: keep best sellers on the shelf, turn dead stock into cash. Output: a reorder email drafted in Gmail and a percentage-off code for slow stock, each behind Approve. By hand: 15 to 25 min (asked, 3 to 5). Connector: reads orders, inventory, analytics; writes products, stock, percentage-off codes; cannot refund or cancel. Shopify's Sidekick covers single-tool stock questions, so chain two tools. Show: SKUs with days-left counters; two glow as they run out, slow movers dim.
 
 **Meta Ads.** Job: stop paying for ads that bring no customers. Output: one approved pause and a paused draft cloned from the best ad. By hand: 15 to 20 min (asked, 3 to 5). Connector: reads spend, ROAS, anomalies; creates ads paused; asks before activation. Docs are silent on confirming pauses and budget edits, so the Approve is Claude's, and Solenix sets Meta's rules that block budget changes. Show: spend streams ending in "bought" or "did not buy"; zero-purchase streams burn out.
 
-**Cash (QuickBooks).** Job: get paid. Output: reminder drafts for invoices over 30 days; total owed as the hero number. By hand: 10 to 15 min to pick who to chase (asked, 2 to 5). Connector: QuickBooks invoices and reminders (writes since 28 July 2026, with preview) are US only. For St. John's use Stripe: creates and finalises invoices and payment links; reminders undocumented. Show: overdue invoices as planets with 30-day rings; the total falls as each is approved.
+**Cash (QuickBooks).** Job: get paid. Output: reminder drafts for invoices over 30 days; total owed as the hero number. By hand: 10 to 15 min to pick who to chase (asked, 2 to 5). Connector: QuickBooks invoices and reminders (writes since 28 July 2026, with preview) are US only. For St. John's use Stripe: creates and finalises invoices and payment links; reminders undocumented. Status 2026-10-11: the homepage picker keeps QuickBooks; in Canada Solenix connects QuickBooks Online through Intuit's open-source server (https://github.com/intuit/quickbooks-online-mcp-server: invoice and receivables tools, no stated region limit; not yet run against a Canadian company, so treat it as untested). Show: overdue invoices as planets with 30-day rings; the total falls as each is approved.
 
 **Gmail and Calendar.** Job: never lose paying work sitting unanswered. Output: replies drafted, one send approved, an invite booked. By hand: 20 to 40 min triage (asked, 5). Connector: searches, drafts, sends with approval; creates events; cannot read attachment contents. Show: envelopes with an hours-waiting clock that reddens after one hour; three carry work and glow.
 

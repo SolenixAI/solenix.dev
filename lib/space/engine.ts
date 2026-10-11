@@ -89,8 +89,8 @@ export interface SpaceEnv {
   story: SpaceStory
   /** The bodies that dip a well. At most MAX_WELLS. */
   wells: readonly SpaceWell[]
-  /** The open band of a section, measured from the page: y0 and y1 in CSS pixels, stacked 1 when lanes are stacked. */
-  openBand?: (section: string) => { y0: number; y1: number; stacked: number } | null
+  /** The open band of a section, measured from the page: y0 and y1 in CSS pixels. */
+  openBand?: (section: string) => { y0: number; y1: number } | null
   /** After the render, each frame: the page writes its labels and markers here. */
   onFrame?: (frame: SpaceFrame) => void
   /** Once the first frame is on screen. */
@@ -466,7 +466,7 @@ export function createSpace(env: SpaceEnv): Space {
   const bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.4, 0.42, 0.9);
   composer.addPass(bloom);
   composer.addPass(new OutputPass());
-  const finalPass = new ShaderPass({ uniforms: { tDiffuse: { value: null }, uTime: { value: 0 }, uRes: { value: new THREE.Vector2(1, 1) }, uCA: { value: 0.008 }, uGrain: { value: 0.045 }, uShade: { value: 0 }, uShadeL: { value: 0 }, uShadeB: { value: 0 }, uPort: { value: 0 } },
+  const finalPass = new ShaderPass({ uniforms: { tDiffuse: { value: null }, uTime: { value: 0 }, uRes: { value: new THREE.Vector2(1, 1) }, uCA: { value: 0 }, uGrain: { value: 0.045 }, uShade: { value: 0 }, uShadeL: { value: 0 }, uShadeB: { value: 0 }, uPort: { value: 0 } },
     vertexShader: `varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.); }`,
     fragmentShader: `uniform sampler2D tDiffuse; uniform float uTime,uCA,uGrain,uShade,uShadeL,uShadeB,uPort; uniform vec2 uRes; varying vec2 vUv;
       float h(vec2 p){ return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453); }
@@ -516,11 +516,10 @@ export function createSpace(env: SpaceEnv): Space {
   const ROAM_RATE = [2.1, 1.2, 0.75];
   // Tool sections: the bodies keep to the open sky. The tallest band of the screen with no small text in it is
   // measured from the page itself; the roam is aimed at that band and sized to fit inside it.
-  const open = { y0: 0, y1: 0, at: -9, k: 0, x: 0, z: 0, sp: 1, size: 1, q: 1, side: 9, deep: 9, stacked: 0 };
+  const open = { y0: 0, y1: 0, at: -9, k: 0, x: 0, z: 0, sp: 1, size: 1, q: 1, side: 9, deep: 9 };
   function measureOpen() {
     const band = env.openBand?.(story.section());
     if (!band) return;
-    open.stacked = band.stacked;
     const y0 = Math.max(0, band.y0), y1 = Math.min(H, band.y1);
     if (y1 - y0 > 48) { open.y0 = y0; open.y1 = y1; }
   }
@@ -575,7 +574,7 @@ export function createSpace(env: SpaceEnv): Space {
     const heroAmt = R ? heroR : sc.hero;
     const fovS = fov0 + (R ? story.hero.lens * heroR : sc.lens) * lensK, fov = fovS + 5 * warp - 1.5 * easeIn;
     if (Math.abs(fov - camera.fov) > 0.01) { camera.fov = fov; camera.updateProjectionMatrix(); }
-    finalPass.uniforms.uCA.value = 0.008 + 0.02 * warp + 0.012 * swell;
+    finalPass.uniforms.uCA.value = 0.02 * warp + 0.012 * swell;
     finalPass.uniforms.uShade.value = heroAmt; finalPass.uniforms.uShadeL.value = sc.shl; finalPass.uniforms.uShadeB.value = R ? (stn > 0 ? 1 : 0) : sc.fly; finalPass.uniforms.uPort.value = portrait ? 1 : 0;
     gridU.uChaos.value = 1 - sc.free; gridU.uDepth.value = lerp(0.95, 0.6, sc.calm);
 
@@ -674,7 +673,7 @@ export function createSpace(env: SpaceEnv): Space {
     worlds.forEach((m, i) => { const on = fl > 0.01, near = fl * Math.max(0, 1 - Math.abs(wsel - i)); warcs[i].mesh.visible = on;
       toolU.value[i].z = TOOL_M[i] * (0.8 + 0.7 * near);
       // Stacked lanes leave the tool no clear sky of its own, so there it glows softer behind the rows.
-      m.material.uniforms.uGain.value = (0.2 + 0.1 * fl + 0.28 * near) * (1 - 0.5 * open.stacked * near); m.material.uniforms.uSize.value = (1.5 + 0.5 * near) * (0.8 + 0.2 * TOOL_M[i]); if (!on) return;
+      m.material.uniforms.uGain.value = (0.2 + 0.1 * fl + 0.28 * near); m.material.uniforms.uSize.value = (1.5 + 0.5 * near) * (0.8 + 0.2 * TOOL_M[i]); if (!on) return;
       layArc(warcs[i], HUB, m.position, 2.2); warcs[i].mesh.material.uniforms.uAlpha.value = fl * (0.1 + 0.85 * near); });
 
     timeU.value = shownT; finalPass.uniforms.uTime.value = shownT;

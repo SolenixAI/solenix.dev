@@ -5,21 +5,15 @@
 //   world  % of sampled points where the 3D world is visible (not under an opaque
 //          or blurred panel). Must be >= MIN_WORLD.
 //   alive  whether the screen changes over time. Every scene must be alive with
-//          motion allowed; demonstrations (DEMO_SCENES) must stay alive with
-//          Reduce Motion on, because reduced motion stops camera movement, not
-//          the demonstration.
-import os from "node:os"
+//          motion allowed. A scene named in DEMO_SCENES (none by default) must
+//          also stay alive with Reduce Motion on.
 import { launch } from "./browser.ts"
 import { loadViewports } from "../lib/viewports.ts"
 
 const URL = process.argv[2] ?? "http://localhost:3000/"
 const MIN_WORLD = Number(process.env.MIN_WORLD ?? 60)
-const DEMO_SCENES = (process.env.DEMO_SCENES ?? "flyby").split(",")
+const DEMO_SCENES = (process.env.DEMO_SCENES ?? "").split(",").filter(Boolean)
 const ONLY = process.env.ONLY // e.g. ONLY=pane to check one viewport
-// A race must reach its payoff (its section gets the class "is-won" when the ask lands) within this
-// many seconds of coming into view. Not data-state="done": that waits for the by-hand side too.
-// most visitors leave a screen within 10 to 20 s (design/research/site-playbook.md).
-const MAX_PAYOFF_S = Number(process.env.MAX_PAYOFF_S ?? 15)
 // The sizes are in design/viewports.json. "pane" is the size Jager reviews in (the Claude app browser pane).
 const { pane, desktop, phone } = loadViewports()
 const VIEWPORTS = { pane, desktop, phone }
@@ -48,20 +42,13 @@ const worldShare = () => {
       total++
       const x = innerWidth * fx, y = innerHeight * fy
       if (!inCanvas(x, y)) continue
-      const stack = document.elementsFromPoint(x, y).filter((e) => e !== document.documentElement && e !== document.body)
+      // An element that holds the canvas paints behind it (a layout wrapper), so it never covers the world.
+      const stack = document.elementsFromPoint(x, y).filter((e) => e !== document.documentElement && e !== document.body && !e.querySelector("canvas"))
       if (!stack.some(covers)) seen++
     }
   return seen / total
 }
 
-// Timing is only meaningful on a calm machine: the race clocks advance with CPU time, so a choked
-// Mac makes races look slow (a false failure). Wait up to 10 minutes for the 1-minute load average
-// to fall under the core count, and print the load next to every timing.
-const cores = os.cpus().length
-for (let waited = 0; os.loadavg()[0] > cores && waited < 600; waited += 15) {
-  if (waited === 0) console.log(`waiting for a calm machine (load ${os.loadavg()[0].toFixed(1)} > ${cores} cores)`)
-  await new Promise((r) => setTimeout(r, 15000))
-}
 const browser = await launch()
 // Never leave a headless browser behind: an orphan keeps rendering the 3D scene and chokes the Mac
 // (three orphans at ~250% CPU each made every timing on 2026-10-01 look slow).
@@ -105,21 +92,6 @@ for (const [vpName, viewport] of Object.entries(VIEWPORTS)) {
       }
       if (status === "FAIL") failed++
       rows.push(`${status} ${vpName.padEnd(7)} ${motion === "reduce" ? "reduced" : "motion "} ${id.padEnd(20)} world ${String(m.world).padStart(3)}%  ${m.alive ? "alive " : "frozen"}  ${problems.join("; ")}`)
-    }
-    // Time to payoff, per race, from a fresh scroll into view.
-    for (const { id } of scenes) {
-      if (!(await page.evaluate((id) => !!document.querySelector(`#${id} [data-state]`), id))) continue
-      await page.evaluate(() => scrollTo(0, 0)); await page.waitForTimeout(300)
-      await page.evaluate((id) => document.getElementById(id)!.scrollIntoView(), id)
-      const t0 = Date.now()
-      const ok = await page.waitForFunction((id) => document.getElementById(id)!.classList.contains("is-won"), id, { timeout: (MAX_PAYOFF_S + 5) * 1000 }).then(() => true, () => false)
-      const secs = (Date.now() - t0) / 1000
-      const slow = !ok || secs > MAX_PAYOFF_S
-      if (slow) failed++
-      const load = os.loadavg()[0]
-      const busy = load > cores
-      if (slow && busy) failed--, flaky++ // not trusted: measured on a choked machine
-      rows.push(`${slow ? (busy ? "LOAD" : "FAIL") : "ok  "} ${vpName.padEnd(7)} ${motion === "reduce" ? "reduced" : "motion "} ${id.padEnd(20)} payoff ${ok ? secs.toFixed(1) + " s" : "not reached"}${slow ? ` (must be within ${MAX_PAYOFF_S} s)` : ""}  load ${load.toFixed(1)}/${cores}${slow && busy ? " (machine busy: rerun when calm)" : ""}`)
     }
     await page.close()
   }

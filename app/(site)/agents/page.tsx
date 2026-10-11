@@ -94,7 +94,7 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
   }
 }
 
-const SPEC_NAMES: Record<string, string> = { skills: "Agent Skills", mcp: "Model Context Protocol", plugin: "Agent Plugins" }
+const SPEC_NAMES: Record<string, string> = { skills: "The open skills standard", mcp: "The open account-link standard", plugin: "The open add-on standard" }
 
 export default function Agents({ searchParams }: { searchParams: Promise<{ world?: string; piece?: string }> }) {
   return (

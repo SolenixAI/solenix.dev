@@ -490,7 +490,8 @@ details.tech p{margin-top:8px;font-size:14.5px;color:var(--muted)}
   #lean *,#lean .lean::after{animation:none!important;transition:none!important}
 }
 .btns{display:flex;gap:8px;flex-wrap:wrap}
-.btn{border:1px solid var(--line-strong);background:transparent;color:var(--ink);border-radius:999px;padding:11px 18px;min-height:44px;font:600 14px var(--f-body);transition:transform .15s,box-shadow .2s}
+.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;white-space:nowrap;border:1px solid var(--line-strong);background:transparent;color:var(--ink);border-radius:999px;padding:11px 18px;min-height:44px;font:600 14px var(--f-body);transition:transform .15s,box-shadow .2s}
+.dbook{margin:0;padding:10px 16px 14px;font:500 13px/1.4 var(--f-body);color:var(--muted)}.dbook a{color:var(--ink);text-underline-offset:3px}
 .btn:hover{transform:translateY(-1px);box-shadow:0 0 24px color-mix(in srgb,var(--accent) 25%,transparent)}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
 .btn.primary:hover{background:var(--sun1)}
@@ -1002,7 +1003,7 @@ abbr.g{text-decoration:underline dotted var(--accent);text-underline-offset:3px;
       <article class="fut-item"><p class="fut-status is-risk"><span class="fut-dot"></span>risk</p><h3>Credit and trust fights</h3><p class="fut-desc">Who owns a result? Was a human's draft used? Rules for this do not exist yet.</p></article>
     </div>
     <div class="fut-set" data-h="1" hidden>
-      <article class="fut-item"><p class="fut-status"><span class="fut-dot"></span>upside</p><h3>Software you can prove correct</h3><p class="fut-desc">The same Lean-style checking can prove code, chips and crypto have no bugs of a given kind.</p></article>
+      <article class="fut-item"><p class="fut-status"><span class="fut-dot"></span>upside</p><h3>Software you can prove correct</h3><p class="fut-desc">The same checking by computer can prove code, chips and crypto have no bugs of a given kind.</p></article>
       <article class="fut-item"><p class="fut-status"><span class="fut-dot"></span>upside</p><h3>Faster physics and engineering</h3><p class="fut-desc">Results on fluids, plasma and magnets can sharpen simulations for weather, fusion and materials.</p></article>
       <article class="fut-item"><p class="fut-status"><span class="fut-dot"></span>upside</p><h3>A proof tutor for everyone</h3><p class="fut-desc">Anyone can ask why a result is true and get a checked, step-by-step answer.</p></article>
     </div>
@@ -1051,7 +1052,7 @@ abbr.g{text-decoration:underline dotted var(--accent);text-underline-offset:3px;
   <p class="src-lede">Open any link to check it.</p>
   <div class="card unknowns">
     <ul>
-      <li><span class="chip">Open</span><p>Whether the results without a Lean-checked main proof are all correct. <b data-count="unchecked">245</b> of the 372 main results (<span data-count="unchecked-pct">66</span>%) have none. <a href="https://github.com/openai/math" target="_blank" rel="noopener">OpenAI's own notes</a> say some may have problems.</p></li>
+      <li><span class="chip">Open</span><p>Whether the results without a main proof checked by computer are all correct. <b data-count="unchecked">245</b> of the 372 main results (<span data-count="unchecked-pct">66</span>%) have none. <a href="https://github.com/openai/math" target="_blank" rel="noopener">OpenAI's own notes</a> say some may have problems.</p></li>
       <li><span class="chip">Open</span><p>Whether the Navier–Stokes blow-up proof holds. <a href="https://www.claymath.org/millennium-problems/navier-stokes-equation/" target="_blank" rel="noopener">The Clay Institute still lists the problem as open</a>, and <a href="https://en.wikipedia.org/wiki/Navier%E2%80%93Stokes_priority_controversy" target="_blank" rel="noopener">a credit dispute continues</a>.</p></li>
       <li><span class="chip">Open</span><p>How many attempts failed. <a href="https://github.com/openai/math" target="_blank" rel="noopener">OpenAI posed about 4,000 problems</a> and has not said how the rest went.</p></li>
       <li><span class="chip">Open</span><p>Who can check the work. <a href="https://www.unite.ai/openai-releases-722-math-manuscripts-from-an-unreleased-ai-model/" target="_blank" rel="noopener">The model is unreleased</a>, so nobody outside OpenAI can rerun it.</p></li>
@@ -1087,6 +1088,7 @@ abbr.g{text-decoration:underline dotted var(--accent);text-underline-offset:3px;
   <div class="dhead"><span id="dId"></span><span style="display:flex;gap:6px"><button class="x" id="dCopy" title="Copy link to this discovery" aria-label="Copy link">⧉</button><button class="x" id="dClose" aria-label="Close">×</button></span></div>
   <div class="dbody" id="dBody"></div>
   <div class="dfoot"><button class="btn ghost" id="dPrev">← Prev</button><button class="btn ghost" id="dRand">Surprise me</button><button class="btn ghost" id="dNext">Next →</button></div>
+  <p class="dbook">Want AI that does real work in your business? <a href="/book">Book a call</a></p>
 </aside>
 <div class="tip" id="tip" hidden></div>
 
@@ -1131,7 +1133,7 @@ const T=[
  {d:"1 Aug 2026",t:"Ten advances",big:"10",cap:"results, checked by computer",x:"An internal version of OpenAI's next model, <b>Astra</b>, published 10 results on problems stuck for 10+ years. 249 pages, 10 Lean 4 proofs, about <b>$2,000</b> of compute for all ten."},
  {d:"8 Sep 2026",t:"Navier–Stokes claim",big:"88 h",cap:"10,000 agents",x:"OpenAI claimed a proof that a smooth fluid can blow up (speed goes to infinity) in finite time, when pushed by a smooth force. About 10,000 coordinated agents ran for 88 hours. A credit dispute followed. Clay still lists the problem as <b>active</b>."},
  {d:"Sep 2026",t:"Advisory group forms",big:"IAS",cap:"Princeton",x:"An independent group on mathematics and AI, hosted at the Institute for Advanced Study and including Terence Tao, began to advise on how to release results. It says its role is <b>not an endorsement</b>."},
- {d:"6 Oct 2026",t:"The flood",big:"722",cap:"manuscripts",x:"OpenAI put 722 manuscripts in 372 families on GitHub, with the main result Lean-checked for 127 families and reasoning summaries for 10. OpenAI says some unformalized results could have issues."},
+ {d:"6 Oct 2026",t:"The flood",big:"722",cap:"manuscripts",x:"OpenAI put 722 manuscripts in 372 families on GitHub, with the main result checked by computer for 127 families and reasoning summaries for 10. OpenAI says some unformalized results could have issues."},
  {d:"7 Oct 2026",t:"Reactions",big:"Split",cap:"coverage",x:"Coverage shows a split field. Tao calls it the end of 'Math 1.0'. Dan Litt calls it great for mathematics. Tristan Buckmaster worries about results built on others' unfinished work. WIRED reported anger hours before the drop: some say OpenAI had promised to space results out. The mathematicians OpenAI consults had asked labs to stop testing models on open problems."}
 ];
 const tl=$("#tl"),td=$("#tlDetail"),tlN=T.length,tlPlay=$("#tlPlay"),tlAnn=$("#tlAnn");
@@ -1167,10 +1169,10 @@ showT(4);tlAnn.textContent="";
 /* trust */
 (()=>{
 const TR=[
- {lv:5,name:"Erdős <span class='nb'>unit-distance</span> (#90)",pill:"Expert-praised",pts:["Gowers: Annals-level","Litt: first AI result he finds interesting in itself","Short, checkable construction"]},
- {lv:4,name:"Astra's ten advances",pill:"Lean-certified",pts:["All 10 have Lean 4 proofs","Public code to rebuild the checks","Human review still ongoing"]},
+ {lv:5,name:"Erdős <span class='nb'>unit-distance</span> (#90)",pill:"Experts praise it",pts:["Gowers: Annals-level","Litt: first AI result he finds interesting in itself","Short, checkable construction"]},
+ {lv:4,name:"Astra's ten advances",pill:"Checked by computer",pts:["All 10 checked by computer, in Lean","Public code to rebuild the checks","Human review still ongoing"]},
  {lv:3,name:"The <span class='nb'>372-family</span> release",pill:"Partly checked",pts:["127 main results checked by computer","108 partly checked, 137 not yet","OpenAI: unformalized results could have issues"]},
- {lv:2,name:"<span class='nb'>Millennium-adjacent</span> results",pill:"Special cases",pts:["Result 003: no zeta zeros past 7/8 (Lean-checked)","Result 002: exact BSD formula for many curves","Result 032: Hodge for one family. No full $1M solution"]},
+ {lv:2,name:"<span class='nb'>Millennium-adjacent</span> results",pill:"Special cases",pts:["Result 003: no zeta zeros past 7/8 (checked by computer)","Result 002: exact BSD formula for many curves","Result 032: Hodge for one family. No full $1M solution"]},
  {lv:1,name:"<span class='nb'>Navier–Stokes</span> <span class='nb'>blow-up</span>",pill:"Unverified · disputed",pts:["Clay status: active","Credit dispute with two mathematicians","Covers the forced case, not the force-free one"]}
 ];
 // One tone per level sets the pill and the bars alike: 4 and 5 ok, 2 and 3 warn, 1 bad.
@@ -1410,7 +1412,7 @@ const FG={"Number theory":0,"Algebra":0,"Group theory":0,"Algebraic and complex 
  "Probability and statistical mechanics":3,"Mathematical physics":3,"Operator algebras":3,
  "Theoretical computer science":4,"Combinatorics":4};
 const GC=g=>`var(--g${g})`;
-const CHK=["Not checked yet","Partly checked by Lean","Main result checked by Lean"];
+const CHK=["Not checked yet","Partly checked by computer","Main result checked by computer"];
 const KINDS=[...new Set(A.map(a=>a.k))].sort();
 A.forEach(a=>{a.F=FIELDS[a.f];a.G=FG[a.F];a.s=[a.h,a.t,a.p,a.F,a.a,a.k,a.q,a.kd,a.mt,(a.lf||[]).join(" ")].join(" ").toLowerCase()});
 const byId=Object.fromEntries(A.map((a,i)=>[a.i,i]));

@@ -1,4 +1,4 @@
-// Types the homepage's modules share (lib/home/ui.ts, races.ts, scene.ts). Ambient on purpose: this file has no
+// Types the homepage's modules share (lib/home/ui.ts, tools.ts, scene.ts). Ambient on purpose: this file has no
 // import or export, so each name is global. It is types only.
 
 /** What the scroll story sets: one number each, blended between two keyframes (lib/home/ui.ts, KEYS). */
@@ -22,16 +22,16 @@ interface Solenix {
   motion: boolean
   vh: number
   scene: HomeSceneParams
-  sceneIdx: number
   smooth: (a: number, b: number, x: number) => number
   hero: { el: number; dist: number; lens: number }
   fly: HomeFlyWorld[]
+  /** The tool picked in the tools scene: its index in the six tool worlds (lib/home/ui.ts FLY). */
+  pick: number
   /** The selector of the section the scroll is in. */
   sec: string
   stops: HTMLElement[]
   pingN: number
   prCur?: number
-  retAlpha: number
   jCur: number
 }
 

@@ -23,10 +23,10 @@ const BAR = `You are reviewing the solenix.dev homepage the way its founder, Jag
 - Show, never tell. Every example is a real-time side-by-side demonstration.
 - The 1–5 plan must not fly past unread.
 - Examples must show purpose, value and impact: the owner's real final output, and that AI does it faster, better and easier. Mediocre "AI slop" examples fail.
-- Nothing static or dead. The races play under Reduce Motion too.
+- Nothing static or dead. Each tool's result shows at once when picked, with or without Reduce Motion.
 - The stable orbit is wide and calm, not cramped.
 - Nothing overlaps or is cut off. Labels are legible.
-Also read ${REPO}/design/research/site-playbook.md ("Decisions for the homepage" and "The six examples") and the "## Decisions" section of ${REPO}/DESIGN.md. Hold the scene to them.`
+Also read ${REPO}/.impeccable/surfaces/design-home-html.md (the approved homepage brief), ${REPO}/design/research/site-playbook.md ("Decisions for the homepage", with its 2026-10-10 status note) and the "## Decisions" section of ${REPO}/DESIGN.md. Hold the scene to them; the brief wins where they differ.`
 
 const JUDGED = {
   type: 'object',

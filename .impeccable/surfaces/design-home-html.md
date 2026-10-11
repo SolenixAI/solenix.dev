@@ -14,13 +14,13 @@ A small-business owner in Newfoundland and Labrador, on a phone. Busy and wary o
 
 ## Action and proof
 - Action: Book a call, the one ember action.
-- Proof is the work itself: six by-hand vs just-ask races (example data, labelled), the three-body world as the problem made visible, and a fixed price in writing.
+- Proof is the work itself: a tool picker that shows each tool's finished result at once, beside its steps by hand (example data, labelled), the three-body world as the problem made visible, and a fixed price in writing.
 
 ## Direction
 The approved baseline (git tag `approved-baseline`): "Your business is a three-body problem" word for word, one 3D world through the page, and five stops, "From one call to a stable orbit".
 
 ## Constraints
-- The six races stay as they are.
+- No simulated typing, no race clocks, no forced waits: a result shows the moment it is picked.
 - No ROI calculator, no Motion switch, no prices, no eyebrows. Dark only.
 - Every change is one named change, judged before the next.
 

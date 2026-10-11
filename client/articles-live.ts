@@ -15,19 +15,19 @@ const rootStyle = getComputedStyle(document.documentElement)
 const token = (name: string) => rootStyle.getPropertyValue(name).trim()
 const ms = (v: string) => parseFloat(v) * (v.endsWith("ms") ? 1 : 1000)
 
-// A play window (the hero) is your screen in miniature: the page is laid out at your screen's size, so its
-// whole first screen shows, and the window takes your screen's shape, as tall as the hero allows and never
-// wider than its room. Entering grows exactly that picture to the full screen. A card renders the page at
-// the width of its still (the picture it replaces) and scales it down, so the still and the live page are
-// the same picture; until the still has loaded, the screen's width stands in.
+// Every live window lays its page out at the size of its still (the picture it shows first) and scales it down,
+// so the still and the live page are the same picture and the swap never jumps. A play window (the hero) takes
+// the still's shape, as tall as the hero allows and never wider than its room; its still is the phone or desktop
+// first screen, whichever matches your screen. Until the still has loaded, your screen's size stands in.
 const layout = (c: HTMLElement) => c.querySelector<HTMLImageElement>(":scope > picture img, :scope > img")
 const box = (c: HTMLElement) => {
   const r = c.getBoundingClientRect()
+  const still = layout(c)
   if (c.classList.contains("play")) {
-    const w = innerWidth, h = innerHeight
+    const w = still?.naturalWidth || innerWidth, h = still?.naturalHeight || innerHeight
     return { r, w, h, s: Math.min(r.height / h, r.width / w) }
   }
-  const still = layout(c), w = still?.naturalWidth || innerWidth, s = r.width / w
+  const w = still?.naturalWidth || innerWidth, s = r.width / w
   return { r, w, s, h: still?.naturalHeight || r.height / s }
 }
 // The window's width follows the screen's shape at the hero's height, capped by the room it sits in.
@@ -35,7 +35,8 @@ const shape = (c: HTMLElement) => {
   const win = c.closest<HTMLElement>(".win"), room = win?.parentElement
   if (!win || !room) return
   const cs = getComputedStyle(room), free = room.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight)
-  win.style.width = Math.min(free, (c.getBoundingClientRect().height * innerWidth) / innerHeight) + "px"
+  const still = layout(c), w = still?.naturalWidth || innerWidth, h = still?.naturalHeight || innerHeight
+  win.style.width = Math.min(free, (c.getBoundingClientRect().height * w) / h) + "px"
 }
 const fit = () => {
   for (const c of document.querySelectorAll<HTMLElement>(".live")) {
