@@ -10,6 +10,12 @@ import type { Get } from "../fresh.ts"
 export type PartKind = "skill" | "agent" | "command"
 /** One thing inside a piece (a skill, agent or command), described by its own file. */
 export type Part = { id: string; kind: PartKind; name: string; blurb: string | null; href: string }
+
+// A part's name as words, not a file name: "access-protected-vercel-deployment" reads "Access protected vercel deployment".
+export const plainName = (name: string): string => {
+  const words = name.replace(/^[_-]+/, "").replace(/[_-]+/g, " ").trim()
+  return words ? words[0].toUpperCase() + words.slice(1) : name
+}
 /** A repo's tree at HEAD: its hash and every path. A null sha means the tree could not be read. */
 export type Tree = { sha: string | null; paths: string[] }
 /** The complete answer for one tree, as the memo keeps it. */
@@ -26,7 +32,7 @@ const hrefOf = (slug: string, path: string) => `https://github.com/${slug}/blob/
 /** A part from its file. Its text gives the name and blurb from its frontmatter; with no text, it is its id and no blurb. */
 const toPart = (slug: string, f: PartFile, text = ""): Part => {
   const fm = frontmatter(text)
-  return { id: f.id, kind: f.kind, name: fm.name || f.id, blurb: fm.description || null, href: hrefOf(slug, f.path) }
+  return { id: f.id, kind: f.kind, name: plainName(fm.name || f.id), blurb: fm.description || null, href: hrefOf(slug, f.path) }
 }
 
 /** A Markdown file's frontmatter name and description (YAML, including folded > and | blocks). */

@@ -2,7 +2,7 @@
 //   node --test lib/marketplace/parts.test.ts
 import { test } from "node:test"
 import assert from "node:assert/strict"
-import { makeDescriber, type Answer, type Tree } from "./parts.ts"
+import { makeDescriber, plainName, type Answer, type Tree } from "./parts.ts"
 
 const SLUG = "example-org/example-repo" // a fake GitHub serves it: no real repo is named
 const skillPath = (id: string) => `skills/${id}/SKILL.md`
@@ -11,7 +11,8 @@ const json = (body: unknown, status = 200) => new Response(JSON.stringify(body),
 /** A tree as its caller holds it: the read that gave it may still be in flight. */
 const tree = (sha: string | null, paths: string[]): Promise<Tree> => Promise.resolve({ sha, paths })
 /** The id fallback: a part whose description could not be read. It shows its id and no blurb. */
-const bare = (id: string) => ({ id, kind: "skill", name: id, blurb: null, href: `https://github.com/${SLUG}/blob/HEAD/${skillPath(id)}` })
+// A part with no description: its name is its id, read as words.
+const bare = (id: string) => ({ id, kind: "skill", name: plainName(id), blurb: null, href: `https://github.com/${SLUG}/blob/HEAD/${skillPath(id)}` })
 const noHeaders = async () => ({})
 
 /** A describer over a fake GitHub. Its memo is passed in, so a test can count what the describer holds. */
@@ -176,4 +177,12 @@ test("a failed read of the part files leaves one log line with the repo and the 
   assert.deepEqual(await parts(SLUG, tree("t1", [skillPath("fetch")]), ["skill"]), [bare("fetch")])
   assert.equal(warn.mock.callCount(), 1)
   assert.match(String(warn.mock.calls[0].arguments[0]), /example-org\/example-repo.*403/)
+})
+
+test("a part's name reads as words: dashes and underscores become spaces, the first letter is a capital", () => {
+  assert.equal(plainName("access-protected-vercel-deployment"), "Access protected vercel deployment")
+  assert.equal(plainName("_conventions"), "Conventions")
+  assert.equal(plainName("fetch"), "Fetch")
+  assert.equal(plainName("Find Skills"), "Find Skills")
+  assert.equal(plainName("---"), "---")
 })

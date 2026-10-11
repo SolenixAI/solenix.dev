@@ -38,12 +38,11 @@ const ScaleIcon = () => <Icon d={<path d="M12 4v16M7 20h10M5 8h14M5 8l-2.5 6a2.5
 const CheckIcon = () => <Icon d={<path d="m5 12.5 4.5 4.5L19 7.5" />} />
 const OutIcon = () => <Icon d={<path d="M14 5h5v5M19 5l-8 8M17 14v4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h4" />} />
 
-/** What a planet says at a glance: one number or version, never a sentence. */
+/** What a planet says at a glance: one number that measures it (stars, a count), never a version or a sentence. */
 function tag(s: Source) {
   if (s.kind === "maker" || s.kind === "tool") return s.repo?.stars != null ? compact(s.repo.stars) : null
   if (s.kind === "skills") return s.items.length ? String(s.items.length) : null
-  if (s.kind === "api") return "docs"
-  return s.version ? `v${s.version.replace(/^v/, "")}` : null
+  return null
 }
 
 /** The body's face: the maker's own avatar where a repo has one, otherwise the piece's drawn icon. */
@@ -223,7 +222,7 @@ function SubWorld({ s, onPart }: { s: Source; onPart?: (x: Part, el: HTMLElement
   const stats = [
     s.repo?.stars != null && <li key="s"><StarIcon />{count(s.repo.stars)}<span>stars</span></li>,
     s.repo?.forks != null && <li key="f"><ForkIcon />{count(s.repo.forks)}<span>forks</span></li>,
-    s.weekly != null && <li key="w"><DownIcon />{count(s.weekly)}<span>npm downloads last week</span></li>,
+    s.weekly != null && <li key="w"><DownIcon />{count(s.weekly)}<span>downloads last week</span></li>,
     s.updated && <li key="u"><ClockIcon /><span>updated</span><Ago iso={s.updated} /></li>,
     s.repo?.license && <li key="l"><ScaleIcon />{s.repo.license}</li>,
   ].filter(Boolean)
@@ -233,11 +232,9 @@ function SubWorld({ s, onPart }: { s: Source; onPart?: (x: Part, el: HTMLElement
       <header className="sy-world-head">
         <span className="sy-orb sy-orb-sm"><Face s={s} size={28} /></span>
         <h3 tabIndex={-1} data-level-title>{s.name}</h3>
-        {s.version && <code className="sy-ver">{s.version.startsWith("v") ? s.version : `v${s.version}`}</code>}
       </header>
       {s.gives && <Gives text={s.gives} />}
-      {s.repo && <a className="sy-slug" href={`https://github.com/${s.repo.slug}`}>{s.repo.slug}</a>}
-      {s.blurb && s.blurb !== s.gives && <p className="sy-blurb">{s.blurb}</p>}
+      {s.blurb && s.blurb !== s.gives && !MACHINERY.test(s.blurb) && <p className="sy-blurb">{s.blurb}</p>}
       {stats.length > 0 && <ul className="sy-stats">{stats}</ul>}
       {s.works.length > 0 && <p className="sy-works"><span>Packaged for</span>{s.works.map((w) => <i key={w}>{w}</i>)}</p>}
       {onPart && groups.map((g) => (
@@ -255,17 +252,18 @@ function SubWorld({ s, onPart }: { s: Source; onPart?: (x: Part, el: HTMLElement
   )
 }
 
-const KIND_WORD: Record<Part["kind"], string> = { skill: "Skill", agent: "Specialist agent", command: "Command" }
+const KIND_WORD: Record<Part["kind"], string> = { skill: "Skill", agent: "Specialist agent", command: "Shortcut" }
+// A maker's own blurb that names its machinery (an install command, a package tool) stays off the screen.
+const MACHINERY = /\b(npx|npm|pip|brew|curl)\b|--[a-z]/i
 function PartView({ part, piece }: { part: Part; piece: Source }) {
   return (
     <section className="sy-world" aria-label={part.name}>
       <header className="sy-world-head">
         <span className="sy-orb sy-orb-sm"><KindIcon kind={part.kind} /></span>
         <h3 tabIndex={-1} data-level-title>{part.name}</h3>
-        <code className="sy-ver">{KIND_WORD[part.kind]}</code>
+        <span className="sy-kind">{KIND_WORD[part.kind]}</span>
       </header>
       {part.blurb ? <p className="sy-part-blurb">{part.blurb}</p> : <p className="sy-blurb">Its makers haven&apos;t described it yet.</p>}
-      {piece.repo && <a className="sy-slug" href={part.href}>{piece.repo.slug} / {part.id}</a>}
       <ul className="sy-refs"><li><a href={part.href}>Read it on GitHub<OutIcon /></a></li></ul>
     </section>
   )

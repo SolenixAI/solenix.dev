@@ -184,9 +184,7 @@ export const WORLDS_CSS = `
 .sy-world-head h3:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:6px}
 .sy-orb-sm{width:40px;height:40px;flex:none}
 .sy-orb-sm .sy-icon{width:20px;height:20px}
-.sy-ver{margin-left:auto;white-space:nowrap;padding:5px 10px;border-radius:var(--radius-pill);border:1px solid var(--line-strong);font:500 .78rem/1 var(--font-mono);color:var(--muted)}
-.sy-slug{align-self:flex-start;font:500 .85rem/1 var(--font-mono);color:var(--accent-text);text-decoration:none}
-.sy-slug:hover{text-decoration:underline;text-underline-offset:3px}
+.sy-kind{margin-left:auto;white-space:nowrap;padding:5px 10px;border-radius:var(--radius-pill);border:1px solid var(--line-strong);font:600 .8rem/1 var(--font-text);color:var(--muted)}
 .sy-blurb{margin:0;font-size:1rem;line-height:1.5;color:var(--text);text-wrap:pretty;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
 .sy-stats{display:flex;flex-wrap:wrap;gap:8px 18px;margin:0;padding:0;list-style:none;font:500 .9rem/1 var(--font-mono);font-variant-numeric:tabular-nums}
 .sy-stats li{display:inline-flex;align-items:center;gap:6px}
