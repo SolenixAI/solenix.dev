@@ -25,7 +25,7 @@ One item in the toolkit, installed from its own repo's skills.
 _Avoid_: plugin, package
 
 **World**:
-One catalog entry that is a tool's whole ecosystem, with its maker at the centre.
+One catalog entry that is a tool's whole ecosystem, with its maker at the centre. The homepage also uses the word for the five tools it shows round the business (lib/home/worlds.ts); those are tool ecosystems too, but not catalog entries.
 _Avoid_: scene, space
 
 **Maker**:
@@ -36,7 +36,7 @@ _Avoid_: vendor, owner
 A world as a system: its maker at the centre, and each piece around it, with facts read from that piece's own source.
 
 **Piece**:
-One body in an orbit. The kinds are: plugin (shown as "Add-on"), skills, connector (shown as "Account link"), CLI (shown as "Pro tools"), API (shown as "Direct access") and tool (an item of the toolkit).
+One body in an orbit. The kinds are: maker (the body at the centre), plugin (shown as "Add-on"), skills, connector (shown as "Account link"), CLI (shown as "Pro tools"), API (shown as "Direct access") and tool (an item of the toolkit).
 _Avoid_: source, module
 
 **Part**:
@@ -52,6 +52,10 @@ The GitHub repo, npm package or MCP registry entry that a fact is read from.
 _Avoid_: piece
 
 ## Site
+
+**Article**:
+A long-form page in the articles folder, with a title, a description and a date.
+_Avoid_: post, blog post
 
 **3D world**:
 The one 3D scene that the site mounts once, in its layout. Pages that show it bind to it.
