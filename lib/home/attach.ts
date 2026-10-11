@@ -4,18 +4,15 @@
 // only stops drawing while no page is bound to it.
 import { spaceWorld } from "@/lib/space/world";
 import { startScene } from "./scene";
-import { startTools } from "./tools";
 import { startUi } from "./ui";
 
 export function attachHome(): () => void {
   const ui = startUi();
-  const stopTools = startTools(ui.S);
   const scene = startScene(ui.S);
   spaceWorld.bind(scene.binding);
   return () => {
     spaceWorld.unbind(scene.binding);
     scene.stop();
-    stopTools();
     ui.stop();
   };
 }

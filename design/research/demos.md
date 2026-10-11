@@ -2,6 +2,8 @@
 
 Method: live pages opened in a browser on 2026-09-30 (DOM counts, screenshots). `<.>` marks anything not verified. Effort sizes are my estimates `<.>`.
 
+Status (2026-10-11): the tool picker is replaced in turn by the homepage journey's tool stops (lib/home/journey.ts, lib/home/proof.ts): the visitor asks in plain words and the answer shows at once in the 3D world.
+
 Status (2026-10-10): superseded for the homepage. The races this research shaped were replaced by one tool picker that shows each finished result at once; its principles 3 to 6 (the tool's own words, dull specifics, the approval gate, Example labels) carry over. Kept as research.
 
 Starting point at the time: `design/home.html` ran two stopwatches per race.

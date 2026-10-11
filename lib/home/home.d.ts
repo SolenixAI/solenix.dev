@@ -1,4 +1,4 @@
-// Types the homepage's modules share (lib/home/ui.ts, tools.ts, scene.ts). Ambient on purpose: this file has no
+// Types the homepage's modules share (lib/home/ui.ts, journey.ts, scene.ts). Ambient on purpose: this file has no
 // import or export, so each name is global. It is types only.
 
 /** What the scroll story sets: one number each, blended between two keyframes (lib/home/ui.ts, KEYS). */
@@ -7,32 +7,32 @@ interface HomeSceneParams {
   el: number; az: number; dist: number; ox: number; oy: number; poy: number
   calm: number; dim: number; labels: number; conn: number; agent: number; stops: number
   tx: number; tz: number; fly: number; wsel: number; hero: number; lens: number
-  rf: number; rs: number; sp: number; rw: number; shl: number
+  rf: number; rs: number; sp: number; rw: number
 }
 
 /** A tool world the camera flies to: its place, its view, and where the three bodies roam beside it. */
 interface HomeFlyWorld {
   id: string; tx: number; tz: number; el: number; dist: number
-  a: [number, number]; b: [number, number]; sp: number; rw: number
+  a: [number, number]; sp: number; rw: number
 }
 
 /** The page's shared state: written by lib/home/ui.ts, read by lib/home/scene.ts. */
 interface Solenix {
-  p: number
   motion: boolean
   vh: number
   scene: HomeSceneParams
   smooth: (a: number, b: number, x: number) => number
   hero: { el: number; dist: number; lens: number }
   fly: HomeFlyWorld[]
-  /** The tool picked in the tools scene: its index in the six tool worlds (lib/home/ui.ts FLY). */
-  pick: number
-  /** The selector of the section the scroll is in. */
+  /** The journey stop the page is at (lib/home/journey.ts); its length means the close. */
+  cur: number
+  /** The part of the story the page is at (lib/home/journey.ts sec), or close. */
   sec: string
   stops: HTMLElement[]
   pingN: number
-  prCur?: number
   jCur: number
+  /** Per tool stop, the ask the visitor's world is answering (lib/home/proof.ts); absent: not asked yet. */
+  asked: Record<string, number>
 }
 
 interface Window {

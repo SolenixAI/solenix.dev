@@ -35,9 +35,6 @@ img, svg { display: block; }
 .wrap { max-width: var(--container-wide); margin-inline: auto; padding-inline: var(--gutter); }
 
 .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
-.label { font: var(--fw-semibold) var(--fs-2xs)/1.2 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--muted); }
-.h2 { font-size: var(--fs-display); font-weight: var(--fw-bold); letter-spacing: var(--track-display); line-height: var(--lh-display); }
-.lede { font-size: var(--fs-lede); color: var(--muted); max-width: var(--measure); }
 
 /* Buttons. One solid ember per screen: hero and closing only. */
 .btn { position: relative; isolation: isolate; overflow: hidden; display: inline-flex; align-items: center; justify-content: center; gap: var(--space-3); min-height: 52px; padding: 0 var(--space-6); border-radius: var(--radius-pill); font: var(--fw-semibold) var(--fs-body)/1 var(--font-text); text-decoration: none; border: 1px solid transparent; cursor: pointer; transition: background-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out), border-color var(--dur-fast); }
@@ -49,7 +46,6 @@ img, svg { display: block; }
 .btn-primary:active { transform: none; }
 .btn-ghost { background: transparent; color: var(--text); border-color: var(--line-strong); }
 .btn-ghost:hover { background: color-mix(in oklch, var(--text) 8%, transparent); transform: translateY(var(--lift)); }
-.btn-sm { min-height: var(--tap-min); padding: 0 var(--space-4); font-size: var(--fs-sm); }
 
 html { background: var(--bg); }
 
@@ -60,7 +56,6 @@ html { background: var(--bg); }
    with the stage itself: every page that shows the world shares it. ── */
 .scene-ui { position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
 footer { position: relative; z-index: 2; } /* inside main, above the scene's tags (.scene-ui) */
-.sky { position: relative; height: 230vh; height: 230svh; }
 .stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; pointer-events: none; }
 .stage a, .stage button { pointer-events: auto; }
 .stop-mk { position: absolute; left: 0; top: 0; opacity: 0; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%; display: grid; place-items: center; font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: .04em; color: var(--muted); background: color-mix(in oklch, var(--bg) 82%, transparent); border: 1px solid var(--line-strong); will-change: transform, opacity; transition: background-color var(--dur-slow), color var(--dur-slow), border-color var(--dur-slow), box-shadow var(--dur-slow); }
@@ -73,36 +68,10 @@ footer { position: relative; z-index: 2; } /* inside main, above the scene's tag
 .stop-mk.cur { box-shadow: 0 0 0 6px var(--accent-quiet), 0 0 24px color-mix(in srgb, var(--ring) 45%, transparent); }
 .stop-mk.cur span { opacity: 1; }
 @media (max-width: 720px) { .stop-mk { width: 28px; height: 28px; margin: -14px 0 0 -14px; } .stop-mk span { display: none; } }
-.hero-copy { position: absolute; left: 0; right: 0; bottom: clamp(1rem, 9svh, 6.5rem); }
-.h1 { font-size: var(--fs-hero); font-weight: var(--fw-bold); letter-spacing: var(--track-hero); line-height: 0.98; max-width: 12.5ch; }
 /* Very wide and short screens (a phone held sideways): the headline takes the width it has, so it wraps less and the hero fits. */
 @media (min-aspect-ratio: 9/5) { .h1 { max-width: none; } }
-.h1 .w { display: inline-block; overflow: clip; padding-block: 0.06em 0.12em; margin-block: -0.06em -0.12em; vertical-align: top; }
-.h1 .w > span { display: inline-block; }
-.h1 .g > span { background: var(--grad-headline); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.hero-sub { margin-top: min(var(--space-5), 2.5svh); font-size: var(--fs-lede); color: var(--muted); max-width: 30rem; text-shadow: 0 0 26px var(--bg), 0 0 10px var(--bg), 0 1px 2px var(--bg); }
-.hero-sub strong { color: var(--text); font-weight: var(--fw-semibold); }
 /* A very short hero (a phone held sideways) keeps the headline and the action; the sentence steps aside. */
 @media (max-height: 420px) { .hero-sub { display: none; } }
-.hero-ctas { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: min(var(--space-6), 3svh); }
-
-/* The story, scrubbed by scroll: a three-stop rail, then headlines that build word by word. */
-.beats { position: absolute; left: var(--gutter); right: var(--gutter); bottom: clamp(1.75rem, 8vh, 6rem); max-width: var(--container-wide); margin-inline: auto; display: grid; pointer-events: none; }
-.beat { visibility: hidden; }
-.beat-no { font: var(--fw-semibold) var(--fs-xs)/1 var(--font-mono); letter-spacing: var(--track-eyebrow); color: var(--accent-text); }
-.beat .beat-h { font-size: var(--fs-beat); font-weight: var(--fw-black); letter-spacing: -0.045em; line-height: 0.98; margin: var(--space-3) 0 var(--space-4) -0.03em; max-width: 11ch; }
-.beat .beat-h em { font-style: normal; }
-.beat .bw { display: inline-block; will-change: transform, opacity; }
-.beat .beat-h em .bw { background: var(--grad-headline); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .04em; }
-.beat p:not(.beat-no) { font-size: var(--fs-lede); color: var(--muted); max-width: 27rem; }
-.beat .bl { will-change: transform, opacity; }
-
-.scroll-cue { position: absolute; left: 50%; bottom: var(--space-5); translate: -50% 0; font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--faint); display: none; }
-.tool { position: absolute; left: 0; top: 0; opacity: 0; will-change: transform, opacity; padding: 7px 10px 7px 12px; border-radius: var(--radius-xs); background: color-mix(in oklch, var(--bg) 78%, transparent); border: 1px solid var(--line-strong); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); font: var(--fw-semibold) var(--fs-2xs)/1.35 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--text); white-space: nowrap; }
-.tool b { display: flex; align-items: center; gap: 8px; font-weight: var(--fw-semibold); }
-.tool b::before { content: attr(data-n); color: var(--accent-text); }
-.tool span { display: block; font-weight: var(--fw-medium); color: var(--muted); letter-spacing: 0.06em; }
-.anchor { position: absolute; left: 0; top: 78svh; width: 1px; height: 1px; }
 
 /* The three bodies, named. Each tag rides with its sun through the whole story. */
 .body-tag { position: absolute; left: 0; top: 0; opacity: 0; will-change: transform, opacity; display: inline-flex; align-items: center; gap: 6px; padding: 4px 9px; border-radius: var(--radius-pill); background: color-mix(in oklch, var(--bg) 74%, transparent); border: 1px solid var(--line-strong); font: var(--fw-semibold) var(--fs-2xs)/1.2 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--text); white-space: nowrap; }
@@ -110,126 +79,84 @@ footer { position: relative; z-index: 2; } /* inside main, above the scene's tag
 .body-tag.in i { background: var(--ok); box-shadow: 0 0 8px var(--ok); }
 .body-tag.ai { color: var(--accent-text); border-color: color-mix(in oklch, var(--accent) 60%, transparent); box-shadow: 0 0 14px color-mix(in srgb, var(--ring) 35%, transparent); }
 @media (min-width: 900px) { .scroll-cue { display: block; } }
-@media (max-width: 720px) {
-  .tool { padding: 6px 8px; }
-  .tool span { display: none; }
-  .beat .beat-h { max-width: 12ch; }
-}
 /* No JavaScript: nothing pins, everything reads in order. */
-html:not(.js) .sky { height: auto; }
-html:not(.js) .jr { height: auto; } html:not(.js) .jr-pin { position: relative; height: auto; } html:not(.js) .jr-steps li { position: relative; opacity: 1; visibility: visible; }
 html:not(.js) .stage { position: relative; height: auto; min-height: 100svh; }
-html:not(.js) .hero-copy, html:not(.js) .beats, html:not(.js) .beat { position: relative; bottom: auto; opacity: 1; visibility: visible; padding-block: var(--space-8); }
-html:not(.js) .ret, html:not(.js) .tool, html:not(.js) .scrub, html:not(.js) .leaders { display: none; }
 
-/* ── Sections after the sky. The story keeps going: every section is lit by
-   one warm source, carries the orbit, and ends settled. ── */
-.sec { position: relative; padding-block: var(--section-pad); overflow: clip; isolation: isolate; }
-.sec > .wrap { position: relative; z-index: var(--z-content); }
 /* One light per section, clipped by the section. The core sits away from prose. */
 .light { position: absolute; z-index: var(--z-sky); pointer-events: none; width: var(--ls, 80vmax); aspect-ratio: 1; border-radius: 50%; translate: -50% -50%;
   background: radial-gradient(closest-side, color-mix(in oklch, var(--sun2) 20%, transparent), color-mix(in oklch, var(--sun1) 7%, transparent) 45%, transparent 72%); }
-.h2 em { font-style: normal; background: var(--grad-headline); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.portal { --rx: 16deg; --ry: -18deg; --rz: 4deg; position: relative; transform: rotateX(calc(var(--rx) + var(--py, 0deg))) rotateY(calc(var(--ry) + var(--px, 0deg))) rotateZ(var(--rz)); transform-origin: 50% 60%; background: var(--surface-solid); border: 1px solid var(--line); border-radius: var(--radius-xl); box-shadow: var(--shadow-lg), var(--glass-inset), 0 40px 120px color-mix(in srgb, var(--sun2) 16%, transparent); overflow: hidden; will-change: transform; max-width: 36rem; margin-inline: auto; }
-.tag { font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--muted); border: 1px dashed var(--line-strong); padding: 5px 8px; border-radius: var(--radius-pill); white-space: nowrap; }
-.dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; position: relative; }
-.pulse::after { content: ""; position: absolute; inset: -4px; border-radius: 50%; border: 1px solid currentColor; opacity: 0; }
-html[data-motion="on"] .pulse::after { animation: pulse 2.4s var(--ease-out) infinite; }
-@keyframes pulse { 0% { transform: scale(.6); opacity: .9; } 100% { transform: scale(2.2); opacity: 0; } }
-.p-card { border: 1px solid var(--line); border-radius: var(--radius-lg); padding: var(--space-4); display: grid; gap: var(--space-3); align-content: start; }
-.inv { display: grid; grid-template-columns: 1fr auto; gap: 2px var(--space-3); align-items: center; padding-block: var(--space-2); border-top: 1px solid var(--line); font-size: var(--fs-sm); }
-.inv:first-of-type { border-top: 0; }
-.inv small { color: var(--muted); font-size: var(--fs-xs); }
-.inv .r { display: grid; justify-items: end; gap: 4px; }
 
-/* ── After you book: a pinned stretch where the eight forms in the scene itself.
-   The five stops sit on the real orbit; the card shows what you get at each one. ── */
-.jr { position: relative; height: 380vh; height: 380svh; }
-.jr-pin { position: sticky; top: 0; height: 100vh; height: 100svh; }
-.jr-in { height: 100%; display: grid; grid-template-rows: auto 1fr auto; padding-top: calc(var(--nav-height) + clamp(1.5rem, 6vh, 4rem)); padding-bottom: clamp(2rem, 9vh, 6rem); }
-.jr-head { display: grid; gap: var(--space-4); max-width: 30rem; }
-.jr-head .h2 { font-size: clamp(2.1rem, 4.4vw, 3.6rem); }
-.jr.locked .jr-head .h2 em { filter: drop-shadow(0 0 18px color-mix(in srgb, var(--sun2) 55%, transparent)); }
-.jr-steps { list-style: none; padding: 0; margin: 0; display: grid; align-self: end; max-width: 26rem; }
-.jr-steps li { grid-area: 1 / 1; display: grid; gap: var(--space-3); align-content: end; opacity: 0; visibility: hidden; transform: translateY(14px); transition: opacity 420ms var(--ease-out), transform 420ms var(--ease-out), visibility 0s linear 420ms; }
-@media (prefers-reduced-motion: reduce) { .jr-steps li, .jr-steps li.on { transform: none !important; } }
-.jr-steps li.on { opacity: 1; visibility: visible; transform: none; transition: opacity 420ms var(--ease-out), transform 420ms var(--ease-out), visibility 0s; }
-.jr-steps .no { font: var(--fw-semibold) var(--fs-xs)/1 var(--font-mono); letter-spacing: var(--track-eyebrow); color: var(--accent-text); }
-.jr-steps h3 { font-size: clamp(1.9rem, 3.4vw, 2.9rem); font-weight: var(--fw-bold); letter-spacing: var(--track-display); line-height: 1.04; }
-.jr-steps p { font-size: var(--fs-lede); color: var(--muted); }
-.jr-dots { display: flex; gap: 6px; margin-top: var(--space-5); }
-.jr-dots i { width: 28px; height: 3px; border-radius: 2px; background: var(--line-strong); transition: background-color var(--dur-slow), box-shadow var(--dur-slow); }
-.jr-dots i.on { background: var(--ring); box-shadow: 0 0 8px var(--ring); }
-@media (max-width: 720px) { .jr-in { padding-top: calc(var(--nav-height) + 5.5rem); } .jr-head .h2 { font-size: 1.9rem; } .jr-steps h3 { font-size: 1.7rem; } }
-/* The plan (#after). Every stop stays in the reading order for screen readers and keyboard users, not only the one on screen.
-   The stops sit on the scene, so they carry shade, as the guide does, and never a panel. The call sits in reach at every stop. */
-#after .jr-head, #after .jr-steps { text-shadow: 0 0 26px var(--bg), 0 0 10px var(--bg), 0 1px 2px var(--bg); }
-#after .jr-steps li { visibility: visible; pointer-events: none; }
-#after .jr-steps li.on { pointer-events: auto; }
-#after .jr-foot { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-5) var(--space-6); margin-top: var(--space-5); }
-#after .jr-foot .jr-dots { margin: 0; }
-html:not(.js) #after .jr-steps li { grid-area: auto; }
-/* Motion (#after). One thesis: the plan settles like an orbit. Each stop lands in turn, the track fills as the stops land,
-   and Book a call sweeps once when it is ready. Only transform and opacity move. Reduced motion keeps every state and drops the travel. */
-#after { view-timeline: --after block; }
-#after .jr-steps li { transform: none; transition: opacity 420ms var(--ease-out), visibility 0s linear 420ms; }
-#after .jr-steps li.on { transform: none; transition: opacity 420ms var(--ease-out), visibility 0s; }
-#after .jr-steps li.on > * { animation: after-settle 640ms cubic-bezier(0.16, 1, 0.3, 1) both; }
-#after .jr-steps li.on > h3 { animation-delay: 110ms; }
-#after .jr-steps li.on > p { animation-delay: 210ms; }
-#after .jr-dots i, #after .jr-dots i.on { position: relative; overflow: hidden; background: var(--line-strong); box-shadow: none; transition: none; }
-#after .jr-dots i::after { content: ""; position: absolute; inset: 0; background: var(--ring); transform: scaleX(0); transform-origin: 0 50%; transition: transform 560ms cubic-bezier(0.16, 1, 0.3, 1); }
-#after .jr-dots i.on::after { transform: scaleX(1); }
-#after .jr-foot svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform var(--dur-base) var(--ease-out); }
-#after .btn-primary:hover svg { transform: translateX(4px); }
-#after .btn-primary:active svg { transform: translateX(2px); }
-#after .btn:focus-visible { outline: var(--focus-width) solid var(--focus-color); outline-offset: 3px; }
-@supports (animation-timeline: view()) {
-  #after .jr-foot { animation: after-rise linear both; animation-timeline: --after; animation-range: cover 14% cover 30%; }
-  #after .btn-primary::after { animation: after-sheen 1100ms cubic-bezier(0.16, 1, 0.3, 1) backwards; animation-timeline: --after; animation-range: cover 22% cover 42%; }
-}
-@keyframes after-settle { from { opacity: 0; transform: translate3d(0, 14px, 0); } to { opacity: 1; transform: none; } }
-@keyframes after-rise { from { opacity: 0; transform: translate3d(0, 18px, 0); } to { opacity: 1; transform: none; } }
-@keyframes after-sheen { from { transform: translateX(-120%); } to { transform: translateX(120%); } }
-@media (prefers-reduced-motion: reduce) {
-  #after .jr-steps li.on > * { animation: none; }
-  #after .jr-dots i::after { transition: none; }
-  #after .jr-foot { animation: none; }
-  #after .btn-primary::after { animation: none; }
-  #after .jr-foot svg { transition: none; }
-}
-.btn-sm { min-height: var(--tap-min); padding: 0 var(--space-4); font-size: var(--fs-sm); }
-
-/* The wiring: four stops, one of them a person. */
-/* Tablets: the four stops as one row. Phones keep the vertical list, so every name sits on one line with its line of detail. */
-
-/* ── What it could be worth: the owner's own numbers, shown as a range ── */
-/* No expert needed: the roles you no longer have to be, and what you say instead. */
-.say { margin-top: var(--space-9, 6rem); display: grid; gap: var(--space-6); }
-
-/* ── Promises: one at a time, with all four named under the line, so the list reads at a glance. ── */
-/* The index lights up as each promise arrives. Scoped to #promises: the journey and guide keep their own dashes. */
-#promises .jr-dots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3) var(--space-4); max-width: 26rem; margin-top: var(--space-6); }
-@media (min-width: 640px) { #promises .jr-dots { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0 var(--space-3); } }
-#promises .jr-dots i { display: block; width: auto; height: auto; padding-top: var(--space-3); border-top: 2px solid var(--line-strong); border-radius: 0; background: none; box-shadow: none; color: var(--muted); font-size: var(--fs-xs); font-style: normal; font-weight: var(--fw-semibold); line-height: 1.25; transition: color var(--dur-slow), border-color var(--dur-slow); }
-#promises .jr-dots i.on { border-top-color: var(--ring); background: none; box-shadow: none; color: var(--text); }
-
-/* ── 5 · Pricing bento: one closed ring, one ring that keeps going ── */
-.px .light { --ls: 60vmax; left: 12%; top: 20%; }
-.bento { display: grid; gap: var(--space-4); }
-@media (min-width: 960px) { .bento { max-width: 34rem; } }
-.cell { position: relative; overflow: hidden; isolation: isolate; border: 1px solid var(--line); border-radius: var(--radius-2xl); padding: var(--space-6); background: var(--surface); box-shadow: var(--shadow-md), var(--glass-inset); display: grid; gap: var(--space-4); align-content: start; transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base); }
-.cell:hover { transform: translateY(var(--lift-card)); box-shadow: var(--shadow-lg), var(--glass-inset), var(--glow-soft); }
-.cell::before { content: ""; position: absolute; z-index: -1; width: 26rem; aspect-ratio: 1; right: -9rem; top: -11rem; border-radius: 50%; background: radial-gradient(closest-side, color-mix(in oklch, var(--sun2) 16%, transparent), transparent); }
-.cell .ring { width: 88px; height: 88px; overflow: visible; }
-.cell .ring circle.r { fill: none; stroke: var(--ring); stroke-opacity: .5; stroke-width: 1.5; }
-.cell .ring circle.s { fill: url(#mk); }
-@keyframes orbit { to { transform: rotate(1turn); } }
-.cell h3.t { font-size: var(--fs-h2); font-weight: var(--fw-bold); letter-spacing: var(--track-heading); }
+/* ── The journey: one pinned stage, one stop per screen (lib/home/journey.ts). The world is the page; each stop's few
+   words sit low in the sky beside it, shaded by their own shadow, never on a panel. ── */
+.journey { position: relative; height: calc(var(--n, 14) * 100vh); height: calc(var(--n, 14) * 100svh); }
+.journey .stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; pointer-events: none; }
+.journey .stage a { pointer-events: auto; }
+.caps { list-style: none; margin: 0 auto; padding: 0; position: relative; height: 100%; }
+.cap { position: absolute; left: var(--gutter); right: var(--gutter); bottom: clamp(1.25rem, 15svh, 10rem); display: grid; gap: var(--space-4); justify-items: start; max-width: 44rem;
+  opacity: 0; visibility: hidden; transform: translateY(18px);
+  transition: opacity 420ms var(--ease-out), transform 420ms var(--ease-out), visibility 0s linear 420ms;
+  text-shadow: 0 0 28px var(--bg), 0 0 12px var(--bg), 0 1px 2px var(--bg); }
+.cap .btn { text-shadow: none; }
+.cap.on { opacity: 1; visibility: visible; transform: none; transition: opacity 640ms var(--ease-out) 260ms, transform 900ms cubic-bezier(0.16, 1, 0.3, 1) 260ms, visibility 0s; }
+.cap-h { margin: 0; font-family: var(--font-display); font-size: clamp(1.75rem, min(4.6vw + 0.9rem, 9svh), 4.6rem); font-weight: var(--fw-black); letter-spacing: var(--track-statement); line-height: 0.98; max-width: 15ch; text-wrap: balance; }
+.cap-hero { font-size: clamp(2rem, min(6.4vw + 1rem, 11svh), 5rem); max-width: 12ch; }
+.cap-h em { font-style: normal; background: var(--grad-headline); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: none; }
+.say { margin: 0; font-size: var(--fs-lede); color: var(--text); }
+.fig { margin: 0; display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); font-size: var(--fs-lede); color: var(--text); }
+.fig b { color: var(--text); font-weight: var(--fw-semibold); font-variant-numeric: tabular-nums; }
+.fig s { color: var(--muted); text-decoration-thickness: 2px; }
+.fig .lg { width: 22px; height: 22px; color: var(--accent-text); }
+.ex { display: inline-block; padding: 1px 8px; border: 1px dashed var(--line-strong); border-radius: var(--radius-pill); font: var(--fw-semibold) var(--fs-2xs)/1.5 var(--font-mono); color: var(--muted); text-shadow: none; }
+.step { margin: 0; display: grid; gap: var(--space-2); font-family: var(--font-display); font-size: clamp(1.75rem, min(3.6vw + 0.6rem, 8svh), 2.8rem); font-weight: var(--fw-bold); letter-spacing: var(--track-display); line-height: 1.05; max-width: 18ch; }
+.cap-plan { font-size: clamp(1.4rem, 2.6vw, 2rem); max-width: none; }
+.chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-3); }
+.chips li { padding: var(--space-2) var(--space-4); border: 1px solid var(--line-strong); border-radius: var(--radius-pill); font-weight: var(--fw-semibold); color: var(--text); background: color-mix(in oklch, var(--bg) 55%, transparent); }
+.cap.on .chips li { animation: chip-in 700ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+.cap.on .chips li:nth-child(2) { animation-delay: 120ms; } .cap.on .chips li:nth-child(3) { animation-delay: 240ms; } .cap.on .chips li:nth-child(4) { animation-delay: 360ms; }
+@keyframes chip-in { from { opacity: 0; transform: translateY(10px) scale(0.96); } }
+/* A tool's things, held beside its world (lib/home/scene.ts): glass cards, a colour and a word for each state. */
+.proof { position: absolute; inset: 0; }
+.pstack { position: absolute; left: 0; top: 0; width: min(17rem, calc(100vw - 32px)); display: flex; flex-direction: column; gap: 8px; opacity: 0; will-change: transform, opacity; }
+.pt { display: grid; gap: 2px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--glass-bg); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); box-shadow: inset 0 1px 0 var(--glass-edge); transition: border-color var(--dur-slow), opacity var(--dur-slow), transform var(--dur-slow) var(--ease-out), box-shadow var(--dur-slow); }
+.pt b { font-weight: var(--fw-semibold); font-size: var(--fs-sm); color: var(--text); }
+.pt span { font: var(--fw-semibold) var(--fs-2xs)/1.4 var(--font-mono); font-variant-numeric: tabular-nums; color: var(--muted); }
+.pt[data-state="hot"] { border-color: var(--accent); box-shadow: inset 0 1px 0 var(--glass-edge), 0 0 22px color-mix(in srgb, var(--ring) 35%, transparent); }
+.pt[data-state="hot"] span { color: var(--accent-text); }
+.pt[data-state="hot"] span::before { content: "Needs you · "; }
+.pt[data-state="new"] { border-color: var(--accent); transform: translateX(-6px); }
+.pt[data-state="new"] span { color: var(--accent-text); }
+.pt[data-state="new"] span::before { content: "New · "; }
+.pt[data-state="done"] { border-color: color-mix(in oklch, var(--ok) 60%, transparent); }
+.pt[data-state="done"] span { color: var(--ok); }
+.pt[data-state="done"] span::before { content: "Done · "; }
+.pt[data-state="dim"] { opacity: 0.42; }
+.asks { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-3); }
+.ask { min-height: var(--tap-min); padding: 0 var(--space-4); border: 1px solid var(--line-strong); border-radius: var(--radius-pill); background: color-mix(in oklch, var(--bg) 60%, transparent); color: var(--text); font: var(--fw-medium) var(--fs-sm)/1.2 var(--font-text); text-align: left; cursor: pointer; text-shadow: none; transition: border-color var(--dur-fast), color var(--dur-fast); }
+.ask:hover { border-color: var(--accent); }
+.ask[aria-pressed="true"] { border-color: var(--accent); color: var(--accent-text); }
+.ask:focus-visible { outline: var(--focus-width) solid var(--focus-color); outline-offset: 3px; }
+.asks .reply { flex-basis: 100%; margin: var(--space-2) 0 0; font-size: var(--fs-lede); color: var(--text); min-height: 1.5em; }
+.asks .reply .ex { margin-left: var(--space-2); vertical-align: 2px; }
+.journey .stage .ask { pointer-events: auto; }
+@media (max-width: 640px) { .pt { padding: 8px 12px; } .ask { padding: 0 var(--space-3); } .asks .reply { font-size: var(--fs-body); } }
+.story { margin: 0; padding: 0; list-style: none; }
+html.js .story { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+html:not(.js) .story { position: relative; padding: calc(var(--nav-height) + var(--space-7)) var(--gutter) var(--space-7); max-width: 40rem; margin-inline: auto; display: grid; gap: var(--space-4); font-size: var(--fs-lede); color: var(--text); }
+.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.jticks { position: absolute; right: max(10px, calc(var(--gutter) * 0.5)); top: 50%; translate: 0 -50%; display: grid; gap: 7px; }
+.jticks i { display: block; width: 3px; height: 16px; border-radius: 2px; background: var(--line-strong); transition: background-color var(--dur-slow), height var(--dur-slow) var(--ease-out); }
+.jticks i.on { height: 28px; background: var(--ring); }
+.jbook { position: absolute; right: var(--gutter); bottom: clamp(1.25rem, 4svh, 2.5rem); transition: opacity var(--dur-base) var(--ease-out); }
+.journey[data-stop="chaos"] .jbook { opacity: 0; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { .cap, .cap.on { transform: none; } .cap.on .chips li { animation: none; } }
+@media (max-width: 640px) { .cap { bottom: calc(5.5rem + env(safe-area-inset-bottom)); } .jbook { left: var(--gutter); right: auto; } .jticks { gap: 5px; } .jticks i { height: 10px; } .jticks i.on { height: 18px; } }
+html:not(.js) .journey { height: auto; } html:not(.js) .journey .stage { position: relative; height: auto; overflow: visible; }
+html:not(.js) .cap { position: relative; inset: auto; opacity: 1; visibility: visible; transform: none; padding-block: var(--space-8); } html:not(.js) .jticks { display: none; }
 
 /* ── Closing: no box, no second canvas. The same orbit, seen whole, above the words. ── */
 .close-sec { position: relative; min-height: 100vh; min-height: 100svh; display: grid; align-items: center; }
-.close-in { padding-block: var(--space-9); display: grid; justify-items: start; }
+.close-in { padding-block: calc(var(--nav-height) + var(--space-7)) var(--space-9); display: grid; justify-items: start; text-shadow: 0 0 28px var(--bg), 0 0 12px var(--bg), 0 1px 2px var(--bg); }
+.close-in .btn, #close-h em, #close-h em * { text-shadow: none; } /* a shadow shows through gradient-clipped text */
 .close-in > * { max-width: 36rem; }
 @media (min-width: 900px) { .close-in { padding-right: 40%; } }
 .close-sec h2 { font-size: clamp(2.6rem, 6vw, 5.25rem); font-weight: var(--fw-black); letter-spacing: var(--track-statement); line-height: var(--lh-display); max-width: 12ch; }
@@ -244,9 +171,12 @@ html:not(.js) #after .jr-steps li { grid-area: auto; }
 .close-sec .close-alt { display: inline-flex; align-items: center; min-height: var(--tap-min); font-size: var(--fs-body); color: var(--muted); text-decoration: underline; text-decoration-color: var(--line-strong); text-underline-offset: 4px; }
 .close-sec .close-alt:hover { color: var(--text); text-decoration-color: currentColor; }
 .close-sec .close-alt:focus-visible { outline: var(--focus-width) solid var(--focus-color); outline-offset: 3px; border-radius: var(--radius-pill); }
-.photo { width: 36px; height: 36px; border-radius: 50%; border: 1px dashed var(--line-strong); display: grid; place-items: center; font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); color: var(--muted); letter-spacing: .04em; }
+.photo { flex: none; width: 76px; height: 76px; padding: 8px; box-sizing: border-box; border-radius: 50%; border: 1px dashed var(--line-strong); display: grid; place-items: center; text-align: center; font: var(--fw-semibold) var(--fs-2xs)/1.15 var(--font-mono); color: var(--muted); }
 
-footer { border-top: 1px solid var(--line); padding-block: var(--space-7); font-size: var(--fs-sm); color: var(--muted); background: var(--bg); }
+/* The end of the journey: the close and the footer share the last screen, so the scroll ends on the stable orbit. */
+.finale { min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; }
+.finale .close-sec { flex: 1; min-height: 0; }
+footer { border-top: 1px solid var(--line); padding-block: var(--space-6); font-size: var(--fs-sm); color: var(--muted); text-shadow: 0 0 26px var(--bg), 0 0 10px var(--bg), 0 1px 2px var(--bg); }
 footer .wrap { display: flex; flex-wrap: wrap; gap: var(--space-5) var(--space-7); align-items: center; justify-content: space-between; }
 footer ul { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); }
 footer a { display: inline-flex; align-items: center; min-height: var(--tap-min); text-decoration: none; color: var(--text); }
@@ -271,103 +201,24 @@ html[data-motion="on"] .scene-ui.lock-pop .body-tag.ai { animation-delay: 320ms;
 .hw > span { display: inline-block; transition: transform 0.95s var(--ease-out); transition-delay: calc(var(--i) * 65ms + 90ms); }
 .h2 em .hw > span, .say-h em .hw > span, #close-h em .hw > span { background: var(--grad-headline); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .04em; }
 html.js[data-motion="on"] .hb.arm:not(.play) .hw > span { transform: translateY(112%); }
-/* The guide headline names a tool, and the name changes in place. It shares its line only with "in", so a
-   longer or shorter name moves nothing else. The name leaving is lifted out of the flow while it fades. */
-.tool-swap { position: relative; white-space: nowrap; }
-.tool-swap > .ts-out { position: absolute; left: 0; top: 0.08em; }
 /* Alive under the pointer: a light that follows it across cards, a primary button that leans toward it. */
-.fx-host { position: relative; }
-.fx { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity var(--dur-slow) var(--ease-out); background: radial-gradient(22rem circle at var(--mx, 50%) var(--my, 50%), color-mix(in oklch, var(--accent) 13%, transparent), transparent 62%); }
-.fx-host:hover > .fx { opacity: 1; }
 .btn:active { scale: 0.97; }
-/* ── One world. Below the hero nothing sits on a panel, card or diagram: the scene performs each section
-   and the page only annotates it. Copy stands on bare sky on one side; the bodies keep to the other. ── */
-.w-sec { position: relative; padding-block: 12svh; }
-.w-sec > .wrap { min-height: var(--wh, 140svh); }
-/* The gold words are painted with a gradient, so they take no shadow: a shadow would show through and bury them. */
-.h2 em, .h2 em * { text-shadow: none; }
-.w-big { font: var(--fw-bold) var(--fs-h1)/1.12 var(--font-display); letter-spacing: var(--track-heading); text-wrap: balance; }
 /* Narrow screens: the scene holds the top of the screen and the words rise out of the dark below it,
    so no label ever sits on the copy. */
-@media (max-width: 1099px) {
-  .w-sec { padding-block: 0; }
-  .w-sec > .wrap { min-height: 0; }
-  .w-copy, .w-sec.r .w-copy { position: relative; top: auto; margin: 56svh calc(var(--gutter) * -1) 34svh; padding: 6rem var(--gutter) 3rem; max-width: none; background: linear-gradient(transparent, var(--bg) 5rem); }
-  .w-copy > * { max-width: 34rem; }
-}
 .lg { width: 18px; height: 18px; flex: none; fill: currentColor; }
 /* Each login is its real mark, riding its own body. */
 .moon-tag { position: absolute; left: 0; top: 0; opacity: 0; will-change: transform, opacity; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; color: var(--text); background: color-mix(in oklch, var(--bg) 80%, transparent); border: 1px solid var(--line-strong); }
 .moon-tag .lg { width: 15px; height: 15px; }
-.moon-tag.one, .lobe-tag { width: auto; height: auto; display: block; white-space: nowrap; font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent-text); padding: 7px 11px; border-radius: var(--radius-pill); border: 1px solid color-mix(in oklch, var(--accent) 60%, transparent); background: color-mix(in oklch, var(--bg) 78%, transparent); }
 /* Promises: one at a time, upright, with the settled orbit beside them. */
-.jr.pr { height: 260vh; height: 260svh; }
 .tm-note { font-size: var(--fs-xs); color: var(--faint); flex-basis: 100%; }
-/* ── The tools: pick one you use and see the finished result at once. The world is the stage: each pick flies the
-   camera to that tool's world, and the words keep to one narrow column (desktop) or the top and bottom edges (phone),
-   shaded by text-shadow, never by a panel. Every panel is in the page, so it reads without script. ── */
-.tools { position: relative; height: 170vh; height: 170svh; }
-.tools-pin { position: sticky; top: 0; height: 100vh; height: 100svh; }
-.tools-in { height: 100%; max-width: 78rem; display: grid; grid-template-columns: minmax(0, 27rem); grid-template-rows: auto auto minmax(0, 1fr) auto; row-gap: var(--space-4); padding-top: calc(var(--nav-height) + clamp(1rem, 4vh, 2.5rem)); padding-bottom: clamp(1rem, 3vh, 2rem); text-shadow: 0 0 26px var(--bg), 0 0 10px var(--bg), 0 1px 2px var(--bg); }
-.tools-in > .h2 { font-size: clamp(1.55rem, 1rem + 2vw, 2.6rem); }
-.tool-tabs { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.tool-tab { display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--tap-min); padding: 0 var(--space-4); border: 1px solid var(--line-strong); border-radius: var(--radius-pill); background: transparent; color: var(--muted); font: var(--fw-semibold) var(--fs-sm)/1 var(--font-text); text-shadow: inherit; cursor: pointer; transition: color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out); }
-.tool-tab:hover { color: var(--text); }
-.tool-tab[aria-selected="true"] { color: var(--accent-text); border-color: var(--accent); }
-.tool-tab:focus-visible { outline: var(--focus-width) solid var(--focus-color); outline-offset: 3px; }
-.tool-panel { align-self: end; display: grid; gap: var(--space-3); }
-.js .tool-panel[data-off] { display: none; }
-.tp-h { margin: 0; font: var(--fw-bold) var(--fs-h3)/1.2 var(--font-display); letter-spacing: var(--track-heading); }
-.tp-h em { font-style: normal; color: var(--accent-text); }
-.tp-say { margin: 0; font-size: var(--fs-sm); line-height: 1.45; color: var(--muted); }
-.tp-say .ex { display: inline-block; margin-right: var(--space-2); padding: 1px 7px; border: 1px dashed var(--line-strong); border-radius: var(--radius-pill); font: var(--fw-semibold) var(--fs-2xs)/1.4 var(--font-mono); color: var(--muted); vertical-align: 1px; }
-/* The result, drawn: one bar per row from the example numbers. A row that changed shows where it was (a hairline
-   ghost) and where it is now; ember marks what needs you, green what got better. */
-.tp-bars { position: relative; list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
-.tb { display: grid; grid-template-columns: minmax(0, 8.5rem) minmax(0, 1fr); grid-template-rows: auto auto; column-gap: var(--space-3); align-items: center; font-size: var(--fs-sm); }
-.tb-l { grid-row: 1 / span 2; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.tb-track { position: relative; height: 10px; }
-.tb-bar, .tb-was { position: absolute; left: 0; top: 0; height: 100%; width: var(--v); border-radius: var(--radius-pill); }
-.tb-bar { background: color-mix(in oklch, var(--text) 55%, transparent); transform-origin: left; animation: tb-grow 600ms var(--ease-out) both; }
-.tb-was { border: 1px dashed color-mix(in oklch, var(--text) 40%, transparent); box-sizing: border-box; }
-.tb-hot .tb-bar { background: var(--accent); }
-.tb-good .tb-bar { background: var(--ok); }
-.tb-v { color: var(--muted); font-size: var(--fs-xs); font-variant-numeric: tabular-nums; }
-.tb-hot .tb-v { color: var(--accent-text); }
 /* A threshold (60 days, 14 days) is a dashed tick on each track at the same place, named once under the bars. */
-.tp-bars[style] .tb-track::after { content: ""; position: absolute; top: -3px; bottom: -3px; left: var(--m); border-left: 1px dashed var(--accent); }
-.tb-key { display: flex; align-items: center; gap: var(--space-2); padding-left: calc(8.5rem + var(--space-3)); font-size: var(--fs-2xs); color: var(--accent-text); }
-.tb-key i { height: 10px; border-left: 1px dashed var(--accent); }
-@keyframes tb-grow { from { transform: scaleX(0); } }
 @media (prefers-reduced-motion: reduce) { .tb-bar { animation: none; } }
-.tp-out { margin: 0; font-weight: var(--fw-semibold); color: var(--text); }
-.tp-ok { display: block; margin-top: 2px; font-weight: var(--fw-regular); font-size: var(--fs-sm); color: var(--ok); }
 /* What it costs you, drawn: one dot per step by hand against one dot for the sentence. */
-.tp-cost { margin: 0; display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); font-size: var(--fs-xs); color: var(--muted); }
-.tp-c { display: inline-flex; align-items: center; gap: var(--space-2); }
-.tp-dots { display: inline-flex; gap: 4px; }
-.tp-dots i { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
-.tp-dots-hand i { background: color-mix(in oklch, var(--text) 45%, transparent); }
-.tools-cta { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3) var(--space-4); font-size: var(--fs-sm); }
-@media (max-width: 699px) {
-  .tools-in { grid-template-columns: minmax(0, 1fr); row-gap: var(--space-3); padding-top: calc(var(--nav-height) + var(--space-3)); padding-bottom: var(--space-3); }
-  .tool-tab { padding: 0 var(--space-3); }
-}
-@media (max-width: 699px) and (max-height: 740px) { .tools-in > .h2 { font-size: 1.35rem; } .tool-tab .lg { display: none; } }
 @media (min-width: 700px) and (max-width: 1099px) { .tools-in { grid-template-columns: minmax(0, 24rem); } }
 @media (max-height: 1000px) { .tools-in { row-gap: var(--space-3); } }
-html:not(.js) .tools { height: auto; } html:not(.js) .tools-pin { position: relative; height: auto; } html:not(.js) .tool-tabs { display: none; } html:not(.js) .tools-in { height: auto; row-gap: var(--space-7); }
 .world-tag { width: 52px; height: 52px; background: color-mix(in oklch, var(--bg) 88%, transparent); border-color: color-mix(in oklch, var(--accent) 55%, transparent); box-shadow: 0 0 24px color-mix(in srgb, var(--ring) 40%, transparent); }
 .world-tag .lg { width: 26px; height: 26px; }
 @media (max-width: 899px) { .close-sec { align-items: end; } .close-in { padding-block: var(--space-7); } }
-/* The guide: one pinned scene. The words keep to the left edge, top and bottom; the world holds the rest. */
-#guide { height: 210vh; height: 210svh; }
-.guide-say { align-self: end; display: grid; gap: var(--space-4); max-width: 30rem; text-shadow: 0 0 26px var(--bg), 0 0 10px var(--bg), 0 1px 2px var(--bg); }
-#guide .jr-head { text-shadow: 0 0 26px var(--bg), 0 0 10px var(--bg), 0 1px 2px var(--bg); }
-/* The guide's one next step: a ghost pill, the same route as the hero's and the close's Book a call. */
-#guide .guide-say .btn { justify-self: start; margin-top: var(--space-2); }
-/* Reduced motion: the camera does not fly. It cuts between stations under a short dip to dark. */
-.world #gl.dip { opacity: 0; transition: opacity 200ms linear; }
 </style>
 </head>
 <body>
@@ -379,19 +230,18 @@ html:not(.js) .tools { height: auto; } html:not(.js) .tools-pin { position: rela
 <symbol id="lg-quickbooks" viewBox="0 0 24 24"><path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm.642 4.1335c.9554 0 1.7296.776 1.7296 1.7332v9.0667h1.6c1.614 0 2.9275-1.3156 2.9275-2.933 0-1.6173-1.3136-2.9333-2.9276-2.9333h-.6654V7.3334h.6654c2.5722 0 4.6577 2.0897 4.6577 4.667 0 2.5774-2.0855 4.6666-4.6577 4.6666H12.642zM7.9837 7.333h3.3291v12.533c-.9555 0-1.73-.7759-1.73-1.7332V9.0662H7.9837c-1.6146 0-2.9277 1.316-2.9277 2.9334 0 1.6175 1.3131 2.9333 2.9277 2.9333h.6654v1.7332h-.6654c-2.5725 0-4.6577-2.0892-4.6577-4.6665 0-2.5771 2.0852-4.6666 4.6577-4.6666Z"/></symbol>
 <symbol id="lg-gmail" viewBox="0 0 24 24"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></symbol>
 <symbol id="lg-microsoftexcel" viewBox="0 0 24 24"><path d="M23 1.5q.41 0 .7.3.3.29.3.7v19q0 .41-.3.7-.29.3-.7.3H7q-.41 0-.7-.3-.3-.29-.3-.7V18H1q-.41 0-.7-.3-.3-.29-.3-.7V7q0-.41.3-.7Q.58 6 1 6h5V2.5q0-.41.3-.7.29-.3.7-.3zM6 13.28l1.42 2.66h2.14l-2.38-3.87 2.34-3.8H7.46l-1.3 2.4-.05.08-.04.09-.64-1.28-.66-1.29H2.59l2.27 3.82-2.48 3.85h2.16zM14.25 21v-3H7.5v3zm0-4.5v-3.75H12v3.75zm0-5.25V7.5H12v3.75zm0-5.25V3H7.5v3zm8.25 15v-3h-6.75v3zm0-4.5v-3.75h-6.75v3.75zm0-5.25V7.5h-6.75v3.75zm0-5.25V3h-6.75v3Z"/></symbol>
-<symbol id="lg-hubspot" viewBox="0 0 24 24"><path d="M18.164 7.93V5.084a2.198 2.198 0 001.267-1.978v-.067A2.2 2.2 0 0017.238.845h-.067a2.2 2.2 0 00-2.193 2.193v.067a2.196 2.196 0 001.252 1.973l.013.006v2.852a6.22 6.22 0 00-2.969 1.31l.012-.01-7.828-6.095A2.497 2.497 0 104.3 4.656l-.012.006 7.697 5.991a6.176 6.176 0 00-1.038 3.446c0 1.343.425 2.588 1.147 3.607l-.013-.02-2.342 2.343a1.968 1.968 0 00-.58-.095h-.002a2.033 2.033 0 102.033 2.033 1.978 1.978 0 00-.1-.595l.005.014 2.317-2.317a6.247 6.247 0 104.782-11.134l-.036-.005zm-.964 9.378a3.206 3.206 0 113.215-3.207v.002a3.206 3.206 0 01-3.207 3.207z"/></symbol>
 </svg>
 <div class="scene-ui" aria-hidden="true">
   <div class="body-tag"><i></i>Revenue</div>
   <div class="body-tag"><i></i>Costs</div>
   <div class="body-tag"><i></i>Time</div>
   <div class="body-tag ai">AI</div>
-  <div class="moon-tag world-tag"><svg class="lg"><use href="#lg-shopify"/></svg></div>
-  <div class="moon-tag world-tag"><svg class="lg"><use href="#lg-meta"/></svg></div>
-  <div class="moon-tag world-tag"><svg class="lg"><use href="#lg-quickbooks"/></svg></div>
-  <div class="moon-tag world-tag"><svg class="lg"><use href="#lg-gmail"/></svg></div>
-  <div class="moon-tag world-tag"><svg class="lg"><use href="#lg-microsoftexcel"/></svg></div>
-  <div class="moon-tag world-tag"><svg class="lg"><use href="#lg-hubspot"/></svg></div>
+  <div class="moon-tag world-tag" data-world="shopify"><svg class="lg"><use href="#lg-shopify"/></svg></div>
+  <div class="moon-tag world-tag" data-world="meta"><svg class="lg"><use href="#lg-meta"/></svg></div>
+  <div class="moon-tag world-tag" data-world="quickbooks"><svg class="lg"><use href="#lg-quickbooks"/></svg></div>
+  <div class="moon-tag world-tag" data-world="gmail"><svg class="lg"><use href="#lg-gmail"/></svg></div>
+  <div class="moon-tag world-tag" data-world="microsoftexcel"><svg class="lg"><use href="#lg-microsoftexcel"/></svg></div>
+  <div class="proof"></div>
   <div class="stop-mk" data-k="0">01<span>Find the hours</span></div>
   <div class="stop-mk" data-k="1">02<span>Cut the tools</span></div>
   <div class="stop-mk" data-k="2">03<span>One AI</span></div>
@@ -400,163 +250,110 @@ html:not(.js) .tools { height: auto; } html:not(.js) .tools-pin { position: rela
 </div>
 
 <div id="main">
-<section class="sky" id="top" data-scene="hero" aria-label="Your business is a three-body problem">
-  <span class="anchor" id="settle" aria-hidden="true"></span>
+<section class="journey" id="journey" data-stop="chaos" aria-label="Your business is a three-body problem">
+  <h2 class="vh">The journey, in words</h2>
+  <ol class="story">
+    <li>Revenue, costs and time, pulled apart by a dozen tools. We put one AI at the centre of the tools you already use. Hours back, every week.</li>
+    <li>Each tool you run eats hours you do not get paid for. That is where this starts.</li>
+    <li>We set up Claude or ChatGPT for your team and connect it to the tools you already use. You say what you want in plain words, and it gets done in those tools.</li>
+    <li>Example: you ask who owes you money. Hillside Roofing is 64 days late; three clients owe $4,450. Then you ask to invoice Harbour Dental for the retainer, and the invoice is ready for you to check before it goes.</li>
+    <li>Example: you ask to sort today's inbox. Four emails need a reply today, nine can wait, sixteen are junk. Then you ask to book 30 minutes with Harbour Dental: Tuesday at 10:30, and the invite waits for your OK.</li>
+    <li>Example: you ask what runs out this month. Sea salt caramels and wool mitts will run out within 30 days. Then you ask to reorder them, and both reorders are drafted for you to approve.</li>
+    <li>Example: you ask which ad is wasting money. Local awareness now costs far more for each sale than it did. Then you ask to move its budget to the fall sale, and the change waits for your call.</li>
+    <li>Example: you ask what sold best this month. Bread and coffee are up; pastry slipped. Then you ask for a chart, and it is added to your sales sheet.</li>
+    <li>On the call, we add up what your tools cost you, in hours and dollars.</li>
+    <li>You stop paying for the ones you barely use. The rest move off outdated software.</li>
+    <li>We set up Claude or ChatGPT and connect it to your tools. Then we teach your team to use it.</li>
+    <li>It is where your customers decide to call you. We look after it. You own everything.</li>
+    <li>Agreed on the call. No surprise invoice.</li>
+    <li>Fixed price: one number, in writing, agreed on the call. You own it all: accounts, code and data in your name. Plain English: updates you read in a minute, on your phone. No lock-in: leave any month, keep everything you paid for.</li>
+  </ol>
   <div class="stage" data-hero>
-    <div class="hero-copy">
-        <div class="wrap">
-          <h1 class="h1"><span class="w" style="--i:0"><span>Your</span></span> <span class="w" style="--i:1"><span>business</span></span> <span class="w" style="--i:2"><span>is</span></span> <span class="w" style="--i:3"><span>a</span></span> <span class="w g" style="--i:4"><span>three&#8209;body</span></span> <span class="w g" style="--i:5"><span>problem.</span></span></h1>
-          <p class="hero-sub">Revenue, costs and time, pulled apart by a dozen tools. We put one AI at the centre of the tools you already use. <strong>Hours back, every week.</strong></p>
-          <div class="hero-ctas">
-            <a class="btn btn-primary" href="/book">Book a call</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="beats">
-        <article class="beat"><p class="beat-no bl">01 · Look</p><h2 class="beat-h">Every tool pulling <em>its own way.</em></h2><p class="bl">Each one eats hours you don't get paid for. That is where this starts.</p></article>
-      </div>
-      <p class="scroll-cue" aria-hidden="true">Scroll · it settles as you go</p>
+    <ol class="caps wrap">
+      <li class="cap on" data-k="0">
+        <h1 class="cap-h cap-hero">Your business is a <em>three&#8209;body problem.</em></h1>
+        <a class="btn btn-primary" href="/book">Book a call</a>
+      </li>
+      <li class="cap" data-k="1">
+        <h2 class="cap-h">Every tool pulls <em>its own way.</em></h2>
+        <p class="fig"><b>6.5 hours</b> a week, lost to them <span class="ex">Example</span></p>
+      </li>
+      <li class="cap" data-k="2">
+        <h2 class="cap-h">Stop learning ten tools. <em>Talk to one.</em></h2>
+        <p class="say">Claude or ChatGPT, set up in the tools you use.</p>
+      </li>
+      <li class="cap" data-k="3">
+        <h2 class="cap-h">You don't need to be an expert in <em>QuickBooks.</em></h2>
+        <div class="asks" data-tool="quickbooks"></div>
+      </li>
+      <li class="cap" data-k="4">
+        <h2 class="cap-h">You don't need to be an expert in <em>Gmail.</em></h2>
+        <div class="asks" data-tool="gmail"></div>
+      </li>
+      <li class="cap" data-k="5">
+        <h2 class="cap-h">You don't need to be an expert in <em>Shopify.</em></h2>
+        <div class="asks" data-tool="shopify"></div>
+      </li>
+      <li class="cap" data-k="6">
+        <h2 class="cap-h">You don't need to be an expert in <em>Meta Ads.</em></h2>
+        <div class="asks" data-tool="meta"></div>
+      </li>
+      <li class="cap" data-k="7">
+        <h2 class="cap-h">You don't need to be an expert in <em>Excel.</em></h2>
+        <div class="asks" data-tool="microsoftexcel"></div>
+      </li>
+      <li class="cap" data-k="8">
+        <h2 class="cap-h cap-plan">From one call to a <em>stable orbit.</em></h2>
+        <p class="step">We find where the hours go.</p>
+      </li>
+      <li class="cap" data-k="9">
+        <p class="step">We cut the tools you don't need.</p>
+      </li>
+      <li class="cap" data-k="10">
+        <p class="step">One AI sits at the centre.</p>
+      </li>
+      <li class="cap" data-k="11">
+        <p class="step">We build your website.</p>
+      </li>
+      <li class="cap" data-k="12">
+        <p class="step">A fixed price, in writing.</p>
+      </li>
+      <li class="cap" data-k="13">
+        <h2 class="cap-h">Four promises, <em>on paper.</em></h2>
+        <ul class="chips"><li>Fixed price</li><li>You own it</li><li>Plain English</li><li>No lock-in</li></ul>
+      </li>
+    </ol>
+    <div class="jticks" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <a class="btn btn-ghost jbook" href="/book">Book a call</a>
   </div>
 </section>
 
-<section class="jr" id="guide" data-scene="guide">
-  <div class="jr-pin">
-    <div class="wrap jr-in">
-      <div class="jr-head">
-        <h2 class="h2">You don't need to be an expert <br>in <span class="hw tool-swap" aria-hidden="true" data-tools="Shopify|QuickBooks|Excel|Meta Ads|HubSpot|Gmail"><span style="--i:8">Shopify</span></span> <br><em>anymore.</em></h2>
-      </div>
-      <div class="guide-say rv">
-        <p class="w-big">Stop learning ten tools. Talk to one.</p>
-        <p class="lede">We set up Claude or ChatGPT for your team and connect it to the tools you already use. You say what you want in plain words, and it gets done in those tools.</p>
-        <a class="btn btn-ghost" href="/book">Book a call</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="tools" id="tools" data-scene="tools" aria-labelledby="tools-h">
-  <div class="tools-pin">
-    <div class="wrap tools-in">
-      <h2 class="h2" id="tools-h">Pick a tool you use. <em>See what one sentence gets you.</em></h2>
-      <div class="tool-tabs" role="tablist" aria-label="Your tools">
-        <button type="button" role="tab" class="tool-tab" id="tt-quickbooks" aria-controls="tp-quickbooks" aria-selected="true" tabindex="0" data-world="2"><svg class="lg" aria-hidden="true"><use href="#lg-quickbooks"/></svg>QuickBooks</button>
-        <button type="button" role="tab" class="tool-tab" id="tt-shopify" aria-controls="tp-shopify" aria-selected="false" tabindex="-1" data-world="0"><svg class="lg" aria-hidden="true"><use href="#lg-shopify"/></svg>Shopify</button>
-        <button type="button" role="tab" class="tool-tab" id="tt-meta" aria-controls="tp-meta" aria-selected="false" tabindex="-1" data-world="1"><svg class="lg" aria-hidden="true"><use href="#lg-meta"/></svg>Meta Ads</button>
-        <button type="button" role="tab" class="tool-tab" id="tt-microsoftexcel" aria-controls="tp-microsoftexcel" aria-selected="false" tabindex="-1" data-world="4"><svg class="lg" aria-hidden="true"><use href="#lg-microsoftexcel"/></svg>Excel</button>
-        <button type="button" role="tab" class="tool-tab" id="tt-hubspot" aria-controls="tp-hubspot" aria-selected="false" tabindex="-1" data-world="5"><svg class="lg" aria-hidden="true"><use href="#lg-hubspot"/></svg>HubSpot</button>
-        <button type="button" role="tab" class="tool-tab" id="tt-gmail" aria-controls="tp-gmail" aria-selected="false" tabindex="-1" data-world="3"><svg class="lg" aria-hidden="true"><use href="#lg-gmail"/></svg>Gmail</button>
-      </div>
-      <div class="tool-panel" role="tabpanel" id="tp-quickbooks" aria-labelledby="tt-quickbooks">
-        <h3 class="tp-h">Know who owes you. <em>The invoice is ready.</em></h3>
-        <p class="tp-say"><span class="ex">Example</span>“Show me who owes us, flag anyone over 60 days, and send Harbour Dental an invoice for the retainer”</p>
-        <ul class="tp-bars" style="--m:85.7%"><li class="tb tb-hot"><span class="tb-l">Hillside Roofing</span><span class="tb-track"><i class="tb-bar" style="--v:91.4%"></i></span><span class="tb-v">64 days</span></li><li class="tb"><span class="tb-l">East End Yoga</span><span class="tb-track"><i class="tb-bar" style="--v:44.3%"></i></span><span class="tb-v">31 days</span></li><li class="tb"><span class="tb-l">Harbour Dental</span><span class="tb-track"><i class="tb-bar" style="--v:17.1%"></i></span><span class="tb-v">12 days</span></li><li class="tb-key" aria-hidden="true"><i></i>60 days</li></ul>
-        <p class="tp-out">The retainer invoice for Harbour Dental is ready to send. <span class="tp-ok">You check it, then it goes.</span></p>
-        <p class="tp-cost"><span class="tp-c"><span class="tp-dots tp-dots-hand" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>By hand: 5 steps</span><span class="tp-c"><span class="tp-dots" aria-hidden="true"><i></i></span>Just ask: 1 sentence</span></p>
-      </div>
-      <div class="tool-panel" role="tabpanel" id="tp-shopify" aria-labelledby="tt-shopify" data-off>
-        <h3 class="tp-h">Keep your <em>best sellers</em> on the shelf.</h3>
-        <p class="tp-say"><span class="ex">Example</span>“Pull last month&#x27;s top 10 sellers by units sold, show current stock for each, and tell me which will run out in 30 days”</p>
-        <ul class="tp-bars"><li class="tb tb-hot"><span class="tb-l">Sea salt caramels</span><span class="tb-track"><i class="tb-bar" style="--v:10.8%"></i></span><span class="tb-v">14 left</span></li><li class="tb tb-hot"><span class="tb-l">Wool mitts</span><span class="tb-track"><i class="tb-bar" style="--v:6.9%"></i></span><span class="tb-v">9 left</span></li><li class="tb"><span class="tb-l">Partridgeberry jam</span><span class="tb-track"><i class="tb-bar" style="--v:92.3%"></i></span><span class="tb-v">120 left</span></li></ul>
-        <p class="tp-out">Caramels and mitts will run out within 30 days. Reorder those two. <span class="tp-ok">You decide what to reorder.</span></p>
-        <p class="tp-cost"><span class="tp-c"><span class="tp-dots tp-dots-hand" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>By hand: 7 steps</span><span class="tp-c"><span class="tp-dots" aria-hidden="true"><i></i></span>Just ask: 1 sentence</span></p>
-      </div>
-      <div class="tool-panel" role="tabpanel" id="tp-meta" aria-labelledby="tt-meta" data-off>
-        <h3 class="tp-h">Which ads worked, and <em>which to pause.</em></h3>
-        <p class="tp-say"><span class="ex">Example</span>“Pull spend, cost per result, and ROAS for all active campaigns over the last 7 days vs. the 7 days before. Tell me which ad sets are underperforming and recommend which to pause.”</p>
-        <ul class="tp-bars"><li class="tb tb-hot"><span class="tb-l">Local awareness</span><span class="tb-track"><i class="tb-was" style="--v:59.0%"></i><i class="tb-bar" style="--v:94.0%"></i></span><span class="tb-v">$5.90 → $9.40</span></li><li class="tb"><span class="tb-l">New arrivals</span><span class="tb-track"><i class="tb-was" style="--v:61.0%"></i><i class="tb-bar" style="--v:68.0%"></i></span><span class="tb-v">$6.10 → $6.80</span></li><li class="tb tb-good"><span class="tb-l">Fall sale</span><span class="tb-track"><i class="tb-was" style="--v:46.0%"></i><i class="tb-bar" style="--v:41.0%"></i></span><span class="tb-v">$4.60 → $4.10</span></li></ul>
-        <p class="tp-out">Local awareness now costs far more per result. I would pause it. <span class="tp-ok">You make the call to pause.</span></p>
-        <p class="tp-cost"><span class="tp-c"><span class="tp-dots tp-dots-hand" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>By hand: 5 steps</span><span class="tp-c"><span class="tp-dots" aria-hidden="true"><i></i></span>Just ask: 1 sentence</span></p>
-      </div>
-      <div class="tool-panel" role="tabpanel" id="tp-microsoftexcel" aria-labelledby="tt-microsoftexcel" data-off>
-        <h3 class="tp-h">The sales workbook, <em>updated for you.</em></h3>
-        <p class="tp-say"><span class="ex">Example</span>“Add a pivot table of revenue by category this month vs. last, with a bar chart”</p>
-        <ul class="tp-bars"><li class="tb tb-good"><span class="tb-l">Bread</span><span class="tb-track"><i class="tb-was" style="--v:86.7%"></i><i class="tb-bar" style="--v:93.6%"></i></span><span class="tb-v">$3,900 → $4,210</span></li><li class="tb"><span class="tb-l">Pastry</span><span class="tb-track"><i class="tb-was" style="--v:73.8%"></i><i class="tb-bar" style="--v:70.7%"></i></span><span class="tb-v">$3,320 → $3,180</span></li><li class="tb tb-good"><span class="tb-l">Coffee</span><span class="tb-track"><i class="tb-was" style="--v:53.6%"></i><i class="tb-bar" style="--v:58.7%"></i></span><span class="tb-v">$2,410 → $2,640</span></li></ul>
-        <p class="tp-out">The pivot table and a bar chart are in the workbook. Your formulas are untouched. <span class="tp-ok">The live workbook is updated.</span></p>
-        <p class="tp-cost"><span class="tp-c"><span class="tp-dots tp-dots-hand" aria-hidden="true"><i></i><i></i><i></i><i></i></span>By hand: 4 steps</span><span class="tp-c"><span class="tp-dots" aria-hidden="true"><i></i></span>Just ask: 1 sentence</span></p>
-      </div>
-      <div class="tool-panel" role="tabpanel" id="tp-hubspot" aria-labelledby="tt-hubspot" data-off>
-        <h3 class="tp-h">The deals that went quiet, <em>followed up.</em></h3>
-        <p class="tp-say"><span class="ex">Example</span>“Show every deal with no activity in 14 days and draft a follow-up for each”</p>
-        <ul class="tp-bars" style="--m:43.8%"><li class="tb tb-hot"><span class="tb-l">Harbour Dental</span><span class="tb-track"><i class="tb-bar" style="--v:93.8%"></i></span><span class="tb-v">30 days quiet · draft ready</span></li><li class="tb tb-hot"><span class="tb-l">Cove Road Cafe</span><span class="tb-track"><i class="tb-bar" style="--v:65.6%"></i></span><span class="tb-v">21 days · draft ready</span></li><li class="tb tb-hot"><span class="tb-l">East End Yoga</span><span class="tb-track"><i class="tb-bar" style="--v:53.1%"></i></span><span class="tb-v">17 days · draft ready</span></li><li class="tb-key" aria-hidden="true"><i></i>14 days</li></ul>
-        <p class="tp-out">Three deals went quiet. Each one has a follow-up that mentions your last talk. <span class="tp-ok">You read each one and press send.</span></p>
-        <p class="tp-cost"><span class="tp-c"><span class="tp-dots tp-dots-hand" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>By hand: 5 steps</span><span class="tp-c"><span class="tp-dots" aria-hidden="true"><i></i></span>Just ask: 1 sentence</span></p>
-      </div>
-      <div class="tool-panel" role="tabpanel" id="tp-gmail" aria-labelledby="tt-gmail" data-off>
-        <h3 class="tp-h">Your inbox sorted, <em>the invite ready to send.</em></h3>
-        <p class="tp-say"><span class="ex">Example</span>“Group today&#x27;s inbox into needs a reply today, can wait, and junk. Then find 30 minutes next week with Harbour Dental and send the invite.”</p>
-        <ul class="tp-bars"><li class="tb tb-hot"><span class="tb-l">Needs a reply today</span><span class="tb-track"><i class="tb-bar" style="--v:23.5%"></i></span><span class="tb-v">4</span></li><li class="tb"><span class="tb-l">Can wait</span><span class="tb-track"><i class="tb-bar" style="--v:52.9%"></i></span><span class="tb-v">9</span></li><li class="tb"><span class="tb-l">Junk</span><span class="tb-track"><i class="tb-bar" style="--v:94.1%"></i></span><span class="tb-v">16</span></li></ul>
-        <p class="tp-out">Tuesday at 10:30 works for you both. The invite is ready to send. <span class="tp-ok">Nothing sends without your OK.</span></p>
-        <p class="tp-cost"><span class="tp-c"><span class="tp-dots tp-dots-hand" aria-hidden="true"><i></i><i></i><i></i><i></i></span>By hand: 4 steps</span><span class="tp-c"><span class="tp-dots" aria-hidden="true"><i></i></span>Just ask: 1 sentence</span></p>
-      </div>
-      <p class="tools-cta"><span>Want this in your tools?</span><a class="btn btn-ghost btn-sm" href="/book">Book a call</a></p>
-    </div>
-  </div>
-</section>
-
-<section class="jr" id="after" data-scene="journey">
-  <div class="jr-pin">
-    <div class="wrap jr-in">
-      <div class="jr-head">
-        <h2 class="h2">From one call to a <em>stable orbit.</em></h2>
-      </div>
-      <ol class="jr-steps" data-steps>
-        <li><span class="no">01 / 05</span><h3>We find where the hours go.</h3><p>On the call, we add up what your tools cost you, in hours and dollars.</p></li>
-        <li><span class="no">02 / 05</span><h3>We cut the tools you don't need.</h3><p>You stop paying for the ones you barely use. The rest move off outdated software.</p></li>
-        <li><span class="no">03 / 05</span><h3>One AI sits at the centre.</h3><p>We set up Claude or ChatGPT and connect it to your tools. Then we teach your team to use it.</p></li>
-        <li><span class="no">04 / 05</span><h3>We build your website.</h3><p>It is where your customers decide to call you. We look after it. You own everything.</p></li>
-        <li><span class="no">05 / 05</span><h3>A fixed price, in writing.</h3><p>Agreed on the call. No surprise invoice.</p></li>
-      </ol>
-      <div class="jr-foot">
-        <div class="jr-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
-        <a class="btn btn-primary" href="/book">Book a call<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="jr pr" id="promises" data-scene="promises">
-  <div class="jr-pin">
-    <div class="wrap jr-in">
-      <div class="jr-head">
-        <h2 class="h2">Four promises, <em>on paper.</em></h2>
-      </div>
-      <ol class="jr-steps" data-promises>
-        <li><span class="no">01 / 04</span><h3>Fixed price</h3><p>One number, in writing, agreed on the call. No surprise invoice.</p></li>
-        <li><span class="no">02 / 04</span><h3>You own it all</h3><p>Accounts, code and data in your name. Nothing to buy back.</p></li>
-        <li><span class="no">03 / 04</span><h3>Plain English</h3><p>Updates you read in a minute, on your phone.</p></li>
-        <li><span class="no">04 / 04</span><h3>No lock-in</h3><p>Leave any month. Keep everything you paid for.</p></li>
-      </ol>
-      <div class="jr-dots" aria-hidden="true"><i>Fixed price</i><i>You own it all</i><i>Plain English</i><i>No lock-in</i></div>
-    </div>
-  </div>
-</section>
-
+<div class="finale">
 <section class="close-sec" id="close" data-scene="close" aria-labelledby="close-h">
   <div class="wrap close-in">
     <h2 id="close-h" class="rv">Let's find your <em>stable orbit.</em></h2>
-    <p class="rv">A short call. We find where your hours and dollars are going, and what one AI at the centre would change.</p>
+    <p class="rv">A short call about where your week goes.</p>
     <div class="close-ctas rv">
       <a class="btn btn-primary" href="/book">Book a call</a>
       <a class="close-alt" href="mailto:hello@solenix.dev">or email hello@solenix.dev</a>
     </div>
     <div class="close-proof rv">
-      <p class="close-who"><span class="photo" title="Photo to come" aria-hidden="true">JC</span><span><span class="who">Jager Cooper</span>, founder, St. John's, NL</span></p>
+      <p class="close-who"><span class="photo" aria-hidden="true">Photo to come</span><span><span class="who">Jager Cooper</span>, founder, St. John's, NL</span></p>
       <p class="close-terms">Fixed price in writing. You own everything.</p>
     </div>
   </div>
 </section>
-</div>
-
-<footer>
+<footer role="contentinfo">
   <div class="wrap">
     <!--site:brand-->
-    <p>One AI at the centre of your business. St. John's, Newfoundland and Labrador.</p>
     <ul><!--site:footer-links--></ul>
     <p class="mono" style="font-size: var(--fs-xs);">© 2026 Solenix</p>
     <p class="tm-note">The logos on this page belong to their owners. They are shown because they are tools you may already use; no partnership is implied.</p>
   </div>
 </footer>
+</div>
+</div>
+
 
 </body>
 </html>

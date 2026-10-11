@@ -23,7 +23,7 @@ export interface SpaceParams {
   el: number; az: number; dist: number; ox: number; oy: number; poy: number
   calm: number; dim: number; labels: number; conn: number; agent: number; stops: number
   tx: number; tz: number; fly: number; wsel: number; hero: number; lens: number
-  rf: number; rs: number; sp: number; rw: number; shl: number
+  rf: number; rs: number; sp: number; rw: number
 }
 
 /** The camera distance and height a reduced-motion station is shown from. */
@@ -466,15 +466,14 @@ export function createSpace(env: SpaceEnv): Space {
   const bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.4, 0.42, 0.9);
   composer.addPass(bloom);
   composer.addPass(new OutputPass());
-  const finalPass = new ShaderPass({ uniforms: { tDiffuse: { value: null }, uTime: { value: 0 }, uRes: { value: new THREE.Vector2(1, 1) }, uCA: { value: 0 }, uGrain: { value: 0.045 }, uShade: { value: 0 }, uShadeL: { value: 0 }, uShadeB: { value: 0 }, uPort: { value: 0 } },
+  const finalPass = new ShaderPass({ uniforms: { tDiffuse: { value: null }, uTime: { value: 0 }, uRes: { value: new THREE.Vector2(1, 1) }, uGrain: { value: 0.045 }, uShadeB: { value: 0 } },
     vertexShader: `varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.); }`,
-    fragmentShader: `uniform sampler2D tDiffuse; uniform float uTime,uCA,uGrain,uShade,uShadeL,uShadeB,uPort; uniform vec2 uRes; varying vec2 vUv;
+    fragmentShader: `uniform sampler2D tDiffuse; uniform float uTime,uGrain,uShadeB; uniform vec2 uRes; varying vec2 vUv;
       float h(vec2 p){ return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453); }
-      void main(){ vec2 c=vUv-.5; float d=dot(c,c); vec2 o=c*d*uCA*4.;
-        vec3 col=vec3(texture2D(tDiffuse,vUv+o).r,texture2D(tDiffuse,vUv).g,texture2D(tDiffuse,vUv-o).b);
+      void main(){ vec2 c=vUv-.5; float d=dot(c,c);
+        vec3 col=texture2D(tDiffuse,vUv).rgb;
         col*=1.-smoothstep(.12,.62,d*1.15)*.6;
-        col*=1.-uShade*.62*mix(smoothstep(.8,.14,vUv.x)*smoothstep(.9,.3,vUv.y),smoothstep(.66,.22,vUv.y),uPort);
-        col*=1.-uShadeL*mix(.66*smoothstep(.74,.26,vUv.x),.42,uPort); col*=1.-uShadeB*.36;
+        col*=1.-uShadeB*.36;
         col+=(h(floor(vUv*uRes)+fract(uTime*7.)*97.)-.5)*uGrain;
         gl_FragColor=vec4(col,1.); }` });
   composer.addPass(finalPass);
@@ -574,8 +573,7 @@ export function createSpace(env: SpaceEnv): Space {
     const heroAmt = R ? heroR : sc.hero;
     const fovS = fov0 + (R ? story.hero.lens * heroR : sc.lens) * lensK, fov = fovS + 5 * warp - 1.5 * easeIn;
     if (Math.abs(fov - camera.fov) > 0.01) { camera.fov = fov; camera.updateProjectionMatrix(); }
-    finalPass.uniforms.uCA.value = 0.02 * warp + 0.012 * swell;
-    finalPass.uniforms.uShade.value = heroAmt; finalPass.uniforms.uShadeL.value = sc.shl; finalPass.uniforms.uShadeB.value = R ? (stn > 0 ? 1 : 0) : sc.fly; finalPass.uniforms.uPort.value = portrait ? 1 : 0;
+    finalPass.uniforms.uShadeB.value = R ? (stn > 0 ? 1 : 0) : sc.fly;
     gridU.uChaos.value = 1 - sc.free; gridU.uDepth.value = lerp(0.95, 0.6, sc.calm);
 
     // One continuous camera move, eased so a fast flick still glides.
