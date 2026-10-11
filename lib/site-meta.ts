@@ -13,6 +13,8 @@
 export const SITE_URL = process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "https://solenix.dev"
 /** The site's host with no protocol: what the live-site checks compare a page's hostname with (lib/analytics.ts, scripts/origin-check.ts). */
 export const SITE_HOST = new URL(SITE_URL).hostname
+/** The homepage's address, with its slash: the one root form the sitemap and the homepage's canonical link both use. */
+export const HOME_URL = `${SITE_URL}/`
 /** The GitHub org that owns Solenix's repos, its GitHub App and the Agents Marketplace. */
 export const GITHUB_ORG = "SolenixAI"
 /** The Agents Marketplace repo (owner/name): the catalog the site reads. */
