@@ -159,7 +159,7 @@ const npm = async (name: string) => {
 const list = (xs: string[]) => (xs.length < 2 ? xs.join("") : `${xs.slice(0, -1).join(", ")} and ${xs.at(-1)}`)
 const slugOf = (url: string | undefined) => url?.match(/github\.com[/:]([^/]+\/[^/.#]+)/)?.[1] ?? null
 const gitHub = (slug: string): Link => ({ label: "Source on GitHub", href: `https://github.com/${slug}` })
-const npmPage = (name: string): Link => ({ label: "npm", href: `https://www.npmjs.com/package/${name}` })
+const npmPage = (name: string): Link => ({ label: "Package page", href: `https://www.npmjs.com/package/${name}` })
 const spec = (specs: Specs, k: keyof Specs, label: string): Link[] => (specs[k] ? [{ label, href: specs[k] }] : [])
 
 // What a plugin repo ships, read from its file tree: skills, agents, commands, and one manifest per AI app.
@@ -189,10 +189,10 @@ async function plugin(slug: string, specs: Specs, maker: string): Promise<Source
   let version: string | null = null
   try { version = m?.content ? JSON.parse(Buffer.from(m.content, "base64").toString("utf8")).version ?? null : null } catch (e) { failed(`${slug} ${manifest}`, e) }
   const extra = [...(s.mcp ? [{ label: "connector", n: 1 }] : []), ...(s.hooks ? [{ label: "hooks", n: 1 }] : [])]
-  return { ...blank({ id: "plugin", kind: "plugin", name: "Plugin", href: `https://github.com/${slug}` }), blurb: f.blurb, repo: asRepo(f), version, updated: f.pushed,
+  return { ...blank({ id: "plugin", kind: "plugin", name: "Add-on", href: `https://github.com/${slug}` }), blurb: f.blurb, repo: asRepo(f), version, updated: f.pushed,
     contents: [...s.contents, ...extra], works: s.works, parts,
     gives: `One install gives your AI everything ${maker} built for it${s.works.length ? `, in ${list(s.works)}` : ""}.`,
-    refs: [gitHub(slug), ...(f.homepage ? [{ label: "Docs", href: f.homepage }] : []), ...spec(specs, "plugin", "Agent Plugins spec")] }
+    refs: [gitHub(slug), ...(f.homepage ? [{ label: "Docs", href: f.homepage }] : []), ...spec(specs, "plugin", "How add-ons work")] }
 }
 async function skills(slug: string, specs: Specs, maker: string): Promise<Source> {
   const tree = treeOf(slug)
@@ -201,7 +201,7 @@ async function skills(slug: string, specs: Specs, maker: string): Promise<Source
   return { ...blank({ id: "skills", kind: "skills", name: "Skills", href: `https://github.com/${slug}/tree/HEAD/skills` }), blurb: f.blurb, repo: asRepo(f), updated: f.pushed,
     contents: s.skills.length ? [{ label: "skills", n: s.skills.length }] : [], items: s.skills, parts,
     gives: s.skills.length ? `Your AI knows how to do ${s.skills.length} things the way ${maker} does them.` : null,
-    refs: [gitHub(slug), { label: "skills.sh", href: `https://skills.sh/${slug}` }, ...spec(specs, "skills", "Agent Skills spec")] }
+    refs: [gitHub(slug), { label: "Skills directory", href: `https://skills.sh/${slug}` }, ...spec(specs, "skills", "How skills work")] }
 }
 async function connector(name: string, specs: Specs, maker: string): Promise<Source> {
   const entry = `${MCP_REGISTRY}/v0.1/servers/${encodeURIComponent(name)}/versions/latest`
@@ -210,24 +210,24 @@ async function connector(name: string, specs: Specs, maker: string): Promise<Sou
   const slug = slugOf(server?.repository?.url)
   const f = slug ? await repoFacts(slug) : null
   const remote: string | undefined = server?.remotes?.[0]?.url
-  return { ...blank({ id: "connector", kind: "connector", name: "Connector", href: server?.websiteUrl ?? remote ?? entry }), blurb: server?.description ?? null,
+  return { ...blank({ id: "connector", kind: "connector", name: "Account link", href: server?.websiteUrl ?? remote ?? entry }), blurb: server?.description ?? null,
     repo: f && asRepo(f), version: server?.version ?? null, gives: `Your AI can see and change what is in your ${maker} account.`, updated: d?._meta?.["io.modelcontextprotocol.registry/official"]?.updatedAt ?? f?.pushed ?? null,
-    refs: [...(remote ? [{ label: remote.replace(/^https:\/\//, ""), href: remote }] : []), { label: "MCP registry entry", href: entry }, ...(slug ? [gitHub(slug)] : []), ...spec(specs, "mcp", "MCP spec")] }
+    refs: [...(remote ? [{ label: "Connection address", href: remote }] : []), { label: "Official listing", href: entry }, ...(slug ? [gitHub(slug)] : []), ...spec(specs, "mcp", "How account links work")] }
 }
 async function cli(name: string, docs: string, maker: string): Promise<Source> {
   const n = await npm(name)
-  return { ...blank({ id: "cli", kind: "cli", name: "Command line", href: docs }), blurb: n.blurb, version: n.version, weekly: n.weekly,
+  return { ...blank({ id: "cli", kind: "cli", name: "Pro tools", href: docs }), blurb: n.blurb, version: n.version, weekly: n.weekly,
     gives: `Your AI can run ${maker} for you, the way its engineers do.`,
-    items: [`npm i -g ${name}`], refs: [{ label: "Docs", href: docs }, npmPage(name)] }
+    refs: [{ label: "Docs", href: docs }, npmPage(name)] }
 }
-const api = (docs: string, maker: string): Source => ({ ...blank({ id: "api", kind: "api", name: "API", href: docs }), gives: `Anything else ${maker} can do, your AI can reach directly.`, refs: [{ label: "API reference", href: docs }] })
+const api = (docs: string, maker: string): Source => ({ ...blank({ id: "api", kind: "api", name: "Direct access", href: docs }), gives: `Anything else ${maker} can do, your AI can reach directly.`, refs: [{ label: "API reference", href: docs }] })
 
 async function tool(t: ToolSource, specs: Specs): Promise<Source> {
   const tree = treeOf(t.install.repo)
   const [f, n, release, parts] = await Promise.all([repoFacts(t.starsRepo), t.cli ? npm(t.cli.npm) : null, gh(`repos/${t.starsRepo}/releases/latest`, { optional: true }), describeParts(t.install.repo, tree, ["skill"], t.install.skills)])
   return { ...blank({ id: t.id, kind: "tool", name: t.name, href: t.site }), blurb: f.blurb ?? t.for, repo: asRepo(f), parts, gives: t.for,
     version: release?.tag_name ?? n?.version ?? null, updated: release?.published_at ?? f.pushed, weekly: n?.weekly ?? null, items: t.install.skills,
-    refs: [{ label: new URL(t.site).host, href: t.site }, gitHub(t.starsRepo), ...(t.cli ? [{ label: "Docs", href: t.cli.docs }, npmPage(t.cli.npm)] : []), ...spec(specs, "skills", "Agent Skills spec")] }
+    refs: [{ label: new URL(t.site).host, href: t.site }, gitHub(t.starsRepo), ...(t.cli ? [{ label: "Docs", href: t.cli.docs }, npmPage(t.cli.npm)] : []), ...spec(specs, "skills", "How skills work")] }
 }
 
 // Each source is named once: the repo already links itself (owner/name), so its links never repeat
