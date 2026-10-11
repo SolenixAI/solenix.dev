@@ -35,7 +35,7 @@ export function useCopyForAi<T extends HTMLElement = HTMLElement>(sentence: stri
   )
   // Leaving the page cancels a pending reset.
   useEffect(() => () => controller.blur(), [controller])
-  // A failed copy selects the whole sentence and brings it into view, so one copy command takes it.
+  // A failed copy selects the whole sentence and scrolls it into view only when it is out of view, so one copy command takes it.
   useEffect(() => {
     const el = text.current
     if (status !== "failed" || !el) return
@@ -44,7 +44,7 @@ export function useCopyForAi<T extends HTMLElement = HTMLElement>(sentence: stri
     const selection = window.getSelection()
     selection?.removeAllRanges()
     selection?.addRange(range)
-    el.scrollIntoView({ block: "center" })
+    el.scrollIntoView({ block: "nearest" })
   }, [status, failures])
   return {
     status,
