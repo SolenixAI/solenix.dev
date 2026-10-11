@@ -5,11 +5,14 @@
 // Run it against a production build that believes it is the live site, so analytics load as they do for a visitor:
 //   VERCEL_PROJECT_PRODUCTION_URL=localhost npm run build && npm start -- -p 3100
 //   node scripts/weight-check.ts http://localhost:3100 [--json]
-// Requests to /lumen (PostHog's proxy: events, and PostHog's own add-ons) are stopped, so nothing leaves the machine.
+// /lumen is PostHog's proxy, a rewrite only Vercel serves. The check plays it: PostHog's script files (/lumen/static/,
+// the core and the replay and heatmap add-ons) are fetched from PostHog's asset host and counted; everything else
+// under /lumen (events, flags) is stopped, so no visit is recorded.
 import { gzipSync } from "node:zlib"
 import { launch } from "./browser.ts"
 import { overBudget, type Weight } from "../lib/page-weight.ts"
 import { NAV } from "../lib/site-nav.ts"
+import { POSTHOG_ASSETS_HOST } from "../lib/analytics.ts"
 
 const base = (process.argv[2] ?? "http://localhost:3000").replace(/\/$/, "")
 const sitemap = await fetch(base + "/sitemap.xml", { signal: AbortSignal.timeout(20_000) }).then((r) => r.text(), (e) => {
@@ -27,7 +30,12 @@ const weights: Weight[] = [], problems: string[] = []
 try {
   for (const path of paths) {
     const context = await browser.newContext({ viewport: { width: 1440, height: 900 } })
-    await context.route("**/lumen/**", (r) => r.abort())
+    await context.route("**/lumen/**", async (r) => {
+      const { pathname, search } = new URL(r.request().url())
+      if (r.request().method() !== "GET" || !pathname.startsWith("/lumen/static/")) return r.abort()
+      const res = await fetch(POSTHOG_ASSETS_HOST + pathname.slice("/lumen".length) + search, { signal: AbortSignal.timeout(20_000) })
+      await r.fulfill({ status: res.status, contentType: res.headers.get("content-type") ?? undefined, body: Buffer.from(await res.arrayBuffer()) })
+    })
     const page = await context.newPage()
     const pending: Promise<{ total: number; script: number } | null>[] = []
     page.on("requestfinished", (req) => pending.push((async () => {
