@@ -3,6 +3,7 @@ import { readdir, readFile } from "node:fs/promises"
 import path from "node:path"
 import { servePage } from "@/lib/site-page"
 import { SLUG, articleProblems } from "@/lib/article-rules"
+import { articleSchema } from "@/lib/site-schema"
 
 // Articles are self-contained interactive pages: one folder per article in articles/,
 // holding index.html and whatever data it loads. Adding an article = adding a folder.
@@ -56,7 +57,7 @@ export async function listArticles(): Promise<Article[]> {
 
 /** Serve an article: wrap a bare page in a document, then add what every page shares. */
 export function serveArticle(meta: Article, html: string) {
-  return servePage(/<html[\s>]/i.test(html) ? html : wrapFragment(html), meta)
+  return servePage(/<html[\s>]/i.test(html) ? html : wrapFragment(html), { ...meta, schema: meta.date ? articleSchema(meta) : undefined })
 }
 
 // A page written as a fragment (no <html>): its leading meta, title, link and style tags

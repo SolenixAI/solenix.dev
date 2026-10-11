@@ -4,6 +4,7 @@ import { fontHead } from "@/lib/site-fonts"
 import { withHero } from "@/lib/site-hero"
 import { withSiteNav } from "@/lib/raw-nav"
 import { withClientScripts } from "@/lib/client-script"
+import { ldJson } from "@/lib/site-schema"
 
 // Every page served as raw HTML (Articles, each article) goes out through here,
 // so each one gets the same things and no page has to remember them:
@@ -14,7 +15,7 @@ import { withClientScripts } from "@/lib/client-script"
 
 const DEV_RELOAD = "<!--client:dev-reload-->"
 
-export type PageMeta = { title: string; description: string; path: string; cover?: string }
+export type PageMeta = { title: string; description: string; path: string; cover?: string; schema?: object }
 
 export function servePage(html: string, meta: PageMeta) {
   // The browser paints its white default canvas unless it knows at once that the page is dark.
@@ -25,7 +26,8 @@ export function servePage(html: string, meta: PageMeta) {
     .replace(/<meta charset="[^"]*">/i, "")
     .replace(/<head>/i, `<head>${first}`)
     .replace(/<title>([^<]*)<\/title>/, (t, x: string) => (x.includes("Solenix") ? t : `<title>${x} · Solenix</title>`))
-    .replace("</head>", `${headTags({ ...meta, image: meta.cover })}${POSTHOG_SNIPPET}${SPEED_INSIGHTS_SNIPPET}</head>`)
+    // A function, not a string: the markup may hold "$" (a replacement string would read it as a pattern).
+    .replace("</head>", () => `${headTags({ ...meta, image: meta.cover })}${meta.schema ? `<script type="application/ld+json">${ldJson(meta.schema)}</script>` : ""}${POSTHOG_SNIPPET}${SPEED_INSIGHTS_SNIPPET}</head>`)
   // In development only, every page listens for saves and reloads itself (client/dev-reload.ts, lib/dev-reload.ts).
   // Production gets the same bytes as before: the marker is added only when NODE_ENV is development.
   const live = process.env.NODE_ENV === "development"
