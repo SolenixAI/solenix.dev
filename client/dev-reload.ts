@@ -6,11 +6,11 @@
 // runs this same script (components/home/dev-reload.tsx), so the stream count stays at one per tab (browsers
 // allow six connections per origin).
 
-const tab = window as Window & { __devReload?: true }
+const tab = window as Window & { __devReload?: EventSource }
 if (window.self === window.top && !tab.__devReload) {
-  tab.__devReload = true
   let start: string | null = null
   const source = new EventSource("/dev/reload")
+  tab.__devReload = source // the React homepage closes it when it leaves
   source.addEventListener("hello", (e: MessageEvent<string>) => {
     if (start !== null && start !== e.data) location.reload()
     start = e.data
