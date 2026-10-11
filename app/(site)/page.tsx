@@ -4,8 +4,8 @@ import { HomeBinding } from "@/components/home/binding";
 import { homeSource } from "@/lib/home/source";
 import { OG_IMAGE, SITE_URL } from "@/lib/site-meta";
 
-// The homepage. Its markup and CSS are design/home.html, the one source (lib/home/source.ts). It renders inside the
-// site layout (app/(site)/layout.tsx), which keeps the 3D world; the homepage binds to that world while it is shown
+// The homepage. Its markup and CSS are design/home.html, the one source (lib/home/source.ts); the world's stage and
+// its first-frame still are components/space/. It renders inside the site layout (app/(site)/layout.tsx), which keeps the 3D world; the homepage binds to that world while it is shown
 // and unbinds when it leaves (components/home/binding.tsx).
 export const dynamic = "force-static";
 
