@@ -1,4 +1,4 @@
-// The current page in the site nav, on the raw HTML pages (the homepage, Articles, each article). It reads
+// The current page in the site nav, on the raw HTML pages (Articles, each article). It reads
 // the page's location, so the markup is the same on every page. A React page marks its own current link
 // from its path (components/site/nav-link.tsx). Runs after client/site-fit.ts, which removes the nav in a frame.
 export {}

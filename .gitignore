@@ -19,6 +19,7 @@ public/vendor/
 
 # Page scripts compiled from client/*.ts by scripts/build-client.ts
 lib/client.generated.ts
+lib/nav.generated.ts
 
 # impeccable-ignore-start
 # Ephemeral output, runtime state, and per-dev overrides.

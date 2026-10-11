@@ -4,7 +4,7 @@ title: "User journeys"
 description: "Every person who uses solenix.dev, what they want, and how each step feels today, scored 1 to 5."
 tags: [ux, journeys, solenix.dev]
 sources:
-  - lib/site-nav.ts, lib/site-page.ts (nav and shared page parts)
+  - lib/site-nav.ts, lib/raw-nav.ts, lib/site-page.ts (nav and shared page parts)
   - design/home.html (homepage)
   - app/articles/route.ts, articles/ (articles)
   - app/(site)/agents/page.tsx (Agents Marketplace)

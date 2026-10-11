@@ -12,8 +12,8 @@ missing() { # missing <tool> <what it checks>
   else echo "skip: $1 is not installed; $2 did not run here (CI fails when $1 is missing)" >&2; fi
 }
 
-# The page scripts are compiled from client/*.ts first: lib/site-nav.ts and the checks below import the result
-# (lib/client.generated.ts, gitignored), so a fresh checkout (CI) must build it before anything reads it.
+# The page scripts are compiled from client/*.ts first, and the raw pages' nav header is rendered: lib/site-nav.ts,
+# lib/raw-nav.ts and the checks below import the results (lib/client.generated.ts, lib/nav.generated.ts, gitignored), so a fresh checkout (CI) must build it before anything reads it.
 node --no-warnings scripts/build-client.ts >/dev/null || bad "client scripts do not compile (scripts/build-client.ts)"
 
 # One version of everything: no versioned file names.
@@ -120,7 +120,7 @@ npx tsc --noEmit || fail=1
 node --test 'lib/**/*.test.ts' >/dev/null 2>&1 || { node --test 'lib/**/*.test.ts'; fail=1; }
 # The hero fit check opens pages in a browser, so locally it runs when something that shapes a first
 # screen changes; in CI it always runs.
-if [ -n "${CI:-}" ] || git diff --cached --name-only | grep -qE '^(articles/|app/\(site\)/|app/articles/|components/(home|site|space)/|design/(home\.html|tokens\.css|viewports\.json)|lib/(home|space)/|lib/site-(nav|hero|page)|scripts/hero-check)'; then
+if [ -n "${CI:-}" ] || git diff --cached --name-only | grep -qE '^(articles/|app/\(site\)/|app/articles/|components/(home|site|space)/|design/(home\.html|tokens\.css|viewports\.json)|lib/(home|space)/|lib/site-(nav|hero|page)|lib/raw-nav|scripts/hero-check)'; then
   node scripts/hero-check.ts || fail=1
 fi
 node scripts/brand-images.ts --check || fail=1
