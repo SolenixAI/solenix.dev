@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs"
+import { dirname, join } from "node:path"
+import { fileURLToPath } from "node:url"
 import { NAV } from "./site-nav.ts"
 
 // The rules every article must pass, in one place. Two gates use them:
@@ -14,6 +17,42 @@ const PRIVATE: [RegExp, string][] = [
   [/\bSOL-\d{2,}\b|linear\.app\/solenix/i, "an internal Linear reference"],
   [/\b(?:sk|rk)_live_[A-Za-z0-9]{8,}|\bghp_[A-Za-z0-9]{20,}|\bxox[bp]-[A-Za-z0-9-]{10,}/, "a secret key"],
 ]
+
+// The template's own placeholder text: every element articles/_template marks with data-placeholder (its text, or a
+// meta tag's content). Read from the template itself, so the rule can never drift from it, and a copy that drops the
+// mark but keeps the words still fails.
+let templateTexts: string[] | null = null
+// The template, found from this module where the file exists beside it, else from the repo root (a bundled build).
+const readTemplate = () => {
+  try { return readFileSync(join(dirname(fileURLToPath(import.meta.url)), "../articles/_template/index.html"), "utf8") }
+  catch { return readFileSync("articles/_template/index.html", "utf8") }
+}
+// Text as words: runs of spaces and line breaks count as one space, so spacing never hides template text.
+const words = (t: string) => t.replace(/\s+/g, " ").trim()
+// Each element of a page marked data-placeholder, as its tag and its whole text (a meta tag's content).
+const marked = (html: string) => [...html.matchAll(/<([a-z][a-z0-9]*)\b([^>]*\bdata-placeholder\b[^>]*)>([^<]*)/gi)]
+  .map((m) => ({ tag: m[1].toLowerCase(), text: words(m[1].toLowerCase() === "meta" ? (m[2].match(/content="([^"]*)"/)?.[1] ?? "") : m[3]) }))
+export const placeholderTexts = (template = readTemplate()): string[] => marked(template).map((m) => m.text).filter(Boolean)
+// Every whole piece of text on a page: each run of text between tags, and each meta tag's content. A template text
+// counts only when a whole piece equals it, so an article's own prose that happens to contain it never trips the rule.
+const pieces = (html: string) => new Set([
+  ...[...html.matchAll(/>([^<]+)</g)].map((m) => words(m[1])),
+  ...[...html.matchAll(/<meta\b[^>]*\bcontent="([^"]*)"/gi)].map((m) => words(m[1])),
+].filter(Boolean))
+const short = (t: string) => (t.length > 48 ? `${t.slice(0, 45)}…` : t)
+
+/** The horizontal paddings set on .wrap, in every form (padding, padding-inline and its -start and -end, padding-left, padding-right). */
+export function pageEdges(html: string): string[] {
+  const out: string[] = []
+  for (const block of html.matchAll(/\.wrap\s*\{([^}]*)\}/g))
+    for (const [, name, value] of block[1].matchAll(/(padding(?:-inline(?:-start|-end)?|-left|-right)?)\s*:\s*([^;}]+)/gi)) {
+      const prop = name.toLowerCase(), v = value.replace(/!\s*important/i, "").trim().split(/\s+(?![^(]*\))/)
+      if (prop === "padding") out.push(v[1] ?? v[0], v[3] ?? v[1] ?? v[0])
+      else if (prop === "padding-inline") out.push(v[0], v[1] ?? v[0])
+      else out.push(v[0])
+    }
+  return out
+}
 
 /** Problems with one article page; empty means it passes. */
 export function articleProblems(slug: string, html: string): string[] {
@@ -34,7 +73,15 @@ export function articleProblems(slug: string, html: string): string[] {
   // The first screen is a hero that the site can check and derive the card and share image from.
   if (!/<[a-z]+\b[^>]*\bdata-hero\b/i.test(html)) out.push(`has no hero: mark the first screen with data-hero (see articles/_template)`)
   // The page edge is the site's: an article's .wrap reads var(--gutter), so it lines up with the nav and every page.
-  if (/\.wrap\s*\{[^}]*padding-inline\s*:\s*\d/.test(html)) out.push(`sets its own page edge: give .wrap padding-inline:var(--gutter)`)
+  if (pageEdges(html).some((v) => v !== "var(--gutter)")) out.push(`sets its own page edge: give .wrap padding-inline:var(--gutter)`)
+  // articles/_template marks each piece of placeholder text with data-placeholder; a page that still holds one is a copy
+  // not yet finished. The mark goes with the text, so a reworded template can never drift from this rule.
+  const marks = marked(html)
+  for (const m of marks) out.push(`still holds template text <${m.tag}>${m.text ? ` "${short(m.text)}"` : ""}: write the article's own, and drop data-placeholder`)
+  templateTexts ??= placeholderTexts()
+  const own = pieces(html)
+  for (const text of templateTexts)
+    if (own.has(text) && !marks.some((m) => m.text === text)) out.push(`still holds template text "${short(text)}": write the article's own`)
   // Colours come from /tokens.css by name, so a brand change reaches every article. A raw colour is a hex code, or a colour
   // function with numbers in it, in the comma or the space syntax: rgb(244 242 238), hsl(), oklch(), color(). Pure black
   // (rgb(0 0 0), rgba(0,0,0,.5)) stays free: a shadow or a scrim is not a brand colour.
