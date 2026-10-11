@@ -20,11 +20,22 @@ const PRIVATE: [RegExp, string][] = [
 // meta tag's content). Read from the template itself, so the rule can never drift from it, and a copy that drops the
 // mark but keeps the words still fails.
 let templateTexts: string[] | null = null
-// Each element of a page marked data-placeholder, as its tag and its text (a meta tag's content).
+// The template, found from this module where the file exists beside it, else from the repo root (a bundled build).
+const readTemplate = () => {
+  try { return readFileSync(new URL("../articles/_template/index.html", import.meta.url), "utf8") }
+  catch { return readFileSync("articles/_template/index.html", "utf8") }
+}
+// Each element of a page marked data-placeholder, as its tag and its whole text (a meta tag's content).
 const marked = (html: string) => [...html.matchAll(/<([a-z][a-z0-9]*)\b([^>]*\bdata-placeholder\b[^>]*)>([^<]*)/gi)]
-  .map((m) => ({ tag: m[1].toLowerCase(), text: (m[1].toLowerCase() === "meta" ? (m[2].match(/content="([^"]*)"/)?.[1] ?? "") : m[3]).trim().slice(0, 40) }))
-export const placeholderTexts = (template = readFileSync("articles/_template/index.html", "utf8")): string[] =>
-  marked(template).map((m) => m.text).filter((t) => t.length >= 8)
+  .map((m) => ({ tag: m[1].toLowerCase(), text: (m[1].toLowerCase() === "meta" ? (m[2].match(/content="([^"]*)"/)?.[1] ?? "") : m[3]).trim() }))
+export const placeholderTexts = (template = readTemplate()): string[] => marked(template).map((m) => m.text).filter(Boolean)
+// Every whole piece of text on a page: each run of text between tags, and each meta tag's content. A template text
+// counts only when a whole piece equals it, so an article's own prose that happens to contain it never trips the rule.
+const pieces = (html: string) => new Set([
+  ...[...html.matchAll(/>([^<]+)</g)].map((m) => m[1].trim()),
+  ...[...html.matchAll(/<meta\b[^>]*\bcontent="([^"]*)"/gi)].map((m) => m[1].trim()),
+].filter(Boolean))
+const short = (t: string) => (t.length > 48 ? `${t.slice(0, 45)}…` : t)
 
 /** The horizontal paddings set on .wrap, in every form (padding, padding-inline and its -start and -end, padding-left, padding-right). */
 export function pageEdges(html: string): string[] {
@@ -62,10 +73,11 @@ export function articleProblems(slug: string, html: string): string[] {
   // articles/_template marks each piece of placeholder text with data-placeholder; a page that still holds one is a copy
   // not yet finished. The mark goes with the text, so a reworded template can never drift from this rule.
   const marks = marked(html)
-  for (const m of marks) out.push(`still holds template text <${m.tag}>${m.text ? ` "${m.text}"` : ""}: write the article's own, and drop data-placeholder`)
+  for (const m of marks) out.push(`still holds template text <${m.tag}>${m.text ? ` "${short(m.text)}"` : ""}: write the article's own, and drop data-placeholder`)
   templateTexts ??= placeholderTexts()
+  const own = pieces(html)
   for (const text of templateTexts)
-    if (html.includes(text) && !marks.some((m) => m.text === text)) out.push(`still holds template text "${text}": write the article's own`)
+    if (own.has(text) && !marks.some((m) => m.text === text)) out.push(`still holds template text "${short(text)}": write the article's own`)
   // Colours come from /tokens.css by name, so a brand change reaches every article. A raw colour is a hex code, or a colour
   // function with numbers in it, in the comma or the space syntax: rgb(244 242 238), hsl(), oklch(), color(). Pure black
   // (rgb(0 0 0), rgba(0,0,0,.5)) stays free: a shadow or a scrim is not a brand colour.
