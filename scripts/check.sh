@@ -69,7 +69,8 @@ bash .claude/hooks/block-dangerous-git.test.sh || fail=1
 git ls-files -co --exclude-standard | grep -E '\.(js|jsx|mjs|cjs)$' | grep -vE '^(public/|\.(agents|claude|cursor|github|grok)/skills/)' | grep -vxFf <(grep -v '^#' scripts/js-allowlist.txt) \
   | while read -r f; do echo "check: JavaScript file $f (the repo is TypeScript; see scripts/js-allowlist.txt)"; done | grep . && fail=1
 # Page scripts are TypeScript in client/*.ts, compiled and inlined where the page holds a
-# <!--client:name--> marker (lib/client-script.ts). The homepage and the articles hold no hand-written
+# <!--client:name--> marker (lib/client-script.ts). The homepage, the articles and the brand motion page (its
+# script is brand/motion/piece.ts) hold no hand-written
 # inline <script>, except: the one-line "js" class (it must run before the first paint), importmaps,
 # JSON data (ld+json) and speculation rules. ALLOWED is the explicit list of pages that still hold their
 # own script: it may only shrink (move the script to client/, then delete its line). An entry whose page
@@ -80,7 +81,7 @@ ALLOWED = ["articles/proof-flood/index.html"]
 JS_CLASS = "document.documentElement.classList.add('js')"
 TYPES = {"importmap", "application/ld+json", "speculationrules"}
 bad = 0
-for f in ["design/home.html"] + sorted(glob.glob("articles/*/index.html")):
+for f in ["design/home.html", "brand/motion/index.html"] + sorted(glob.glob("articles/*/index.html")):
     text = re.sub(r"<!--.*?-->", lambda m: re.sub(r"[^\n]", " ", m.group()), open(f).read(), flags=re.S)  # comments, keeping line numbers
     inline = []
     for m in re.finditer(r"<script\b([^>]*)>(.*?)</script>", text, re.S | re.I):
@@ -93,7 +94,7 @@ for f in ["design/home.html"] + sorted(glob.glob("articles/*/index.html")):
         print(f"check: {f} is in the inline-script list in scripts/check.sh but holds no inline script: delete it from the list"); bad = 1
     if f not in ALLOWED:
         for line in inline:
-            print(f"check: {f}:{line} hand-written inline <script>: put it in client/<name>.ts and mark the spot with <!--client:<name>--> (lib/client-script.ts)"); bad = 1
+            print(f"check: {f}:{line} hand-written inline <script>: put it in client/<name>.ts and mark the spot with <!--client:<name>--> (lib/client-script.ts); on the brand motion page, in brand/motion/piece.ts"); bad = 1
 sys.exit(bad)
 PY
 # CI workflows: valid (actionlint) and safe (zizmor: pinned actions, least privilege). ACTIONLINT and ZIZMOR name the binaries.
