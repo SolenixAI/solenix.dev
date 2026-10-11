@@ -1,6 +1,7 @@
 import "server-only"
 import { cache } from "react"
 import { githubHeaders } from "@/lib/github"
+import { makeFacts } from "@/lib/facts"
 import { failed } from "@/lib/failed"
 import { fresh } from "@/lib/fresh"
 import { makeDescriber, type Part } from "@/lib/marketplace/parts"
@@ -124,13 +125,9 @@ export const getCatalog = cache(async (): Promise<Entry[] | null> => {
   return [...kit, ...worlds]
 })
 
-// Other people's facts: hourly at most, tagged so a push refreshes them behind the page. A source that
-// fails, or answers with something that is not JSON, gives null and logs why: it drops only its own facts.
-// `optional`: a 404 means the fact does not exist (a repo with no release), so it gives null quietly.
-const hourly = (url: string, headers: Record<string, string> = {}, { optional = false } = {}) =>
-  fetch(url, { headers, next: { revalidate: HOUR, tags: [FACTS_TAG] } })
-    .then((r) => (r.ok ? r.json() : optional && r.status === 404 ? null : failed(url, `HTTP ${r.status}`)))
-    .catch((e: unknown) => failed(url, e))
+// Other people's facts: hourly at most, tagged so a push refreshes them behind the page (lib/facts: a failure
+// logs and drops only its own facts; an optional fact that does not exist is quiet).
+const hourly = makeFacts((url, init) => fetch(url, init), { revalidate: HOUR, tags: [FACTS_TAG] })
 const gh = async (path: string, opts?: { optional?: boolean }) => hourly(`https://api.github.com/${path}`, await githubHeaders(), opts)
 
 type RepoFacts = { slug: string; blurb: string | null; stars: number | null; forks: number | null; license: string | null; avatar: string | null; pushed: string | null; homepage: string | null }
