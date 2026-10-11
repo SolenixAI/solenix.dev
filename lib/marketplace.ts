@@ -218,7 +218,7 @@ async function cli(name: string, docs: string, maker: string): Promise<Source> {
   const n = await npm(name)
   return { ...blank({ id: "cli", kind: "cli", name: "Command line", href: docs }), blurb: n.blurb, version: n.version, weekly: n.weekly,
     gives: `Your AI can run ${maker} for you, the way its engineers do.`,
-    items: [`npm i -g ${name}`], refs: [{ label: "Docs", href: docs }, npmPage(name)] }
+    refs: [{ label: "Docs", href: docs }, npmPage(name)] }
 }
 const api = (docs: string, maker: string): Source => ({ ...blank({ id: "api", kind: "api", name: "API", href: docs }), gives: `Anything else ${maker} can do, your AI can reach directly.`, refs: [{ label: "API reference", href: docs }] })
 

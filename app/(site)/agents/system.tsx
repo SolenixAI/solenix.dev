@@ -248,7 +248,6 @@ function SubWorld({ s, onPart }: { s: Source; onPart?: (x: Part, el: HTMLElement
           </ul>
         </div>
       ))}
-      {s.kind === "cli" && s.items.length > 0 && <ul className="sy-items">{s.items.map((it) => <li key={it}><code>{it}</code></li>)}</ul>}
       <ul className="sy-refs">
         {s.refs.map((r) => <li key={r.href}><a href={r.href}>{r.label}<OutIcon /></a></li>)}
       </ul>

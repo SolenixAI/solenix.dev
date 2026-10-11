@@ -50,9 +50,6 @@ export const WORLDS_CSS = `
 .wd-quiet{margin:0;font:500 .92rem/1.5 var(--font-text);color:var(--muted);text-wrap:pretty}
 .wd-quiet a{color:var(--text);text-decoration:underline;text-decoration-color:var(--line-strong);text-underline-offset:3px}
 .wd-quiet a:hover{text-decoration-color:var(--accent-text)}
-.wd-quiet-toggle{display:inline-flex;align-items:center;min-height:var(--tap-min);margin-left:6px;padding:0 2px;border:0;background:none;cursor:pointer;font:600 .92rem/1 var(--font-text);color:var(--text);text-decoration:underline;text-decoration-color:var(--line-strong);text-underline-offset:3px}
-.wd-quiet-toggle:hover{text-decoration-color:var(--accent-text)}
-.wd-quiet-toggle[aria-expanded="true"]{color:var(--accent-text)}
 .wd-ask-sentence{margin:0;width:min(100%,30rem);box-sizing:border-box;padding:14px 16px;border-radius:12px;border:1px solid var(--line);background:var(--surface-solid);font:500 .92rem/1.6 var(--font-text);color:var(--text);text-wrap:pretty}
 .wd-ask-sentence code{padding:1px 6px;border-radius:var(--radius-xs);background:var(--surface-solid);border:1px solid var(--line);font:500 .88em/1.6 var(--font-mono);color:var(--accent-text)}
 .wd-ask-wait{pointer-events:none}
@@ -140,14 +137,7 @@ export const WORLDS_CSS = `
 .wd-lede{margin:0;max-width:44rem;font-size:clamp(1.05rem,2.4vw,1.25rem);color:var(--muted);text-wrap:pretty}
 .wd-copy{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px 20px;margin-top:8px;padding:20px 20px 20px 24px;border-radius:var(--radius-xl);background:var(--bg);border:1px solid var(--line);box-shadow:inset 0 2px 12px rgb(0 0 0/.35)}
 .wd-outcome{flex:1 1 22rem;max-width:62ch;margin:0;font:500 clamp(1rem,2.2vw,1.125rem)/1.6 var(--font-text);color:var(--text);overflow-wrap:break-word;text-wrap:pretty}
-.wd-run{flex:1 1 100%;margin:0}
-.wd-run summary{display:inline-flex;align-items:center;gap:8px;min-height:var(--tap-min);cursor:pointer;font:600 .86rem/1 var(--font-text);color:var(--muted);list-style:none}
-.wd-run summary::-webkit-details-marker{display:none}
-.wd-run summary::after{content:"";width:6px;height:6px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;rotate:45deg;transition:rotate var(--dur-base) var(--ease-out)}
-.wd-run[open] summary::after{rotate:225deg}
-.wd-run summary:hover{color:var(--text)}
-.wd-run summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:var(--radius-pill)}
-.wd-run-text{margin:8px 0 0;padding:14px 16px;border-radius:var(--radius-lg);background:var(--surface-solid);border:1px solid var(--line);font:500 .95rem/1.7 var(--font-text);color:var(--text);text-wrap:pretty}
+.wd-run-text{flex:1 1 100%;margin:0;padding:14px 16px;border-radius:var(--radius-lg);background:var(--surface-solid);border:1px solid var(--line);font:500 .95rem/1.7 var(--font-text);color:var(--text);text-wrap:pretty}
 .wd-copy code{padding:2px 8px;border-radius:var(--radius-xs);background:var(--surface-solid);border:1px solid var(--line);font:500 .86em/1.7 var(--font-mono);font-variant-ligatures:none;color:var(--accent-text);-webkit-box-decoration-break:clone;box-decoration-break:clone}
 /* Command text: a line breaks only at a space between pieces, never inside a word or between a flag and its value
    (<Sentence> makes each piece one nowrap span). A sentence never widens its column (contain). A piece wider than the
@@ -239,14 +229,7 @@ export const WORLDS_CSS = `
 .wd-say-copy:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 .wd-say-copy[data-state=copied]{border-color:var(--accent);color:var(--accent-text)}
 .wd-say-bar-act{width:11rem;height:var(--tap-min)}
-.wd-say-more{grid-column:1/-1;margin:0}
-.wd-say-more summary{display:inline-flex;align-items:center;gap:10px;min-height:var(--tap-min);cursor:pointer;font:600 var(--fs-sm)/1 var(--font-text);color:var(--muted);list-style:none;border-radius:var(--radius-xs)}
-.wd-say-more summary::-webkit-details-marker{display:none}
-.wd-say-more summary::before{content:"";width:6px;height:6px;border-right:1.6px solid currentColor;border-bottom:1.6px solid currentColor;transform:translateY(-2px) rotate(45deg);transition:transform var(--dur-base) var(--ease-out)}
-.wd-say-more[open] summary::before{transform:translateY(2px) rotate(-135deg)}
-.wd-say-more summary:hover{color:var(--text);text-decoration:underline;text-underline-offset:3px}
-.wd-say-more summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
-.wd-say-raw{margin:10px 0 0;max-width:62ch;font:500 .92rem/1.6 var(--font-text);color:var(--muted);text-wrap:pretty}
+.wd-say-raw{grid-column:1/-1;margin:0;max-width:62ch;font:500 .92rem/1.6 var(--font-text);color:var(--muted);text-wrap:pretty}
 .wd-say-raw code{padding:1px 6px;border-radius:var(--radius-xs);background:var(--surface-solid);border:1px solid var(--line);font:500 .88em/1.6 var(--font-mono);color:var(--accent-text)}
 .wd-say-note{grid-column:1/-1;margin:0;font:500 .9rem/1.4 var(--font-text);color:var(--accent-text);text-wrap:pretty}
 /* A failed copy selects the sentence: the selection takes the site's palette, not the browser's blue. */
