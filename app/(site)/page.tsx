@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { preload } from "react-dom";
 import { DevReload } from "@/components/home/dev-reload";
 import { HomeBinding } from "@/components/home/binding";
 import { homeSource } from "@/lib/home/source";
@@ -22,9 +21,6 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function Home() {
   const { css, body } = await homeSource();
-  // The world's first-frame still (design/home.html .fallback) is fetched with the page, so it is on screen in frame one.
-  preload("/space/poster.webp", { as: "image", fetchPriority: "high", media: "(min-aspect-ratio: 3/4)" });
-  preload("/space/poster-phone.webp", { as: "image", fetchPriority: "high", media: "(max-aspect-ratio: 3/4)" });
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: css }} />
