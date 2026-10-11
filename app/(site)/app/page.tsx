@@ -1,8 +1,7 @@
 import type { Metadata } from "next"
-import { SITE_URL } from "@/lib/site-meta"
 import { Button } from "@/components/ui/button"
 import { HERO_CSS } from "@/lib/site-hero"
-import { OG_IMAGE } from "@/lib/site-meta"
+import { OG_IMAGE, SITE_URL } from "@/lib/site-meta"
 import { NAV } from "@/lib/site-nav"
 
 // solenix.dev/app: the platform page. The platform is being rebuilt from scratch, so the nav's platform button
