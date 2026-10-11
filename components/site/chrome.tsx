@@ -24,7 +24,7 @@ export function SiteFooter() {
           </a>
           <nav aria-label="Footer" className="flex flex-wrap gap-x-6 gap-y-3 text-sm">
             {links.map((l) => (
-              <a key={l.href} href={l.href} className="inline-flex min-h-6 items-center text-muted-foreground no-underline hover:text-foreground">
+              <a key={l.href} href={l.href} className="inline-flex min-h-tap items-center text-muted-foreground no-underline hover:text-foreground">
                 {l.label}
               </a>
             ))}

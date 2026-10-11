@@ -93,7 +93,7 @@ footer { position: relative; z-index: 2; }
 .h1 .w { display: inline-block; overflow: clip; padding-block: 0.06em 0.12em; margin-block: -0.06em -0.12em; vertical-align: top; }
 .h1 .w > span { display: inline-block; }
 .h1 .g > span { background: var(--grad-headline); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.hero-sub { margin-top: min(var(--space-5), 2.5svh); font-size: var(--fs-lede); color: var(--muted); max-width: 30rem; }
+.hero-sub { margin-top: min(var(--space-5), 2.5svh); font-size: var(--fs-lede); color: var(--muted); max-width: 30rem; text-shadow: 0 0 26px var(--bg), 0 0 10px var(--bg), 0 1px 2px var(--bg); }
 .hero-sub strong { color: var(--text); font-weight: var(--fw-semibold); }
 /* A very short hero (a phone held sideways) keeps the headline and the action; the sentence steps aside. */
 @media (max-height: 420px) { .hero-sub { display: none; } }
@@ -408,7 +408,7 @@ html[data-motion="on"] .faq-side .mk .spin { animation: orbit 24s linear infinit
 footer { border-top: 1px solid var(--line); padding-block: var(--space-7); font-size: var(--fs-sm); color: var(--muted); background: var(--bg); }
 footer .wrap { display: flex; flex-wrap: wrap; gap: var(--space-5) var(--space-7); align-items: center; justify-content: space-between; }
 footer ul { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); }
-footer a { display: inline-flex; align-items: center; min-height: 24px; padding-block: var(--space-2); text-decoration: none; color: var(--text); }
+footer a { display: inline-flex; align-items: center; min-height: var(--tap-min); text-decoration: none; color: var(--text); }
 footer a:hover { text-decoration: underline; text-underline-offset: 3px; }
 
 /* Reveal: only blocks still below the screen at load are armed (lib/home/ui.ts); what is on screen never hides. */

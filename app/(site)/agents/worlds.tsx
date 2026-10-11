@@ -198,6 +198,9 @@ export function HeroAsk({ sentence, repo }: { sentence: string; repo: string }) 
       <p className="wd-quiet">
         Open source. Read every step on <a href={repo}>GitHub</a>.
       </p>
+      <p className="wd-quiet">
+        Using ChatGPT or Claude in a browser? It can't run the setup. <a href="/book">Book a call</a> and we set it up with you.
+      </p>
       <p ref={text} className="wd-ask-sentence" hidden={!shown}>
         <Sentence text={sentence} />
       </p>
