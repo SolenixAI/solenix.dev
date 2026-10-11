@@ -156,7 +156,6 @@ const npm = async (name: string) => {
   const [latest, week] = await Promise.all([hourly(`https://registry.npmjs.org/${name}/latest`), hourly(`https://api.npmjs.org/downloads/point/last-week/${name}`)])
   return { version: (latest?.version as string) ?? null, blurb: (latest?.description as string) ?? null, weekly: (week?.downloads as number) ?? null }
 }
-const list = (xs: string[]) => (xs.length < 2 ? xs.join("") : `${xs.slice(0, -1).join(", ")} and ${xs.at(-1)}`)
 const slugOf = (url: string | undefined) => url?.match(/github\.com[/:]([^/]+\/[^/.#]+)/)?.[1] ?? null
 const gitHub = (slug: string): Link => ({ label: "Source on GitHub", href: `https://github.com/${slug}` })
 const npmPage = (name: string): Link => ({ label: "Package page", href: `https://www.npmjs.com/package/${name}` })
@@ -191,7 +190,7 @@ async function plugin(slug: string, specs: Specs, maker: string): Promise<Source
   const extra = [...(s.mcp ? [{ label: "connector", n: 1 }] : []), ...(s.hooks ? [{ label: "hooks", n: 1 }] : [])]
   return { ...blank({ id: "plugin", kind: "plugin", name: "Add-on", href: `https://github.com/${slug}` }), blurb: f.blurb, repo: asRepo(f), version, updated: f.pushed,
     contents: [...s.contents, ...extra], works: s.works, parts,
-    gives: `One install gives your AI everything ${maker} built for it${s.works.length ? `, in ${list(s.works)}` : ""}.`,
+    gives: `One install gives your AI everything ${maker} built for it.`,
     refs: [gitHub(slug), ...(f.homepage ? [{ label: "Docs", href: f.homepage }] : []), ...spec(specs, "plugin", "How add-ons work")] }
 }
 async function skills(slug: string, specs: Specs, maker: string): Promise<Source> {

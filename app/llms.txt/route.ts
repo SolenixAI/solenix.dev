@@ -12,7 +12,7 @@ export async function GET() {
     "",
     "> One tech expert for small businesses in St. John's, Newfoundland and Labrador: one AI at the centre of the tools a business already uses.",
     "",
-    "Solenix puts one AI at the centre of the tools a business already uses. It sets up Claude or ChatGPT for the team, connects it to those tools, cuts the ones the business pays for but barely uses, teaches the staff, and builds the website.",
+    "Solenix puts one AI at the centre of the tools a business already uses. It sets up the AI agent of the team's choice, connects it to those tools, cuts the ones the business pays for but barely uses, teaches the staff, and builds the website.",
     "",
     "Price: a fixed price, in writing, agreed on the call. No surprise invoice. There is no public price list.",
     "",
@@ -30,7 +30,7 @@ export async function GET() {
     "",
     "## Articles",
     "",
-    ...articles.map((a) => `- [${a.title}](${SITE_URL}${a.path})`),
+    ...articles.map((a) => `- [${a.title}](${SITE_URL}${a.path}): ${a.description}`),
     "",
   ].join("\n")
   return new Response(body, { headers: { "content-type": "text/markdown; charset=utf-8" } })

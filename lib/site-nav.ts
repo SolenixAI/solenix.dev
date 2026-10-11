@@ -98,7 +98,7 @@ html{scroll-padding-top:var(--nav-height)}
 .lnav.is-on{visibility:visible}
 .lnav-home{flex:none;display:inline-flex;align-items:center;justify-content:center;width:var(--tap-min);height:var(--tap-min);border-radius:50%}
 .lnav-home svg{display:block;width:26px;height:26px}
-.lnav-title{flex:none;display:inline-flex;align-items:center;min-height:var(--tap-min);padding-right:var(--space-3);font:var(--fw-brand) 1rem/1 var(--font-display);letter-spacing:-.01em;white-space:nowrap}
+.lnav-title{flex:0 1 auto;min-width:0;display:block;overflow:hidden;text-overflow:ellipsis;min-height:var(--tap-min);line-height:var(--tap-min);padding-right:var(--space-3);font:var(--fw-brand) 1rem/1 var(--font-display);letter-spacing:-.01em;white-space:nowrap}
 .lnav-in{flex:none;display:flex;align-items:center;gap:2px;margin-left:auto}
 .lnav-cur,.lnav-share{flex:none;display:inline-flex;align-items:center;gap:8px;min-height:var(--tap-min);border-radius:var(--radius-pill);background:none;color:inherit;font:inherit;cursor:pointer;white-space:nowrap}
 .lnav-cur{display:none;margin-left:auto;padding:0 var(--space-3);border:0;color:var(--accent-text)}

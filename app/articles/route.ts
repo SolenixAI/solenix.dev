@@ -1,5 +1,6 @@
 import { listArticles, type Article } from "@/lib/articles"
 import { servePage } from "@/lib/site-page"
+import { articlesSchema } from "@/lib/site-schema"
 import { CLIENT } from "@/lib/client.generated"
 
 // solenix.dev/articles: every article, newest first and featured, built from the pages themselves.
@@ -18,11 +19,11 @@ function card(a: Article, feature = false) {
     ? `<img src="${a.cover}" alt="" loading="${feature ? "eager" : "lazy"}" width="1200" height="630">`
     : `<div class="noimg" aria-hidden="true"></div>`
   return `<article class="card${feature ? " feature" : ""}" data-live-scope>
-  <div class="cover live">${still}<iframe data-src="${a.path}" hidden tabindex="-1" aria-hidden="true" title=""></iframe></div>
+  <div class="cover live">${still}<iframe data-src="${a.path}" hidden tabindex="-1" aria-hidden="true" title="${esc(a.title)}"></iframe></div>
   <div class="text">
     <h3><a href="${a.path}">${esc(a.title)}</a></h3>
     <p>${esc(a.description)}</p>
-    <div class="meta"><span class="date">${esc(day(a.date))}${feature ? ` · <b>New</b>` : ""}</span><span class="go" aria-hidden="true">Play with it<svg viewBox="0 0 16 16" focusable="false"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+    <div class="meta"><span class="date"><time datetime="${a.date}">${esc(day(a.date))}</time>${feature ? ` · <b>New</b>` : ""}</span><span class="go" aria-hidden="true">Play with it<svg viewBox="0 0 16 16" focusable="false"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
   </div>
 </article>`
 }
@@ -40,24 +41,25 @@ function newestHero(a: Article, more: number) {
   const still = a.hero && a.heroPhone
     ? `<picture><source media="(max-width:760px)" srcset="${srcset(a.heroPhone, a.heroPhone2x)}" width="390" height="844"><img src="${a.hero}" srcset="${srcset(a.hero, a.hero2x)}" alt="" width="1440" height="900" decoding="sync" fetchpriority="high"></picture>`
     : a.cover ? `<img src="${a.cover}" alt="" width="1200" height="630">` : `<div class="noimg" aria-hidden="true"></div>`
-  const live = `<div class="cover live play">${still}<iframe data-src="${a.path}" hidden tabindex="-1" aria-hidden="true" title=""></iframe></div>`
+  const live = `<div class="cover live play">${still}<iframe data-src="${a.path}" hidden tabindex="-1" aria-hidden="true" title="${t}"></iframe></div>`
   const enter = `<a class="enter" href="${a.path}" aria-label="Play with ${t}">Play with it<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>`
   const cue = `<a class="sx-cue" href="#more">${more ? "More articles" : "Who made these"} ↓</a>`
   return `
 <header class="sx-hero ar-hero" data-hero data-live-scope>
- <h1 class="sr">Articles: pages you can play with</h1>
+ <h1 class="sr">AI articles: pages you can play with</h1>
  <div class="win">
   ${live}
-  <div class="win-bar"><span class="win-cap"><b>New</b><span class="win-name">${t}</span><span class="win-hint">Try it right here.</span></span>${enter}</div>
+  <div class="win-bar"><span class="win-cap"><b>New</b><time class="win-date" datetime="${a.date}">${esc(day(a.date))}</time><span class="win-name">${t}</span><span class="win-hint">Try it right here.</span></span>${enter}</div>
  </div>
  ${cue}
 </header>`
 }
 
 export async function GET() {
-  const [first, ...rest] = await listArticles()
-  const title = "Articles"
-  const description = "Stories about what AI can do now, told as pages you can play with."
+  const all = await listArticles()
+  const [first, ...rest] = all
+  const title = "AI articles you can play with"
+  const description = "Stories about what AI can do now, told as pages you can play with. Made by Solenix in St. John's, Newfoundland and Labrador."
   const hero = first
     ? newestHero(first, rest.length)
     : `<header class="sx-hero" data-hero><div class="sx-hero-in"><div class="sx-hero-text"><h1>Pages you can play with, on their way</h1><p class="sx-sub">The first one is almost ready.</p></div></div></header>`
@@ -68,7 +70,7 @@ export async function GET() {
       `<link rel="preload" as="image" href="${first.heroPhone}" imagesrcset="${srcset(first.heroPhone, first.heroPhone2x)}" media="(max-width:760px)" fetchpriority="high">`
     : ""
   const html = `<!doctype html>
-<html lang="en"><head>
+<html lang="en-CA"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${title}</title><meta name="description" content="${esc(description)}">
 ${preload}<style>
@@ -99,7 +101,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background-im
 /* A narrow window (a small or short screen): the article shows its own title right above, so the bar keeps only the action. */
 @container win (max-width:440px){.win-cap{display:none}.win-bar{padding:8px}.enter{flex:1;justify-content:center}}
 .win-hint{font:400 .9rem/1.2 var(--font-text);color:var(--muted)}
-@container (max-width:480px){.win-hint{display:none}}
+.win-date{font:500 .8rem ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--faint);letter-spacing:.06em}@container (max-width:480px){.win-hint{display:none}}
 .card{position:relative;display:grid;grid-template-rows:auto 1fr;border-radius:var(--radius-xl);overflow:hidden;background:var(--glass-bg);border:1px solid var(--line);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-md);color:var(--text);text-decoration:none;transition:transform .4s var(--ease-out),border-color .4s var(--ease-out),box-shadow .4s var(--ease-out)}
 .card:hover{transform:translateY(-3px);border-color:color-mix(in oklch,var(--accent) 45%,transparent);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-lg),0 28px 60px -28px color-mix(in srgb,var(--sun2) 45%,transparent)}
 .cover{position:relative;aspect-ratio:1200/630;overflow:hidden;background:var(--bg2);border-bottom:1px solid var(--line)}
@@ -145,7 +147,7 @@ footer p{margin:0;color:var(--muted);max-width:34rem}
 ${hero}
 <div class="wrap" id="more">
 ${list}
-<footer><p>Solenix built these pages with AI. For your business, we put one AI at the centre of the tools you already use, cut the ones you don't, and teach your team. A fixed price, in writing.</p><a class="btn primary" href="/book">Book a call</a></footer>
+<footer><p>Solenix built these pages with AI. For your business, we set up one AI at the centre of the tools you already use. We cut the tools you don't need and teach your team. A fixed price, in writing.</p><a class="btn primary" href="/book">Book a call</a></footer>
 </div><script>${CLIENT["articles-live"]}</script></body></html>`
-  return servePage(html, { title, description, path: "/articles" })
+  return servePage(html, { title, description, path: "/articles", cover: first?.cover, schema: articlesSchema(all) })
 }

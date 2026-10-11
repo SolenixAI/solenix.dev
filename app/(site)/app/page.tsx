@@ -9,14 +9,14 @@ import { NAV } from "@/lib/site-nav"
 // behind it (components/space/world.tsx); the words are shaded from the scene as on the homepage, never panelled.
 const SHADE = ".sx-hero-text{text-shadow:0 0 26px var(--bg),0 0 10px var(--bg),0 1px 2px var(--bg)}.sx-hero-text a{text-shadow:none}"
 const title = NAV.platform.label
-const description = `The ${title} is being rebuilt from scratch. Book a call and we set up your AI on the tools you already use.`
+const description = `The ${title} is being rebuilt. Start with one call, where a fixed price is agreed in writing. Then we set up one AI on the tools you already use.`
 
 export const metadata: Metadata = {
   title,
   description,
   alternates: { canonical: `${SITE_URL}/app` },
   robots: { index: false },
-  openGraph: { title: `${title} · Solenix`, description, url: "/app", images: [OG_IMAGE] },
+  openGraph: { type: "website", siteName: "Solenix", locale: "en_CA", title: `${title} · Solenix`, description, url: "/app", images: [OG_IMAGE] },
 }
 
 export default function Platform() {
@@ -27,7 +27,7 @@ export default function Platform() {
         <div className="sx-hero-in">
           <div className="sx-hero-text">
             <h1>The {title} is being rebuilt.</h1>
-            <p className="sx-sub">Your own AI, on the tools you already use. Until it opens, we set it up with you on a call.</p>
+            <p className="sx-sub">Until it opens, start with one call. A fixed price, in writing, agreed on the call.</p>
             <div>
               <Button asChild size="lg">
                 <a href="/book">Book a call</a>

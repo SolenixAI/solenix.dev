@@ -17,7 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
     description,
     // Next merges metadata one key at a time: the page restates the root's Open Graph values, or they are lost.
     alternates: { canonical: `${SITE_URL}/` },
-    openGraph: { type: "website", siteName: "Solenix", title, description, url: `${SITE_URL}/`, images: [OG_IMAGE] },
+    openGraph: { type: "website", siteName: "Solenix", locale: "en_CA", title, description, url: `${SITE_URL}/`, images: [OG_IMAGE] },
   };
 }
 

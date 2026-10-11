@@ -164,6 +164,7 @@ function WorldView({ card, onClose, failedOnOpen }: { card: Card; onClose: () =>
         <p className="wd-lede">{world.for}</p>
         <div className="wd-copy">
           <p className="wd-outcome">{outcome}</p>
+          <p className="wd-outcome">Your AI explains each step, and asks before it installs anything system-wide.</p>
           <button ref={action} type="button" className="wd-action" onBlur={blur} onClick={copy}>{label}</button>
           <p ref={text} className="wd-copy-sentence" hidden={!shown}><Sentence text={world.sentence} /></p>
           <p role="status" className={status === "failed" ? "wd-copy-note" : "sy-sr"}>
@@ -199,7 +200,7 @@ export function HeroAsk({ sentence, repo }: { sentence: string; repo: string }) 
         Open source. Read every step on <a href={repo}>GitHub</a>.
       </p>
       <p className="wd-quiet">
-        Using ChatGPT or Claude in a browser? It can't run the setup. <a href="/book">Book a call</a> and we set it up with you.
+        Using a chat in a browser? It can't run the setup. <a href="/book">Book a call</a> and we set it up with you.
       </p>
       <p ref={text} className="wd-ask-sentence" hidden={!shown}>
         <Sentence text={sentence} />

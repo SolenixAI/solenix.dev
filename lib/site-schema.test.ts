@@ -4,7 +4,7 @@
 import { test } from "node:test"
 import assert from "node:assert/strict"
 import { SITE_URL } from "./site-meta.ts"
-import { articleSchema, homeSchema, ldJson } from "./site-schema.ts"
+import { agentsSchema, articleSchema, articlesSchema, homeSchema, ldJson } from "./site-schema.ts"
 
 // The homepage's graph as plain JSON, so each node is read by its own keys.
 const homeGraph = (description: string) =>
@@ -32,6 +32,34 @@ test("an article describes its own title, description and date", () => {
   assert.equal(a.mainEntityOfPage, `${SITE_URL}/articles/proof-flood`)
   assert.equal(a.image, `${SITE_URL}/og.png`, "an article without a cover uses the site's share image")
   assert.equal(a.author.name, "Solenix")
+})
+
+test("the business is located in St. John's, with a locality and no street address", () => {
+  const business = homeGraph("x")[0]
+  assert.equal(business.address["@type"], "PostalAddress")
+  assert.equal(business.address.addressLocality, "St. John's")
+  assert.equal(business.address.addressRegion, "NL")
+  assert.equal(business.address.addressCountry, "CA")
+  assert.equal(business.address.streetAddress, undefined, "the repo holds no street address, so none is published")
+})
+
+test("the articles index lists each article in order, with its own title and link", () => {
+  const index = articlesSchema([
+    { title: "First", path: "/articles/first" },
+    { title: "Second", path: "/articles/second" },
+  ])
+  assert.equal(index["@type"], "CollectionPage")
+  const items = index.mainEntity.itemListElement
+  assert.deepEqual(items.map((i) => i.position), [1, 2])
+  assert.equal(items[1].url, `${SITE_URL}/articles/second`)
+  assert.equal(items[1].name, "Second")
+})
+
+test("the Agents Marketplace lists each world with its name, line and link", () => {
+  const list = agentsSchema([{ id: "vercel", name: "Vercel", for: "Put your website online." }])
+  assert.equal(list["@type"], "ItemList")
+  assert.equal(list.itemListElement[0].url, `${SITE_URL}/agents?world=vercel`)
+  assert.equal(list.itemListElement[0].description, "Put your website online.")
 })
 
 test("ldJson cannot close its own script tag, and parses back to the same data", () => {

@@ -27,6 +27,7 @@ export function homeSchema(description: string) {
         image: `${SITE_URL}${OG_IMAGE.url}`,
         email: EMAIL,
         founder: { "@type": "Person", name: "Jager Cooper", jobTitle: "Founder" },
+        address: { "@type": "PostalAddress", addressLocality: "St. John's", addressRegion: "NL", addressCountry: "CA" },
         areaServed: { "@type": "Place", name: "St. John's, Newfoundland and Labrador" },
         serviceType: "AI consulting for small businesses",
         sameAs: [`https://github.com/${GITHUB_ORG}`],
@@ -58,5 +59,32 @@ export function articleSchema(a: { title: string; description: string; date: str
     image: `${SITE_URL}${a.cover ?? OG_IMAGE.url}`,
     author: solenix,
     publisher: solenix,
+  }
+}
+
+/** The Agents Marketplace: each world in the catalogue, with its own name, one-line description and link. */
+export function agentsSchema(entries: { id: string; name: string; for: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Agents Marketplace",
+    url: `${SITE_URL}/agents`,
+    itemListElement: entries.map((e, i) => ({ "@type": "ListItem", position: i + 1, url: `${SITE_URL}/agents?world=${e.id}`, name: e.name, description: e.for })),
+  }
+}
+
+/** The articles index: each article in order, with its own title and link. */
+export function articlesSchema(articles: { title: string; path: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "AI articles you can play with",
+    url: `${SITE_URL}/articles`,
+    inLanguage: "en-CA",
+    isPartOf: { "@id": `${SITE_URL}/#website` },
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: articles.map((a, i) => ({ "@type": "ListItem", position: i + 1, url: `${SITE_URL}${a.path}`, name: a.title })),
+    },
   }
 }

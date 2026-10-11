@@ -1,6 +1,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>The Proof Flood</title>
-<meta name="description" content="OpenAI's AI produced 372 new math results in one week. Every one explained in plain words: the question, the answer, why it matters and what it makes possible.">
+<title>The Proof Flood: OpenAI's 372 math results</title>
+<meta name="description" content="OpenAI released 372 new math results in October 2026. Every one is explained in plain words: the question, the answer, why it matters and what it makes possible.">
 <meta name="article:published_time" content="2026-10-08">
 <style>
 /* Layout: Solenix night sky. One warm light source, a 32px hairline grid, glass panels with a lit top edge; three suns settle into the figure-eight behind the hero. Single dark design, as the Solenix site is dark. */
@@ -688,6 +688,7 @@ abbr.g{text-decoration:underline dotted var(--accent);text-underline-offset:3px;
   #solenix .sol-halo{r:60px}
 }
 @media (prefers-reduced-motion:reduce){#solenix .sol-body circle{animation-play-state:paused}}
+.pub{margin:12px 0 0;font:500 .8rem ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--faint);letter-spacing:.06em}
 </style>
 
 
@@ -697,8 +698,9 @@ abbr.g{text-decoration:underline dotted var(--accent);text-underline-offset:3px;
  <div class="sx-hero-in">
   <div class="sx-hero-text">
     <h1>The Proof <span class="grad">Flood</span></h1>
-    <p class="sx-sub"><mark>372 open math problems.</mark> One AI. Every answer, in plain words. Which one touches your life?</p>
-    <div class="btns"><a class="btn primary" href="#atlas" style="text-decoration:none">Explore all 372 →</a></div>
+    <p class="sx-sub">OpenAI's AI produced <mark>372 new results</mark> from 4,000 open math problems. Which one touches your life?</p>
+    <div class="btns"><a class="btn" href="#atlas" style="text-decoration:none">Explore all 372 →</a></div>
+    <p class="pub">Published <time datetime="2026-10-08">8 October 2026</time>. Made by Solenix.</p>
   </div>
   <div class="hero-vis">
     <div class="qwrap">
@@ -721,7 +723,8 @@ abbr.g{text-decoration:underline dotted var(--accent);text-underline-offset:3px;
 <!-- FLOOD -->
 <section id="flood" data-nav="The flood">
   <h2>From 4,000 questions to 372 results</h2>
-  <p class="flood-hint">Tap a stage to see what it means. Bars show each share of the 4,000. The dotted line is compute time.</p>
+  <p class="lede">OpenAI released 722 manuscripts, grouped into 372 result families. This page counts each family as one result.</p>
+  <p class="flood-hint">Tap a stage to see what it means. Bars show each share of the 4,000. The dotted line is thinking time.</p>
   <div class="funnel" id="funnel"></div>
   <p class="explain" id="funnelText"></p>
 </section>
@@ -786,7 +789,7 @@ abbr.g{text-decoration:underline dotted var(--accent);text-underline-offset:3px;
     <div class="starts" id="starts"></div>
   </div>
 
-  <p class="atlas-source">Plain summaries, analogies and the fame and reach ratings were written by AI agents from OpenAI's official summaries on 2026-10-07. They are judgments, not measurements. Lean status comes from the repo's own files.</p>
+  <p class="atlas-source">Plain summaries, analogies and the fame and reach ratings were written by AI agents from OpenAI's official summaries on 2026-10-07. They are judgments, not measurements. Lean status comes from the release's own index.</p>
 </section>
 
 <!-- TIMELINE -->
@@ -852,16 +855,16 @@ abbr.g{text-decoration:underline dotted var(--accent);text-underline-offset:3px;
     </div>
     <div>
       <h3>What to notice</h3>
-      <p>The triangle grid beats the square grid. Both stay near 2–3 pairs per dot. The AI's patterns grow faster than any grid as n gets huge. That is why experts called it a real discovery.</p>
+      <p>The triangle grid beats the square grid. Both stay near 2–3 pairs per dot. The AI's patterns grow faster than any grid as n gets huge. Mathematicians were shocked by it (<a href="https://www.sciencealert.com/stunning-ai-solution-for-80-year-old-problem-shocks-mathematicians" target="_blank" rel="noopener">ScienceAlert, May 2026</a>).</p>
     </div>
   </div>
-  <p class="maker">Built by <a href="/">Solenix</a>, one tech expert for small businesses in St. John's.</p>
+  <p class="maker">Made by <a href="/">Solenix</a>, one tech expert for small businesses in St. John's.</p>
 </section>
 
 <!-- PLAY: FLUID -->
 <section id="fluid" data-nav="Play: fluids">
   <h2>Navier–Stokes: can a fluid's speed reach <span class="emph">infinity?</span></h2>
-  <p class="lede">One equation describes every liquid and gas: weather, wings, blood, smoke. OpenAI claims it proved that speed can <mark>blow up</mark> to infinity, if a smooth force keeps pushing. The <abbr class="g" data-g="millennium">Millennium Prize</abbr> pays $1M for the answer. Drag to stir, then press Squeeze.</p>
+  <p class="lede">One equation describes most liquids and gases: weather, wings, smoke. OpenAI claims it proved that speed can <mark>blow up</mark> to infinity, if a smooth force keeps pushing. The <abbr class="g" data-g="millennium">Millennium Prize</abbr> pays $1M for the answer. Drag to stir, then press Squeeze.</p>
   <div class="fluid">
     <div class="fbox" id="fbox">
       <canvas id="fcv" width="720" height="720" aria-label="Fluid simulation. Drag to stir."></canvas>
@@ -911,7 +914,7 @@ abbr.g{text-decoration:underline dotted var(--accent);text-underline-offset:3px;
 <!-- PLAY: LEAN -->
 <section id="lean" data-nav="Play: proof checker">
   <h2 id="leanTitle">Plant a mistake. Watch Lean catch it.</h2>
-  <p class="lede">Lean is a program that checks proofs. This one shows that two even numbers add up to an even number. Lean refuses any step that does not follow from earlier steps. So a proof it accepts can be trusted, even when an AI wrote it.</p>
+  <p class="lede">Lean is a program that checks proofs. This one shows that two even numbers add up to an even number. Lean refuses any step that does not follow from earlier steps. So a proof it accepts has no gaps in its steps, even when an AI wrote it. Lean cannot check that the statement is the one you meant.</p>
   <span class="orbit" aria-hidden="true"><i></i></span>
   <div class="lean" role="group" aria-labelledby="leanTitle">
     <div class="steps" id="steps"></div>
@@ -922,7 +925,7 @@ abbr.g{text-decoration:underline dotted var(--accent);text-underline-offset:3px;
     </div>
     <p class="verdict" id="verdict" role="status" aria-live="polite">Run the check to see the verdict.</p>
   </div>
-  <p class="credit">A demo of how Lean reads this proof. Built by <a href="#solenix">Solenix</a>, one tech expert for small businesses in St. John's.</p>
+  <p class="credit">A demo of how Lean reads this proof. Made by <a href="#solenix">Solenix</a>, one tech expert for small businesses in St. John's.</p>
 </section>
 
 <!-- DEBATE -->
@@ -944,7 +947,7 @@ abbr.g{text-decoration:underline dotted var(--accent);text-underline-offset:3px;
 <!-- FUTURE -->
 <section id="future" data-nav="What it means" data-h="0">
   <h2>The slow part of science just moved</h2>
-  <p class="lede">For centuries, finding a proof was the slow, rare part. If an average result costs about three hours of compute, finding stops being the bottleneck. Checking, understanding and using become the hard part. Pick a horizon to see what changes.</p>
+  <p class="lede">For centuries, finding a proof was the slow, rare part. If an average result costs about three hours of ChatGPT Pro thinking time, finding stops being the bottleneck. Checking, understanding and using become the hard part. Pick a horizon to see what changes.</p>
   <div class="fut-stage">
     <svg class="fut-orbit" viewBox="0 0 640 280" aria-hidden="true" focusable="false">
   <defs>
@@ -975,7 +978,7 @@ abbr.g{text-decoration:underline dotted var(--accent);text-underline-offset:3px;
     <g class="fut-mover"><animateMotion dur="140s" begin="0s" repeatCount="indefinite" path="M534 140A214 71 0 1 1 106 140A214 71 0 1 1 534 140"/><circle class="fut-halo-up" r="13"/><circle class="fut-up" r="7"/></g>
     <g class="fut-mover"><animateMotion dur="140s" begin="-46.67s" repeatCount="indefinite" path="M534 140A214 71 0 1 1 106 140A214 71 0 1 1 534 140"/><circle class="fut-halo-up" r="13"/><circle class="fut-up" r="7"/></g>
     <g class="fut-mover"><animateMotion dur="140s" begin="-93.33s" repeatCount="indefinite" path="M534 140A214 71 0 1 1 106 140A214 71 0 1 1 534 140"/><circle class="fut-halo-up" r="13"/><circle class="fut-up" r="7"/></g>
-    <text class="fut-label" x="320" y="61">1–3 years</text>
+    <text class="fut-label" x="320" y="61">1–3 years (estimate)</text>
   </g>
   <g class="fut-lane" data-r="2">
     <path class="fut-track fut-back" d="M20 140A300 100 0 0 1 620 140"/>
@@ -986,19 +989,19 @@ abbr.g{text-decoration:underline dotted var(--accent);text-underline-offset:3px;
     <g class="fut-mover"><animateMotion dur="200s" begin="0s" repeatCount="indefinite" path="M620 140A300 100 0 1 1 20 140A300 100 0 1 1 620 140"/><circle class="fut-halo-up" r="13"/><circle class="fut-up" r="7"/></g>
     <g class="fut-mover"><animateMotion dur="200s" begin="-66.67s" repeatCount="indefinite" path="M620 140A300 100 0 1 1 20 140A300 100 0 1 1 620 140"/><circle class="fut-halo-risk" r="13"/><circle class="fut-risk" r="7"/></g>
     <g class="fut-mover"><animateMotion dur="200s" begin="-133.33s" repeatCount="indefinite" path="M620 140A300 100 0 1 1 20 140A300 100 0 1 1 620 140"/><circle class="fut-halo-risk" r="13"/><circle class="fut-risk" r="7"/></g>
-    <text class="fut-label" x="320" y="32">10+ years</text>
+    <text class="fut-label" x="320" y="32">10+ years (estimate)</text>
   </g>
   <circle class="fut-core" cx="320" cy="140" r="10"/>
 </svg>
     <div class="fut-horizons" role="group" aria-label="Time horizon">
       <button type="button" data-h-btn data-h="0" aria-pressed="true" aria-controls="futItems"><span class="fut-name">Now</span><span class="fut-count"></span></button>
-      <button type="button" data-h-btn data-h="1" aria-pressed="false" aria-controls="futItems"><span class="fut-name">1–3 years</span><span class="fut-count"></span></button>
-      <button type="button" data-h-btn data-h="2" aria-pressed="false" aria-controls="futItems"><span class="fut-name">10+ years</span><span class="fut-count"></span></button>
+      <button type="button" data-h-btn data-h="1" aria-pressed="false" aria-controls="futItems"><span class="fut-name">1–3 years (estimate)</span><span class="fut-count"></span></button>
+      <button type="button" data-h-btn data-h="2" aria-pressed="false" aria-controls="futItems"><span class="fut-name">10+ years (estimate)</span><span class="fut-count"></span></button>
     </div>
   </div>
   <div class="fut-items" id="futItems">
     <div class="fut-set" data-h="0">
-      <article class="fut-item"><p class="fut-status"><span class="fut-dot"></span>upside</p><h3>Proofs get cheap</h3><p class="fut-desc">About 3 hours of compute per result. The rare, slow part of math is now fast and plentiful.</p></article>
+      <article class="fut-item"><p class="fut-status"><span class="fut-dot"></span>upside</p><h3>Proofs get cheap</h3><p class="fut-desc">About 3 hours of ChatGPT Pro thinking time per result. The rare, slow part of math is now fast and plentiful.</p></article>
       <article class="fut-item"><p class="fut-status"><span class="fut-dot"></span>upside</p><h3>Checking is the new bottleneck</h3><p class="fut-desc">Hundreds of papers wait for human readers. Lean makes some of that checking automatic.</p></article>
       <article class="fut-item"><p class="fut-status is-risk"><span class="fut-dot"></span>risk</p><h3>Credit and trust fights</h3><p class="fut-desc">Who owns a result? Was a human's draft used? Rules for this do not exist yet.</p></article>
     </div>
@@ -1060,11 +1063,9 @@ abbr.g{text-decoration:underline dotted var(--accent);text-underline-offset:3px;
   </div>
   <h3>Sources, newest first</h3>
   <ol class="src">
-    <li><span class="row"><span class="dt">2026-10-07</span><span class="what">LinkedIn posts by Olga Holtz and Moshe Vardi on the release</span><span class="meta"><span class="chip to-confirm">Link to confirm</span></span></span></li>
-    <li><span class="row"><span class="dt">2026-10-07</span><span class="what">GenAI Works newsletter, "OpenAI just broke the rules of math"</span><span class="meta"><span class="chip to-confirm">Link to confirm</span></span></span></li>
-    <li><a class="row" href="https://github.com/openai/math" target="_blank" rel="noopener"><span class="dt">2026-10-06</span><span class="what">openai/math on GitHub, pushed 22:01Z: CONTENTS.md, overview.tex, lean/formalization.yaml (primary source for the Atlas)</span><span class="meta"><span class="host">github.com</span><svg class="go" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4h6v6M12 4 4 12"/></svg></span></a></li>
     <li><a class="row" href="https://fortune.com/2026/10/07/openai-math-controversy-solutions-370-outstanding-challenges-published-criticisms-celebration/" target="_blank" rel="noopener"><span class="dt">2026-10-07</span><span class="what">Fortune: OpenAI publishes solutions to more than 370 outstanding math challenges</span><span class="meta"><span class="host">fortune.com</span><svg class="go" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4h6v6M12 4 4 12"/></svg></span></a></li>
     <li><a class="row" href="https://tech-insider.org/openai-722-math-claims-mathematician-scrutiny-2026/" target="_blank" rel="noopener"><span class="dt">2026-10-07</span><span class="what">Tech Insider: Tao group scrutinizes OpenAI's 722 math claims</span><span class="meta"><span class="host">tech-insider.org</span><svg class="go" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4h6v6M12 4 4 12"/></svg></span></a></li>
+    <li><a class="row" href="https://github.com/openai/math" target="_blank" rel="noopener"><span class="dt">2026-10-06</span><span class="what">openai/math on GitHub, pushed 22:01Z: the release's index and Lean files (primary source for this page)</span><span class="meta"><span class="host">github.com</span><svg class="go" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4h6v6M12 4 4 12"/></svg></span></a></li>
     <li><a class="row" href="https://explainx.ai/blog/openai-722-math-manuscripts-github-repo-what-to-check-2026" target="_blank" rel="noopener"><span class="dt">2026-10</span><span class="what">explainx: what the openai/math repo holds</span><span class="meta"><span class="host">explainx.ai</span><svg class="go" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4h6v6M12 4 4 12"/></svg></span></a></li>
     <li><a class="row" href="https://interestingengineering.com/ai-robotics/openai-largest-math-release-lean-proofs" target="_blank" rel="noopener"><span class="dt">2026-10</span><span class="what">Interesting Engineering: OpenAI's math release and its Lean proofs</span><span class="meta"><span class="host">interestingengineering.com</span><svg class="go" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4h6v6M12 4 4 12"/></svg></span></a></li>
     <li><a class="row" href="https://yellow.com/news/openai-722-ai-math-papers-public" target="_blank" rel="noopener"><span class="dt">2026-10</span><span class="what">Yellow: 722 AI math papers are public (Kakeya, Fields Medalists)</span><span class="meta"><span class="host">yellow.com</span><svg class="go" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 4h6v6M12 4 4 12"/></svg></span></a></li>
@@ -1108,7 +1109,7 @@ const G={
  erdos:"Paul Erdős (1913–1996) was a Hungarian mathematician who left hundreds of open problems, many with cash prizes.",
  millennium:"Seven problems picked by the Clay Mathematics Institute in 2000, each with a $1 million prize. Only one (Poincaré) is officially solved.",
  conj:"A conjecture is a statement that experts think is true but nobody has proven.",
- family:"A result family is one main result plus its variants and companion papers. 372 families hold 722 papers."
+ family:"A result family is one main result plus its variants and companion papers. 372 families hold 722 manuscripts."
 };
 const tip=$("#tip");
 document.addEventListener("pointerover",e=>{const a=e.target.closest("abbr.g");if(!a)return;tip.textContent=G[a.dataset.g];tip.hidden=false;const r=a.getBoundingClientRect();tip.style.left=Math.min(r.left,innerWidth-300)+"px";tip.style.top=(r.bottom+8)+"px"});
@@ -1118,9 +1119,9 @@ document.addEventListener("pointerout",e=>{if(e.target.closest("abbr.g"))tip.hid
 const F=[
  {n:"4,000",l:"open problems given",p:100,t:"OpenAI gave its unreleased model about <b>4,000 open problems</b>. It kept only results it judged significant. Nobody outside knows how many attempts failed. The advisory group asked OpenAI to publish failure rates."},
  {n:"372",l:"results kept",p:9.3,t:"<b>372 result families</b> survived (about 9% of what was posed), across 17 areas of math. They hold <b>722 manuscripts</b> (a <abbr class=\"g\" data-g=\"family\">family</abbr> is one result plus its variants), under an Apache-2.0 license."},
- {n:"235",l:"checked by computer, fully or partly",p:5.9,t:"<b>235 of 372 families</b> link a Lean document in the repo's CONTENTS.md. A Lean doc can cover only part of a paper. Its scope section says which part."},
- {n:"127",l:"main result checked by computer",p:3.2,t:"<b>127 families</b> (162 papers) have a paper whose <b>main result</b> is in the repo's formal catalogue (lean/formalization.yaml). For these, a computer has checked the headline claim step by step. Counted from the repo files on 2026-10-07; the GenAI Works newsletter reports the same 162."},
- {n:"~3 h",l:"computer time per result",p:3,t:"An average result used compute equal to about <b>three hours of ChatGPT Pro thinking</b>. A human mathematician can spend years on one such result. That cost gap is the real news."}
+ {n:"235",l:"checked by computer, fully or partly",p:5.9,t:"<b>235 of 372 families</b> link a Lean document in the release index. A Lean doc can cover only part of a paper. Its scope section says which part."},
+ {n:"127",l:"main result checked by computer",p:3.2,t:"<b>127 families</b> have a paper whose <b>main result</b> is in the release's formal catalogue. For these, a computer has checked the headline claim step by step. Counted from the release files on 2026-10-07."},
+ {n:"~3 h",l:"ChatGPT Pro thinking time per result",p:3,t:"An average result used compute equal to about <b>three hours of ChatGPT Pro thinking</b>. A human mathematician can spend years on one such result. That cost gap is the real news."}
 ];
 const fu=$("#funnel");
 F.forEach((f,i)=>{const b=el("button",{class:"stage","aria-pressed":i==0},`<span class="l">${f.l}</span><span class="n">${f.n}</span><span class="bar"><b style="width:${Math.max(f.p,3)}%"></b></span>`);
@@ -1129,12 +1130,12 @@ $("#funnelText").innerHTML=F[0].t;
 
 /* timeline */
 const T=[
- {d:"May 2026",t:"Erdős #90 falls",big:"1946",cap:"age of the guess",x:"An OpenAI reasoning model found a counterexample to Erdős's unit-distance guess from 1946. Fields Medallist Timothy Gowers said he would recommend it to the <i>Annals of Mathematics</i> without hesitation."},
+ {d:"May 2026",t:"Erdős #90 falls",big:"1946",cap:"age of the guess",x:"An OpenAI reasoning model found a counterexample to Erdős's unit-distance guess from 1946. Mathematicians were shocked by it (<a href='https://www.sciencealert.com/stunning-ai-solution-for-80-year-old-problem-shocks-mathematicians' target='_blank' rel='noopener'>ScienceAlert, May 2026</a>)."},
  {d:"1 Aug 2026",t:"Ten advances",big:"10",cap:"results, checked by computer",x:"An internal version of OpenAI's next model, <b>Astra</b>, published 10 results on problems stuck for 10+ years. 249 pages, 10 Lean 4 proofs, about <b>$2,000</b> of compute for all ten."},
  {d:"8 Sep 2026",t:"Navier–Stokes claim",big:"88 h",cap:"10,000 agents",x:"OpenAI claimed a proof that a smooth fluid can blow up (speed goes to infinity) in finite time, when pushed by a smooth force. About 10,000 coordinated agents ran for 88 hours. A credit dispute followed. Clay still lists the problem as <b>active</b>."},
- {d:"Sep 2026",t:"Advisory group forms",big:"IAS",cap:"Princeton",x:"An independent group on mathematics and AI, hosted at the Institute for Advanced Study and including Terence Tao, began to advise on how to release results. It says its role is <b>not an endorsement</b>."},
+ {d:"Sep 2026",t:"Advisory group forms",big:"IAS",cap:"Princeton",x:"A panel formed in September 2026, associated with the Institute for Advanced Study, includes Terence Tao (Tech Insider)."},
  {d:"6 Oct 2026",t:"The flood",big:"722",cap:"manuscripts",x:"OpenAI put 722 manuscripts in 372 families on GitHub, with the main result checked by computer for 127 families and reasoning summaries for 10. OpenAI says some unformalized results could have issues."},
- {d:"7 Oct 2026",t:"Reactions",big:"Split",cap:"coverage",x:"Coverage shows a split field. Tao calls it the end of 'Math 1.0'. Dan Litt calls it great for mathematics. Tristan Buckmaster worries about results built on others' unfinished work. WIRED reported anger hours before the drop: some say OpenAI had promised to space results out. The mathematicians OpenAI consults had asked labs to stop testing models on open problems."}
+ {d:"7 Oct 2026",t:"Reactions",big:"Split",cap:"coverage",x:"Coverage shows a split field. Tech Insider reports that a group Tao is part of is scrutinizing the 722 claims."}
 ];
 const tl=$("#tl"),td=$("#tlDetail"),tlN=T.length,tlPlay=$("#tlPlay"),tlAnn=$("#tlAnn");
 let tlI=4,tlTimer=null;
@@ -1169,8 +1170,8 @@ showT(4);tlAnn.textContent="";
 /* trust */
 (()=>{
 const TR=[
- {lv:5,name:"Erdős <span class='nb'>unit-distance</span> (#90)",pill:"Experts praise it",pts:["Gowers: Annals-level","Litt: first AI result he finds interesting in itself","Short, checkable construction"]},
  {lv:4,name:"Astra's ten advances",pill:"Checked by computer",pts:["All 10 checked by computer, in Lean","Public code to rebuild the checks","Human review still ongoing"]},
+{lv:3,name:"Erdős <span class='nb'>unit-distance</span> (#90)",pill:"Expert praise only",pts:["Mathematicians were shocked by it (ScienceAlert)","Short, checkable construction","No computer check on record"]},
  {lv:3,name:"The <span class='nb'>372-family</span> release",pill:"Partly checked",pts:["127 main results checked by computer","108 partly checked, 137 not yet","OpenAI: unformalized results could have issues"]},
  {lv:2,name:"<span class='nb'>Millennium-adjacent</span> results",pill:"Special cases",pts:["Result 003: no zeta zeros past 7/8 (checked by computer)","Result 002: exact BSD formula for many curves","Result 032: Hodge for one family. No full $1M solution"]},
  {lv:1,name:"<span class='nb'>Navier–Stokes</span> <span class='nb'>blow-up</span>",pill:"Unverified · disputed",pts:["Clay status: active","Credit dispute with two mathematicians","Covers the forced case, not the force-free one"]}
@@ -1227,15 +1228,8 @@ $("#runLean").onclick=async()=>{if(running)return;running=true;renderSteps();con
 
 /* debate */
 const V=[
- {x:4,who:"Moshe Vardi",role:"Rice University · LinkedIn post, 2026-10-07",say:"The sharpest critic: <b>\"You are destroying mathematics!\"</b> He asks OpenAI to stop."},
- {x:12,who:"Terence Tao",role:"Fields Medallist, UCLA · leads the IAS advisory group",say:"Calls this the end of <b>'Math 1.0'</b>. His worry: problems get solved by prompters with no interest in the field, so results arrive without understanding of what they mean."},
- {x:22,who:"25 Fields Medallists",role:"Open warning (1 source)",say:"Warned that mass-producing results could harm the field. One mathematician quoted by WIRED described a perception of 'mobster behavior' by leading AI labs."},
- {x:32,who:"Tristan Buckmaster",role:"NYU · fluid dynamics",say:"Worries about credit: an AI may take someone's unfinished work and carry it to completion. Two mathematicians made this claim about the Navier–Stokes result. OpenAI denies it."},
- {x:55,who:"IAS advisory group",role:"Independent, Princeton",say:"Asked OpenAI to publish model names, prompts, reasoning, compute, how problems were chosen, and failure rates. OpenAI partly complied. The group says its role is not an endorsement."},
- {x:80,who:"Timothy Gowers",role:"Fields Medallist, Cambridge",say:"On the May Erdős result: he would recommend it to the <i>Annals of Mathematics</i> without hesitation, if a human had sent it."},
- {x:70,who:"Olga Holtz",role:"UC Berkeley · math + AI researcher",say:"Two numbers stopped her in her tracks: <b>7/8</b> (no zeta zeros past it, result 003) and <b>9/4</b> (the new matrix multiplication exponent, result 107)."},
- {x:97,who:"Levent Alpöge",role:"Anthropic mathematician (1 source)",say:"Called it the most significant moment in mathematical history, per the GenAI Works newsletter."},
- {x:90,who:"Daniel Litt",role:"University of Toronto",say:"Says this is <b>great for mathematics</b>. Some of the new results touch his own research, and he is excited to use them."}
+{x:12,who:"Terence Tao",role:"Fields Medallist",say:"His group scrutinizes OpenAI's 722 claims, per the Tech Insider report."},
+ {x:55,who:"IAS advisory group",role:"Associated with the Institute for Advanced Study",say:"A panel formed in September 2026. Tech Insider reports that Terence Tao is a member."},
 ];
 (()=>{
 const rows=$("#spec"),vo=$("#voice"),lamp=vo.querySelector(".dbt-lamp");
