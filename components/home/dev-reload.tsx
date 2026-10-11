@@ -9,12 +9,15 @@ import { useEffect } from "react";
 export function DevReload() {
   useEffect(() => {
     if (process.env.NODE_ENV !== "development") return;
+    let left = false; // the homepage may leave before the import resolves: then nothing starts
     import("@/lib/client.generated").then(({ CLIENT }) => {
+      if (left) return;
       const script = document.createElement("script");
       script.textContent = CLIENT["dev-reload"];
       document.head.append(script);
     });
     return () => {
+      left = true;
       const tab = window as Window & { __devReload?: EventSource };
       tab.__devReload?.close();
       tab.__devReload = undefined;
