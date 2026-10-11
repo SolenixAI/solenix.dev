@@ -34,6 +34,9 @@ else if (bar) {
 
   let frame = 0
   let finished = false
+  // The reader's own input. A scroll the browser restores (Back into an article already at its end) is not reading.
+  let interacted = false
+  for (const type of ["wheel", "touchmove", "keydown", "pointerdown"]) addEventListener(type, () => { interacted = true }, { passive: true })
   let shown: string | null | undefined
   const update = () => {
     frame = 0
@@ -63,8 +66,8 @@ else if (bar) {
     const root = document.documentElement
     const scrollable = root.scrollHeight - innerHeight
     if (progress) progress.style.transform = `scaleX(${Math.min(1, root.scrollTop / Math.max(1, scrollable))})`
-    // Finished: the reader scrolled and reached the end of a page that scrolls (2px allowed, for fractional scroll). Counted once per view.
-    if (!finished && scrollable > 0 && root.scrollTop > 0 && root.scrollTop >= scrollable - 2) {
+    // Finished: the reader scrolled by their own input and reached the end of a page that scrolls (2px allowed, for fractional scroll). Counted once per view.
+    if (!finished && interacted && scrollable > 0 && root.scrollTop > 0 && root.scrollTop >= scrollable - 2) {
       finished = true
       window.captureGoal?.("article_read")
     }
