@@ -104,7 +104,7 @@ export default function Agents({ searchParams }: { searchParams: Promise<{ world
         <div className="sx-hero-in">
           <div className="sx-hero-text">
             <h1>One paste sets up your AI <em>the makers&rsquo; way.</em></h1>
-            <p className="sx-sub">Paste one sentence into Claude, Codex, Cursor or another AI agent. It installs what each tool&rsquo;s company made for AI.</p>
+            <p className="sx-sub">Paste one sentence into any AI agent. It installs what each tool&rsquo;s company made for AI.</p>
           </div>
           <div className="wd-hero-sky"><Suspense fallback={<Ring sky />}><HeroSky /></Suspense></div>
           <Suspense fallback={<AskWait />}><HeroPrompt /></Suspense>
@@ -118,7 +118,7 @@ export default function Agents({ searchParams }: { searchParams: Promise<{ world
           <h2 id="how-title" className="mb-8 font-display text-h2 font-brand text-balance">Copy one sentence. Your AI does the rest.</h2>
           <ol className="wd-steps">
             <li><span className="wd-step-orb" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2.5" /><path d="M16 8V6.5A2.5 2.5 0 0 0 13.5 4h-7A2.5 2.5 0 0 0 4 6.5v7A2.5 2.5 0 0 0 6.5 16H8" /></svg></span><b>Copy</b><span>Press Copy for your AI below, or on any card above.</span></li>
-            <li><span className="wd-step-orb" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="8" y="3.5" width="8" height="4" rx="1.5" /><path d="M8 5.5H6.5A1.5 1.5 0 0 0 5 7v12.5A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V7a1.5 1.5 0 0 0-1.5-1.5H16M9 12h6M9 16h4" /></svg></span><b>Paste into your AI</b><span>Claude, Codex, Cursor or another AI agent. Paste and press send.</span></li>
+            <li><span className="wd-step-orb" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="8" y="3.5" width="8" height="4" rx="1.5" /><path d="M8 5.5H6.5A1.5 1.5 0 0 0 5 7v12.5A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V7a1.5 1.5 0 0 0-1.5-1.5H16M9 12h6M9 16h4" /></svg></span><b>Paste into your AI</b><span>Any AI agent that can run commands. Paste and press send.</span></li>
             <li><span className="wd-step-orb" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3.5 20 8v8l-8 4.5L4 16V8z" /><path d="m4 8 8 4.5L20 8M12 12.5v8" /></svg></span><b>Your AI is set up</b><span>It installs what each tool&apos;s company made for AI.</span></li>
           </ol>
           <Suspense fallback={<SayWait />}><StepSentence /></Suspense>

@@ -6,6 +6,7 @@
 // Page code imports it from lib/space (@/lib/space/... in TypeScript). This folder is the only place that imports
 // three: scripts/check.sh enforces it. Everything here is a browser module with no page globals: the page is injected.
 import { INK0, INK_SPAN } from "./orbit";
+import { createCards, type SpaceCard } from "./cards";
 import * as THREE from 'three';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
@@ -16,6 +17,8 @@ import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 // ── Interface ──────────────────────────────────────────────────────────────────────────────────────────
 
 export interface Vec3 { x: number; y: number; z: number }
+
+export type { SpaceCard, CardState } from "./cards";
 
 /** The scroll-driven values a page sets each frame. Each field is read by the engine or by the page's onFrame. */
 export interface SpaceParams {
@@ -76,6 +79,8 @@ export interface SpaceFrame {
   sunRadiusPx: (i: number) => number
   /** How far sun i is from its place on the exact figure-eight (world units; 0 once it holds). */
   offOrbit: (i: number) => number
+  /** A card's box on screen in CSS pixels, or null while it is not shown (for taps). */
+  cardRect: (id: string) => { x0: number; y0: number; x1: number; y1: number } | null
 }
 
 export interface SpaceEnv {
@@ -91,6 +96,10 @@ export interface SpaceEnv {
   wells: readonly SpaceWell[]
   /** The open band of a section, measured from the page: y0 and y1 in CSS pixels. */
   openBand?: (section: string) => { y0: number; y1: number } | null
+  /** The cards the page shows in the world this frame (lib/space/cards.ts). */
+  cards?: () => readonly SpaceCard[]
+  /** The card the AI agent is working at this frame, by id: the agent flies there. Null: it rides its loop. */
+  agentTo?: () => string | null
   /** After the render, each frame: the page writes its labels and markers here. */
   onFrame?: (frame: SpaceFrame) => void
   /** Once the first frame is on screen. */
@@ -256,6 +265,7 @@ export function createSpace(env: SpaceEnv): Space {
   renderer.toneMappingExposure = 0.86;
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 400);
+  const cards = createCards(scene, camera);
 
   const additive = { transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending };
   const bodyU = { value: [new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()] };
@@ -501,7 +511,7 @@ export function createSpace(env: SpaceEnv): Space {
 
   // ── Pointer ──
   const mouse = { x: 0, y: 0, tx: 0, ty: 0, px: -1, py: -1, lastMove: -99 };
-  let clockT = 0, shownT = 0, lastY = scrollY, scrollVel = 0, lockT = -99, armed = true, locked = false;
+  let clockT = 0, shownT = 0, lockT = -99, armed = true, locked = false;
   const onPointerMove = (e: PointerEvent) => { mouse.tx = e.clientX / innerWidth * 2 - 1; mouse.ty = e.clientY / innerHeight * 2 - 1; mouse.px = e.clientX; mouse.py = e.clientY; mouse.lastMove = clockT; };
   const onPointerDown = (e: PointerEvent) => { mouse.px = e.clientX; mouse.py = e.clientY; mouse.lastMove = clockT; };
   addEventListener('pointermove', onPointerMove, { passive: true });
@@ -522,7 +532,18 @@ export function createSpace(env: SpaceEnv): Space {
     const y0 = Math.max(0, band.y0), y1 = Math.min(H, band.y1);
     if (y1 - y0 > 48) { open.y0 = y0; open.y1 = y1; }
   }
-  let secR = '', heroR = 1, warp = 0;
+  let secR = '', heroR = 1;
+  const wantP = new THREE.Vector3(), camP = new THREE.Vector3(), camT = new THREE.Vector3(), camV = new THREE.Vector3(), tgtV = new THREE.Vector3(), gap = new THREE.Vector3();
+  let camSet = false, work = 0;
+  const agentP = new THREE.Vector3(), loopP = new THREE.Vector3(), workP = new THREE.Vector3();
+  // A critically damped spring with a top speed (world units a second): it starts gently, never overshoots, and a
+  // long hop takes as long as it needs instead of snapping.
+  function glide(x: THREE.Vector3, v: THREE.Vector3, to: THREE.Vector3, dt: number, w = 2.6, top = 44) {
+    const h = Math.min(dt, 1 / 30);
+    gap.subVectors(to, x).multiplyScalar(w * w).addScaledVector(v, -2 * w);
+    v.addScaledVector(gap, h); if (v.length() > top) v.setLength(top);
+    x.addScaledVector(v, h);
+  }
 
   function frame(dtReal: number) {
     const R = !env.motion(), sc = story.params(), a = 1 - Math.exp(-dtReal * (R ? 1.4 : 5));
@@ -568,10 +589,8 @@ export function createSpace(env: SpaceEnv): Space {
     const sinceLock = clockT - lockT, live = !R && sinceLock >= 0;
     const swell = live ? (sinceLock / 0.55) * Math.exp(1 - sinceLock / 0.55) : 0;
     const easeIn = live ? smooth(0, 1.5, sinceLock) * Math.exp(-Math.max(0, sinceLock - 1.5) * 0.3) : 0;
-    // Scrolling between sections is a move through the world: the lens widens a touch and the camera banks into the turn.
-    warp = R ? 0 : lerp(warp, Math.min(1, scrollVel / 3.5), 1 - Math.exp(-dtReal * 6));
     const heroAmt = R ? heroR : sc.hero;
-    const fovS = fov0 + (R ? story.hero.lens * heroR : sc.lens) * lensK, fov = fovS + 5 * warp - 1.5 * easeIn;
+    const fovS = fov0 + (R ? story.hero.lens * heroR : sc.lens) * lensK, fov = fovS - 1.5 * easeIn;
     if (Math.abs(fov - camera.fov) > 0.01) { camera.fov = fov; camera.updateProjectionMatrix(); }
     finalPass.uniforms.uShadeB.value = R ? (stn > 0 ? 1 : 0) : sc.fly;
     gridU.uChaos.value = 1 - sc.free; gridU.uDepth.value = lerp(0.95, 0.6, sc.calm);
@@ -594,9 +613,13 @@ export function createSpace(env: SpaceEnv): Space {
     tgt.set(shown.tx, lerp(-0.6, SUN_Y, smooth(22, 62, shown.el)), shown.tz);
     // Pulled back through the whole space: every station sits twice as far out, so the system reads at a glance with room round it.
     const cd = shown.dist * ZOOM * (1 - (portrait ? 0.04 : 0.07) * easeIn);
-    camera.position.set(tgt.x + cd * Math.cos(el) * Math.sin(az), tgt.y + cd * Math.sin(el), tgt.z + cd * Math.cos(el) * Math.cos(az));
-    camera.lookAt(tgt);
-    if (!R) camera.rotateZ(Math.max(-0.09, Math.min(0.09, (sc.az - shown.az) * 0.004)));
+    wantP.set(tgt.x + cd * Math.cos(el) * Math.sin(az), tgt.y + cd * Math.sin(el), tgt.z + cd * Math.cos(el) * Math.cos(az));
+    // The camera glides to where the story wants it, in space: one damped move with a top speed, so a turn or a hop
+    // between worlds is a smooth arc, never a whip. Reduced motion holds its stations still.
+    if (R || !camSet) { camP.copy(wantP); camT.copy(tgt); camV.set(0, 0, 0); tgtV.set(0, 0, 0); camSet = true; }
+    else { glide(camP, camV, wantP, dtReal); glide(camT, tgtV, tgt, dtReal); }
+    camera.position.copy(camP);
+    camera.lookAt(camT);
     camera.setViewOffset(W, H, -W * shown.ox, H * shown.oy, W, H);
     camera.updateMatrixWorld(); deepSky.position.copy(camera.position);
 
@@ -661,10 +684,16 @@ export function createSpace(env: SpaceEnv): Space {
     hub.position.copy(HUB); hub.material.uniforms.uGain.value = Math.max(sc.conn, sc.free * 0.75) * 0.9 + 1.1 * swell;
 
     // The agent dot rides the loop once it holds.
-    const ap = phase * 2 + 0.17;
-    curve(ap, tmp2); agent.position.set(tmp2[0] * SC, SUN_Y, tmp2[1] * SC); agent.material.uniforms.uGain.value = sc.agent * 1.2; agent.material.uniforms.uSize.value = 0.62;
-    for (let k = 0; k < agentTrail.n; k++) { curve(ap - (agentTrail.n - 1 - k) * 0.0018, tmp2); agentTrail.pts[k * 3] = tmp2[0] * SC; agentTrail.pts[k * 3 + 1] = SUN_Y; agentTrail.pts[k * 3 + 2] = tmp2[1] * SC; }
-    layRibbon(agentTrail, 0.7); agentTrail.mesh.material.uniforms.uAlpha.value = sc.agent;
+    // At work, it flies to the card it is working on, and its trail is the path it took.
+    const ap = phase * 2 + 0.17, goal = env.agentTo?.(), gp = goal ? cards.where(goal) : null;
+    curve(ap, tmp2); loopP.set(tmp2[0] * SC, SUN_Y, tmp2[1] * SC);
+    work = gp ? Math.min(1, work + dtReal * 3) : Math.max(0, work - dtReal * 1.5);
+    if (gp) { workP.copy(gp).addScaledVector(camera.getWorldDirection(gap), -0.6); agentP.lerp(workP, 1 - Math.exp(-dtReal * 7)); }
+    else if (work > 0) agentP.lerp(loopP, 1 - Math.exp(-dtReal * 3)); else agentP.copy(loopP);
+    agent.position.copy(agentP); agent.material.uniforms.uGain.value = Math.max(sc.agent * 1.2, work * 1.5); agent.material.uniforms.uSize.value = 0.62 + 0.3 * work;
+    if (work > 0) { agentTrail.pts.copyWithin(0, 3); agentTrail.pts[agentTrail.pts.length - 3] = agentP.x; agentTrail.pts[agentTrail.pts.length - 2] = agentP.y; agentTrail.pts[agentTrail.pts.length - 1] = agentP.z; }
+    else for (let k = 0; k < agentTrail.n; k++) { curve(ap - (agentTrail.n - 1 - k) * 0.0018, tmp2); agentTrail.pts[k * 3] = tmp2[0] * SC; agentTrail.pts[k * 3 + 1] = SUN_Y; agentTrail.pts[k * 3 + 2] = tmp2[1] * SC; }
+    layRibbon(agentTrail, 0.7); agentTrail.mesh.material.uniforms.uAlpha.value = Math.max(sc.agent, work);
 
     // The tool worlds. The one you are passing is lit and wired to the AI at the centre.
     const fl = R ? (stn > 0 ? 1 : 0) : sc.fly, wsel = R ? stn - 1 : sc.wsel;
@@ -674,13 +703,14 @@ export function createSpace(env: SpaceEnv): Space {
       m.material.uniforms.uGain.value = (0.2 + 0.1 * fl + 0.28 * near); m.material.uniforms.uSize.value = (1.5 + 0.5 * near) * (0.8 + 0.2 * TOOL_M[i]); if (!on) return;
       layArc(warcs[i], HUB, m.position, 2.2); warcs[i].mesh.material.uniforms.uAlpha.value = fl * (0.1 + 0.85 * near); });
 
+    cards.update(env.cards?.() ?? [], dtReal);
     timeU.value = shownT; finalPass.uniforms.uTime.value = shownT;
     composer.render();
 
     // The page's own DOM: its labels and markers, placed from this frame. Read-only for the engine.
     env.onFrame?.({
       dt: dtReal, width: W, height: H, portrait, params: sc, hero: heroAmt, fly: fl, wsel, locked,
-      project, well, sun, hub: hubPoint, orbit, sunRadiusPx, offOrbit: offOrbitAt,
+      project, well, sun, hub: hubPoint, orbit, sunRadiusPx, offOrbit: offOrbitAt, cardRect: (id: string) => cards.rect(id, W, H),
     });
 
     // The payoff: the first moment it holds with no steering, the grid rings out and the labels settle.
@@ -712,8 +742,7 @@ export function createSpace(env: SpaceEnv): Space {
     // clockT is real time, for timing (throttles, the lock moment). shownT drives what moves on screen: reduced motion
     // freezes it and the bodies (DESIGN.md: every value still). What changes then changes only as the visitor scrolls.
     clockT += dt; if (!R) shownT += dt;
-    scrollVel = lerp(scrollVel, Math.abs(scrollY - lastY) / innerHeight / Math.max(dt, 1e-3), 1 - Math.exp(-dt * 8)); lastY = scrollY;
-    if (!R) advance(Math.min(dt, 1 / 20) * (0.55 + Math.min(1.4, scrollVel * 1.2)));
+    if (!R) advance(Math.min(dt, 1 / 20) * 0.6);
     frame(dt);
     // Adaptive quality: drop resolution if frames run long, restore if they recover.
     if (dt > 0.024) { slow++; fast = 0; } else { fast++; slow = Math.max(0, slow - 1); }
@@ -774,6 +803,7 @@ export function createSpace(env: SpaceEnv): Space {
       });
       skyRT.dispose();
       composer.dispose();
+      cards.dispose();
       renderer.dispose();
       renderer.forceContextLoss();
     },

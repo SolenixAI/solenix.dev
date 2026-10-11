@@ -1,12 +1,12 @@
 // The homepage's space binding: the labels, the markers and the stop points that sit on the 3D world. The world (one
 // engine, drawing on the layout's canvas, lib/space/world.ts) calls labels() after each frame. The story it reads (S,
-// set by lib/home/ui.ts) and the six tool worlds are this page's. startScene() returns the binding the world takes,
+// set by lib/home/ui.ts) and the five tool worlds are this page's. startScene() returns the binding the world takes,
 // and stop(), which removes what this page added.
 import type { SpaceBinding } from "@/lib/space/world";
-import type { SpaceFrame, SpaceWell, Vec3 } from "@/lib/space/engine";
+import type { SpaceCard, SpaceFrame, SpaceWell, Vec3 } from "@/lib/space/engine";
 import { orbitStop } from "@/lib/space/orbit";
 import { listener } from "./listen";
-import { PROOF, placeProof } from "./proof";
+import { PROOF, playProof, proofLength } from "./proof";
 import { slotAz, TOOL_WORLDS } from "./worlds";
 
 // The tool worlds (lib/home/worlds.ts): each is a well (its mass) at its own place. az is the camera's view of it in
@@ -35,19 +35,41 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
   // Each world's mark, in the worlds' own order (matched by id, never by position in the page).
   const worldTags = TOOL_WORLDS.map(w => document.querySelector<HTMLElement>(`.world-tag[data-world="${w.id}"]`)!);
   const ui = tags[0].parentElement!;   // carries the locked and lock-pop classes
-  // The tools' things (lib/home/proof.ts): one stack of cards per tool, held beside its world as the camera moves.
-  // A card per thing, made once; each answer re-orders them and lights what it found.
-  const proofLayer = q('.proof')!, stacks = new Map<string, { e: HTMLElement; cards: Map<string, HTMLElement>; x: number; y: number }>();
-  for (const p of PROOF) {
-    const e = document.createElement('div'), cards = new Map<string, HTMLElement>(); e.className = 'pstack';
-    const ex = document.createElement('span'); ex.className = 'ex'; ex.textContent = 'Example'; e.append(ex);
-    for (const t of [...p.things, ...p.asks.flatMap(a => a.adds ?? [])]) {
-      const c = document.createElement('div'); c.className = 'pt'; c.innerHTML = '<b></b><span></span>';
-      c.querySelector('b')!.textContent = t.label; c.querySelector('span')!.textContent = t.value; e.append(c); cards.set(t.id, c);
-    }
-    proofLayer.append(e); stacks.set(p.tool, { e, cards, x: -1, y: -1 });
+  // The tools' work (lib/home/proof.ts), as cards in the world beside each tool (lib/space/cards.ts): the ask is
+  // typed, the AI goes to each thing and changes it there, the answer appears, and the other asks wait to be tapped.
+  let shown: SpaceCard[] = [], agentAt: string | null = null, last: SpaceFrame | null = null;
+  const started: { play: Solenix['play']; at: number } = { play: null, at: -1 };
+  function work(f: SpaceFrame) {
+    shown = []; agentAt = null;
+    const p = PROOF.find(x => S.play && x.tool === S.play.tool), wi = p ? S.fly.findIndex(w => w.id === p.tool) : -1;
+    const al = wi < 0 ? 0 : f.fly * Math.max(0, 1 - Math.abs(f.wsel - wi) * 2);
+    if (!p || !S.play || al < 0.01) return;
+    // The work starts once the camera has arrived beside the world, so the visitor sees all of it.
+    if (started.play !== S.play) { started.play = S.play; started.at = -1; }
+    if (started.at < 0 && al > 0.92) started.at = performance.now();
+    const a = S.play.ask, t = !S.motion ? Infinity : started.at < 0 ? 0 : (performance.now() - started.at) / 1000, m = playProof(p, a, Math.min(t, proofLength(p, a)));
+    // A column beside the world: to its left on a wide screen, under it on a narrow one. Units: view heights.
+    const aspect = f.width / f.height, w = f.portrait ? Math.min(0.4, 0.88 * aspect) : 0.3;
+    const x = f.portrait ? 0 : -0.36, step = w * 0.26, at = f.well(wi), id = (k: string) => `${p.tool}:${k}`, own = (k: string) => `${p.tool}/${k}`;
+    let y = f.portrait ? -0.1 : 0.3;
+    shown.push({ id: own('say'), at, dx: x, dy: y, w, kind: 'say', title: m.typed || ' ', alpha: al * (m.typed ? 1 : 0) });
+    y -= w * 0.32;
+    for (const th of m.things) shown.push({ id: id(th.id), at, dx: x, dy: y - th.slot * step, w, kind: 'thing', title: th.label, value: th.value, state: th.state, alpha: al * th.show });
+    y -= m.things.length * step + w * 0.06;
+    shown.push({ id: own('answer'), at, dx: x, dy: y, w, kind: 'reply', title: p.asks[a].reply, value: "Example", alpha: al * m.reply });
+    y -= w * 0.34;
+    p.asks.forEach((q, i) => { if (i === a) return; shown.push({ id: own(`ask${i}`), at, dx: x, dy: y, w: w * 0.92, kind: 'ask', title: q.say, alpha: al * m.reply }); y -= w * 0.2; });
+    agentAt = m.at === 'say' ? own('say') : m.at ? id(m.at) : null;
   }
-  l.add(() => proofLayer.replaceChildren());
+  // A tap on an ask in the world plays it.
+  const hitAsk = (e: PointerEvent) => {
+    if (!last || !S.play) return null;
+    for (const c of shown) if (c.kind === 'ask' && c.alpha > 0.5) { const r = last.cardRect(c.id); if (r && e.clientX >= r.x0 && e.clientX <= r.x1 && e.clientY >= r.y0 && e.clientY <= r.y1) return c; }
+    return null;
+  };
+  l.on(window, 'pointerup', (e: PointerEvent) => { const c = hitAsk(e); if (!c || !S.play) return; const p = PROOF.find(x => x.tool === S.play!.tool)!; S.ask(p.tool, p.asks.findIndex(q => q.say === c.title)); });
+  l.on(window, 'pointermove', (e: PointerEvent) => { document.documentElement.style.cursor = hitAsk(e) ? 'pointer' : ''; }, { passive: true });
+  l.add(() => { document.documentElement.style.cursor = ''; });
   const jrEl = document.getElementById('journey')!;
 
   // Revenue, Costs, Time: a small tag under each sun, all the way through. They fade only where the scene is
@@ -73,22 +95,8 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
   // The page's labels and markers, placed from each frame after the render. Every value is the scene's, as the frame reports it.
   function labels(f: SpaceFrame) {
     const sc = f.params, W = f.width, H = f.height, portrait = f.portrait, fl = f.fly, wsel = f.wsel, heroAmt = f.hero, locked = f.locked;
-    // The tool beside the camera shows its things, as its latest answer arranged them: a stack held beside its world,
-    // kept between the nav and the words.
-    for (const p of PROOF) {
-      const st = stacks.get(p.tool)!, wi = S.fly.findIndex(w => w.id === p.tool), al = fl * Math.max(0, 1 - Math.abs(wsel - wi) * 2);
-      if (al < 0.01) { if (st.e.style.opacity !== '0') st.e.style.opacity = '0'; st.x = -1; continue; }
-      const placed = placeProof(p, S.asked[p.tool] ?? -1), shown = new Set(placed.map(t => t.id));
-      // A phone holds only what the answer found or made; the rest would crowd the words.
-      st.cards.forEach((c, id) => { const k = placed.findIndex(t => t.id === id); c.hidden = !shown.has(id) || (portrait && placed[k]?.state === 'dim'); if (k >= 0) { c.style.order = String(k); c.dataset.state = placed[k].state; } });
-      const w = f.well(wi), v = f.project(w.x, w.y, w.z), wx = (v.x + 1) / 2 * W, wy = (1 - v.y) / 2 * H;
-      const band = openBand('tools'), sw = st.e.offsetWidth || 240, sh = st.e.offsetHeight || 180, top = band ? band.y0 : 84, bottom = band ? band.y1 - 4 : H - 16;
-      // The open sky is beside the world, above the words: the stack takes the left of the world when it fits there.
-      const left = wx - 56 - sw >= 24, x = portrait ? Math.min(Math.max(wx - sw / 2, 16), W - sw - 16) : left ? wx - 56 - sw : Math.min(wx + 56, W - sw - 24);
-      const y = Math.min(Math.max(portrait ? wy + 40 : wy - sh / 2, top), Math.max(top, bottom - sh));
-      if (st.x < 0) { st.x = x; st.y = y; } else { const k = 1 - Math.exp(-f.dt * 8); st.x += (x - st.x) * k; st.y += (y - st.y) * k; }
-      st.e.style.opacity = al.toFixed(3); st.e.style.transform = `translate3d(${st.x.toFixed(1)}px, ${st.y.toFixed(1)}px, 0)`;
-    }
+    last = f;
+    work(f);
     // Beside one world, only its mark shows; seen from afar (no world picked), every world wears its mark.
     worldTags.forEach((e, i) => placeAt(e, f.well(i), fl * (wsel < 0 ? 1 : (portrait ? 0 : 1) * Math.max(0, 1 - Math.abs(wsel - i) * 1.6)), 0, f));
     tagShow = lerp(tagShow, locked || sc.agent > 0.98 ? 1 : 0, 1 - Math.exp(-f.dt * 4));
@@ -133,6 +141,8 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
     },
     openBand,
     onFrame: labels,
+    cards: () => shown,
+    agentTo: () => agentAt,
     onLock: (holding) => { jrEl.classList.toggle('locked', holding); ui.classList.toggle('locked', holding); },
     onPayoff: () => { ui.classList.remove('lock-pop'); void ui.offsetWidth; ui.classList.add('lock-pop'); },
     onResize: () => { tagW = tags.map(e => e.offsetWidth || 90); tagH = tags[0]?.offsetHeight || 28; },

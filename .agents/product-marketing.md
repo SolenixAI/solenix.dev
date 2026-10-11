@@ -154,7 +154,7 @@ Reddit post dates are approximate.
 **Value themes:**
 | Theme | Proof |
 |-------|-------|
-| Live, interactive pages built with AI | The Proof Flood article (articles/proof-flood), the homepage's 3D three-body world, and the homepage's tool stops (ask in plain words; the answer shows at once, beside the tool's world). |
+| Live, interactive pages built with AI | The Proof Flood article (articles/proof-flood), the homepage's 3D three-body world, and the homepage's tool stops (the AI does the job live, in front of the visitor, at that tool's world in the 3D space). |
 | Open source, with live numbers | Agents Marketplace tools with live GitHub stars and update dates (lib/marketplace.ts). |
 | Hours back for the owner | Not set yet. No client results. |
 | A fixed price in writing | Agreed on each call. No public price. |

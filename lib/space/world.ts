@@ -5,7 +5,7 @@
 //
 // The engine module (three.js and the scene, the site's largest script) loads the first time a page binds, so a page
 // that shows no world downloads none of it. The engine is created once it is in, with that page's own story.
-import type { Space, SpaceEnv, SpaceFrame, SpaceParams, SpaceStory, SpaceWell } from "./engine";
+import type { Space, SpaceCard, SpaceEnv, SpaceFrame, SpaceParams, SpaceStory, SpaceWell } from "./engine";
 
 /** What a page gives the world while it is shown. Each function is read at the moment it is needed, so the page may change its state. */
 export type SpaceBinding = {
@@ -14,6 +14,9 @@ export type SpaceBinding = {
   story: SpaceStory;
   openBand: (section: string) => { y0: number; y1: number } | null;
   onFrame: (frame: SpaceFrame) => void;
+  /** The cards shown in the world, and the card the AI agent is working at (lib/space/cards.ts). Optional. */
+  cards?: () => readonly SpaceCard[];
+  agentTo?: () => string | null;
   onLock: (holding: boolean) => void;
   onPayoff: () => void;
   onResize: () => void;
@@ -59,6 +62,8 @@ export function makeSpaceWorld(load: () => Promise<Engine>) {
       wells: current.wells,
       openBand: (section) => (current ? current.openBand(section) : null),
       onFrame: (f) => current?.onFrame(f),
+      cards: () => current?.cards?.() ?? [],
+      agentTo: () => current?.agentTo?.() ?? null,
       onReady: () => s.classList.add("gl-on"),
       onNoWebGL: () => s.classList.add("gl-off"),
       onLock: (holding) => current?.onLock(holding),

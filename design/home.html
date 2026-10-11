@@ -114,31 +114,6 @@ html:not(.js) .stage { position: relative; height: auto; min-height: 100svh; }
 .cap.on .chips li { animation: chip-in 700ms cubic-bezier(0.16, 1, 0.3, 1) both; }
 .cap.on .chips li:nth-child(2) { animation-delay: 120ms; } .cap.on .chips li:nth-child(3) { animation-delay: 240ms; } .cap.on .chips li:nth-child(4) { animation-delay: 360ms; }
 @keyframes chip-in { from { opacity: 0; transform: translateY(10px) scale(0.96); } }
-/* A tool's things, held beside its world (lib/home/scene.ts): glass cards, a colour and a word for each state. */
-.proof { position: absolute; inset: 0; }
-.pstack { position: absolute; left: 0; top: 0; width: min(17rem, calc(100vw - 32px)); display: flex; flex-direction: column; gap: 8px; opacity: 0; will-change: transform, opacity; }
-.pt { display: grid; gap: 2px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--glass-bg); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); box-shadow: inset 0 1px 0 var(--glass-edge); transition: border-color var(--dur-slow), opacity var(--dur-slow), transform var(--dur-slow) var(--ease-out), box-shadow var(--dur-slow); }
-.pt b { font-weight: var(--fw-semibold); font-size: var(--fs-sm); color: var(--text); }
-.pt span { font: var(--fw-semibold) var(--fs-2xs)/1.4 var(--font-mono); font-variant-numeric: tabular-nums; color: var(--muted); }
-.pt[data-state="hot"] { border-color: var(--accent); box-shadow: inset 0 1px 0 var(--glass-edge), 0 0 22px color-mix(in srgb, var(--ring) 35%, transparent); }
-.pt[data-state="hot"] span { color: var(--accent-text); }
-.pt[data-state="hot"] span::before { content: "Needs you · "; }
-.pt[data-state="new"] { border-color: var(--accent); transform: translateX(-6px); }
-.pt[data-state="new"] span { color: var(--accent-text); }
-.pt[data-state="new"] span::before { content: "New · "; }
-.pt[data-state="done"] { border-color: color-mix(in oklch, var(--ok) 60%, transparent); }
-.pt[data-state="done"] span { color: var(--ok); }
-.pt[data-state="done"] span::before { content: "Done · "; }
-.pt[data-state="dim"] { opacity: 0.42; }
-.asks { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-3); }
-.ask { min-height: var(--tap-min); padding: 0 var(--space-4); border: 1px solid var(--line-strong); border-radius: var(--radius-pill); background: color-mix(in oklch, var(--bg) 60%, transparent); color: var(--text); font: var(--fw-medium) var(--fs-sm)/1.2 var(--font-text); text-align: left; cursor: pointer; text-shadow: none; transition: border-color var(--dur-fast), color var(--dur-fast); }
-.ask:hover { border-color: var(--accent); }
-.ask[aria-pressed="true"] { border-color: var(--accent); color: var(--accent-text); }
-.ask:focus-visible { outline: var(--focus-width) solid var(--focus-color); outline-offset: 3px; }
-.asks .reply { flex-basis: 100%; margin: var(--space-2) 0 0; font-size: var(--fs-lede); color: var(--text); min-height: 1.5em; }
-.asks .reply .ex { margin-left: var(--space-2); vertical-align: 2px; }
-.journey .stage .ask { pointer-events: auto; }
-@media (max-width: 640px) { .pt { padding: 8px 12px; } .ask { padding: 0 var(--space-3); } .asks .reply { font-size: var(--fs-body); } }
 .story { margin: 0; padding: 0; list-style: none; }
 html.js .story { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 html:not(.js) .story { position: relative; padding: calc(var(--nav-height) + var(--space-7)) var(--gutter) var(--space-7); max-width: 40rem; margin-inline: auto; display: grid; gap: var(--space-4); font-size: var(--fs-lede); color: var(--text); }
@@ -241,7 +216,6 @@ html.js[data-motion="on"] .hb.arm:not(.play) .hw > span { transform: translateY(
   <div class="moon-tag world-tag" data-world="quickbooks"><svg class="lg"><use href="#lg-quickbooks"/></svg></div>
   <div class="moon-tag world-tag" data-world="gmail"><svg class="lg"><use href="#lg-gmail"/></svg></div>
   <div class="moon-tag world-tag" data-world="microsoftexcel"><svg class="lg"><use href="#lg-microsoftexcel"/></svg></div>
-  <div class="proof"></div>
   <div class="stop-mk" data-k="0">01<span>Find the hours</span></div>
   <div class="stop-mk" data-k="1">02<span>Cut the tools</span></div>
   <div class="stop-mk" data-k="2">03<span>One AI</span></div>
@@ -255,7 +229,7 @@ html.js[data-motion="on"] .hb.arm:not(.play) .hw > span { transform: translateY(
   <ol class="story">
     <li>Revenue, costs and time, pulled apart by a dozen tools. We put one AI at the centre of the tools you already use. Hours back, every week.</li>
     <li>Each tool you run eats hours you do not get paid for. That is where this starts.</li>
-    <li>We set up Claude or ChatGPT for your team and connect it to the tools you already use. You say what you want in plain words, and it gets done in those tools.</li>
+    <li>We set up the AI agent of your choice for your team and connect it to the tools you already use. You say what you want in plain words, and it gets done in those tools.</li>
     <li>Example: you ask who owes you money. Hillside Roofing is 64 days late; three clients owe $4,450. Then you ask to invoice Harbour Dental for the retainer, and the invoice is ready for you to check before it goes.</li>
     <li>Example: you ask to sort today's inbox. Four emails need a reply today, nine can wait, sixteen are junk. Then you ask to book 30 minutes with Harbour Dental: Tuesday at 10:30, and the invite waits for your OK.</li>
     <li>Example: you ask what runs out this month. Sea salt caramels and wool mitts will run out within 30 days. Then you ask to reorder them, and both reorders are drafted for you to approve.</li>
@@ -263,7 +237,7 @@ html.js[data-motion="on"] .hb.arm:not(.play) .hw > span { transform: translateY(
     <li>Example: you ask what sold best this month. Bread and coffee are up; pastry slipped. Then you ask for a chart, and it is added to your sales sheet.</li>
     <li>On the call, we add up what your tools cost you, in hours and dollars.</li>
     <li>You stop paying for the ones you barely use. The rest move off outdated software.</li>
-    <li>We set up Claude or ChatGPT and connect it to your tools. Then we teach your team to use it.</li>
+    <li>We set up the AI agent of your choice and connect it to your tools. Then we teach your team to use it.</li>
     <li>It is where your customers decide to call you. We look after it. You own everything.</li>
     <li>Agreed on the call. No surprise invoice.</li>
     <li>Fixed price: one number, in writing, agreed on the call. You own it all: accounts, code and data in your name. Plain English: updates you read in a minute, on your phone. No lock-in: leave any month, keep everything you paid for.</li>
@@ -280,27 +254,27 @@ html.js[data-motion="on"] .hb.arm:not(.play) .hw > span { transform: translateY(
       </li>
       <li class="cap" data-k="2">
         <h2 class="cap-h">Stop learning ten tools. <em>Talk to one.</em></h2>
-        <p class="say">Claude or ChatGPT, set up in the tools you use.</p>
+        <p class="say">Any AI agent, set up in the tools you use.</p>
       </li>
       <li class="cap" data-k="3">
         <h2 class="cap-h">You don't need to be an expert in <em>QuickBooks.</em></h2>
-        <div class="asks" data-tool="quickbooks"></div>
+        <div class="asks vh" data-tool="quickbooks"></div>
       </li>
       <li class="cap" data-k="4">
         <h2 class="cap-h">You don't need to be an expert in <em>Gmail.</em></h2>
-        <div class="asks" data-tool="gmail"></div>
+        <div class="asks vh" data-tool="gmail"></div>
       </li>
       <li class="cap" data-k="5">
         <h2 class="cap-h">You don't need to be an expert in <em>Shopify.</em></h2>
-        <div class="asks" data-tool="shopify"></div>
+        <div class="asks vh" data-tool="shopify"></div>
       </li>
       <li class="cap" data-k="6">
         <h2 class="cap-h">You don't need to be an expert in <em>Meta Ads.</em></h2>
-        <div class="asks" data-tool="meta"></div>
+        <div class="asks vh" data-tool="meta"></div>
       </li>
       <li class="cap" data-k="7">
         <h2 class="cap-h">You don't need to be an expert in <em>Excel.</em></h2>
-        <div class="asks" data-tool="microsoftexcel"></div>
+        <div class="asks vh" data-tool="microsoftexcel"></div>
       </li>
       <li class="cap" data-k="8">
         <h2 class="cap-h cap-plan">From one call to a <em>stable orbit.</em></h2>

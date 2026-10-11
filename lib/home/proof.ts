@@ -1,8 +1,8 @@
 // What AI does in each tool, shown in the world rather than told. At a tool stop the tool's things (invoices, emails,
-// rows) stand in a stack beside its world (lib/home/scene.ts); the visitor asks in plain words (a tap on an ask) and the things answer
-// at once: the overdue one glows, the inbox sorts itself, the chart grows. Most visitors have never seen AI do real
-// work in their own tools; this is where they watch it (.impeccable/surfaces/design-home-html.md). All data is an
-// example and wears the Example tag on the page.
+// rows) stand as cards in the world beside its world (lib/home/scene.ts, lib/space/cards.ts). The AI does the ask live:
+// the ask types out, the agent goes to each thing and changes it there, then the answer appears (playProof). Most
+// visitors have never seen AI do real work in their own tools; this is where they watch it
+// (.impeccable/surfaces/design-home-html.md). All data is an example and says Example in the world.
 
 type ProofState = "plain" | "hot" | "dim" | "done" | "new"
 type ProofThing = { id: string; label: string; value: string }
@@ -95,4 +95,43 @@ export function placeProof(p: ToolProof, a: number): ShownThing[] {
   return ids.map((id) => all.find((t) => t.id === id)).filter((t): t is ProofThing => !!t).map((t) => ({
     ...t, state: !ask ? "plain" : ask.adds?.some((n) => n.id === t.id) ? "new" : ask.states[t.id] ?? "dim",
   }))
+}
+
+/** One moment of an ask being done, live: what has been typed, each thing's look and place, where the agent is. */
+export type ProofMoment = {
+  /** The ask as typed so far. */
+  typed: string
+  /** The things on show, each with its place in the stack (0 is the top) and whether it is there yet. */
+  things: (ShownThing & { slot: number; show: number })[]
+  /** The thing the agent is working at ("say" while the ask is being typed), or null. */
+  at: string | null
+  /** How far the answer is shown, 0 to 1. */
+  reply: number
+}
+
+// The pace of one ask: a beat, the typing, a beat, then one thing after another, then the answer.
+const BEAT = 0.3, PER_CHAR = 0.035, STEP = 0.55, FLIP = 0.3
+
+const pace = (p: ToolProof, a: number) => { const typeEnd = BEAT + Math.min(1.2, p.asks[a].say.length * PER_CHAR), s0 = typeEnd + BEAT
+  return { typeEnd, s0, last: s0 + STEP * placeProof(p, a).length } }
+
+/** How long ask `a` takes to play, in seconds. */
+export const proofLength = (p: ToolProof, a: number) => pace(p, a).last + 0.4
+
+/** Ask `a`, `t` seconds after it starts: the AI reads the ask, goes to each thing in the order its answer puts
+ * them, and changes it there, so the visitor watches the work happen. Things it has done take the top of the stack;
+ * the rest wait below in their old order. A thing the ask makes appears only when the agent makes it. */
+export function playProof(p: ToolProof, a: number, t: number): ProofMoment {
+  const ask = p.asks[a], end = placeProof(p, a), { typeEnd, s0, last } = pace(p, a)
+  const typed = ask.say.slice(0, Math.max(0, Math.round((t - BEAT) / (typeEnd - BEAT) * ask.say.length)))
+  const doneN = end.filter((_, k) => t >= s0 + STEP * k + FLIP).length
+  const waiting = p.things.filter((x) => !end.slice(0, doneN).some((d) => d.id === x.id))
+  const things = end.map((x, k) => {
+    if (k < doneN) return { ...x, slot: k, show: 1 }
+    const isNew = !p.things.some((o) => o.id === x.id)
+    const w = waiting.findIndex((o) => o.id === x.id)
+    return { ...x, state: "plain" as ProofState, slot: doneN + Math.max(0, w), show: isNew ? 0 : 1 }
+  })
+  const k = Math.floor((t - s0) / STEP), at = t < BEAT ? null : t < s0 ? "say" : k >= 0 && k < end.length ? end[k].id : null
+  return { typed, things, at, reply: t >= last + 0.4 ? 1 : Math.max(0, (t - last) / 0.4) }
 }

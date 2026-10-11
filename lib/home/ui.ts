@@ -30,7 +30,7 @@ const toolView = (i: number): Partial<HomeSceneParams> => {
 // Each stop holds still through the middle of its stretch of scroll, and the world moves only between stops, so a
 // stop is never skipped past and the scroll stays the visitor's own. Each stop owns an equal share of the scroll; HOLD
 // of its share is still.
-const HOLD = 0.55;
+const HOLD = 0.3;
 const stopAt = (k: number): [number, number] => { const n = JOURNEY.length, c = (k + 0.5) / n, h = HOLD / n / 2;
   return [Math.max(0, c - h), Math.min(1, c + h)]; };
 // The scene's keyframes, one per journey stop (lib/home/journey.ts), then the close. A tool stop takes its world's
@@ -93,18 +93,20 @@ export function startUi(): { S: Solenix; stop: () => void } {
     PARAMS.forEach(k => sc[k] = A[k]! + (B[k]! - A[k]!) * t);
   }
 
-  S.stops = $$('.stop-mk'); S.pingN = 0; S.jCur = -1; S.cur = 0; S.asked = {};
-  // The asks at each tool stop: plain words a visitor would say. A tap answers at once, in the world (lib/home/scene.ts).
-  // Arriving at a tool, its first ask is already answered, so every visitor sees one answer.
+  S.stops = $$('.stop-mk'); S.pingN = 0; S.jCur = -1; S.cur = 0; S.asked = {}; S.play = null;
+  // The asks at each tool stop: plain words a visitor would say. The world shows them and plays each one live
+  // (lib/home/scene.ts, lib/home/proof.ts playProof); these buttons carry them for keyboards and screen readers.
+  // Arriving at a tool plays its ask again, every time, so every visitor watches the work happen.
   const asks = $$('.asks', journey).map(box => { const p = PROOF.find(x => x.tool === box.dataset.tool)!;
     const reply = document.createElement('p'); reply.className = 'reply'; reply.setAttribute('aria-live', 'polite');
     const btns = p.asks.map((a, i) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'ask'; b.textContent = `“${a.say}”`;
       b.setAttribute('aria-pressed', 'false'); l.on(b, 'click', () => answer(p.tool, i)); return b; });
     box.replaceChildren(...btns, reply);
     return { tool: p.tool, btns, reply, p }; });
+  S.ask = answer;
   function answer(tool: string, i: number) {
     const a = asks.find(x => x.tool === tool); if (!a) return;
-    S.asked[tool] = i; a.btns.forEach((b, k) => b.setAttribute('aria-pressed', String(k === i)));
+    S.asked[tool] = i; S.play = { tool, ask: i, at: performance.now() }; a.btns.forEach((b, k) => b.setAttribute('aria-pressed', String(k === i)));
     a.reply.textContent = a.p.asks[i].reply + ' ';
     const ex = document.createElement('span'); ex.className = 'ex'; ex.textContent = 'Example'; a.reply.append(ex);
   }
@@ -123,8 +125,8 @@ export function startUi(): { S: Solenix; stop: () => void } {
       ticks.forEach((d, k) => d.classList.toggle('on', k === cur));
       journey.dataset.stop = JOURNEY[cur]?.id ?? 'close';
       const sc = JOURNEY[cur]?.scene, tool = sc && 'tool' in sc ? sc.tool : null;
-      // The first answer is there the moment the stop is: nothing to wait for.
-      if (tool && S.asked[tool] === undefined) answer(tool, 0);
+      // Each arrival plays the tool's ask again, live.
+      if (tool) answer(tool, S.asked[tool] ?? 0);
     }
     const stop = JOURNEY[cur];
     S.sec = stop ? stop.sec : 'close';

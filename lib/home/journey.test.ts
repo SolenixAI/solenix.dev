@@ -6,7 +6,8 @@ import { test } from "node:test"
 import assert from "node:assert/strict"
 import { readFileSync } from "node:fs"
 import { fileURLToPath } from "node:url"
-import { JOURNEY, TOOL_STOPS } from "./journey.ts"
+import { JOURNEY } from "./journey.ts"
+import { TOOL_WORLDS } from "./worlds.ts"
 
 const html = readFileSync(fileURLToPath(new URL("../../design/home.html", import.meta.url)), "utf8")
 const caps = [...html.matchAll(/<li class="cap(?: on)?" data-k="(\d+)">([\s\S]*?)<\/li>\n/g)].map((m) => ({ k: +m[1], body: m[2] }))
@@ -42,8 +43,9 @@ test("the story in words has one full sentence per stop, for screen readers and 
 test("each tool stop flies to a tool world that exists, and holds that tool's asks", () => {
   JOURNEY.forEach((s, k) => {
     if (!("tool" in s.scene)) return
-    assert.ok(TOOL_STOPS.includes(s.scene.tool))
-    assert.match(caps[k].body, new RegExp(`class="asks" data-tool="${s.scene.tool}"`), `stop ${k} holds its tool's asks`)
+    const tool = s.scene.tool
+    assert.ok(TOOL_WORLDS.some((w) => w.id === tool), `stop ${k}: no world ${tool}`)
+    assert.match(caps[k].body, new RegExp(`class="asks(?: vh)?" data-tool="${tool}"`), `stop ${k} holds its tool's asks`)
   })
 })
 

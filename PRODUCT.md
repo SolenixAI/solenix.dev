@@ -71,7 +71,7 @@ Each surface, and each section inside it, has its own purpose, value and impact,
 
 ## Evidence on Hand
 
-- Our own builds: The Proof Flood (articles/proof-flood), the homepage's 3D three-body world, the homepage's tool stops (ask in plain words; the answer shows at once, beside the tool's world).
+- Our own builds: The Proof Flood (articles/proof-flood), the homepage's 3D three-body world, the homepage's tool stops (the AI does the job live, in front of the visitor, at that tool's world in the 3D space).
 - Open-source numbers: Agents Marketplace tools with live GitHub stars and update dates (lib/marketplace.ts).
 - Live data wherever it exists: real numbers read at view time, never typed in.
 - Not yet: client results, testimonials, a founder photo ("Photo to come"). Never invent them.

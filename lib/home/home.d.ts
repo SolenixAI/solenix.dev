@@ -33,6 +33,10 @@ interface Solenix {
   jCur: number
   /** Per tool stop, the ask the visitor's world is answering (lib/home/proof.ts); absent: not asked yet. */
   asked: Record<string, number>
+  /** The ask playing now, and when it started (performance.now() ms). Null before any tool stop. */
+  play: { tool: string; ask: number; at: number } | null
+  /** Plays ask i of a tool (from a tap in the world or a button). */
+  ask: (tool: string, i: number) => void
 }
 
 interface Window {
