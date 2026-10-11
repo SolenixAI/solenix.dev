@@ -44,6 +44,3 @@ export function makeFresh(get: Get) {
     return read as Promise<T | null>
   }
 }
-
-/** The reader the site uses: live by default, cached with a cache option. */
-export const fresh = makeFresh((url, init) => fetch(url, init))

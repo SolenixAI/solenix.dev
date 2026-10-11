@@ -1,7 +1,7 @@
 "use client"
 
 import type { CSSProperties } from "react"
-import type { Entry, Orbit, Source } from "@/lib/marketplace"
+import type { Entry, Orbit, Piece } from "@/lib/marketplace"
 import { avatar } from "@/lib/avatar"
 import { KindIcon } from "./system"
 
@@ -31,7 +31,7 @@ const place = (i: number, n: number) => {
 const side = (u: { x: number; y: number }) => (u.x >= 0.3 ? "r" : u.x <= -0.3 ? "l" : u.y < 0 ? "t" : "b")
 
 // A planet's pieces ride one arc on the sun's side of it.
-function pieces(planets: Source[], u: { x: number; y: number }) {
+function pieces(planets: Piece[], u: { x: number; y: number }) {
   const inward = Math.atan2(-u.y, -u.x)
   const step = Math.min(PIECE_STEP, 110 / Math.max(1, planets.length - 1))
   return planets.map((piece, k) => {
@@ -40,7 +40,7 @@ function pieces(planets: Source[], u: { x: number; y: number }) {
   })
 }
 
-function Face({ s, size }: { s: Source; size: number }) {
+function Face({ s, size }: { s: Piece; size: number }) {
   return s.repo?.avatar ? <img src={avatar(s.repo.avatar, size * 2)} width={size} height={size} alt="" /> : <KindIcon kind={s.kind} />
 }
 
