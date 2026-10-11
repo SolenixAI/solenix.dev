@@ -3,7 +3,8 @@
 // set by lib/home/ui.ts) and the five tool worlds are this page's. startScene() returns the binding the world takes,
 // and stop(), which removes what this page added.
 import type { SpaceBinding } from "@/lib/space/world";
-import type { SpaceCard, SpaceFrame, SpaceWell, TypeLine, Vec3 } from "@/lib/space/engine";
+import type { SpaceCard, SpaceFrame, SpaceSprite, SpaceWell, TypeLine, Vec3 } from "@/lib/space/engine";
+import { hasScene, playScene } from "./scenes";
 import { orbitStop } from "@/lib/space/orbit";
 import { listener } from "./listen";
 import { PROOF, playProof, proofLength } from "./proof";
@@ -40,10 +41,13 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
   const ui = tags[0].parentElement!;   // carries the locked and lock-pop classes
   // The tools' work (lib/home/proof.ts), as cards in the world beside each tool (lib/space/cards.ts): the ask is
   // typed, the AI goes to each thing and changes it there, the answer appears, and the other asks wait to be tapped.
-  let shown: SpaceCard[] = [], agentAt: string | null = null, last: SpaceFrame | null = null;
+  let sceneAgent = (q: Vec3): Vec3 => q;
+  let shown: SpaceCard[] = [], things: SpaceSprite[] = [], agentAt: string | Vec3 | null = null, last: SpaceFrame | null = null;
   const started: { play: Solenix['play']; at: number } = { play: null, at: -1 };
+  const capWords = [...document.querySelectorAll<HTMLElement>('#journey .cap')].map(cap => [...cap.querySelectorAll<HTMLElement>(':scope > :is(h1, h2, p, ul)')]);
+
   function work(f: SpaceFrame) {
-    shown = []; agentAt = null;
+    shown = []; things = []; agentAt = null;
     const p = PROOF.find(x => S.play && x.tool === S.play.tool), wi = p ? S.fly.findIndex(w => w.id === p.tool) : -1;
     const al = wi < 0 ? 0 : f.fly * Math.max(0, 1 - Math.abs(f.wsel - wi) * 2);
     if (!p || !S.play || al < 0.01) return;
@@ -51,24 +55,45 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
     if (started.play !== S.play) { started.play = S.play; started.at = -1; }
     if (started.at < 0 && al > 0.92) started.at = performance.now();
     const a = S.play.ask, t = !S.motion ? Infinity : started.at < 0 ? 0 : (performance.now() - started.at) / 1000, m = playProof(p, a, Math.min(t, proofLength(p, a)));
-    // A column beside the world: to its left on a wide screen, under it on a narrow one. Units: view heights.
+    // Units: view heights at the world's depth. The things (when a tool shows its work as cards) stand in a column
+    // beside the world: to its left on a wide screen, under it on a narrow one. What is asked and what came back sit
+    // just above the stop's words, where the eye already is.
     const aspect = f.width / f.height, w = f.portrait ? Math.min(0.4, 0.88 * aspect) : 0.3;
     const x = f.portrait ? 0 : -0.36, step = w * 0.26, at = f.well(wi), id = (k: string) => `${p.tool}:${k}`, own = (k: string) => `${p.tool}/${k}`;
-    let y = f.portrait ? -0.1 : 0.3;
-    shown.push({ id: own('say'), at, dx: x, dy: y, w, kind: 'say', title: m.typed || ' ', alpha: al * (m.typed ? 1 : 0) });
-    y -= w * 0.32;
-    for (const th of m.things) shown.push({ id: id(th.id), at, dx: x, dy: y - th.slot * step, w, kind: 'thing', title: th.label, value: th.value, state: th.state, alpha: al * th.show });
-    y -= m.things.length * step + w * 0.06;
-    shown.push({ id: own('answer'), at, dx: x, dy: y, w, kind: 'reply', title: p.asks[a].reply, value: "Example", alpha: al * m.reply });
-    y -= w * 0.34;
-    p.asks.forEach((q, i) => { if (i === a) return; shown.push({ id: own(`ask${i}`), at, dx: x, dy: y, w: w * 0.92, kind: 'ask', title: q.say, alpha: al * m.reply }); y -= w * 0.2; });
-    agentAt = m.at === 'say' ? own('say') : m.at ? id(m.at) : null;
+    const v = f.project(at.x, at.y, at.z), H = f.height, W = f.width;
+    const cap = capWords[S.cur]?.map(e => e.getBoundingClientRect()).filter(r => r.width > 0) ?? [];
+    const capLeft = cap.length ? Math.min(...cap.map(r => r.left)) : 32, capTop = cap.length ? Math.min(...cap.map(r => r.top)) : H * 0.62;
+    // A card's offset so its left edge and top land on a point of the screen (CSS pixels).
+    const toScreen = (cw: number, px: number, py: number) => ({ dx: (px - W / 2) / H + cw / 2 - v.x * aspect / 2, dy: (H / 2 - py) / H - v.y / 2 });
+    const live = hasScene(p.tool) ? playScene(p, a, Math.min(t, proofLength(p, a)), performance.now() / 1000) : null;
+    if (live) {
+      // The scene fits the frame: centred in the open part of the screen (the right half on a wide screen, the upper
+      // half on a phone) at the world's depth, and sized to the view there, whatever the tool's camera.
+      const vw = f.view(at.x, at.y, at.z), k = vw.vh * (f.portrait ? 0.085 : 0.15);
+      const sx = f.portrait ? 0 : 0.21 * aspect, sy = f.portrait ? 0.2 : -0.04, ox = (sx - v.x * aspect / 2) * vw.vh, oy = (sy - v.y / 2) * vw.vh;
+      const o = { x: at.x + vw.right.x * ox + vw.up.x * oy, y: at.y + vw.right.y * ox + vw.up.y * oy, z: at.z + vw.right.z * ox + vw.up.z * oy };
+      // The scene's own axes face the camera: x across the screen, y up, z toward the viewer (level with the ground).
+      const rl = Math.hypot(vw.right.x, vw.right.z) || 1, rx = vw.right.x / rl, rz = vw.right.z / rl, fx = -rz, fz = rx;
+      const place = (q: { x: number; y: number; z: number }) => ({ x: o.x + (q.x * rx + q.z * fx) * k, y: o.y + q.y * k, z: o.z + (q.x * rz + q.z * fz) * k });
+      for (const th of live.things) things.push({ id: id(th.id), ...place(th), size: th.size * k, aspect: th.aspect, icon: th.icon, tone: th.tone, alpha: al * th.alpha });
+      sceneAgent = place;
+      for (const lb of live.labels) shown.push({ id: id(`label-${lb.id}`), at: place(lb), dx: 0, dy: 0, w: 0.34, kind: 'type', title: '', lines: [{ size: 'p', px: 150, weight: 650, parts: [{ t: lb.text, em: lb.tone === 'new' }] }], alpha: al });
+    } else {
+      const y0 = f.portrait ? -0.1 : 0.22;
+      for (const th of m.things) shown.push({ id: id(th.id), at, dx: x, dy: y0 - th.slot * step, w, kind: 'thing', title: th.label, value: th.value, state: th.state, alpha: al * th.show });
+    }
+    // Above the words, bottom up: the other asks, the answer, then what was asked.
+    const cw = f.portrait ? Math.min(0.42, 0.9 * aspect) : 0.28, gap = 12;
+    let yb = capTop - gap;
+    p.asks.forEach((q, i) => { if (i === a) return; const hpx = cw * H * 0.22; const o = toScreen(cw * 0.92, capLeft, yb - hpx / 2); shown.push({ id: own(`ask${i}`), at, dx: o.dx, dy: o.dy, w: cw * 0.92, kind: 'ask', title: q.say, alpha: al * m.reply }); yb -= hpx + gap; });
+    { const hpx = cw * H * 0.3, o = toScreen(cw, capLeft, yb - hpx / 2); shown.push({ id: own('answer'), at, dx: o.dx, dy: o.dy, w: cw, kind: 'reply', title: p.asks[a].reply, value: "Example", alpha: al * m.reply }); yb -= hpx + gap; }
+    { const hpx = cw * H * 0.2, o = toScreen(cw, capLeft, yb - hpx / 2); shown.push({ id: own('say'), at, dx: o.dx, dy: o.dy, w: cw, kind: 'say', title: m.typed || ' ', alpha: al * (m.typed ? 1 : 0) }); }
+    agentAt = m.at === 'say' ? own('say') : live ? (live.agent ? sceneAgent(live.agent) : null) : m.at ? id(m.at) : null;
   }
   // The words of each stop, set as type in the world (lib/space/cards.ts). They are read from the page (the stop's
   // caption: one source), drawn at the caption's own size and place while the stop is on, and left in the world when
   // the camera moves on, so it passes them. The page's own words stay for screen readers and keyboards.
   const TW = 1600, CANVAS_H = 132;
-  const capWords = [...document.querySelectorAll<HTMLElement>('#journey .cap')].map(cap => [...cap.querySelectorAll<HTMLElement>(':scope > :is(h1, h2, p, ul)')]);
   const partsOf = (el: HTMLElement): TypeLine['parts'] => el.tagName === 'UL'
     ? [{ t: [...el.querySelectorAll('li')].map(li => li.textContent!.trim()).join(' · ') }]
     : [...el.childNodes].map(n => n instanceof HTMLElement ? (n.classList.contains('ex') ? { t: 'Example', ex: true } : { t: n.textContent!.replace(/\u2011/g, '-'), em: n.tagName === 'EM' }) : { t: (n.textContent ?? '').replace(/\u2011/g, '-') }).filter(p => p.t.trim());
@@ -86,7 +111,7 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
     const sc = JOURNEY_TOOL[S.cur], wi = sc ? S.fly.findIndex(w => w.id === sc) : -1, at = wi >= 0 ? f.well(wi) : f.hub();
     const v = f.project(at.x, at.y, at.z); if (v.z > 1) return;
     const W = f.width, H = f.height, aspect = W / H, wpx = TW / K;
-    const cx = (left - 20 / K + wpx / 2 - W / 2) / H, by = -(bottom + 8 - H / 2) / H;
+    const cx = (left - 20 / K + wpx / 2 - W / 2) / H, by = -(bottom + 30 / K - H / 2) / H;
     typeOn = { id: `type:${S.cur}`, at, dx: cx - v.x * aspect / 2, dy: by - v.y / 2, w: wpx / H, kind: 'type', title: '', lines, wrap: (right - left) * K + 30, align: 'bottom', alpha: 1 };
   }
 
@@ -173,6 +198,7 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
     openBand,
     onFrame: labels,
     cards: () => (typeOn ? [...shown, typeOn] : shown),
+    sprites: () => things,
     agentTo: () => agentAt,
     onLock: (holding) => { jrEl.classList.toggle('locked', holding); ui.classList.toggle('locked', holding); },
     onPayoff: () => { ui.classList.remove('lock-pop'); void ui.offsetWidth; ui.classList.add('lock-pop'); },

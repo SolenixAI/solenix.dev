@@ -7,6 +7,7 @@
 // three: scripts/check.sh enforces it. Everything here is a browser module with no page globals: the page is injected.
 import { INK0, INK_SPAN } from "./orbit";
 import { createCards, type SpaceCard } from "./cards";
+import { createSprites, type SpaceSprite } from "./sprites";
 import * as THREE from 'three';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
@@ -19,6 +20,7 @@ import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 export interface Vec3 { x: number; y: number; z: number }
 
 export type { SpaceCard, CardState, TypeLine } from "./cards";
+export type { SpaceSprite, SpriteIcon, SpriteTone } from "./sprites";
 
 /** The scroll-driven values a page sets each frame. Each field is read by the engine or by the page's onFrame. */
 export interface SpaceParams {
@@ -79,6 +81,9 @@ export interface SpaceFrame {
   sunRadiusPx: (i: number) => number
   /** How far sun i is from its place on the exact figure-eight (world units; 0 once it holds). */
   offOrbit: (i: number) => number
+  /** The camera's right and up directions, and the height of the view (world units) at a point's depth: for placing
+   * things so they sit at a chosen place on screen. */
+  view: (x: number, y: number, z: number) => { right: Vec3; up: Vec3; vh: number }
   /** A card's box on screen in CSS pixels, or null while it is not shown (for taps). */
   cardRect: (id: string) => { x0: number; y0: number; x1: number; y1: number } | null
 }
@@ -98,8 +103,10 @@ export interface SpaceEnv {
   openBand?: (section: string) => { y0: number; y1: number } | null
   /** The cards the page shows in the world this frame (lib/space/cards.ts). */
   cards?: () => readonly SpaceCard[]
-  /** The card the AI agent is working at this frame, by id: the agent flies there. Null: it rides its loop. */
-  agentTo?: () => string | null
+  /** The things in the world this frame: envelopes, invoices, crates, coins (lib/space/sprites.ts). */
+  sprites?: () => readonly SpaceSprite[]
+  /** Where the AI agent is working this frame: a card by id, or a point in the world. Null: it rides its loop. */
+  agentTo?: () => string | Vec3 | null
   /** After the render, each frame: the page writes its labels and markers here. */
   onFrame?: (frame: SpaceFrame) => void
   /** Once the first frame is on screen. */
@@ -266,6 +273,7 @@ export function createSpace(env: SpaceEnv): Space {
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 400);
   const cards = createCards(camera);
+  const sprites = createSprites(scene);
 
   const additive = { transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending };
   const bodyU = { value: [new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()] };
@@ -535,7 +543,7 @@ export function createSpace(env: SpaceEnv): Space {
   let secR = '', heroR = 1;
   const wantP = new THREE.Vector3(), camP = new THREE.Vector3(), camT = new THREE.Vector3(), camV = new THREE.Vector3(), tgtV = new THREE.Vector3(), gap = new THREE.Vector3();
   let camSet = false, work = 0;
-  const agentP = new THREE.Vector3(), loopP = new THREE.Vector3(), workP = new THREE.Vector3();
+  const agentP = new THREE.Vector3(), loopP = new THREE.Vector3(), workP = new THREE.Vector3(), goalP = new THREE.Vector3();
   // A critically damped spring with a top speed (world units a second): it starts gently, never overshoots, and a
   // long hop takes as long as it needs instead of snapping.
   function glide(x: THREE.Vector3, v: THREE.Vector3, to: THREE.Vector3, dt: number, w = 2.6, top = 44) {
@@ -645,7 +653,7 @@ export function createSpace(env: SpaceEnv): Space {
       suns[b].position.copy(v);
       // Warm and dramatic, but never so bright it swallows the body, its trail or a label.
       const u = suns[b].material.uniforms;
-      u.uSize.value = lerp(1.75, portrait ? 1.35 : 1.25, sc.calm) * lerp(1, open.size, open.k); u.uGain.value = (lerp(0.72, 0.62, sc.calm) + 0.3 * swell) * (1 - 0.45 * sc.fly); u.uFlare.value = lerp(0.45, 0.18, sc.calm);
+      u.uSize.value = lerp(1.75, portrait ? 1.35 : 1.25, sc.calm) * lerp(1, open.size, open.k) * (1 - 0.35 * sc.fly); u.uGain.value = (lerp(0.72, 0.62, sc.calm) + 0.3 * swell) * (1 - 0.7 * sc.fly); u.uFlare.value = lerp(0.45, 0.18, sc.calm);
       // Lens strength for this sun, in screen units, shrinking with distance.
       proj.copy(v).project(camera); lensU.value[b].set(proj.x, proj.y, proj.z < 1 ? 0.05 * 11 / (shown.dist * ZOOM) : 0);
     }
@@ -685,7 +693,7 @@ export function createSpace(env: SpaceEnv): Space {
 
     // The agent dot rides the loop once it holds.
     // At work, it flies to the card it is working on, and its trail is the path it took.
-    const ap = phase * 2 + 0.17, goal = env.agentTo?.(), gp = goal ? cards.where(goal) : null;
+    const ap = phase * 2 + 0.17, goal = env.agentTo?.(), gp = typeof goal === 'string' ? cards.where(goal) : goal ? goalP.set(goal.x, goal.y, goal.z) : null;
     curve(ap, tmp2); loopP.set(tmp2[0] * SC, SUN_Y, tmp2[1] * SC);
     work = gp ? Math.min(1, work + dtReal * 3) : Math.max(0, work - dtReal * 1.5);
     if (gp) { workP.copy(gp).addScaledVector(camera.getWorldDirection(gap), -0.6); agentP.lerp(workP, 1 - Math.exp(-dtReal * 7)); }
@@ -704,6 +712,7 @@ export function createSpace(env: SpaceEnv): Space {
       layArc(warcs[i], HUB, m.position, 2.2); warcs[i].mesh.material.uniforms.uAlpha.value = fl * (0.1 + 0.85 * near); });
 
     cards.update(env.cards?.() ?? [], dtReal);
+    sprites.update(env.sprites?.() ?? []);
     timeU.value = shownT; finalPass.uniforms.uTime.value = shownT;
     composer.render();
     cards.render(renderer);
@@ -711,7 +720,7 @@ export function createSpace(env: SpaceEnv): Space {
     // The page's own DOM: its labels and markers, placed from this frame. Read-only for the engine.
     env.onFrame?.({
       dt: dtReal, width: W, height: H, portrait, params: sc, hero: heroAmt, fly: fl, wsel, locked,
-      project, well, sun, hub: hubPoint, orbit, sunRadiusPx, offOrbit: offOrbitAt, cardRect: (id: string) => cards.rect(id, W, H),
+      project, well, sun, hub: hubPoint, orbit, sunRadiusPx, offOrbit: offOrbitAt, cardRect: (id: string) => cards.rect(id, W, H), view,
     });
 
     // The payoff: the first moment it holds with no steering, the grid rings out and the labels settle.
@@ -722,6 +731,12 @@ export function createSpace(env: SpaceEnv): Space {
   }
 
   // What the page reads from a frame. Each one reflects the scene as it was drawn.
+  const vR = new THREE.Vector3(), vU = new THREE.Vector3(), vP = new THREE.Vector3();
+  const view = (x: number, y: number, z: number) => {
+    vR.setFromMatrixColumn(camera.matrixWorld, 0); vU.setFromMatrixColumn(camera.matrixWorld, 1);
+    const vh = 2 * Math.tan(D2R(camera.fov / 2)) * Math.max(0.5, vP.set(x, y, z).distanceTo(camera.position));
+    return { right: { x: vR.x, y: vR.y, z: vR.z }, up: { x: vU.x, y: vU.y, z: vU.z }, vh };
+  };
   const project = (x: number, y: number, z: number): Vec3 => { const p = proj.set(x, y, z).project(camera); return { x: p.x, y: p.y, z: p.z }; };
   const well = (i: number): Vec3 => ({ x: WPOS[i].x, y: WPOS[i].y, z: WPOS[i].z });
   const sun = (i: number): Vec3 => ({ x: bodyU.value[i].x, y: bodyU.value[i].y, z: bodyU.value[i].z });
@@ -805,6 +820,7 @@ export function createSpace(env: SpaceEnv): Space {
       skyRT.dispose();
       composer.dispose();
       cards.dispose();
+      sprites.dispose();
       renderer.dispose();
       renderer.forceContextLoss();
     },

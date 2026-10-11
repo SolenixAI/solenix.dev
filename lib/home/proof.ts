@@ -110,9 +110,10 @@ export type ProofMoment = {
 }
 
 // The pace of one ask: a beat, the typing, a beat, then one thing after another, then the answer.
-const BEAT = 0.3, PER_CHAR = 0.035, STEP = 0.55, FLIP = 0.3
+const BEAT = 0.3, PER_CHAR = 0.035, STEP = 0.9, FLIP = 0.45
 
-const pace = (p: ToolProof, a: number) => { const typeEnd = BEAT + Math.min(1.2, p.asks[a].say.length * PER_CHAR), s0 = typeEnd + BEAT
+/** When ask `a` types, starts its work and finishes it, in seconds from its start. */
+export const pace = (p: ToolProof, a: number) => { const typeEnd = BEAT + Math.min(1.2, p.asks[a].say.length * PER_CHAR), s0 = typeEnd + BEAT
   return { typeEnd, s0, last: s0 + STEP * placeProof(p, a).length } }
 
 /** How long ask `a` takes to play, in seconds. */
