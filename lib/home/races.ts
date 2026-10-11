@@ -1,4 +1,7 @@
-// The homepage's race demos: in each tool section, "by hand" plays against "just ask" while the section is on screen.
+// The homepage's race demos: in each tool section, "by hand" plays against "just ask". A race starts when its section
+// comes on screen and then runs on its own clock to Done, even if the visitor scrolls on: just ask stops its clock, by
+// hand keeps going for one more pass, and the last frame holds. A race resets only when its section is two screens
+// away, so it plays again on the way back. Each race has one control (WCAG 2.2.2): Pause, Play, or Replay once done.
 // startRaces() runs when the homepage mounts (lib/home/attach.ts); the function it returns stops every race and
 // removes every listener it added.
 import { listener } from "./listen";
@@ -19,14 +22,35 @@ export function startRaces(): () => void {
     const scr = hand.querySelector<HTMLElement>('.scr')!, nav = [...hand.querySelectorAll<HTMLElement>('.scr-nav li')], crumb = hand.querySelector<HTMLElement>('.crumb')!, view = hand.querySelector<HTMLElement>('.scr-view')!, cur = hand.querySelector<HTMLElement>('.scr-cur')!, hs = hand.querySelector<HTMLElement>('.lane-s')!;
     const me = ask.querySelector<HTMLElement>('.rmsg.me span')!, st = ask.querySelector<HTMLElement>('.rmsg.st')!, ai = ask.querySelector<HTMLElement>('.rmsg.ai')!, as = ask.querySelector<HTMLElement>('.lane-s')!;
     const swH = hand.querySelector<HTMLElement>('.sw')!, swA = ask.querySelector<HTMLElement>('.sw')!;
-    let run = 0, on = false, t0 = 0, tStop = 0, timer: ReturnType<typeof setInterval> | 0 = 0;
-    const wait = (ms: number, id: number) => new Promise<void>((ok, no) => setTimeout(() => id === run ? ok() : no(), ms));
+    let run = 0, state: 'idle' | 'running' | 'paused' | 'done' = 'idle', t0 = 0, tStop = 0, pausedAt = 0, timer: ReturnType<typeof setInterval> | 0 = 0;
+    let askDone = false, handLooped = false;
+    // The one control. Its label says what a press does next.
+    const ctl = document.createElement('button');
+    ctl.type = 'button'; ctl.className = 'race-ctl'; ctl.hidden = true;
+    sec.querySelector('.race-foot')?.prepend(ctl);
+    const show = () => {
+      const [act, label] = state === 'running' ? ['pause', 'Pause'] : state === 'paused' ? ['play', 'Play'] : ['replay', 'Replay'];
+      ctl.hidden = state === 'idle'; ctl.dataset.act = act; ctl.textContent = label;
+      ctl.setAttribute('aria-label', `${label} the ${R.name} race`);
+    };
+    // A step's pause, on the race's own clock: time spent paused does not count.
+    const wait = (ms: number, id: number) => new Promise<void>((ok, no) => {
+      let left = ms, last = performance.now();
+      const tick = () => {
+        if (id !== run) return no();
+        const now = performance.now();
+        if (state !== 'paused') left -= now - last;
+        last = now;
+        if (left <= 0) ok(); else setTimeout(tick, Math.min(left, 100));
+      };
+      setTimeout(tick, Math.min(ms, 100));
+    });
     const draw = (k: string) => { const v = R.views[k]; view.innerHTML = (v.chip ? `<p class="scr-chip">${v.chip}</p>` : '') + row(v.head, ' hd') + v.rows.map(r => row(r)).join(''); };
     const menu = (n: number) => nav.forEach((li, k) => li.classList.toggle('on', k === n));
     const point = (t: Element | null | undefined) => { if (!t) return; const a = scr.getBoundingClientRect(), b = t.getBoundingClientRect(); if (!b.width) return;
       const x = t.matches('li') ? b.width / 2 : t.matches('.scr-chip') ? b.width + 12 : t.firstElementChild!.getBoundingClientRect().width + 26;
       cur.style.transform = `translate(${(b.left - a.left + x).toFixed(1)}px, ${(b.top - a.top + b.height / 2 + (t.matches('li') ? 17 : 0)).toFixed(1)}px)`; };
-    const clocks = () => { const now = performance.now(); swH.textContent = fmt(now - t0); swA.textContent = fmt((tStop || now) - t0); };
+    const clocks = () => { const now = state === 'paused' ? pausedAt : performance.now(); swH.textContent = fmt(now - t0); swA.textContent = fmt((tStop || now) - t0); };
     function reset() {
       hand.classList.remove('go'); ask.classList.remove('go', 'sent', 'done'); menu(-1); crumb.textContent = R.name; view.innerHTML = ''; hs.textContent = ''; as.textContent = '';
       me.textContent = ''; st.hidden = ai.hidden = true; swH.textContent = swA.textContent = '0:00'; cur.style.transform = '';
@@ -44,7 +68,7 @@ export function startRaces(): () => void {
         // The last step is the slow one: every row, one at a time, for as long as you watch.
         if (mode === 'scan') for (;;) { const rows = [...view.querySelectorAll('.scr-row:not(.hd)')];
           for (const r of rows) { point(r); rows.forEach(x => x.classList.toggle('on', x === r)); await wait(1900, id); }
-          hs.innerHTML = `<b>Still going</b><span>${cap}</span>`; }
+          hs.innerHTML = `<b>Still going</b><span>${cap}</span>`; handLooped = true; latch(id); }
       }
     }
     async function justAsk(id: number) {
@@ -53,15 +77,31 @@ export function startRaces(): () => void {
       ask.classList.add('sent'); st.hidden = false; as.innerHTML = `<b>Working</b><span>The AI does it in ${R.name}</span>`;
       for (const w of R.work) { st.textContent = w + '…'; await wait(2300, id); }
       st.hidden = true; ai.hidden = false; tStop = performance.now(); ask.classList.add('done'); as.innerHTML = `<b>Done</b><span>${R.done}</span>`; clocks();
+      askDone = true; latch(id);
     }
-    function start() { const id = ++run; reset(); t0 = performance.now(); tStop = 0; hand.classList.add('go'); ask.classList.add('go');
+    // Both lanes have made their point: just ask is done and by hand is on its second pass. Hold that frame.
+    function latch(id: number) {
+      if (!askDone || !handLooped) return;
+      wait(2000, id).then(() => { run++; clearInterval(timer); state = 'done'; clocks(); show(); }, () => {});
+    }
+    function start() { const id = ++run; clearInterval(timer); reset(); t0 = performance.now(); tStop = 0; askDone = handLooped = false;
+      state = 'running'; show(); hand.classList.add('go'); ask.classList.add('go');
       timer = setInterval(clocks, 250); byHand(id).catch(() => {}); justAsk(id).catch(() => {}); }
-    function stop() { run++; clearInterval(timer); reset(); }
+    function stop() { run++; clearInterval(timer); reset(); state = 'idle'; show(); }
+    ctl.addEventListener('click', () => {
+      if (state === 'running') { state = 'paused'; pausedAt = performance.now(); sec.classList.add('race-paused'); }
+      else if (state === 'paused') { t0 += performance.now() - pausedAt; if (tStop) tStop += performance.now() - pausedAt; state = 'running'; sec.classList.remove('race-paused'); }
+      else { sec.classList.remove('race-paused'); start(); }
+      show();
+    });
     return {
-      check(vh: number) { const r = sec.getBoundingClientRect(), now = r.top < vh * 0.3 && r.bottom > vh * 0.75;
-        if (now === on) return; on = now; now ? start() : stop(); },
+      check(vh: number) {
+        const r = sec.getBoundingClientRect();
+        if (state === 'idle' && r.top < vh * 0.3 && r.bottom > vh * 0.75) start();
+        else if (state !== 'idle' && (r.bottom < -vh || r.top > vh * 2)) { sec.classList.remove('race-paused'); stop(); }
+      },
       // Leaving the page: a race that is running stops, and its pending steps are dropped.
-      halt() { if (on) { on = false; stop(); } },
+      halt() { if (state !== 'idle') stop(); ctl.remove(); },
     };
   });
   let queued = false, raf = 0;

@@ -637,6 +637,18 @@ html.js[data-motion="on"] .hb.arm:not(.play) .hw > span { transform: translateY(
 .rmsg.ai { display: grid; }
 .rmsg.ai[hidden], .rmsg.st[hidden] { display: none; }
 .rmsg.ai p { margin: 0; padding-top: var(--space-3); border-top: 1px solid var(--line); font-weight: var(--fw-semibold); color: var(--text); }
+/* Each race's one control (lib/home/races.ts adds it): Pause while it runs, Play while paused, Replay once done. */
+.race-foot { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-6); }
+.race-ctl { position: relative; display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--tap-min); padding: 0 var(--space-1); border: 0; background: none; cursor: pointer; font: var(--fw-semibold) var(--fs-sm)/1 var(--font-text); color: var(--muted); text-shadow: 0 0 12px var(--bg), 0 1px 2px var(--bg); }
+.race-ctl[hidden] { display: none; }
+.race-ctl::before { content: ""; width: 10px; height: 12px; background: currentColor; }
+.race-ctl[data-act="pause"]::before { box-sizing: border-box; background: none; border-inline: 3.5px solid currentColor; }
+.race-ctl[data-act="play"]::before { clip-path: polygon(0 0, 100% 50%, 0 100%); }
+.race-ctl[data-act="replay"]::before { width: 12px; height: 12px; background: none; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; }
+.race-ctl:hover { color: var(--text); }
+.race-ctl::after { content: ""; position: absolute; inset: -8px -6px; }
+.race-ctl:focus-visible { outline: var(--focus-width) solid var(--focus-color); outline-offset: 3px; border-radius: var(--radius-pill); }
+.race-paused * { animation-play-state: paused !important; }
 .race-note { margin: 0; font-size: var(--fs-xs); line-height: 1.5; color: var(--muted); text-shadow: 0 0 12px var(--bg), 0 1px 2px var(--bg); }
 @media (max-width: 899px) {
   .race-in { gap: var(--space-3); padding-top: calc(var(--nav-height) + var(--space-3)); padding-bottom: var(--space-3); }
@@ -747,6 +759,16 @@ html.js[data-motion="on"] .hb.arm:not(.play) .hw > span { transform: translateY(
   #fly-gmail .rn-long { display: none; }
   #fly-gmail .rn-short { display: inline; }
   #fly-gmail .lane.done .rmsg.me span { -webkit-line-clamp: 3; }
+}
+/* Phones: the race control shares the Book a call row (the note keeps its own row above), or sits beside the note
+   where a race has no call to action, so the two screens keep their height. */
+@media (max-width: 899px) {
+  .race-foot { gap: var(--space-2) var(--space-3); }
+  .race-ctl { flex: none; min-height: 28px; }
+  #fly-shopify .race-foot .race-note, #fly-quickbooks .race-foot .race-note { order: -1; flex: 1 1 100%; }
+  #fly-shopify .race-lead, #fly-quickbooks .race-lead { display: none; }
+  #fly-shopify .race-cta, #fly-quickbooks .race-cta { margin-left: auto; }
+  #fly-microsoftexcel .race-note, #fly-hubspot .race-note { flex: 1 1 12rem; min-width: 0; }
 }
 /* Phones: the two lanes and the foot fit one screen, so the done line and the button show at 390 by 844. */
 @media (max-width: 899px) {
@@ -999,7 +1021,9 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
           <p class="lane-s"></p>
         </article>
       </div>
-      <p class="race-note">A replay with example data. Both clocks run in real time on your screen. Claude edits the open Excel file. It cannot yet edit a Google Sheet in place.</p>
+      <div class="race-foot">
+        <p class="race-note">A replay with example data. Both clocks run in real time on your screen. Claude edits the open Excel file. It cannot yet edit a Google Sheet in place.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -1030,7 +1054,9 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
           <p class="lane-s"></p>
         </article>
       </div>
-      <p class="race-note">A replay with example data. Both clocks run in real time on your screen. It works through HubSpot's own connector.</p>
+      <div class="race-foot">
+        <p class="race-note">A replay with example data. Both clocks run in real time on your screen. It works through HubSpot's own connector.</p>
+      </div>
     </div>
   </div>
 </section>
