@@ -2,7 +2,7 @@
 version: 1
 slug: "app-articles-route-ts"
 primary_target: "app/articles/route.ts"
-related_targets: []
+related_targets: ["client/articles-live.ts"]
 ---
 
 # Articles
@@ -13,7 +13,7 @@ Mode: Read
 A curious reader from a social post, often on a phone, who knows nothing about the topic. Find an article worth playing with and step in.
 
 ## Action and proof
-- Action: enter the newest article (Read it). Measured as reads and shares per article.
+- Action: enter the newest article. Measured as reads and shares per article.
 - Proof is the article itself, live in the first screen.
 
 ## Direction
@@ -25,4 +25,4 @@ The newest article, live, in a window with the visitor's own screen shape; more 
 - When narrow, the window's bar keeps only the action.
 
 ## Open
-- The card grid is unproven with two or more articles (one article today).
+- The card grid is unproven with two or more articles.

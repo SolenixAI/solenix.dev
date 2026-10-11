@@ -10,7 +10,7 @@ related_targets: ["app/(site)/page.tsx"]
 Mode: Persuade
 
 ## Job and audience
-A small-business owner in Newfoundland and Labrador, often on a phone, arriving from a post or a referral. Busy and wary of tech. They must see in seconds what changes in their week.
+A small-business owner in Newfoundland and Labrador, on a phone. Busy and wary of tech. They must see in seconds what changes in their week.
 
 ## Action and proof
 - Action: Book a call, the one ember action.
@@ -22,7 +22,7 @@ The approved baseline (git tag `approved-baseline`): "Your business is a three-b
 ## Constraints
 - The six races stay as they are.
 - No ROI calculator, no Motion switch, no prices, no eyebrows. Dark only.
-- Every change is one named change that the owner judges before the next.
+- Every change is one named change, judged before the next.
 
 ## Open
-- The booked-calls target (PRODUCT.md Goals: not set yet).
+- The booked-calls target (PRODUCT.md Goals).

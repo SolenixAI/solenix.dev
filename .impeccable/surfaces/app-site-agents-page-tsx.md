@@ -2,7 +2,7 @@
 version: 1
 slug: "app-site-agents-page-tsx"
 primary_target: "app/(site)/agents/page.tsx"
-related_targets: []
+related_targets: ["app/(site)/agents/sky.tsx","app/(site)/agents/worlds.tsx","app/(site)/agents/worlds-css.ts","app/(site)/agents/system.tsx","app/(site)/agents/use-copy-for-ai.ts"]
 ---
 
 # Agents Marketplace
@@ -25,4 +25,4 @@ The sky hero (the core toolkit as the sun, worlds in orbit), world cards, a worl
 - Claims name the agents it works in.
 
 ## Open
-- The copies-and-installs target (PRODUCT.md Goals: not set yet).
+- The copies-and-installs target (PRODUCT.md Goals).

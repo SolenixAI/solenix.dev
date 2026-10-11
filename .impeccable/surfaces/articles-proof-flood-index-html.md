@@ -2,7 +2,7 @@
 version: 1
 slug: "articles-proof-flood-index-html"
 primary_target: "articles/proof-flood/index.html"
-related_targets: []
+related_targets: ["client/article-bar.ts"]
 ---
 
 # The Proof Flood
