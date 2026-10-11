@@ -79,8 +79,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
-          # Built as the live site (its analytics load on its own host), as npm runs it on Vercel (prebuild included).
-          VERCEL_PROJECT_PRODUCTION_URL=localhost npm run build
+          # Built and served as the live site (analytics load on its own host; pages rendered per request read it at run
+          # time too), as npm runs it on Vercel (prebuild included).
+          export VERCEL_PROJECT_PRODUCTION_URL=localhost
+          npm run build
           npm start -- -p 3100 > "$RUNNER_TEMP/start.log" 2>&1 &
           up=no; for _ in $(seq 1 60); do curl -sf -o /dev/null http://localhost:3100/ && up=yes && break; sleep 1; done
           [ "$up" = yes ] || { cat "$RUNNER_TEMP/start.log"; exit 1; }
