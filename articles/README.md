@@ -65,4 +65,4 @@ A page written without `<html>` (an artifact draft) is wrapped in a document aut
 * Colour and type come from the tokens by name; the check stops a raw value.
 * Show before you tell: a picture or playground before each block of text.
 * Every fact links to its source, with its date.
-* End on one action: Book a call.
+* End on one action: Book a call. The template's closing card keeps its Book a call button; only its marked heading and line are yours to write.

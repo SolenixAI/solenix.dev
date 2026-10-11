@@ -1,7 +1,7 @@
 import { test } from "node:test"
 import assert from "node:assert/strict"
 import { readFileSync } from "node:fs"
-import { articleProblems, pageEdges } from "./article-rules.ts"
+import { articleProblems, pageEdges, placeholderTexts } from "./article-rules.ts"
 
 const read = (p: string) => readFileSync(new URL(p, import.meta.url), "utf8")
 const TEMPLATE = read("../articles/_template/index.html")
@@ -15,8 +15,12 @@ test("a copy of the template fails once for every piece of template text it stil
     assert.ok(placeholders(TEMPLATE).some((p) => p.includes(words)), `a problem names "${words}"`)
 })
 
-test("a copy with its marks dropped passes the placeholder rule, and so does the real article", () => {
-  assert.deepEqual(placeholders(TEMPLATE.replace(/\s*\bdata-placeholder\b/g, "")), [])
+test("a copy that drops the marks but keeps the words still fails; one with its own words passes, as does the real article", () => {
+  const unmarked = TEMPLATE.replace(/\s*\bdata-placeholder\b/g, "")
+  assert.equal(placeholders(unmarked).length, placeholderTexts(TEMPLATE).length)
+  let own = unmarked
+  for (const text of placeholderTexts(TEMPLATE)) own = own.replace(text, `Words of the article's own, number ${own.length}`)
+  assert.deepEqual(placeholders(own), [])
   assert.deepEqual(articleProblems("proof-flood", read("../articles/proof-flood/index.html")), [])
 })
 
@@ -29,6 +33,9 @@ test("the page edge is .wrap's left and right padding, read from every form of t
   assert.deepEqual(edge("padding:var(--space-6) var(--space-4)"), ["var(--space-4)", "var(--space-4)"])
   assert.deepEqual(edge("padding-left:20px"), ["20px"])
   assert.deepEqual(edge("padding-block:0 80px"), [])
+  assert.deepEqual(edge("padding:0 var(--gutter)!important"), ["var(--gutter)", "var(--gutter)"])
+  assert.deepEqual(edge("padding-inline-start:20px"), ["20px"])
+  assert.deepEqual(edge("PADDING-LEFT:20px"), ["20px"])
 })
 
 test("a page edge other than the gutter fails, and the template's own edge passes", () => {
