@@ -6,10 +6,12 @@
 // A stop's scene is either its own values or a tool world to fly to. Values a stop leaves out carry on from the stop
 // before, so each one names only what changes.
 
-/** The tool stops, by world id (lib/home/worlds.ts), each a job an owner does by hand or pays someone for: the books,
- * the inbox, stock, ads and the numbers. Why these tools: design/research/site-playbook.md (Sources). To add a tool,
- * follow lib/home/worlds.ts. */
-export const TOOL_STOPS = ["quickbooks", "gmail", "shopify", "meta", "microsoftexcel"] as const
+import { TOOL_ORDER } from "./worlds.ts"
+
+/** The tool stops, by world id, in the order the journey visits them (each world's stop in lib/home/worlds.ts). Each is a
+ * job an owner does by hand or pays someone for: the books, the inbox, stock, ads and the numbers. Why these tools:
+ * design/research/site-playbook.md (Sources). To add a tool, follow lib/home/worlds.ts. */
+export const TOOL_STOPS = TOOL_ORDER
 
 export type JourneyStop = {
   /** What the stop shows, in a few words (for analytics and the tests). */
