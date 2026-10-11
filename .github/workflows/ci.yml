@@ -64,4 +64,8 @@ jobs:
           npm run dev > "$RUNNER_TEMP/dev.log" 2>&1 &
           for _ in $(seq 1 120); do curl -sf -o /dev/null http://localhost:3000/ && exit 0; sleep 1; done
           cat "$RUNNER_TEMP/dev.log"; exit 1
+      # The checks that read the site use the one started above. Without this, hero-check could not tell that :3000 runs
+      # this checkout, tried a second dev server in the same folder (Next refuses one), and measured no page at all.
       - run: npm run check
+        env:
+          SITE_URL: http://localhost:3000
