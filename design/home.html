@@ -12,7 +12,6 @@
 :root {
   --page-bg: var(--bg);            /* resolved at :root, so it survives into the dark sky */
     --track-hero: -0.045em;
-  --section-pad: clamp(5rem, 14vh, 10rem);
 }
 
 /* The site layout marks its pages dark with data-theme. tokens.css declares its tokens on :root and [data-theme], but
@@ -30,8 +29,6 @@ h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; }
 p { text-wrap: pretty; }
 a { color: inherit; }
 img, svg { display: block; }
-.skip { position: absolute; left: var(--space-4); top: -100px; z-index: var(--z-skip); background: var(--surface-solid); color: var(--text); padding: var(--space-3) var(--space-4); border-radius: var(--radius-pill); }
-.skip:focus { top: var(--space-4); }
 .wrap { max-width: var(--container-wide); margin-inline: auto; padding-inline: var(--gutter); }
 
 .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
@@ -68,22 +65,15 @@ footer { position: relative; z-index: 2; } /* inside main, above the scene's tag
 .stop-mk.cur { box-shadow: 0 0 0 6px var(--accent-quiet), 0 0 24px color-mix(in srgb, var(--ring) 45%, transparent); }
 .stop-mk.cur span { opacity: 1; }
 @media (max-width: 720px) { .stop-mk { width: 28px; height: 28px; margin: -14px 0 0 -14px; } .stop-mk span { display: none; } }
-/* Very wide and short screens (a phone held sideways): the headline takes the width it has, so it wraps less and the hero fits. */
-@media (min-aspect-ratio: 9/5) { .h1 { max-width: none; } }
-/* A very short hero (a phone held sideways) keeps the headline and the action; the sentence steps aside. */
-@media (max-height: 420px) { .hero-sub { display: none; } }
 
 /* The three bodies, named. Each tag rides with its sun through the whole story. */
 .body-tag { position: absolute; left: 0; top: 0; opacity: 0; will-change: transform, opacity; display: inline-flex; align-items: center; gap: 6px; padding: 4px 9px; border-radius: var(--radius-pill); background: color-mix(in oklch, var(--bg) 74%, transparent); border: 1px solid var(--line-strong); font: var(--fw-semibold) var(--fs-2xs)/1.2 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--text); white-space: nowrap; }
 .body-tag i { width: 6px; height: 6px; border-radius: 50%; background: var(--warn); box-shadow: 0 0 8px var(--warn); transition: background-color var(--dur-slow), box-shadow var(--dur-slow); }
 .body-tag.in i { background: var(--ok); box-shadow: 0 0 8px var(--ok); }
 .body-tag.ai { color: var(--accent-text); border-color: color-mix(in oklch, var(--accent) 60%, transparent); box-shadow: 0 0 14px color-mix(in srgb, var(--ring) 35%, transparent); }
-@media (min-width: 900px) { .scroll-cue { display: block; } }
 /* No JavaScript: nothing pins, everything reads in order. */
 html:not(.js) .stage { position: relative; height: auto; min-height: 100svh; }
 
-/* One light per section, clipped by the section. The core sits away from prose. */
-.light { position: absolute; z-index: var(--z-sky); pointer-events: none; width: var(--ls, 80vmax); aspect-ratio: 1; border-radius: 50%; translate: -50% -50%;
   background: radial-gradient(closest-side, color-mix(in oklch, var(--sun2) 20%, transparent), color-mix(in oklch, var(--sun1) 7%, transparent) 45%, transparent 72%); }
 
 /* ── The journey: one pinned stage, one stop per screen (lib/home/journey.ts). The world is the page; each stop's few
@@ -181,23 +171,14 @@ html[data-motion="on"] .scene-ui.lock-pop .body-tag.ai { animation-delay: 320ms;
 /* Section headlines build word by word as the camera arrives. */
 .hw { display: inline-block; overflow: clip; padding-block: 0.08em 0.16em; margin-block: -0.08em -0.16em; vertical-align: top; }
 .hw > span { display: inline-block; transition: transform 0.95s var(--ease-out); transition-delay: calc(var(--i) * 65ms + 90ms); }
-.h2 em .hw > span, .say-h em .hw > span, #close-h em .hw > span { background: var(--grad-headline); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .04em; }
+#close-h em .hw > span { background: var(--grad-headline); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .04em; }
 html.js[data-motion="on"] .hb.arm:not(.play) .hw > span { transform: translateY(112%); }
-/* Alive under the pointer: a light that follows it across cards, a primary button that leans toward it. */
 .btn:active { scale: 0.97; }
-/* Narrow screens: the scene holds the top of the screen and the words rise out of the dark below it,
-   so no label ever sits on the copy. */
 .lg { width: 18px; height: 18px; flex: none; fill: currentColor; }
-/* Each login is its real mark, riding its own body. */
+/* Each tool world wears its real mark. */
 .moon-tag { position: absolute; left: 0; top: 0; opacity: 0; will-change: transform, opacity; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; color: var(--text); background: color-mix(in oklch, var(--bg) 80%, transparent); border: 1px solid var(--line-strong); }
 .moon-tag .lg { width: 15px; height: 15px; }
-/* Promises: one at a time, upright, with the settled orbit beside them. */
 .tm-note { font-size: var(--fs-xs); color: var(--faint); flex-basis: 100%; }
-/* A threshold (60 days, 14 days) is a dashed tick on each track at the same place, named once under the bars. */
-@media (prefers-reduced-motion: reduce) { .tb-bar { animation: none; } }
-/* What it costs you, drawn: one dot per step by hand against one dot for the sentence. */
-@media (min-width: 700px) and (max-width: 1099px) { .tools-in { grid-template-columns: minmax(0, 24rem); } }
-@media (max-height: 1000px) { .tools-in { row-gap: var(--space-3); } }
 .world-tag { width: 52px; height: 52px; background: color-mix(in oklch, var(--bg) 88%, transparent); border-color: color-mix(in oklch, var(--accent) 55%, transparent); box-shadow: 0 0 24px color-mix(in srgb, var(--ring) 40%, transparent); }
 .world-tag .lg { width: 26px; height: 26px; }
 @media (max-width: 899px) { .close-sec { align-items: end; } .close-in { padding-block: var(--space-7); } }
