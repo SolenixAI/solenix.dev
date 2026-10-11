@@ -37,9 +37,16 @@ try {
     })
     const page = await context.newPage()
     const pending: Promise<{ total: number; script: number } | null>[] = []
+    let analytics = 0 // PostHog files that arrived: every page on the live host loads them, so none means the measure is short
     page.on("requestfinished", (req) => pending.push((async () => {
       const res = await req.response()
+      if (new URL(req.url()).pathname.startsWith(POSTHOG_PROXY + "/")) {
+        if (!res?.ok()) problems.push(`${path}: PostHog's ${new URL(req.url()).pathname} answered ${res?.status() ?? "nothing"}, so analytics were not weighed`)
+        else analytics++
+      }
       if (!res || (res.status() >= 300 && res.status() < 400)) return { total: 0, script: 0 } // a redirect carries no body
+      // A live stream (/agents/live) is a connection that stays open, not something downloaded once: it has no body to weigh.
+      if ((await res.headerValue("content-type"))?.startsWith("text/event-stream")) return { total: 0, script: 0 }
       const body = await res.body()
       const total = gz(body)
       if (req.resourceType() === "script") return { total, script: total }
@@ -51,6 +58,7 @@ try {
     await page.waitForTimeout(3_000) // what loads after the first idle (the 3D engine, analytics) counts too
     await page.waitForLoadState("networkidle")
     const parts = await Promise.all(pending)
+    if (!analytics) problems.push(`${path} loaded no PostHog file, so its analytics were not weighed (is the build the live host?)`)
     const w: Weight = { path, total: 0, script: 0, requests: parts.length }
     for (const p of parts) if (p) { w.total += p.total; w.script += p.script }
     weights.push(w)
