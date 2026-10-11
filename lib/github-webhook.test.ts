@@ -39,3 +39,26 @@ test("ping gets 204, other events 202, and a push is handed on with its repo and
   assert.equal((await handle(delivery(body, "push"))).status, 204)
   assert.deepEqual(pushes, [{ repo: "o/r", branch: "main", after: "abc1234def" }])
 })
+
+test("a signed body that is JSON but not an object (null, a number) gets 400 too", async (t) => {
+  t.mock.method(console, "warn", () => {})
+  const { pushes, handle } = hook()
+  assert.equal((await handle(delivery("null", "push"))).status, 400)
+  assert.equal((await handle(delivery("42", "push"))).status, 400)
+  assert.equal(pushes.length, 0)
+})
+
+test("a tag push names no branch, so nothing branch-keyed is touched", async () => {
+  const { pushes, handle } = hook()
+  await handle(delivery(JSON.stringify({ ref: "refs/tags/v1", after: "a", repository: { full_name: "o/r" } }), "push"))
+  assert.deepEqual(pushes, [{ repo: "o/r", branch: null, after: "a" }])
+})
+
+test("a push whose handling fails gets 500 and one log line naming the step", async (t) => {
+  const warn = t.mock.method(console, "warn", () => {})
+  const handle = makeWebhook(SECRET, async () => { throw new Error("cache down") })
+  const body = JSON.stringify({ ref: "refs/heads/main", repository: { full_name: "o/r" } })
+  assert.equal((await handle(delivery(body, "push"))).status, 500)
+  assert.equal(warn.mock.callCount(), 1)
+  assert.match(String(warn.mock.calls[0].arguments[0]), /^push failed · GitHub webhook .*cache down/)
+})

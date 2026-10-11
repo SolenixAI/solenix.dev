@@ -18,6 +18,6 @@ export const POST = makeWebhook(process.env.GITHUB_WEBHOOK_SECRET, async ({ repo
   // carries the same version, so no page reloads for nothing.
   const version = await catalogVersion(branch)
   // A bus that is down costs only the live update; GitHub still gets its answer, and pages read on load.
-  if (version && bus) await bus.publish(catalogKey(branch), version).catch((e: unknown) => failed(`bus ${catalogKey(branch)}`, e))
+  if (version && bus) await bus.publish(catalogKey(branch), version).catch((e: unknown) => failed(`bus ${catalogKey(branch)}`, e, "publish"))
   console.log(`marketplace: push to ${branch} (${after?.slice(0, 7)}), catalog ${version?.slice(0, 7)}`)
 })
