@@ -79,7 +79,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
-          npx next build
-          npx next start -p 3100 > "$RUNNER_TEMP/start.log" 2>&1 &
-          for _ in $(seq 1 60); do curl -sf -o /dev/null http://localhost:3100/ && break; sleep 1; done
-          node --no-warnings scripts/weight-check.ts http://localhost:3100
+          # Built as the live site (its analytics load on its own host), as npm runs it on Vercel (prebuild included).
+          VERCEL_PROJECT_PRODUCTION_URL=localhost npm run build
+          npm start -- -p 3100 > "$RUNNER_TEMP/start.log" 2>&1 &
+          up=no; for _ in $(seq 1 60); do curl -sf -o /dev/null http://localhost:3100/ && up=yes && break; sleep 1; done
+          [ "$up" = yes ] || { cat "$RUNNER_TEMP/start.log"; exit 1; }
+          node --no-warnings scripts/weight-check.ts http://localhost:3100 || { tail -50 "$RUNNER_TEMP/start.log"; exit 1; }

@@ -57,3 +57,21 @@ test("the engine module loads only when a page binds: a page that shows no world
   world.bind(binding()); await tick()
   assert.equal(loads, 1, "the first bind loads it, once")
 })
+
+test("a load that fails is tried again on the next bind, and a page that leaves before the load starts no engine", async (t) => {
+  t.mock.method(console, "error", () => {})
+  fakePage()
+  let loads = 0, started = 0
+  const world = makeSpaceWorld(async () => {
+    if (++loads === 1) throw new Error("chunk gone")
+    return { createSpace: () => { started++; return { setActive() {} } } } as unknown as Engine
+  })
+  world.mount(stage, canvas)
+  const a = binding(); world.bind(a); await tick(); world.unbind(a)
+  assert.equal(started, 0, "the failed load starts nothing")
+  const b = binding(); world.bind(b); world.unbind(b); await tick()
+  assert.equal(loads, 2, "the next bind loads again")
+  assert.equal(started, 0, "the page left before the load arrived, so no engine starts")
+  world.bind(binding()); await tick()
+  assert.equal(started, 1)
+})

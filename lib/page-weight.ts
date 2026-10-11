@@ -1,21 +1,22 @@
-// What each public page costs a visitor to download: every response the browser receives while the page opens and
-// settles (HTML, scripts, styles, fonts, images, the 3D engine), counted as sent over the wire (compressed), split
-// into scripts and everything. scripts/weight-check.ts measures a built site in a real browser and holds each page
-// to its budget below, so a change that makes a page heavier fails before it ships.
+// What each page costs a visitor to download: every response the browser receives while the page opens and settles
+// (HTML, scripts, styles, fonts, images, the 3D engine, analytics), each body weighed gzipped, with the page's own
+// inline scripts counted as script. scripts/weight-check.ts measures a production build in a real browser and holds
+// each page to its budget below, so a change that makes a page heavier fails before it ships.
 
 export type Weight = { path: string; total: number; script: number; requests: number }
 export type Budget = { total: number; script: number }
 
 const KB = 1024
-// Ceilings, set 2026-10-11 from a production build served by `next start` (as CI runs it, without analytics, which
-// only Vercel serves), each about 15% over what it measured that day. A page not listed is held to DEFAULT. Raise a
-// ceiling only with the change that needs it, and say why in its commit.
+// Ceilings, set 2026-10-11 from a production build that believes it is the live site (analytics included; PostHog's
+// own add-ons, served from PostHog through /lumen, are not counted), each about 15% over what it measured that day.
+// A page not listed is held to DEFAULT. Raise a ceiling only with the change that needs it, and say why in its commit.
 export const DEFAULT: Budget = { total: 900 * KB, script: 450 * KB }
 const BUDGETS: Record<string, Budget> = {
-  "/": { total: 540 * KB, script: 360 * KB }, // measured 468 KB, 307 KB script (the 3D engine)
-  "/agents": { total: 310 * KB, script: 200 * KB }, // measured 269 KB, 166 KB script
-  "/articles": { total: 1820 * KB, script: 32 * KB }, // measured 1577 KB, no script: the hero is the article's stills
-  "/articles/proof-flood": { total: 1360 * KB, script: 32 * KB }, // measured 1179 KB, no script
+  "/": { total: 650 * KB, script: 490 * KB }, // measured 560 KB, 425 KB script (the 3D engine, analytics)
+  "/agents": { total: 290 * KB, script: 220 * KB }, // measured 248 KB, 187 KB script
+  "/app": { total: 440 * KB, script: 300 * KB }, // measured 379 KB, 259 KB script; the world's still is most of the rest
+  "/articles": { total: 880 * KB, script: 330 * KB }, // measured 764 KB, 286 KB script (the newest article, inline)
+  "/articles/proof-flood": { total: 430 * KB, script: 330 * KB }, // measured 368 KB, 283 KB script, inline in the page
 }
 
 /** The budget a page is held to. Query strings share their page's budget. */

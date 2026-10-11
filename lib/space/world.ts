@@ -28,7 +28,7 @@ const NO_PARAMS = {} as SpaceParams;
 /** The world, with its engine module loaded by `load` (the site loads ./engine; a test passes a fake). */
 export function makeSpaceWorld(load: () => Promise<Engine>) {
   let engine: Engine | null = null;
-  let loading: Promise<Engine> | null = null;
+  let loading: Promise<Engine | null> | null = null;
   let stage: HTMLElement | null = null;
   let canvas: HTMLCanvasElement | null = null;
   let current: SpaceBinding | null = null;
@@ -84,8 +84,8 @@ export function makeSpaceWorld(load: () => Promise<Engine>) {
   /** A page is shown and takes the world: from now on its story and labels draw. The first bind loads the engine. */
   bind(b: SpaceBinding) {
     current = b;
-    loading ??= load().then((m) => { engine = m; ensure(); return m; }, (e) => { console.error("the 3D world did not load", e); throw e; });
-    loading.catch(() => {});
+    // A load that fails (a chunk gone after a deploy, a dropped connection) is forgotten, so the next bind tries again.
+    loading ??= load().then((m) => { engine = m; ensure(); return m; }, (e) => { console.error("the 3D world did not load", e); loading = null; return null; });
     if (space) space.setActive(true);
     else ensure();
   },
