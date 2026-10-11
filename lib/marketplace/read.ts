@@ -137,7 +137,7 @@ function inventory(paths: string[]) {
 
 const emptyPiece = (s: Pick<Piece, "id" | "kind" | "name" | "href">): Piece =>
   ({ blurb: null, repo: null, version: null, updated: null, weekly: null, contents: [], items: [], parts: [], gives: null, works: [], refs: [], ...s })
-const api = (docs: string, maker: string): Piece => ({ ...emptyPiece({ id: "api", kind: "api", name: "Direct access", href: docs }), gives: `Anything else ${maker} can do, your AI can reach directly.`, refs: [{ label: "API reference", href: docs }] })
+const api = (docs: string, maker: string): Piece => ({ ...emptyPiece({ id: "api", kind: "api", name: "Connects directly", href: docs }), gives: `Anything else ${maker} can do, your AI can reach directly.`, refs: [{ label: "API reference", href: docs }] })
 
 // Each link is named once: the repo already links itself (owner/name), so a piece's links never repeat
 // it or each other, whatever the catalog says.
@@ -194,7 +194,7 @@ export function makeMarketplace({ get, headers, marketplace, ref }: Deps) {
     let version: string | null = null
     try { version = m?.content ? JSON.parse(Buffer.from(m.content, "base64").toString("utf8")).version ?? null : null } catch (e) { failed(`${slug} ${manifest}`, e) }
     const extra = [...(s.mcp ? [{ label: "connector", n: 1 }] : []), ...(s.hooks ? [{ label: "hooks", n: 1 }] : [])]
-    return { ...emptyPiece({ id: "plugin", kind: "plugin", name: "Add-on", href: repoUrl(slug) }), blurb: f.blurb, repo: asRepo(f), version, updated: f.pushed,
+    return { ...emptyPiece({ id: "plugin", kind: "plugin", name: "Extends your AI", href: repoUrl(slug) }), blurb: f.blurb, repo: asRepo(f), version, updated: f.pushed,
       contents: [...s.contents, ...extra], works: s.works, parts,
       gives: `One install gives your AI everything ${maker} built for it${s.works.length ? `, in ${list(s.works)}` : ""}.`,
       refs: [gitHub(slug), ...(f.homepage ? [{ label: "Docs", href: f.homepage }] : []), ...spec(specs, "plugin", "How add-ons work")] }
@@ -215,13 +215,13 @@ export function makeMarketplace({ get, headers, marketplace, ref }: Deps) {
     const slug = slugOf(server?.repository?.url)
     const f = slug ? await repoFacts(slug) : null
     const remote: string | undefined = server?.remotes?.[0]?.url
-    return { ...emptyPiece({ id: "connector", kind: "connector", name: "Account link", href: server?.websiteUrl ?? remote ?? entry }), blurb: server?.description ?? null,
+    return { ...emptyPiece({ id: "connector", kind: "connector", name: "Connects to your account", href: server?.websiteUrl ?? remote ?? entry }), blurb: server?.description ?? null,
       repo: f && asRepo(f), version: server?.version ?? null, gives: `Your AI can see and change what is in your ${maker} account.`, updated: d?._meta?.["io.modelcontextprotocol.registry/official"]?.updatedAt ?? f?.pushed ?? null,
       refs: [...(remote ? [{ label: "Connection address", href: remote }] : []), { label: "Official listing", href: entry }, ...(slug ? [gitHub(slug)] : []), ...spec(specs, "mcp", "How account links work")] }
   }
   async function cli(name: string, docs: string, { maker }: Ctx): Promise<Piece> {
     const n = await npm(name)
-    return { ...emptyPiece({ id: "cli", kind: "cli", name: "Pro tools", href: docs }), blurb: n.blurb, version: n.version, weekly: n.weekly,
+    return { ...emptyPiece({ id: "cli", kind: "cli", name: "Runs on your computer", href: docs }), blurb: n.blurb, version: n.version, weekly: n.weekly,
       gives: `Your AI can run ${maker} for you, the way its engineers do.`,
       refs: [{ label: "Docs", href: docs }, npmPage(name)] }
   }

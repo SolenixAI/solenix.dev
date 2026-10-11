@@ -85,20 +85,12 @@ export const WORLDS_CSS = `
   @media (max-height: 599px){.wd-quiet{display:none}}
   @media (max-height: 319px){.wd-ask-status{display:none}}
 }
-.wd-grid{height:100%;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,19rem),1fr));align-content:safe center;gap:16px;min-height:0}
 
 /* A card is a world seen from afar: its system, its name, one line. */
 .wd-card{position:relative;display:grid;grid-template-columns:auto 1fr;grid-template-areas:"glance glance" "name name" "for for";align-items:end;gap:10px 16px;padding:clamp(18px,3cqmin,28px);border-radius:var(--radius-2xl);border:1px solid var(--line);background:radial-gradient(120% 90% at 0% 0%,color-mix(in srgb,var(--sun2) 9%,transparent),transparent 60%),var(--glass-bg);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-drop-1);color:var(--text);text-align:left;cursor:pointer;overflow:hidden;transition:transform var(--dur-base) var(--ease-out),border-color var(--dur-base),box-shadow var(--dur-base)}
 .wd-card:hover{transform:translateY(-3px);border-color:color-mix(in oklch,var(--accent) 45%,transparent);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-drop-2),0 8px 40px -12px color-mix(in srgb,var(--sun2) 30%,transparent)}
-.wd-glance{grid-area:glance;display:flex;align-items:center;justify-content:space-between;gap:12px}
 .wd-name{grid-area:name;display:flex;align-items:center;gap:10px;font:700 clamp(1.6rem,4.4cqmin,2.6rem)/1 var(--font-display);letter-spacing:-.035em}
-.wd-arrow{width:.7em;height:.7em;fill:none;stroke:var(--accent-text);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;transition:transform var(--dur-base) var(--ease-out)}
-.wd-card:hover .wd-arrow{transform:translateX(4px)}
 .wd-for{grid-area:for;max-width:30ch;color:var(--muted);font-size:clamp(.95rem,2.2cqmin,1.08rem);line-height:1.4;text-wrap:pretty}
-.wd-stat{display:flex;flex-direction:column;align-items:flex-end;gap:4px;font:500 .82rem/1 var(--font-mono);font-variant-numeric:tabular-nums;color:var(--muted)}
-.wd-stat span{display:inline-flex;align-items:center;gap:6px}
-.wd-stat span:first-child{color:var(--text);font-size:.95rem}
-.wd-stat .sy-glyph{width:15px;height:15px;color:var(--accent-text)}
 
 /* The system: one sun, one ring, a dot per piece, one agent dot travelling the ring. */
 .sy-ring{fill:none;stroke:color-mix(in srgb,var(--text) 18%,transparent);stroke-width:.6;stroke-dasharray:1.4 2.2}
@@ -119,8 +111,8 @@ export const WORLDS_CSS = `
 @keyframes sy-breathe{from{opacity:.35}to{opacity:1}}
 
 /* Short screens (a phone held sideways): the card keeps its system and name. */
-@container (max-height: 460px) or ((max-height: 700px) and (aspect-ratio <= 1.15)){.wd-card{gap:6px 12px;padding:14px 18px}.wd-for{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font-size:.9rem}.sy-mini{width:60px}.wd-name{font-size:clamp(1.3rem,5cqh,1.8rem)}.wd-card{grid-template-columns:auto 1fr;grid-template-areas:"glance name" "glance for";align-items:center}.wd-glance .wd-stat{display:none}}
-@container (max-height: 460px){.wd-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,13rem),1fr));gap:10px}.wd-card{grid-template-columns:auto 1fr;grid-template-areas:"glance name" "glance for"}.wd-glance .wd-stat{display:none}}
+@container (max-height: 460px) or ((max-height: 700px) and (aspect-ratio <= 1.15)){.wd-card{gap:6px 12px;padding:14px 18px}.wd-for{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font-size:.9rem}.sy-mini{width:60px}.wd-name{font-size:clamp(1.3rem,5cqh,1.8rem)}.wd-card{grid-template-columns:auto 1fr;grid-template-areas:"glance name" "glance for";align-items:center}}
+@container (max-height: 460px){.wd-card{grid-template-columns:auto 1fr;grid-template-areas:"glance name" "glance for"}}
 @container (max-height: 380px){.wd-for{display:none}}
 .wd-card:focus-visible,.wd-dialog :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 
@@ -191,10 +183,6 @@ export const WORLDS_CSS = `
 .sy-stats span{color:var(--muted);font-family:var(--font-text);font-size:.85rem}
 .sy-glyph{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .sy-stats .sy-glyph{color:var(--accent-text)}
-.sy-inside{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
-.sy-inside li{display:inline-flex;align-items:baseline;gap:6px;padding:10px 14px;border-radius:var(--radius-lg);background:var(--surface-solid);border:1px solid var(--line);font-size:.9rem;color:var(--muted)}
-.sy-inside b{font:700 1.35rem/1 var(--font-display);font-variant-numeric:tabular-nums;color:var(--text)}
-.sy-inside .sy-glyph{align-self:center;color:var(--accent-text)}
 .sy-works{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0;font-size:.85rem;color:var(--muted)}
 .sy-works span{margin-right:4px}
 .sy-works i{font-style:normal;padding:4px 10px;border-radius:var(--radius-pill);border:1px solid var(--line-strong);color:var(--text)}
