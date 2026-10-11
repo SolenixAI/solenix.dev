@@ -94,7 +94,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background-im
 .win-bar{flex:none;display:flex;gap:10px 16px;align-items:center;justify-content:space-between;padding:8px 8px 8px 20px;border-top:1px solid var(--line)}
 .win-cap{flex:1;display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;min-width:0;color:var(--text)}
 .win-name{min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:650 clamp(1rem,3.2cqmin,1.4rem)/1.15 var(--font-display);letter-spacing:-.01em}
-.win-cap b{display:inline-flex;align-items:center;gap:7px;padding:6px 9px;border-radius:999px;border:1px solid color-mix(in srgb,var(--accent) 40%,transparent);background:color-mix(in srgb,var(--accent) 14%,transparent);font:600 .72rem/1 var(--font-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent-text)}
+.win-cap b{display:inline-flex;align-items:center;gap:7px;padding:6px 9px;border-radius:999px;border:1px solid color-mix(in srgb,var(--accent) 40%,transparent);background:color-mix(in srgb,var(--accent) 14%,transparent);font:600 .75rem/1 var(--font-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent-text)}
 .win-cap b::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent)}
 /* A narrow window (a small or short screen): the article shows its own title right above, so the bar keeps only the action. */
 @container win (max-width:440px){.win-cap{display:none}.win-bar{padding:8px}.enter{flex:1;justify-content:center}}

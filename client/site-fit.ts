@@ -9,10 +9,10 @@ const nav = document.currentScript?.previousElementSibling as HTMLElement | null
 if (nav && window.top !== window.self) nav.remove()
 else if (nav) {
   // No width guesses: the first layout that fits, in order (lib/site-nav.ts explains each step).
-  const layouts = [[], ["c1"], ["c1", "c2"], ["c1", "c3"], ["c1", "c2", "c3"]]
+  const layouts = [[], ["c1"], ["c1", "c2"], ["c1", "c3"], ["c1", "c2", "c3"], ["c1", "c2", "c4"]]
   const fit = () => {
     for (const classes of layouts) {
-      nav.classList.remove("c1", "c2", "c3")
+      nav.classList.remove("c1", "c2", "c3", "c4")
       nav.classList.add(...classes)
       if (nav.scrollWidth <= nav.clientWidth) return
     }
