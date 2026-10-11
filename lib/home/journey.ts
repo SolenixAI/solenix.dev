@@ -6,10 +6,9 @@
 // A stop's scene is either its own values or a tool world to fly to. Values a stop leaves out carry on from the stop
 // before, so each one names only what changes.
 
-/** The tool stops, by world id (lib/home/ui.ts FLY), each a job an owner does by hand or pays someone for: the books
- * (46% of Canadian small businesses use accounting software; QuickBooks holds 83% of it), the inbox, stock, ads, and
- * the numbers. Sources: National Post / QuickBooks small-business survey, 2025-10-16; 6sense, Small Business
- * Accounting, 2026. Any list of worlds works: add a world to FLY, a stop here, its things in lib/home/proof.ts. */
+/** The tool stops, by world id (lib/home/worlds.ts), each a job an owner does by hand or pays someone for: the books,
+ * the inbox, stock, ads and the numbers. Why these tools: design/research/site-playbook.md (Sources). To add a tool,
+ * follow lib/home/worlds.ts. */
 export const TOOL_STOPS = ["quickbooks", "gmail", "shopify", "meta", "microsoftexcel"] as const
 
 export type JourneyStop = {

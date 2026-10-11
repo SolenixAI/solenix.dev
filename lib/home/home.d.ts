@@ -13,12 +13,11 @@ interface HomeSceneParams {
 /** A tool world the camera flies to: its place, its view, and where the three bodies roam beside it. */
 interface HomeFlyWorld {
   id: string; tx: number; tz: number; el: number; dist: number
-  a: [number, number]; b: [number, number]; sp: number; rw: number
+  a: [number, number]; sp: number; rw: number
 }
 
 /** The page's shared state: written by lib/home/ui.ts, read by lib/home/scene.ts. */
 interface Solenix {
-  p: number
   motion: boolean
   vh: number
   scene: HomeSceneParams

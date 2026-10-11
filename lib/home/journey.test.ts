@@ -10,10 +10,10 @@ import { JOURNEY, TOOL_STOPS } from "./journey.ts"
 
 const html = readFileSync(fileURLToPath(new URL("../../design/home.html", import.meta.url)), "utf8")
 const caps = [...html.matchAll(/<li class="cap(?: on)?" data-k="(\d+)">([\s\S]*?)<\/li>\n/g)].map((m) => ({ k: +m[1], body: m[2] }))
-const text = (s: string) => s.replace(/<p class="vh">[\s\S]*?<\/p>/g, "").replace(/<span class="ex">[\s\S]*?<\/span>/g, "").replace(/<svg[\s\S]*?<\/svg>/g, "")
+const text = (s: string) => s.replace(/<span class="ex">[\s\S]*?<\/span>/g, "").replace(/<svg[\s\S]*?<\/svg>/g, "")
   .replace(/<span class="no">[\s\S]*?<\/span>/g, "").replace(/<[^>]+>/g, " ").replace(/&#8209;/g, "-").replace(/&[a-z]+;/g, " ")
 const words = (s: string) => text(s).split(/\s+/).filter((w) => /[a-z0-9]/i.test(w)).length
-const lines = (body: string) => [...body.matchAll(/<(h1|h2|p|ul)\b(?![^>]*class="vh")[^>]*>([\s\S]*?)<\/\1>/g)].map((m) => m[2])
+const lines = (body: string) => [...body.matchAll(/<(h1|h2|p|ul)\b[^>]*>([\s\S]*?)<\/\1>/g)].map((m) => m[2])
 
 test("there is one caption per stop, in order", () => {
   assert.equal(caps.length, JOURNEY.length)
@@ -28,11 +28,15 @@ test("every figure on screen wears an Example tag", () => {
   for (const c of caps) for (const f of c.body.match(/<p class="fig">[\s\S]*?<\/p>/g) ?? []) assert.match(f, /class="ex">Example</, `stop ${c.k}`)
 })
 
-test("a stop has at most one ember action, and every stop has its words for a screen reader", () => {
-  for (const c of caps) {
-    assert.ok((c.body.match(/btn-primary/g) ?? []).length <= 1, `stop ${c.k}`)
-    assert.match(c.body, /<p class="vh">[^<]{20,}<\/p>/, `stop ${c.k} has no full sentence for screen readers`)
-  }
+test("a stop has at most one ember action", () => {
+  for (const c of caps) assert.ok((c.body.match(/btn-primary/g) ?? []).length <= 1, `stop ${c.k}`)
+})
+
+test("the story in words has one full sentence per stop, for screen readers and pages without script", () => {
+  const story = html.match(/<ol class="story">([\s\S]*?)<\/ol>/)?.[1] ?? ""
+  const items = [...story.matchAll(/<li>([^<]+)<\/li>/g)].map((m) => m[1])
+  assert.equal(items.length, JOURNEY.length)
+  for (const t of items) assert.ok(t.split(/\s+/).length >= 6, t)
 })
 
 test("each tool stop flies to a tool world that exists, and holds that tool's asks", () => {

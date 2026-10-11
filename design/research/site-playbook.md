@@ -42,6 +42,8 @@ Status (2026-10-10): the examples now live in the homepage tool picker as finish
 
 ## Sources
 
+- Which tools small businesses run on (the homepage's tool stops, 2026-10-11): 95% of small businesses use at least one digital tool; Canadian ones most often a website (55%) or social media, then accounting software (46%) and payment platforms (37%). [National Post / QuickBooks small-business report, 2025-10-16](https://nationalpost.com/sponsored/business-sponsored/successful-canadian-small-businesses-are-bridging-the-digital-divide). QuickBooks holds about 83% of small-business accounting installs. [6sense, Small Business Accounting](https://6sense.com/tech/small-business-accounting).
+
 - 2: StatCan 79.1% https://www150.statcan.gc.ca/n1/daily-quotidien/260831/dq260831a-eng.htm
 - 2: 74% in two screenfuls https://www.nngroup.com/articles/scrolling-and-attention/
 - 2: abandonment in 10 to 20 s https://www.nngroup.com/articles/how-long-do-users-stay-on-web-pages/

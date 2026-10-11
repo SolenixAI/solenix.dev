@@ -4,6 +4,7 @@
 import { listener } from "./listen";
 import { FINALE, JOURNEY } from "./journey";
 import { PROOF } from "./proof";
+import { slotAz, TOOL_WORLDS } from "./worlds";
 
 // One keyframe of the story: where in the scroll it sits, and the scene values it pins.
 type HomeKey = { sel: string; f: number; pin?: number } & Partial<HomeSceneParams>;
@@ -15,33 +16,26 @@ const $$ = <T extends Element = HTMLElement>(s: string, el: ParentNode = documen
 
 // The opening is seen from above and pulled back, so all three bodies read as one system pulling apart.
 const HERO = { el: 30, dist: 11.5, lens: 4 };
-// Six tool worlds. Each has its own camera height and distance, and its own place for the three bodies:
-// a → b is where they roam (ahead of / beside the tool, in world units) as you scroll through the tools scene.
-const FLY: HomeFlyWorld[] = [
-  { id: 'shopify',        tx: 7.71,   tz: 9.19,   el: 24, dist: 8.6,  a: [-0.8, -2.6], b: [-0.4, 2.6],  sp: 1.0, rw: 1.1 },
-  { id: 'meta',           tx: 11.82,  tz: -2.08,  el: 12, dist: 8.2,  a: [5.5, -2.5],  b: [4.5, 2.5],   sp: 1.5, rw: 2.0 },
-  { id: 'quickbooks',     tx: 4.10,   tz: -11.28, el: 56, dist: 11.5, a: [0.5, 0],     b: [-0.8, 0.6],  sp: 2.0, rw: 1.6 },
-  { id: 'gmail',          tx: -7.71,  tz: -9.19,  el: 30, dist: 7.4,  a: [1.2, 3.0],   b: [0.6, -2.8],  sp: 1.0, rw: 1.0 },
-  { id: 'microsoftexcel', tx: -11.82, tz: 2.08,   el: 16, dist: 10.5, a: [3.5, -3.6],  b: [1.5, 3.2],   sp: 1.3, rw: 2.0 },
-  { id: 'hubspot',        tx: -4.10,  tz: 11.28,  el: 42, dist: 9.6,  a: [-1.6, -2.2], b: [-1.2, 2.4],  sp: 1.15, rw: 1.2 }
-];
-// The picked tool's world, at the start (f 0.15) and end (f 0.8) of the tools scene. Each world is seen from its own
-// side: the six sit 60° apart round the centre, the first seen from 70°, and the camera drifts 10° across the scene.
-// The angle is kept within half a turn of the guide's view (34°), so the camera never spins the long way round.
-const WORLD_AZ0 = 70, WORLD_AZ_STEP = 60, SCENE_DRIFT = 10, GUIDE_AZ = 34;
+// The tool worlds (lib/home/worlds.ts), as the camera flies to them: each world's place, view and the place beside it
+// where the three bodies roam.
+const FLY: HomeFlyWorld[] = TOOL_WORLDS.map(w => ({ id: w.id, tx: w.x, tz: w.z, el: w.el, dist: w.dist, a: w.roam, sp: w.sp, rw: w.rw }));
+// A tool world is seen from its own side: its slot's angle plus 30 degrees, kept within half a turn of the guide's view
+// (34 degrees) so the camera never spins the long way round.
+const GUIDE_AZ = 34;
 const nearGuide = (az: number) => ((az - GUIDE_AZ + 180) % 360 + 360) % 360 - 180 + GUIDE_AZ;
-const toolView = (i: number, end: boolean): Partial<HomeSceneParams> => {
-  const w = FLY[i] ?? FLY[0], roam = end ? w.b : w.a, az = nearGuide(WORLD_AZ0 + i * WORLD_AZ_STEP + (end ? SCENE_DRIFT : 0));
-  return { wsel: i, tx: w.tx, tz: w.tz, el: w.el, dist: w.dist, az, rf: roam[0], rs: roam[1], sp: w.sp, rw: w.rw };
+const toolView = (i: number): Partial<HomeSceneParams> => {
+  const w = FLY[i], az = nearGuide(slotAz(TOOL_WORLDS[i].slot) + 30);
+  return { wsel: i, tx: w.tx, tz: w.tz, el: w.el, dist: w.dist, az, rf: w.a[0], rs: w.a[1], sp: w.sp, rw: w.rw };
 };
 // Each stop holds still through the middle of its stretch of scroll, and the world moves only between stops, so a
-// stop is never skipped past and the scroll stays the visitor's own. A stop's stretch is one screen; HOLD of it is still.
+// stop is never skipped past and the scroll stays the visitor's own. Each stop owns an equal share of the scroll; HOLD
+// of its share is still.
 const HOLD = 0.55;
 const stopAt = (k: number): [number, number] => { const n = JOURNEY.length, c = (k + 0.5) / n, h = HOLD / n / 2;
   return [Math.max(0, c - h), Math.min(1, c + h)]; };
 // The scene's keyframes, one per journey stop (lib/home/journey.ts), then the close. A tool stop takes its world's
 // view (toolView); every value a stop leaves out carries on from the one before.
-const toolKey = (id: string): Partial<HomeSceneParams> => ({ ...toolView(FLY.findIndex(w => w.id === id), false), fly: 1, conn: 0, k: 0, free: 0, dim: 0.6, ox: 0.26, oy: 0.02, poy: 0.12 });
+const toolKey = (id: string): Partial<HomeSceneParams> => ({ ...toolView(FLY.findIndex(w => w.id === id)), fly: 1, conn: 0, k: 0, free: 0, dim: 0.6, ox: 0.26, oy: 0.02, poy: 0.12 });
 const KEYS: HomeKey[] = [
   ...JOURNEY.flatMap((s, k): HomeKey[] => { const v = 'tool' in s.scene ? toolKey(s.scene.tool) : s.scene, at = stopAt(k);
     return [{ sel: '#journey', f: at[0], pin: 1, ...v }, { sel: '#journey', f: at[1], pin: 1 }]; }),
@@ -54,7 +48,7 @@ for (let i = 1; i < KEYS.length; i++) PARAMS.forEach(k => { if (KEYS[i][k] === u
 export function startUi(): { S: Solenix; stop: () => void } {
   const root = document.documentElement;
   // The object is made here and filled in below (hero, fly, stops, ...) before any other part reads it.
-  const S = window.solenix = { p: 0, motion: true, vh: innerHeight, scene: {}, cur: 0, jCur: -1 } as Solenix;
+  const S = window.solenix = { motion: true, vh: innerHeight, scene: {}, cur: 0, jCur: -1 } as Solenix;
   S.smooth = smooth;
   S.hero = HERO;
   S.fly = FLY;
@@ -64,7 +58,8 @@ export function startUi(): { S: Solenix; stop: () => void } {
   let ticking = false;
   let scrollRaf = 0;
 
-  // Motion follows the operating system. Reduced motion freezes the scene; every value stays on screen.
+  // Motion follows the operating system. Reduced motion stills the scene's own drift; it still follows the scroll, and
+  // every value stays on screen.
   const reduce = matchMedia('(prefers-reduced-motion: reduce)');
   function applyMotion() {
     S.motion = !reduce.matches;
@@ -121,9 +116,8 @@ export function startUi(): { S: Solenix; stop: () => void } {
     const p = clamp(-journey.getBoundingClientRect().top / Math.max(1, run()));
     const atEnd = finale.getBoundingClientRect().top < innerHeight * 0.5;
     const cur = atEnd ? JOURNEY.length : Math.min(JOURNEY.length - 1, Math.floor(p * JOURNEY.length));
-    S.p = p;
     if (cur !== S.cur) {
-      if (JOURNEY[cur]?.sec === 'promises' && S.cur !== cur) S.pingN++;
+      if (JOURNEY[cur]?.sec === 'promises') S.pingN++;
       S.cur = cur;
       caps.forEach((c, k) => c.classList.toggle('on', k === cur));
       ticks.forEach((d, k) => d.classList.toggle('on', k === cur));

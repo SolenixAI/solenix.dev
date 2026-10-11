@@ -78,7 +78,7 @@ export const PROOF: ToolProof[] = [
       { id: "coffee", label: "Coffee", value: "$2,640 · up 10%" },
     ],
     asks: [
-      { say: "What sold best this month?", reply: "Bread and coffee are up. Pastry slipped.", states: { bread: "plain", pastry: "hot", coffee: "plain" }, order: ["pastry", "bread", "coffee"] },
+      { say: "What slipped this month?", reply: "Pastry slipped 4%. Bread and coffee are up.", states: { bread: "plain", pastry: "hot", coffee: "plain" }, order: ["pastry", "bread", "coffee"] },
       { say: "Make me a chart of it", reply: "The chart is in your sales sheet.", states: { bread: "done", pastry: "done", coffee: "done" }, adds: [{ id: "chart", label: "Sales by product", value: "chart added" }], order: ["chart", "bread", "pastry", "coffee"] },
     ],
   },

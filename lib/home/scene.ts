@@ -7,12 +7,11 @@ import type { SpaceFrame, SpaceWell, Vec3 } from "@/lib/space/engine";
 import { orbitStop } from "@/lib/space/orbit";
 import { listener } from "./listen";
 import { PROOF, placeProof } from "./proof";
+import { slotAz, TOOL_WORLDS } from "./worlds";
 
-// The six tool worlds: a wide circle round the business, one every 60 degrees from 40. Each is a well (its mass)
-// and its own place. az is the camera's view of it in reduced motion.
-const WN = 6, WR = 12, WAZ = (i: number) => 40 + 60 * i, TOOL_M = [1, 0.8, 1.2, 0.85, 1.1, 0.9];
-const D2Rq = (d: number) => d * Math.PI / 180;
-const WELLS: SpaceWell[] = Array.from({ length: WN }, (_, i) => { const th = D2Rq(90 - WAZ(i)); return { x: Math.cos(th) * WR, z: Math.sin(th) * WR, mass: TOOL_M[i], az: WAZ(i) + 30 }; });
+// The tool worlds (lib/home/worlds.ts): each is a well (its mass) at its own place. az is the camera's view of it in
+// reduced motion.
+const WELLS: SpaceWell[] = TOOL_WORLDS.map(w => ({ x: w.x, z: w.z, mass: w.mass, az: slotAz(w.slot) + 30 }));
 // The reduced-motion view of each section: [elevation, distance].
 const RVIEW: Record<string, number[]> = { guide: [44, 12.5], promises: [17, 8.8] };
 // The five stops of "After you book" sit on the real orbit, in the order the ink reaches them.
@@ -33,13 +32,15 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
   const smooth = S.smooth;
   const q = (s: string) => document.querySelector<HTMLElement>(s);
   const tags = [...document.querySelectorAll<HTMLElement>('.body-tag:not(.ai)')], tagAi = q('.body-tag.ai')!;
-  const worldTags = [...document.querySelectorAll<HTMLElement>('.world-tag')];
+  // Each world's mark, in the worlds' own order (matched by id, never by position in the page).
+  const worldTags = TOOL_WORLDS.map(w => document.querySelector<HTMLElement>(`.world-tag[data-world="${w.id}"]`)!);
   const ui = tags[0].parentElement!;   // carries the locked and lock-pop classes
   // The tools' things (lib/home/proof.ts): one stack of cards per tool, held beside its world as the camera moves.
   // A card per thing, made once; each answer re-orders them and lights what it found.
   const proofLayer = q('.proof')!, stacks = new Map<string, { e: HTMLElement; cards: Map<string, HTMLElement>; x: number; y: number }>();
   for (const p of PROOF) {
     const e = document.createElement('div'), cards = new Map<string, HTMLElement>(); e.className = 'pstack';
+    const ex = document.createElement('span'); ex.className = 'ex'; ex.textContent = 'Example'; e.append(ex);
     for (const t of [...p.things, ...p.asks.flatMap(a => a.adds ?? [])]) {
       const c = document.createElement('div'); c.className = 'pt'; c.innerHTML = '<b></b><span></span>';
       c.querySelector('b')!.textContent = t.label; c.querySelector('span')!.textContent = t.value; e.append(c); cards.set(t.id, c);
@@ -55,7 +56,7 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
   let tagShow = 1, tagW = [90, 90, 90], tagH = 28;
   // The words on screen (the stop's caption, or the close) are kept clear: no tag lands on any of them.
   const caps = [...document.querySelectorAll<HTMLElement>('#journey .cap')], closeBlocks = [...document.querySelectorAll<HTMLElement>('#close .close-in > *')];
-  let readBox: number[][] = [], boxDirty = true;
+  let readBox: number[][] = [], boxDirty = true, boxCur = -1;
   const markDirty = () => { boxDirty = true; };
   l.on(window, 'scroll', markDirty, { passive: true });
   l.on(window, 'resize', markDirty);
@@ -81,7 +82,7 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
       // A phone holds only what the answer found or made; the rest would crowd the words.
       st.cards.forEach((c, id) => { const k = placed.findIndex(t => t.id === id); c.hidden = !shown.has(id) || (portrait && placed[k]?.state === 'dim'); if (k >= 0) { c.style.order = String(k); c.dataset.state = placed[k].state; } });
       const w = f.well(wi), v = f.project(w.x, w.y, w.z), wx = (v.x + 1) / 2 * W, wy = (1 - v.y) / 2 * H;
-      const sw = st.e.offsetWidth || 240, sh = st.e.offsetHeight || 180, cap = caps[S.cur], top = 84, bottom = cap ? cap.getBoundingClientRect().top - 16 : H - 16;
+      const band = openBand('tools'), sw = st.e.offsetWidth || 240, sh = st.e.offsetHeight || 180, top = band ? band.y0 : 84, bottom = band ? band.y1 - 4 : H - 16;
       // The open sky is beside the world, above the words: the stack takes the left of the world when it fits there.
       const left = wx - 56 - sw >= 24, x = portrait ? Math.min(Math.max(wx - sw / 2, 16), W - sw - 16) : left ? wx - 56 - sw : Math.min(wx + 56, W - sw - 24);
       const y = Math.min(Math.max(portrait ? wy + 40 : wy - sh / 2, top), Math.max(top, bottom - sh));
@@ -92,7 +93,8 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
     worldTags.forEach((e, i) => placeAt(e, f.well(i), fl * (wsel < 0 ? 1 : (portrait ? 0 : 1) * Math.max(0, 1 - Math.abs(wsel - i) * 1.6)), 0, f));
     tagShow = lerp(tagShow, locked || sc.agent > 0.98 ? 1 : 0, 1 - Math.exp(-f.dt * 4));
     const pad = (e: Element) => { const r = e.getBoundingClientRect(); return [r.left - 14, r.top - 10, r.right + 14, r.bottom + 10]; };
-    if (boxDirty) { boxDirty = false; readBox = (S.cur < caps.length ? [...caps[S.cur].children] : closeBlocks).map(pad); }
+    // Re-measured on scroll and whenever the stop (and so its words) changes.
+    if (boxDirty || boxCur !== S.cur) { boxDirty = false; boxCur = S.cur; readBox = (S.cur < caps.length ? [...caps[S.cur].children] : closeBlocks).map(pad); }
     // On a phone the close fills the screen with words: the tags step back there.
     const la = Math.max(0, Math.min(1, 1 - sc.dim / 0.4)) * lerp(1, tagShow, sc.stops) * (portrait && S.sec === 'close' ? 0 : 1), margin = portrait ? 24 : 34;
     const bd = [0, 1, 2].map(i => f.offOrbit(i));

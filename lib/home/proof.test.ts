@@ -11,7 +11,7 @@ test("every tool stop has its things and at least two asks, each in a few plain 
     const p = PROOF.find((x) => x.tool === tool)
     assert.ok(p, tool)
     assert.ok(p.asks.length >= 2)
-    for (const a of p.asks) { assert.ok(a.say.split(/\s+/).length <= 8, a.say); assert.ok(a.reply.split(/\s+/).length <= 12, a.reply) }
+    for (const a of p.asks) { assert.ok(a.say.split(/\s+/).length <= 8, a.say); assert.ok(a.reply.split(/\s+/).length <= 10, a.reply) }
   }
 })
 

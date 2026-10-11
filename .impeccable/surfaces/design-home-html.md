@@ -27,11 +27,11 @@ Each stop: one scene state, one focal object, one caption of 10 words or fewer a
 | # | Stop | The scene shows | Caption | Lever |
 |---|---|---|---|---|
 | 1 | Chaos | Revenue, Costs, Time fling apart | Your business is a three-body problem. | Contrast: the before, vivid |
-| 2 | Tools pull | Six tool planets tug the suns; an hours meter climbs (Example) | Every tool pulls its own way. | Loss aversion: hours you lose |
-| 3 | Talk to one | The AI lights at the centre; six arcs snap into it; the meter falls | Stop learning ten tools. Talk to one. | Hick's law: ten become one |
+| 2 | Tools pull | The tool worlds tug the suns; 6.5 hours a week lost (Example) | Every tool pulls its own way. | Loss aversion: hours you lose |
+| 3 | Talk to one | The AI lights at the centre; every world is joined to it | Stop learning ten tools. Talk to one. + Claude or ChatGPT, set up in the tools you use. | Hick's law: ten become one |
 | 4–8 | QuickBooks, Gmail, Shopify, Meta Ads, Excel (lib/home/journey.ts TOOL_STOPS): the books, the inbox, stock, ads, the numbers | The camera flies to the tool's world; its things stand beside it; the visitor taps a plain-words ask and the answer shows at once: the overdue invoice glows, the drafted one appears; the inbox sorts; the reorder is drafted; the wasted ad budget moves; the chart is added | You don't need to be an expert in [tool]. + two asks and the answer | Vivid proof, you stay in control |
 | 9–13 | The plan | The figure-eight forms; one stop lights per step | From one call to a stable orbit. + one line per step | Goal gradient |
-| 14 | Promises | Four rings lock round the orbit | Fixed price · You own it · Plain English · No lock-in | Regret aversion |
+| 14 | Promises | Down inside the orbit; the four promises arrive one by one | Fixed price · You own it · Plain English · No lock-in | Regret aversion |
 | Close | Stable orbit | The calm, centred orbit; the footer shares this screen | Let's find your stable orbit. | Peak-end, the prompt at the peak |
 
 
@@ -40,13 +40,13 @@ Each stop: one scene state, one focal object, one caption of 10 words or fewer a
 - Anti-goals: a text panel over the scene, a paragraph on screen, a section that is only words, a fade across the screen, the scene "in the background".
 
 ## States and ranges
-- Captions at most 10 words a line; the full sentence of each stop is in the page, visually hidden, for screen readers and search.
+- Captions at most 10 words a line. The full sentence of each stop is one list in the page (the story): visually hidden for sighted visitors, always there for screen readers and search, and shown as the page itself when script is off. Only the stop on screen takes the keyboard.
 - Example tags on every sample number; unknown numbers get a dashed "to confirm" chip.
 - Reduced motion: each stop is a fixed camera station with every value on screen; the scene still follows the stops.
 
 ## Interaction and layout
 - The scroll is native, up and down; each stop holds through its stretch. A stop indicator on the right shows where you are and how many are left.
-- Captions sit beside their object in the scene (projected tags), never over a body.
+- Captions sit low in the sky, clear of the bodies; a tool's things stand beside its world. The labels on the bodies step back from any words.
 - Phone first: 375 px is the floor; the first stop fills exactly the first screen.
 
 ## Constraints

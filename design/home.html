@@ -73,9 +73,6 @@ footer { position: relative; z-index: 2; } /* inside main, above the scene's tag
 /* A very short hero (a phone held sideways) keeps the headline and the action; the sentence steps aside. */
 @media (max-height: 420px) { .hero-sub { display: none; } }
 
-/* The story, scrubbed by scroll: a three-stop rail, then headlines that build word by word. */
-
-
 /* The three bodies, named. Each tag rides with its sun through the whole story. */
 .body-tag { position: absolute; left: 0; top: 0; opacity: 0; will-change: transform, opacity; display: inline-flex; align-items: center; gap: 6px; padding: 4px 9px; border-radius: var(--radius-pill); background: color-mix(in oklch, var(--bg) 74%, transparent); border: 1px solid var(--line-strong); font: var(--fw-semibold) var(--fs-2xs)/1.2 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--text); white-space: nowrap; }
 .body-tag i { width: 6px; height: 6px; border-radius: 50%; background: var(--warn); box-shadow: 0 0 8px var(--warn); transition: background-color var(--dur-slow), box-shadow var(--dur-slow); }
@@ -85,18 +82,13 @@ footer { position: relative; z-index: 2; } /* inside main, above the scene's tag
 /* No JavaScript: nothing pins, everything reads in order. */
 html:not(.js) .stage { position: relative; height: auto; min-height: 100svh; }
 
-/* ── Sections after the sky. The story keeps going: every section is lit by
-   one warm source, carries the orbit, and ends settled. ── */
 /* One light per section, clipped by the section. The core sits away from prose. */
 .light { position: absolute; z-index: var(--z-sky); pointer-events: none; width: var(--ls, 80vmax); aspect-ratio: 1; border-radius: 50%; translate: -50% -50%;
   background: radial-gradient(closest-side, color-mix(in oklch, var(--sun2) 20%, transparent), color-mix(in oklch, var(--sun1) 7%, transparent) 45%, transparent 72%); }
 
-/* ── After you book: a pinned stretch where the eight forms in the scene itself.
-   The five stops sit on the real orbit; the card shows what you get at each one. ── */
-
 /* ── The journey: one pinned stage, one stop per screen (lib/home/journey.ts). The world is the page; each stop's few
    words sit low in the sky beside it, shaded by their own shadow, never on a panel. ── */
-.journey { position: relative; height: calc(var(--n, 12) * 100vh); height: calc(var(--n, 12) * 100svh); }
+.journey { position: relative; height: calc(var(--n, 14) * 100vh); height: calc(var(--n, 14) * 100svh); }
 .journey .stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; pointer-events: none; }
 .journey .stage a { pointer-events: auto; }
 .caps { list-style: none; margin: 0 auto; padding: 0; position: relative; height: 100%; }
@@ -147,6 +139,9 @@ html:not(.js) .stage { position: relative; height: auto; min-height: 100svh; }
 .asks .reply .ex { margin-left: var(--space-2); vertical-align: 2px; }
 .journey .stage .ask { pointer-events: auto; }
 @media (max-width: 640px) { .pt { padding: 8px 12px; } .ask { padding: 0 var(--space-3); } .asks .reply { font-size: var(--fs-body); } }
+.story { margin: 0; padding: 0; list-style: none; }
+html.js .story { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+html:not(.js) .story { position: relative; padding: calc(var(--nav-height) + var(--space-7)) var(--gutter) var(--space-7); max-width: 40rem; margin-inline: auto; display: grid; gap: var(--space-4); font-size: var(--fs-lede); color: var(--text); }
 .vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .jticks { position: absolute; right: max(10px, calc(var(--gutter) * 0.5)); top: 50%; translate: 0 -50%; display: grid; gap: 7px; }
 .jticks i { display: block; width: 3px; height: 16px; border-radius: 2px; background: var(--line-strong); transition: background-color var(--dur-slow), height var(--dur-slow) var(--ease-out); }
@@ -157,25 +152,6 @@ html:not(.js) .stage { position: relative; height: auto; min-height: 100svh; }
 @media (max-width: 640px) { .cap { bottom: calc(5.5rem + env(safe-area-inset-bottom)); } .jbook { left: var(--gutter); right: auto; } .jticks { gap: 5px; } .jticks i { height: 10px; } .jticks i.on { height: 18px; } }
 html:not(.js) .journey { height: auto; } html:not(.js) .journey .stage { position: relative; height: auto; overflow: visible; }
 html:not(.js) .cap { position: relative; inset: auto; opacity: 1; visibility: visible; transform: none; padding-block: var(--space-8); } html:not(.js) .jticks { display: none; }
-@media (prefers-reduced-motion: reduce) { .jr-steps li, .jr-steps li.on { transform: none !important; } }
-@media (max-width: 720px) { .jr-in { padding-top: calc(var(--nav-height) + 5.5rem); } .jr-head .h2 { font-size: 1.9rem; } .jr-steps h3 { font-size: 1.7rem; } }
-/* The plan (#after). Every stop stays in the reading order for screen readers and keyboard users, not only the one on screen.
-   The stops sit on the scene, so they carry shade, as the guide does, and never a panel. The call sits in reach at every stop. */
-/* Motion (#after). One thesis: the plan settles like an orbit. Each stop lands in turn, the track fills as the stops land,
-   and Book a call sweeps once when it is ready. Only transform and opacity move. Reduced motion keeps every state and drops the travel. */
-
-/* The wiring: four stops, one of them a person. */
-/* Tablets: the four stops as one row. Phones keep the vertical list, so every name sits on one line with its line of detail. */
-
-/* ── What it could be worth: the owner's own numbers, shown as a range ── */
-/* No expert needed: the roles you no longer have to be, and what you say instead. */
-
-/* ── Promises: one at a time, with all four named under the line, so the list reads at a glance. ── */
-/* The index lights up as each promise arrives. Scoped to #promises: the journey and guide keep their own dashes. */
-@media (min-width: 640px) { #promises .jr-dots { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0 var(--space-3); } }
-
-/* ── 5 · Pricing bento: one closed ring, one ring that keeps going ── */
-@media (min-width: 960px) { .bento { max-width: 34rem; } }
 
 /* ── Closing: no box, no second canvas. The same orbit, seen whole, above the words. ── */
 .close-sec { position: relative; min-height: 100vh; min-height: 100svh; display: grid; align-items: center; }
@@ -225,13 +201,8 @@ html[data-motion="on"] .scene-ui.lock-pop .body-tag.ai { animation-delay: 320ms;
 .hw > span { display: inline-block; transition: transform 0.95s var(--ease-out); transition-delay: calc(var(--i) * 65ms + 90ms); }
 .h2 em .hw > span, .say-h em .hw > span, #close-h em .hw > span { background: var(--grad-headline); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .04em; }
 html.js[data-motion="on"] .hb.arm:not(.play) .hw > span { transform: translateY(112%); }
-/* The guide headline names a tool, and the name changes in place. It shares its line only with "in", so a
-   longer or shorter name moves nothing else. The name leaving is lifted out of the flow while it fades. */
 /* Alive under the pointer: a light that follows it across cards, a primary button that leans toward it. */
 .btn:active { scale: 0.97; }
-/* ── One world. Below the hero nothing sits on a panel, card or diagram: the scene performs each section
-   and the page only annotates it. Copy stands on bare sky on one side; the bodies keep to the other. ── */
-/* The gold words are painted with a gradient, so they take no shadow: a shadow would show through and bury them. */
 /* Narrow screens: the scene holds the top of the screen and the words rise out of the dark below it,
    so no label ever sits on the copy. */
 .lg { width: 18px; height: 18px; flex: none; fill: currentColor; }
@@ -240,11 +211,6 @@ html.js[data-motion="on"] .hb.arm:not(.play) .hw > span { transform: translateY(
 .moon-tag .lg { width: 15px; height: 15px; }
 /* Promises: one at a time, upright, with the settled orbit beside them. */
 .tm-note { font-size: var(--fs-xs); color: var(--faint); flex-basis: 100%; }
-/* ── The tools: pick one you use and see the finished result at once. The world is the stage: each pick flies the
-   camera to that tool's world, and the words keep to one narrow column (desktop) or the top and bottom edges (phone),
-   shaded by text-shadow, never by a panel. Every panel is in the page, so it reads without script. ── */
-/* The result, drawn: one bar per row from the example numbers. A row that changed shows where it was (a hairline
-   ghost) and where it is now; ember marks what needs you, green what got better. */
 /* A threshold (60 days, 14 days) is a dashed tick on each track at the same place, named once under the bars. */
 @media (prefers-reduced-motion: reduce) { .tb-bar { animation: none; } }
 /* What it costs you, drawn: one dot per step by hand against one dot for the sentence. */
@@ -253,9 +219,6 @@ html.js[data-motion="on"] .hb.arm:not(.play) .hw > span { transform: translateY(
 .world-tag { width: 52px; height: 52px; background: color-mix(in oklch, var(--bg) 88%, transparent); border-color: color-mix(in oklch, var(--accent) 55%, transparent); box-shadow: 0 0 24px color-mix(in srgb, var(--ring) 40%, transparent); }
 .world-tag .lg { width: 26px; height: 26px; }
 @media (max-width: 899px) { .close-sec { align-items: end; } .close-in { padding-block: var(--space-7); } }
-/* The guide: one pinned scene. The words keep to the left edge, top and bottom; the world holds the rest. */
-/* The guide's one next step: a ghost pill, the same route as the hero's and the close's Book a call. */
-/* Reduced motion: the camera does not fly. It cuts between stations under a short dip to dark. */
 </style>
 </head>
 <body>
@@ -273,12 +236,11 @@ html.js[data-motion="on"] .hb.arm:not(.play) .hw > span { transform: translateY(
   <div class="body-tag"><i></i>Costs</div>
   <div class="body-tag"><i></i>Time</div>
   <div class="body-tag ai">AI</div>
-  <div class="moon-tag world-tag"><svg class="lg"><use href="#lg-shopify"/></svg></div>
-  <div class="moon-tag world-tag"><svg class="lg"><use href="#lg-meta"/></svg></div>
-  <div class="moon-tag world-tag"><svg class="lg"><use href="#lg-quickbooks"/></svg></div>
-  <div class="moon-tag world-tag"><svg class="lg"><use href="#lg-gmail"/></svg></div>
-  <div class="moon-tag world-tag"><svg class="lg"><use href="#lg-microsoftexcel"/></svg></div>
-  <div class="moon-tag world-tag" hidden></div>
+  <div class="moon-tag world-tag" data-world="shopify"><svg class="lg"><use href="#lg-shopify"/></svg></div>
+  <div class="moon-tag world-tag" data-world="meta"><svg class="lg"><use href="#lg-meta"/></svg></div>
+  <div class="moon-tag world-tag" data-world="quickbooks"><svg class="lg"><use href="#lg-quickbooks"/></svg></div>
+  <div class="moon-tag world-tag" data-world="gmail"><svg class="lg"><use href="#lg-gmail"/></svg></div>
+  <div class="moon-tag world-tag" data-world="microsoftexcel"><svg class="lg"><use href="#lg-microsoftexcel"/></svg></div>
   <div class="proof"></div>
   <div class="stop-mk" data-k="0">01<span>Find the hours</span></div>
   <div class="stop-mk" data-k="1">02<span>Cut the tools</span></div>
@@ -289,73 +251,76 @@ html.js[data-motion="on"] .hb.arm:not(.play) .hw > span { transform: translateY(
 
 <div id="main">
 <section class="journey" id="journey" data-stop="chaos" aria-label="Your business is a three-body problem">
+  <h2 class="vh">The journey, in words</h2>
+  <ol class="story">
+    <li>Revenue, costs and time, pulled apart by a dozen tools. We put one AI at the centre of the tools you already use. Hours back, every week.</li>
+    <li>Each tool you run eats hours you do not get paid for. That is where this starts.</li>
+    <li>We set up Claude or ChatGPT for your team and connect it to the tools you already use. You say what you want in plain words, and it gets done in those tools.</li>
+    <li>Example: you ask who owes you money. Hillside Roofing is 64 days late; three clients owe $4,450. Then you ask to invoice Harbour Dental for the retainer, and the invoice is ready for you to check before it goes.</li>
+    <li>Example: you ask to sort today's inbox. Four emails need a reply today, nine can wait, sixteen are junk. Then you ask to book 30 minutes with Harbour Dental: Tuesday at 10:30, and the invite waits for your OK.</li>
+    <li>Example: you ask what runs out this month. Sea salt caramels and wool mitts will run out within 30 days. Then you ask to reorder them, and both reorders are drafted for you to approve.</li>
+    <li>Example: you ask which ad is wasting money. Local awareness now costs far more for each sale than it did. Then you ask to move its budget to the fall sale, and the change waits for your call.</li>
+    <li>Example: you ask what sold best this month. Bread and coffee are up; pastry slipped. Then you ask for a chart, and it is added to your sales sheet.</li>
+    <li>On the call, we add up what your tools cost you, in hours and dollars.</li>
+    <li>You stop paying for the ones you barely use. The rest move off outdated software.</li>
+    <li>We set up Claude or ChatGPT and connect it to your tools. Then we teach your team to use it.</li>
+    <li>It is where your customers decide to call you. We look after it. You own everything.</li>
+    <li>Agreed on the call. No surprise invoice.</li>
+    <li>Fixed price: one number, in writing, agreed on the call. You own it all: accounts, code and data in your name. Plain English: updates you read in a minute, on your phone. No lock-in: leave any month, keep everything you paid for.</li>
+  </ol>
   <div class="stage" data-hero>
     <ol class="caps wrap">
       <li class="cap on" data-k="0">
         <h1 class="cap-h cap-hero">Your business is a <em>three&#8209;body problem.</em></h1>
         <a class="btn btn-primary" href="/book">Book a call</a>
-        <p class="vh">Revenue, costs and time, pulled apart by a dozen tools. We put one AI at the centre of the tools you already use. Hours back, every week.</p>
       </li>
       <li class="cap" data-k="1">
         <h2 class="cap-h">Every tool pulls <em>its own way.</em></h2>
         <p class="fig"><b>6.5 hours</b> a week, lost to them <span class="ex">Example</span></p>
-        <p class="vh">Each tool you run eats hours you do not get paid for. That is where this starts.</p>
       </li>
       <li class="cap" data-k="2">
         <h2 class="cap-h">Stop learning ten tools. <em>Talk to one.</em></h2>
         <p class="say">Claude or ChatGPT, set up in the tools you use.</p>
-        <p class="vh">We set up Claude or ChatGPT for your team and connect it to the tools you already use. You say what you want in plain words, and it gets done in those tools.</p>
       </li>
       <li class="cap" data-k="3">
         <h2 class="cap-h">You don't need to be an expert in <em>QuickBooks.</em></h2>
         <div class="asks" data-tool="quickbooks"></div>
-        <p class="vh">Example: you ask who owes you money. Hillside Roofing is 64 days late; three clients owe $4,450. Then you ask to invoice Harbour Dental for the retainer, and the invoice is ready for you to check before it goes.</p>
       </li>
       <li class="cap" data-k="4">
         <h2 class="cap-h">You don't need to be an expert in <em>Gmail.</em></h2>
         <div class="asks" data-tool="gmail"></div>
-        <p class="vh">Example: you ask to sort today's inbox. Four emails need a reply today, nine can wait, sixteen are junk. Then you ask to book 30 minutes with Harbour Dental: Tuesday at 10:30, and the invite waits for your OK.</p>
       </li>
       <li class="cap" data-k="5">
         <h2 class="cap-h">You don't need to be an expert in <em>Shopify.</em></h2>
         <div class="asks" data-tool="shopify"></div>
-        <p class="vh">Example: you ask what runs out this month. Sea salt caramels and wool mitts will run out within 30 days. Then you ask to reorder them, and both reorders are drafted for you to approve.</p>
       </li>
       <li class="cap" data-k="6">
         <h2 class="cap-h">You don't need to be an expert in <em>Meta Ads.</em></h2>
         <div class="asks" data-tool="meta"></div>
-        <p class="vh">Example: you ask which ad is wasting money. Local awareness now costs far more for each sale than it did. Then you ask to move its budget to the fall sale, and the change waits for your call.</p>
       </li>
       <li class="cap" data-k="7">
         <h2 class="cap-h">You don't need to be an expert in <em>Excel.</em></h2>
         <div class="asks" data-tool="microsoftexcel"></div>
-        <p class="vh">Example: you ask what sold best this month. Bread and coffee are up; pastry slipped. Then you ask for a chart, and it is added to your sales sheet.</p>
       </li>
       <li class="cap" data-k="8">
         <h2 class="cap-h cap-plan">From one call to a <em>stable orbit.</em></h2>
         <p class="step">We find where the hours go.</p>
-        <p class="vh">On the call, we add up what your tools cost you, in hours and dollars.</p>
       </li>
       <li class="cap" data-k="9">
         <p class="step">We cut the tools you don't need.</p>
-        <p class="vh">You stop paying for the ones you barely use. The rest move off outdated software.</p>
       </li>
       <li class="cap" data-k="10">
         <p class="step">One AI sits at the centre.</p>
-        <p class="vh">We set up Claude or ChatGPT and connect it to your tools. Then we teach your team to use it.</p>
       </li>
       <li class="cap" data-k="11">
         <p class="step">We build your website.</p>
-        <p class="vh">It is where your customers decide to call you. We look after it. You own everything.</p>
       </li>
       <li class="cap" data-k="12">
         <p class="step">A fixed price, in writing.</p>
-        <p class="vh">Agreed on the call. No surprise invoice.</p>
       </li>
       <li class="cap" data-k="13">
         <h2 class="cap-h">Four promises, <em>on paper.</em></h2>
         <ul class="chips"><li>Fixed price</li><li>You own it</li><li>Plain English</li><li>No lock-in</li></ul>
-        <p class="vh">Fixed price: one number, in writing, agreed on the call. You own it all: accounts, code and data in your name. Plain English: updates you read in a minute, on your phone. No lock-in: leave any month, keep everything you paid for.</p>
       </li>
     </ol>
     <div class="jticks" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>

@@ -169,7 +169,7 @@ sys.exit(1 if missing else 0)
 PY
 
 # Impeccable's detector on the homepage. Findings may not rise above the baseline
-# (7 on 2026-10-11: the seven are the ember glows DESIGN.md allows.)
+# (6 on 2026-10-11, measured on the journey homepage: all six are the ember glows DESIGN.md allows.)
 # Fix findings and lower the baseline; never raise it.
 # The launcher ships in this repo (.claude/skills/impeccable); on its first run it downloads its pinned, sha256-checked engine.
 IMP=${IMPECCABLE:-.claude/skills/impeccable/scripts/impeccable}
