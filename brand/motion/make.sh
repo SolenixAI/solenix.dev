@@ -4,6 +4,8 @@
 set -euo pipefail
 here="$(cd "$(dirname "$0")" && pwd)"; out="${1:-$here/out}"; mkdir -p "$out"
 root="$(cd "$here/../.." && pwd)"; (cd "$root" && node scripts/vendor.ts >/dev/null)
+# The piece is TypeScript (piece.ts); the page loads it as piece.js, compiled here by Node's own type stripper (git ignores it).
+node --input-type=module -e "import { stripTypeScriptTypes } from 'node:module'; import { readFileSync, writeFileSync } from 'node:fs'; writeFileSync(process.argv[2], stripTypeScriptTypes(readFileSync(process.argv[1], 'utf8')))" "$here/piece.ts" "$here/piece.js" 2>/dev/null
 python3 -m http.server 8812 --bind 127.0.0.1 --directory "$root" >/dev/null 2>&1 & srv=$!
 trap 'kill $srv 2>/dev/null' EXIT; sleep 1
 rm -rf "$out/frames" && node "$here/render.ts" "$out/frames"
