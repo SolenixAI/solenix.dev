@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { SITE_URL } from "@/lib/site-meta"
 import { Button } from "@/components/ui/button"
 import { HERO_CSS } from "@/lib/site-hero"
 import { OG_IMAGE } from "@/lib/site-meta"
@@ -12,7 +13,7 @@ const description = `The ${title} is being rebuilt from scratch. Book a call and
 export const metadata: Metadata = {
   title,
   description,
-  alternates: { canonical: "/app" },
+  alternates: { canonical: `${SITE_URL}/app` },
   robots: { index: false },
   openGraph: { title: `${title} · Solenix`, description, url: "/app", images: [OG_IMAGE] },
 }

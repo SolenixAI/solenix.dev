@@ -1,33 +1,27 @@
-// Every page the sitemap lists, on the local site: its head says what it is (lib/page-audit.ts), every link and asset
-// on it answers, and the site's redirects land. Run by scripts/check.sh whenever the local site is up.
+// Every page the sitemap lists, on the local site: its head says what it is, every link and asset on it lands
+// (lib/page-audit.ts). Run by scripts/check.sh whenever the local site is up. Every request has a time limit, so the
+// check can never hold up a commit.
 //   node scripts/link-check.ts [<base url>]
-import { internalLinks, seoProblems } from "../lib/page-audit.ts"
+import { internalLinks, landed, seoProblems } from "../lib/page-audit.ts"
 
 const base = (process.argv[2] ?? process.env.SITE_URL ?? "http://localhost:3000").replace(/\/$/, "")
 const problems: string[] = []
-const sitemap = await fetch(`${base}/sitemap.xml`).then((r) => r.text())
-const pages = [...new Set([...sitemap.matchAll(/<loc>https?:\/\/[^/]+([^<]*)<\/loc>/g)].map((m) => m[1] || "/"))]
-if (!pages.length) problems.push("the sitemap lists no pages")
+const get = (path: string) => fetch(base + path, { signal: AbortSignal.timeout(20_000) }).then((r) => r.text())
+const sitemap = await get("/sitemap.xml").catch(() => "")
+const pages = [...new Set([...sitemap.matchAll(/<loc>https?:\/\/[^/<]+([^<]*)<\/loc>/g)].map((m) => m[1] || "/"))]
+if (!pages.length) problems.push("the sitemap lists no pages (or did not answer)")
 
-// A link answers when it ends at a 2xx, following the site's own redirects; one that leaves the site counts as landed.
-const answered = new Map<string, number>()
-const status = async (path: string) => {
-  if (!answered.has(path)) {
-    const r = await fetch(base + path, { redirect: "manual" })
-    const to = r.headers.get("location")
-    answered.set(path, r.status >= 300 && r.status < 400 && to && !to.startsWith("/") && !to.startsWith(base) ? 200 : r.status >= 300 && r.status < 400 && to ? (await fetch(new URL(to, base + path))).status : r.status)
-  }
-  return answered.get(path)!
-}
-
+const seen = new Map<string, Promise<{ ok: boolean; why: string }>>()
 for (const page of pages) {
-  const html = await fetch(base + page).then((r) => r.text())
+  let html: string
+  try { html = await get(page) } catch (e) { problems.push(`${page} did not load (${e instanceof Error ? e.message : e})`); continue }
   for (const p of seoProblems(html)) problems.push(`${page} ${p}`)
   for (const link of internalLinks(html)) {
-    const code = await status(link)
-    if (code >= 400) problems.push(`${page} links to ${link}, which answers ${code}`)
+    if (!seen.has(link)) seen.set(link, landed(base, link))
+    const r = await seen.get(link)!
+    if (!r.ok) problems.push(`${page} links to ${link}, which ${r.why}`)
   }
 }
 for (const p of problems) console.log(`links: ${p}`)
-console.log(problems.length ? `links: ${problems.length} problem(s)` : `links: ${pages.length} pages, ${answered.size} links and assets, all answer; every head is complete`)
+console.log(problems.length ? `links: ${problems.length} problem(s)` : `links: ${pages.length} pages, ${seen.size} links and assets, all land; every head is complete`)
 process.exit(problems.length ? 1 : 0)
