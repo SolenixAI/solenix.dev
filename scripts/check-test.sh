@@ -43,7 +43,7 @@ fresh; expect pass "untouched repo passes"
 # put on main, and update-ref works whichever branch the repo itself is on.
 # A commit on top of GitHub main that adds one file, made without touching the copy's files or index.
 local_only() {
-  local idx; idx=$(mktemp); GIT_INDEX_FILE=$idx git read-tree origin/main
+  local idx="$tmp/drift-index"; GIT_INDEX_FILE=$idx git read-tree origin/main
   GIT_INDEX_FILE=$idx git update-index --add --cacheinfo "100644,$(echo drift | git hash-object -w --stdin),drift.txt"
   GIT_AUTHOR_NAME=t GIT_AUTHOR_EMAIL=t@t GIT_COMMITTER_NAME=t GIT_COMMITTER_EMAIL=t@t git commit-tree "$(GIT_INDEX_FILE=$idx git write-tree)" -p origin/main -m "local only"
   rm -f "$idx"
