@@ -38,8 +38,11 @@ export const ICONS = {
 
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;")
 
-/** The same icons and preview tags as <head> markup, for a page Next.js does not render. */
-export function headTags(page: { title: string; description: string; path: string; image?: string }) {
+/** A page's tab title: its own title with the site's name once, "Title · Solenix" (the one form every page's title takes). */
+export const tabTitle = (title: string) => (title.includes("Solenix") ? title : `${title} · Solenix`)
+
+/** The same icons and preview tags as <head> markup, for a page Next.js does not render. `title` is the tab title (tabTitle). */
+export function headTags(page: { title: string; description: string; path: string; image?: string; type?: "website" | "article" }) {
   const icons = ICONS.icon
     .map((i) => `<link rel="icon" href="${i.url}"${"sizes" in i ? ` sizes="${i.sizes}"` : ""}${"type" in i ? ` type="${i.type}"` : ""}${"media" in i ? ` media="${i.media}"` : ""}>`)
     .join("")
@@ -47,7 +50,7 @@ export function headTags(page: { title: string; description: string; path: strin
   return (
     icons +
     `<link rel="apple-touch-icon" href="${ICONS.apple}">` +
-    `<meta property="og:type" content="website">` +
+    `<meta property="og:type" content="${page.type ?? "website"}">` +
     `<meta property="og:site_name" content="Solenix">` +
     `<link rel="canonical" href="${SITE_URL}${page.path}">` +
     `<meta property="og:url" content="${SITE_URL}${page.path}">` +

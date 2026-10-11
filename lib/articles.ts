@@ -2,12 +2,12 @@ import { existsSync } from "node:fs"
 import { readdir, readFile } from "node:fs/promises"
 import path from "node:path"
 import { servePage } from "@/lib/site-page"
-import { SLUG, articleProblems } from "@/lib/article-rules"
+import { SLUG, articleProblems, publishedDate } from "@/lib/article-rules"
 
 // Articles are self-contained interactive pages: one folder per article in articles/,
 // holding index.html and whatever data it loads. Adding an article = adding a folder.
 // The page is the one source of truth for its title, description and date
-// (<title>, <meta name="description">, <meta name="article:published_time">).
+// (<title>, <meta name="description">, <meta property="article:published_time">).
 // At serve time lib/site-page.ts adds what every page shares: the nav, head tags and measurement.
 
 const DIR = path.join(process.cwd(), "articles")
@@ -34,7 +34,7 @@ export async function readArticle(slug: string): Promise<{ meta: Article; html: 
     slug,
     title: pick(/<title>([^<]*)<\/title>/) || slug,
     description: pick(/<meta name="description" content="([^"]*)"/),
-    date: pick(/<meta name="article:published_time" content="([^"]*)"/),
+    date: publishedDate(html),
     path: `/articles/${slug}`,
     // From npm run article-covers; also the share image.
     cover: still("cover.png"),
@@ -56,7 +56,7 @@ export async function listArticles(): Promise<Article[]> {
 
 /** Serve an article: wrap a bare page in a document, then add what every page shares. */
 export function serveArticle(meta: Article, html: string) {
-  return servePage(/<html[\s>]/i.test(html) ? html : wrapFragment(html), meta)
+  return servePage(/<html[\s>]/i.test(html) ? html : wrapFragment(html), { ...meta, type: "article" })
 }
 
 // A page written as a fragment (no <html>): its leading meta, title, link and style tags
