@@ -67,7 +67,7 @@ test("content never throws: out-of-range entities stay as text, and a > inside a
 })
 
 test("links are read against the page: relative paths, unquoted values, SVG, embeds, posters, CSS url() and the own share image", () => {
-  const html = `<a href=proof-flood>p</a><a href="../agents">a</a><svg><use href="/icons.svg#a"/></svg><object data="/o.pdf"></object><embed src="/e.swf"><video poster="/p.webp"><track src="/t.vtt"></video><style>.h{background:url('/bg.webp')}</style><div style="background:url(/d.webp)"></div><meta property="og:image" content="https://example.org/articles/x/cover.png"><a href="/\\evil.example/x">bad</a><img src="data:image/png;base64,AA"><script src="/app.js">el.style.background = "url(" + p + ")"; x.innerHTML = '<a href="\${u}">'</script>`
+  const html = `<a href=proof-flood>p</a><a href="../agents">a</a><svg><use href="/icons.svg#a"/></svg><object data="/o.pdf"></object><embed src="/e.swf"><video poster="/p.webp"><track src="/t.vtt"></video><style>.h{background:url('/bg.webp')}</style><div style="background:url(/d.webp)"></div><meta property="og:image" content="https://example.org/articles/x/cover.png"><a href="/\\evil.example/x">bad</a><img src="data:image/png;base64,AA"><script src="/app.js">el.style.background = "url(" + p + ")"; x.innerHTML = '<a href="\${u}">'</script >`
   assert.deepEqual(internalLinks(html, "http://localhost:3000/articles/", ["https://example.org"]).sort(),
     ["/agents", "/app.js", "/articles/proof-flood", "/articles/x/cover.png", "/bg.webp", "/d.webp", "/e.swf", "/icons.svg", "/o.pdf", "/p.webp", "/t.vtt"])
 })

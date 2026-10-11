@@ -19,7 +19,7 @@ const URL_ATTRS: Record<string, string[]> = {
  * read against the page `at`; an absolute URL is the site's own when its origin is the page's or one of `own`. */
 export function internalLinks(html: string, at = "http://site.invalid/", own: string[] = []): string[] {
   // A script's own text is code, not markup: its templates are not links. Its src stays.
-  const markup = html.replace(/(<script\b[^>]*>)[\s\S]*?<\/script>/gi, "$1</script>")
+  const markup = html.replace(/(<script\b[^>]*>)[\s\S]*?<\/script[^>]*>/gi, "$1</script>")
   const raw: string[] = []
   for (const [name, attrs] of Object.entries(URL_ATTRS))
     for (const t of tags(markup, name)) {
