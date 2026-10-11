@@ -99,3 +99,11 @@ test("a source that throws, or answers with a body that is not JSON, logs once a
   assert.match(String(warn.mock.calls[0].arguments[0]), /https:\/\/x\/throws.*socket hang up/)
   assert.match(String(warn.mock.calls[1].arguments[0]), /https:\/\/x\/garbled/)
 })
+
+test("an unchanged source (304) is not a failed read: nothing is logged", async (t) => {
+  const warn = t.mock.method(console, "warn", () => {})
+  const fresh = makeFresh(async (_url, init) => ((init.headers as Record<string, string>)["if-none-match"] ? answer(304) : answer(200, { a: 1 }, '"e"')))
+  await fresh("https://x/same")
+  await fresh("https://x/same")
+  assert.equal(warn.mock.callCount(), 0)
+})

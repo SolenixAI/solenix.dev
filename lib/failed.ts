@@ -4,7 +4,9 @@
 // simply absent stays silent.
 
 export function failed(source: string, reason: unknown): null {
-  const why = reason instanceof Error ? reason.message : String(reason)
-  console.warn(`read failed · ${source} · ${why}`)
+  // One line, at most 300 characters: an error from an HTML body can hold newlines and a whole page.
+  const why = (reason instanceof Error ? reason.message : String(reason)).replace(/\s+/g, " ").trim()
+  const line = `read failed · ${source} · ${why}`
+  console.warn(line.length > 300 ? `${line.slice(0, 299)}…` : line)
   return null
 }

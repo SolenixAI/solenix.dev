@@ -1,6 +1,7 @@
 import "server-only"
 import { cache } from "react"
 import { githubHeaders } from "@/lib/github"
+import { makeFacts } from "@/lib/facts"
 import { failed } from "@/lib/failed"
 import { fresh } from "@/lib/fresh"
 import { makeDescriber, type Part } from "@/lib/marketplace/parts"
@@ -124,13 +125,10 @@ export const getCatalog = cache(async (): Promise<Entry[] | null> => {
   return [...kit, ...worlds]
 })
 
-// Other people's facts: hourly at most, tagged so a push refreshes them behind the page. A source that
-// fails, or answers with something that is not JSON, gives null and logs why: it drops only its own facts.
-const hourly = (url: string, headers: Record<string, string> = {}) =>
-  fetch(url, { headers, next: { revalidate: HOUR, tags: [FACTS_TAG] } })
-    .then((r) => (r.ok ? r.json() : failed(url, `HTTP ${r.status}`)))
-    .catch((e: unknown) => failed(url, e))
-const gh = async (path: string) => hourly(`https://api.github.com/${path}`, await githubHeaders())
+// Other people's facts: hourly at most, tagged so a push refreshes them behind the page (lib/facts: a failure
+// logs and drops only its own facts; an optional fact that does not exist is quiet).
+const hourly = makeFacts((url, init) => fetch(url, init), { revalidate: HOUR, tags: [FACTS_TAG] })
+const gh = async (path: string, opts?: { optional?: boolean }) => hourly(`https://api.github.com/${path}`, await githubHeaders(), opts)
 
 type RepoFacts = { slug: string; blurb: string | null; stars: number | null; forks: number | null; license: string | null; avatar: string | null; pushed: string | null; homepage: string | null }
 const repoFacts = async (slug: string): Promise<RepoFacts> => {
@@ -226,7 +224,7 @@ const api = (docs: string, maker: string): Source => ({ ...blank({ id: "api", ki
 
 async function tool(t: ToolSource, specs: Specs): Promise<Source> {
   const tree = treeOf(t.install.repo)
-  const [f, n, release, parts] = await Promise.all([repoFacts(t.starsRepo), t.cli ? npm(t.cli.npm) : null, gh(`repos/${t.starsRepo}/releases/latest`), describeParts(t.install.repo, tree, ["skill"], t.install.skills)])
+  const [f, n, release, parts] = await Promise.all([repoFacts(t.starsRepo), t.cli ? npm(t.cli.npm) : null, gh(`repos/${t.starsRepo}/releases/latest`, { optional: true }), describeParts(t.install.repo, tree, ["skill"], t.install.skills)])
   return { ...blank({ id: t.id, kind: "tool", name: t.name, href: t.site }), blurb: f.blurb ?? t.for, repo: asRepo(f), parts, gives: t.for,
     version: release?.tag_name ?? n?.version ?? null, updated: release?.published_at ?? f.pushed, weekly: n?.weekly ?? null, items: t.install.skills,
     refs: [{ label: new URL(t.site).host, href: t.site }, gitHub(t.starsRepo), ...(t.cli ? [{ label: "Docs", href: t.cli.docs }, npmPage(t.cli.npm)] : []), ...spec(specs, "skills", "Agent Skills spec")] }
