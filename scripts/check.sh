@@ -25,6 +25,20 @@ git ls-files --cached --others --exclude-standard \
 grep -rn -E '· v[0-9]|\(v[0-9]\)|/\* v[0-9]|\bv[0-9] ·' DESIGN.md design/tokens.css app components lib 2>/dev/null \
   | while read -r l; do echo "check: version label: $l"; done | grep . && fail=1
 
+# GitHub main is the one source. Committing on local main is where drift starts: a change GitHub main does not have
+# is lost on the next reset or becomes a second history. Changes are compared by content (git cherry), so a commit
+# GitHub took as is, or squashed alone, is not drift; several local commits squashed into one still count until main
+# is moved. A main that is only behind is not drift: pull.ff only brings it up to date. Commits on any other branch
+# cannot drift main, so the check runs only on main (on pull requests CI checks out a detached merge ref and skips it).
+if [ "$(git symbolic-ref -q HEAD)" = refs/heads/main ]; then
+  if git rev-parse -q --verify refs/remotes/origin/main >/dev/null; then
+    ahead=$(git cherry refs/remotes/origin/main refs/heads/main | grep -c '^+')
+    [ "$ahead" -eq 0 ] || bad "local main has $ahead change(s) GitHub main does not: git fetch origin; git switch -c <name> to keep them; open a PR; then git branch -f main origin/main from that branch"
+  else
+    echo "skip: no origin/main to compare local main with (fetch it to check for drift)" >&2
+  fi
+fi
+
 # The site is dark only: the root layout declares dark before first paint, and nothing follows the device.
 # The first-frame ground (lib/site-ground.ts) is a literal by necessity; it must equal --bg in the tokens.
 ground=$(sed -n 's/^export const GROUND = "\(#[0-9a-fA-F]*\)".*/\1/p' lib/site-ground.ts); bg=$(sed -n 's/^[[:space:]]*--bg:[[:space:]]*\(#[0-9a-fA-F]*\);.*/\1/p' design/tokens.css | head -1)
