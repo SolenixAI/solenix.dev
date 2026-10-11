@@ -570,27 +570,41 @@ html.js[data-motion="on"] .hb.arm:not(.play) .hw > span { transform: translateY(
 .tool-panel[hidden] { display: none; }
 .tp-h { margin: 0; font: var(--fw-bold) var(--fs-h3)/1.2 var(--font-display); letter-spacing: var(--track-heading); }
 .tp-h em { font-style: normal; color: var(--accent-text); }
-.tp-ask { display: grid; gap: var(--space-2); }
-.tp-say { margin: 0; font-size: var(--fs-body); line-height: 1.45; color: var(--muted); }
-.tp-rows { margin-top: var(--space-1); }
-.tp-row { display: flex; justify-content: space-between; gap: var(--space-4); padding: 6px 0; border-top: 1px solid var(--line); font-size: var(--fs-sm); }
-.tp-row span:last-child { color: var(--muted); font-variant-numeric: tabular-nums; text-align: right; }
-.tp-out { margin: var(--space-2) 0 0; font-weight: var(--fw-semibold); color: var(--text); }
-.tp-ok { margin: 0; font-size: var(--fs-sm); color: var(--ok); }
-.tp-hand { order: 3; }
-.tp-hand ol { display: none; }
-.tp-hand .tp-k { margin: 0; font-size: var(--fs-sm); color: var(--muted); }
-.tp-note { order: 4; margin: 0; font-size: var(--fs-2xs); line-height: 1.5; color: var(--muted); }
-.tp-note a { color: var(--accent-text); text-decoration: underline; text-underline-offset: 3px; }
-.tp-ask .tp-k { display: none; }
+.tp-say { margin: 0; font-size: var(--fs-sm); line-height: 1.45; color: var(--muted); }
+.tp-say .ex { display: inline-block; margin-right: var(--space-2); padding: 1px 7px; border: 1px dashed var(--line-strong); border-radius: var(--radius-pill); font: var(--fw-semibold) var(--fs-2xs)/1.4 var(--font-mono); color: var(--muted); vertical-align: 1px; }
+/* The result, drawn: one bar per row from the example numbers. A row that changed shows where it was (a hairline
+   ghost) and where it is now; ember marks what needs you, green what got better. */
+.tp-bars { position: relative; list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+.tb { display: grid; grid-template-columns: minmax(0, 8.5rem) minmax(0, 1fr); grid-template-rows: auto auto; column-gap: var(--space-3); align-items: center; font-size: var(--fs-sm); }
+.tb-l { grid-row: 1 / span 2; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tb-track { position: relative; height: 10px; }
+.tb-bar, .tb-was { position: absolute; left: 0; top: 0; height: 100%; width: var(--v); border-radius: var(--radius-pill); }
+.tb-bar { background: color-mix(in oklch, var(--text) 55%, transparent); transform-origin: left; animation: tb-grow 600ms var(--ease-out) both; }
+.tb-was { border: 1px dashed color-mix(in oklch, var(--text) 40%, transparent); box-sizing: border-box; }
+.tb-hot .tb-bar { background: var(--accent); }
+.tb-good .tb-bar { background: var(--ok); }
+.tb-v { color: var(--muted); font-size: var(--fs-xs); font-variant-numeric: tabular-nums; }
+.tb-hot .tb-v { color: var(--accent-text); }
+.tb-mark { position: absolute; top: -6px; bottom: -4px; left: calc(8.5rem + var(--space-3)); width: calc(100% - 8.5rem - var(--space-3)); pointer-events: none; }
+.tb-mark::before { content: ""; position: absolute; top: 0; bottom: 0; left: var(--v); border-left: 1px dashed var(--accent); }
+.tb-mark span { position: absolute; top: -1.3em; left: var(--v); translate: -50% 0; font-size: var(--fs-2xs); color: var(--accent-text); white-space: nowrap; }
+@keyframes tb-grow { from { transform: scaleX(0); } }
+@media (prefers-reduced-motion: reduce) { .tb-bar { animation: none; } }
+.tp-out { margin: 0; font-weight: var(--fw-semibold); color: var(--text); }
+.tp-ok { display: block; margin-top: 2px; font-weight: var(--fw-regular); font-size: var(--fs-sm); color: var(--ok); }
+/* What it costs you, drawn: one dot per step by hand against one dot for the sentence. */
+.tp-cost { margin: 0; display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); font-size: var(--fs-xs); color: var(--muted); }
+.tp-c { display: inline-flex; align-items: center; gap: var(--space-2); }
+.tp-dots { display: inline-flex; gap: 4px; }
+.tp-dots i { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+.tp-dots-hand i { background: color-mix(in oklch, var(--text) 45%, transparent); }
 .tools-cta { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3) var(--space-4); font-size: var(--fs-sm); }
 @media (max-width: 699px) {
   .tools-in { grid-template-columns: minmax(0, 1fr); row-gap: var(--space-3); padding-top: calc(var(--nav-height) + var(--space-3)); padding-bottom: var(--space-3); }
   .tool-tabs { flex-wrap: nowrap; overflow-x: auto; margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter); scrollbar-width: none; }
   .tool-tab { flex: none; }
-  .tp-say { font-size: var(--fs-sm); }
 }
-@media (max-width: 699px) and (max-height: 740px) { .tp-say, .tp-note { display: none; } }
+@media (max-width: 699px) and (max-height: 740px) { .tp-say { display: none; } }
 @media (min-width: 700px) and (max-width: 1099px) { .tools-in { grid-template-columns: minmax(0, 24rem); } }
 @media (max-height: 1000px) { .tp-h { display: none; } .tools-in { row-gap: var(--space-3); } }
 html:not(.js) .tools { height: auto; } html:not(.js) .tools-pin { position: relative; height: auto; } html:not(.js) .tool-tabs { display: none; } html:not(.js) .tool-panel[hidden] { display: grid; }
@@ -686,75 +700,45 @@ html:not(.js) .tools { height: auto; } html:not(.js) .tools-pin { position: rela
       </div>
       <div class="tool-panel" role="tabpanel" id="tp-quickbooks" aria-labelledby="tt-quickbooks">
         <h3 class="tp-h">Know who owes you. <em>The invoice is ready.</em></h3>
-        <div class="tp-hand"><p class="tp-k">By hand: 5 steps</p><ol><li>Open Reports</li><li>Open the report of who owes you</li><li>Read down the list and decide who to chase</li><li>Open a new invoice, a separate screen</li><li>Fill in the customer, the item, the amount and the date</li></ol></div>
-        <div class="tp-ask">
-          <p class="tp-k">Just ask</p>
-          <p class="tp-say">“Show me who owes us, flag anyone over 60 days, and send Harbour Dental an invoice for the retainer”</p>
-          <div class="tp-rows"><div class="tp-row"><span>Hillside Roofing</span><span>64 days · flagged</span></div><div class="tp-row"><span>East End Yoga</span><span>31 days</span></div><div class="tp-row"><span>Harbour Dental</span><span>12 days</span></div></div>
-          <p class="tp-out">The retainer invoice for Harbour Dental is ready to send.</p>
-          <p class="tp-ok">You check it, then it goes.</p>
-        </div>
-        <p class="tp-note">Example data. Intuit's <a href="https://quickbooks.intuit.com/learn-support/en-us/help-article/accounting-bookkeeping/use-quickbooks-connector-claude/L3YBlo6Ht_US_en_US" target="_blank" rel="noopener">connector for Claude</a> is US-only today. In Canada we connect QuickBooks Online through Intuit's <a href="https://github.com/intuit/quickbooks-online-mcp-server" target="_blank" rel="noopener">open-source QuickBooks server</a>.</p>
+        <p class="tp-say"><span class="ex">Example</span>“Show me who owes us, flag anyone over 60 days, and send Harbour Dental an invoice for the retainer”</p>
+        <ul class="tp-bars"><li class="tb-mark" style="--v:85.7%" aria-hidden="true"><span>60 days</span></li><li class="tb tb-hot"><span class="tb-l">Hillside Roofing</span><span class="tb-track"><i class="tb-bar" style="--v:91.4%"></i></span><span class="tb-v">64 days</span></li><li class="tb"><span class="tb-l">East End Yoga</span><span class="tb-track"><i class="tb-bar" style="--v:44.3%"></i></span><span class="tb-v">31 days</span></li><li class="tb"><span class="tb-l">Harbour Dental</span><span class="tb-track"><i class="tb-bar" style="--v:17.1%"></i></span><span class="tb-v">12 days</span></li></ul>
+        <p class="tp-out">The retainer invoice for Harbour Dental is ready to send. <span class="tp-ok">You check it, then it goes.</span></p>
+        <p class="tp-cost"><span class="tp-c"><span class="tp-dots tp-dots-hand" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>By hand: 5 steps</span><span class="tp-c"><span class="tp-dots" aria-hidden="true"><i></i></span>Just ask: 1 sentence</span></p>
       </div>
       <div class="tool-panel" role="tabpanel" id="tp-shopify" aria-labelledby="tt-shopify" hidden>
         <h3 class="tp-h">Keep your <em>best sellers</em> on the shelf.</h3>
-        <div class="tp-hand"><p class="tp-k">By hand: 7 steps</p><ol><li>Open Analytics</li><li>Open Reports</li><li>Find Sales by product</li><li>Set the date range to last month</li><li>Sort by units sold</li><li>Open Inventory, a separate screen</li><li>Check the stock on each product, one at a time</li></ol></div>
-        <div class="tp-ask">
-          <p class="tp-k">Just ask</p>
-          <p class="tp-say">“Pull last month&#x27;s top 10 sellers by units sold, show current stock for each, and tell me which will run out in 30 days”</p>
-          <div class="tp-rows"><div class="tp-row"><span>Sea salt caramels</span><span>212 sold · 14 left</span></div><div class="tp-row"><span>Wool mitts</span><span>150 sold · 9 left</span></div><div class="tp-row"><span>Partridgeberry jam</span><span>187 sold · 120 left</span></div></div>
-          <p class="tp-out">Caramels and mitts will run out within 30 days. Reorder those two.</p>
-          <p class="tp-ok">You decide what to reorder.</p>
-        </div>
-        <p class="tp-note">Example data. Works through <a href="https://help.shopify.com/en/manual/ai-powered-tools/connecting-ai-tools/shopify-connector-for-claude" target="_blank" rel="noopener">Shopify's official connector for Claude</a>.</p>
+        <p class="tp-say"><span class="ex">Example</span>“Pull last month&#x27;s top 10 sellers by units sold, show current stock for each, and tell me which will run out in 30 days”</p>
+        <ul class="tp-bars"><li class="tb tb-hot"><span class="tb-l">Sea salt caramels</span><span class="tb-track"><i class="tb-bar" style="--v:10.8%"></i></span><span class="tb-v">14 left</span></li><li class="tb tb-hot"><span class="tb-l">Wool mitts</span><span class="tb-track"><i class="tb-bar" style="--v:6.9%"></i></span><span class="tb-v">9 left</span></li><li class="tb"><span class="tb-l">Partridgeberry jam</span><span class="tb-track"><i class="tb-bar" style="--v:92.3%"></i></span><span class="tb-v">120 left</span></li></ul>
+        <p class="tp-out">Caramels and mitts will run out within 30 days. Reorder those two. <span class="tp-ok">You decide what to reorder.</span></p>
+        <p class="tp-cost"><span class="tp-c"><span class="tp-dots tp-dots-hand" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>By hand: 7 steps</span><span class="tp-c"><span class="tp-dots" aria-hidden="true"><i></i></span>Just ask: 1 sentence</span></p>
       </div>
       <div class="tool-panel" role="tabpanel" id="tp-meta" aria-labelledby="tt-meta" hidden>
         <h3 class="tp-h">Which ads worked, and <em>which to pause.</em></h3>
-        <div class="tp-hand"><p class="tp-k">By hand: 5 steps</p><ol><li>Log into Ads Manager</li><li>Set the date range to the last 7 days</li><li>Read the spend and the cost per result</li><li>Switch to the 7 days before</li><li>Compare every campaign by eye, back and forth</li></ol></div>
-        <div class="tp-ask">
-          <p class="tp-k">Just ask</p>
-          <p class="tp-say">“Pull spend, cost per result, and ROAS for all active campaigns over the last 7 days vs. the 7 days before. Tell me which ad sets are underperforming and recommend which to pause.”</p>
-          <div class="tp-rows"><div class="tp-row"><span>Local awareness</span><span>$5.90 → $9.40</span></div><div class="tp-row"><span>New arrivals</span><span>$6.10 → $6.80</span></div><div class="tp-row"><span>Fall sale</span><span>$4.60 → $4.10</span></div></div>
-          <p class="tp-out">Local awareness now costs far more per result. I would pause it.</p>
-          <p class="tp-ok">You make the call to pause.</p>
-        </div>
-        <p class="tp-note">Example data. Works through Meta's own AI access.</p>
+        <p class="tp-say"><span class="ex">Example</span>“Pull spend, cost per result, and ROAS for all active campaigns over the last 7 days vs. the 7 days before. Tell me which ad sets are underperforming and recommend which to pause.”</p>
+        <ul class="tp-bars"><li class="tb tb-hot"><span class="tb-l">Local awareness</span><span class="tb-track"><i class="tb-was" style="--v:59.0%"></i><i class="tb-bar" style="--v:94.0%"></i></span><span class="tb-v">$5.90 → $9.40</span></li><li class="tb"><span class="tb-l">New arrivals</span><span class="tb-track"><i class="tb-was" style="--v:61.0%"></i><i class="tb-bar" style="--v:68.0%"></i></span><span class="tb-v">$6.10 → $6.80</span></li><li class="tb tb-good"><span class="tb-l">Fall sale</span><span class="tb-track"><i class="tb-was" style="--v:46.0%"></i><i class="tb-bar" style="--v:41.0%"></i></span><span class="tb-v">$4.60 → $4.10</span></li></ul>
+        <p class="tp-out">Local awareness now costs far more per result. I would pause it. <span class="tp-ok">You make the call to pause.</span></p>
+        <p class="tp-cost"><span class="tp-c"><span class="tp-dots tp-dots-hand" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>By hand: 5 steps</span><span class="tp-c"><span class="tp-dots" aria-hidden="true"><i></i></span>Just ask: 1 sentence</span></p>
       </div>
       <div class="tool-panel" role="tabpanel" id="tp-microsoftexcel" aria-labelledby="tt-microsoftexcel" hidden>
         <h3 class="tp-h">The sales workbook, <em>updated for you.</em></h3>
-        <div class="tp-hand"><p class="tp-k">By hand: 4 steps</p><ol><li>Open the sales workbook</li><li>Select all of the sales data</li><li>Insert a pivot table</li><li>Set up each field, then build the chart</li></ol></div>
-        <div class="tp-ask">
-          <p class="tp-k">Just ask</p>
-          <p class="tp-say">“Add a pivot table of revenue by category this month vs. last, with a bar chart”</p>
-          <div class="tp-rows"><div class="tp-row"><span>Bread</span><span>$3,900 → $4,210</span></div><div class="tp-row"><span>Pastry</span><span>$3,320 → $3,180</span></div><div class="tp-row"><span>Coffee</span><span>$2,410 → $2,640</span></div></div>
-          <p class="tp-out">The pivot table and a bar chart are in the workbook. Your formulas are untouched.</p>
-          <p class="tp-ok">The live workbook is updated.</p>
-        </div>
-        <p class="tp-note">Example data. Claude edits the open Excel file. It cannot yet edit a Google Sheet in place.</p>
+        <p class="tp-say"><span class="ex">Example</span>“Add a pivot table of revenue by category this month vs. last, with a bar chart”</p>
+        <ul class="tp-bars"><li class="tb tb-good"><span class="tb-l">Bread</span><span class="tb-track"><i class="tb-was" style="--v:86.7%"></i><i class="tb-bar" style="--v:93.6%"></i></span><span class="tb-v">$3,900 → $4,210</span></li><li class="tb"><span class="tb-l">Pastry</span><span class="tb-track"><i class="tb-was" style="--v:73.8%"></i><i class="tb-bar" style="--v:70.7%"></i></span><span class="tb-v">$3,320 → $3,180</span></li><li class="tb tb-good"><span class="tb-l">Coffee</span><span class="tb-track"><i class="tb-was" style="--v:53.6%"></i><i class="tb-bar" style="--v:58.7%"></i></span><span class="tb-v">$2,410 → $2,640</span></li></ul>
+        <p class="tp-out">The pivot table and a bar chart are in the workbook. Your formulas are untouched. <span class="tp-ok">The live workbook is updated.</span></p>
+        <p class="tp-cost"><span class="tp-c"><span class="tp-dots tp-dots-hand" aria-hidden="true"><i></i><i></i><i></i><i></i></span>By hand: 4 steps</span><span class="tp-c"><span class="tp-dots" aria-hidden="true"><i></i></span>Just ask: 1 sentence</span></p>
       </div>
       <div class="tool-panel" role="tabpanel" id="tp-hubspot" aria-labelledby="tt-hubspot" hidden>
         <h3 class="tp-h">The deals that went quiet, <em>followed up.</em></h3>
-        <div class="tp-hand"><p class="tp-k">By hand: 5 steps</p><ol><li>Open the deals list</li><li>Filter by last activity date, then sort</li><li>Open the first stalled deal and reread it</li><li>Write a follow-up by hand</li><li>Back to the list. Next deal, same again.</li></ol></div>
-        <div class="tp-ask">
-          <p class="tp-k">Just ask</p>
-          <p class="tp-say">“Show every deal with no activity in 14 days and draft a follow-up for each”</p>
-          <div class="tp-rows"><div class="tp-row"><span>Harbour Dental</span><span>Draft ready</span></div><div class="tp-row"><span>Cove Road Cafe</span><span>Draft ready</span></div><div class="tp-row"><span>East End Yoga</span><span>Draft ready</span></div></div>
-          <p class="tp-out">Three deals went quiet. Each one has a follow-up that mentions your last talk.</p>
-          <p class="tp-ok">You read each one and press send.</p>
-        </div>
-        <p class="tp-note">Example data. Works through HubSpot's own connector.</p>
+        <p class="tp-say"><span class="ex">Example</span>“Show every deal with no activity in 14 days and draft a follow-up for each”</p>
+        <ul class="tp-bars"><li class="tb-mark" style="--v:43.8%" aria-hidden="true"><span>14 days</span></li><li class="tb tb-hot"><span class="tb-l">Harbour Dental</span><span class="tb-track"><i class="tb-bar" style="--v:93.8%"></i></span><span class="tb-v">30 days quiet · draft ready</span></li><li class="tb tb-hot"><span class="tb-l">Cove Road Cafe</span><span class="tb-track"><i class="tb-bar" style="--v:65.6%"></i></span><span class="tb-v">21 days · draft ready</span></li><li class="tb tb-hot"><span class="tb-l">East End Yoga</span><span class="tb-track"><i class="tb-bar" style="--v:53.1%"></i></span><span class="tb-v">17 days · draft ready</span></li></ul>
+        <p class="tp-out">Three deals went quiet. Each one has a follow-up that mentions your last talk. <span class="tp-ok">You read each one and press send.</span></p>
+        <p class="tp-cost"><span class="tp-c"><span class="tp-dots tp-dots-hand" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>By hand: 5 steps</span><span class="tp-c"><span class="tp-dots" aria-hidden="true"><i></i></span>Just ask: 1 sentence</span></p>
       </div>
       <div class="tool-panel" role="tabpanel" id="tp-gmail" aria-labelledby="tt-gmail" hidden>
         <h3 class="tp-h">Your inbox sorted, <em>the invite ready to send.</em></h3>
-        <div class="tp-hand"><p class="tp-k">By hand: 4 steps</p><ol><li>Open the inbox</li><li>Open the first email and read it</li><li>Decide: reply today, later, or junk</li><li>Back to the inbox. Then the next one, and the next.</li></ol></div>
-        <div class="tp-ask">
-          <p class="tp-k">Just ask</p>
-          <p class="tp-say">“Group today&#x27;s inbox into needs a reply today, can wait, and junk. Then find 30 minutes next week with Harbour Dental and send the invite.”</p>
-          <div class="tp-rows"><div class="tp-row"><span>Needs a reply today</span><span>4</span></div><div class="tp-row"><span>Can wait</span><span>9</span></div><div class="tp-row"><span>Junk and newsletters</span><span>16</span></div></div>
-          <p class="tp-out">Tuesday at 10:30 works for you both. The invite is ready to send.</p>
-          <p class="tp-ok">Nothing sends without your OK.</p>
-        </div>
-        <p class="tp-note">Example data. Works in the Gmail and Calendar you already use.</p>
+        <p class="tp-say"><span class="ex">Example</span>“Group today&#x27;s inbox into needs a reply today, can wait, and junk. Then find 30 minutes next week with Harbour Dental and send the invite.”</p>
+        <ul class="tp-bars"><li class="tb tb-hot"><span class="tb-l">Needs a reply today</span><span class="tb-track"><i class="tb-bar" style="--v:23.5%"></i></span><span class="tb-v">4</span></li><li class="tb"><span class="tb-l">Can wait</span><span class="tb-track"><i class="tb-bar" style="--v:52.9%"></i></span><span class="tb-v">9</span></li><li class="tb"><span class="tb-l">Junk and newsletters</span><span class="tb-track"><i class="tb-bar" style="--v:94.1%"></i></span><span class="tb-v">16</span></li></ul>
+        <p class="tp-out">Tuesday at 10:30 works for you both. The invite is ready to send. <span class="tp-ok">Nothing sends without your OK.</span></p>
+        <p class="tp-cost"><span class="tp-c"><span class="tp-dots tp-dots-hand" aria-hidden="true"><i></i><i></i><i></i><i></i></span>By hand: 4 steps</span><span class="tp-c"><span class="tp-dots" aria-hidden="true"><i></i></span>Just ask: 1 sentence</span></p>
       </div>
       <p class="tools-cta"><span>Want this in your tools?</span><a class="btn btn-ghost btn-sm" href="/book">Book a call</a></p>
     </div>
