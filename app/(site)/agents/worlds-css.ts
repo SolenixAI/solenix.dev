@@ -88,8 +88,8 @@ export const WORLDS_CSS = `
 .wd-grid{height:100%;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,19rem),1fr));align-content:safe center;gap:16px;min-height:0}
 
 /* A card is a world seen from afar: its system, its name, one line. */
-.wd-card{position:relative;display:grid;grid-template-columns:auto 1fr;grid-template-areas:"glance glance" "name name" "for for";align-items:end;gap:10px 16px;padding:clamp(18px,3cqmin,28px);border-radius:var(--radius-2xl);border:1px solid var(--line);background:radial-gradient(120% 90% at 0% 0%,color-mix(in srgb,var(--sun2) 9%,transparent),transparent 60%),var(--glass-bg);box-shadow:inset 0 1px 0 var(--glass-edge),0 18px 40px -18px rgb(0 0 0/.7);color:var(--text);text-align:left;cursor:pointer;overflow:hidden;transition:transform var(--dur-base) var(--ease-out),border-color var(--dur-base),box-shadow var(--dur-base)}
-.wd-card:hover{transform:translateY(-3px);border-color:color-mix(in oklch,var(--accent) 45%,transparent);box-shadow:inset 0 1px 0 var(--glass-edge),0 26px 50px -20px rgb(0 0 0/.75),0 8px 40px -12px color-mix(in srgb,var(--sun2) 30%,transparent)}
+.wd-card{position:relative;display:grid;grid-template-columns:auto 1fr;grid-template-areas:"glance glance" "name name" "for for";align-items:end;gap:10px 16px;padding:clamp(18px,3cqmin,28px);border-radius:var(--radius-2xl);border:1px solid var(--line);background:radial-gradient(120% 90% at 0% 0%,color-mix(in srgb,var(--sun2) 9%,transparent),transparent 60%),var(--glass-bg);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-drop-1);color:var(--text);text-align:left;cursor:pointer;overflow:hidden;transition:transform var(--dur-base) var(--ease-out),border-color var(--dur-base),box-shadow var(--dur-base)}
+.wd-card:hover{transform:translateY(-3px);border-color:color-mix(in oklch,var(--accent) 45%,transparent);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-drop-2),0 8px 40px -12px color-mix(in srgb,var(--sun2) 30%,transparent)}
 .wd-glance{grid-area:glance;display:flex;align-items:center;justify-content:space-between;gap:12px}
 .wd-name{grid-area:name;display:flex;align-items:center;gap:10px;font:700 clamp(1.6rem,4.4cqmin,2.6rem)/1 var(--font-display);letter-spacing:-.035em}
 .wd-arrow{width:.7em;height:.7em;fill:none;stroke:var(--accent-text);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;transition:transform var(--dur-base) var(--ease-out)}
@@ -126,7 +126,7 @@ export const WORLDS_CSS = `
 
 /* A world, opened. */
 /* The top edge stays put from level to level: the dialog hangs from a fixed gap, and a long level scrolls inside it. */
-.wd-dialog{--wd-gap:clamp(12px,3vh,32px);box-sizing:border-box;width:min(calc(100% - 24px),64rem);max-height:calc(100dvh - var(--wd-gap) - 12px);margin:var(--wd-gap) auto auto;padding:0;border:1px solid var(--line-strong);border-radius:var(--radius-2xl);background:radial-gradient(90% 60% at 50% 0%,color-mix(in srgb,var(--sun2) 7%,transparent),transparent 70%),var(--surface-solid);color:var(--text);box-shadow:inset 0 1px 0 var(--glass-edge),0 40px 80px -30px rgb(0 0 0/.8);overflow:auto;overscroll-behavior:contain}
+.wd-dialog{--wd-gap:clamp(12px,3vh,32px);box-sizing:border-box;width:min(calc(100% - 24px),64rem);max-height:calc(100dvh - var(--wd-gap) - 12px);margin:var(--wd-gap) auto auto;padding:0;border:1px solid var(--line-strong);border-radius:var(--radius-2xl);background:radial-gradient(90% 60% at 50% 0%,color-mix(in srgb,var(--sun2) 7%,transparent),transparent 70%),var(--surface-solid);color:var(--text);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-drop-3);overflow:auto;overscroll-behavior:contain}
 .wd-dialog::backdrop{background:color-mix(in srgb,var(--bg) 72%,transparent);backdrop-filter:blur(8px)}
 .wd-view{position:relative;display:flex;flex-direction:column;gap:clamp(24px,4vw,40px);padding:clamp(20px,4vw,44px)}
 .wd-close{position:absolute;top:clamp(12px,2.4vw,24px);right:clamp(12px,2.4vw,24px);display:grid;place-items:center;width:var(--tap-min);height:var(--tap-min);border-radius:50%;border:1px solid var(--line);background:var(--surface-solid);color:var(--text);cursor:pointer;z-index:1}
@@ -135,7 +135,7 @@ export const WORLDS_CSS = `
 .wd-top{display:grid;gap:12px}
 .wd-big{margin:0;padding-right:56px;font:700 clamp(2.2rem,6vw,3.75rem)/1 var(--font-display);letter-spacing:-.04em}
 .wd-lede{margin:0;max-width:44rem;font-size:clamp(1.05rem,2.4vw,1.25rem);color:var(--muted);text-wrap:pretty}
-.wd-copy{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px 20px;margin-top:8px;padding:20px 20px 20px 24px;border-radius:var(--radius-xl);background:var(--bg);border:1px solid var(--line);box-shadow:inset 0 2px 12px rgb(0 0 0/.35)}
+.wd-copy{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px 20px;margin-top:8px;padding:20px 20px 20px 24px;border-radius:var(--radius-xl);background:var(--bg);border:1px solid var(--line);box-shadow:var(--shadow-inset-well)}
 .wd-outcome{flex:1 1 22rem;max-width:62ch;margin:0;font:500 clamp(1rem,2.2vw,1.125rem)/1.6 var(--font-text);color:var(--text);overflow-wrap:break-word;text-wrap:pretty}
 .wd-copy-sentence{flex:1 1 100%;margin:0;padding:14px 16px;border-radius:var(--radius-lg);background:var(--surface-solid);border:1px solid var(--line);font:500 .95rem/1.7 var(--font-text);color:var(--text);text-wrap:pretty}
 .wd-copy code{padding:2px 8px;border-radius:var(--radius-xs);background:var(--surface-solid);border:1px solid var(--line);font:500 .86em/1.7 var(--font-mono);font-variant-ligatures:none;color:var(--accent-text);-webkit-box-decoration-break:clone;box-decoration-break:clone}
@@ -153,7 +153,7 @@ export const WORLDS_CSS = `
 .wd-copy .wd-copy-note{flex:1 1 100%;margin:0;font:500 .9rem/1.4 var(--font-text);color:var(--accent-text);text-wrap:pretty}
 /* A phone, once the inline action has scrolled off: a sticky copy bar in the thumb's reach. Hidden everywhere else. */
 .wd-pin{display:none}
-@media (max-width:639px){.wd-pin{display:block;position:sticky;bottom:12px;z-index:2;padding:6px;border-radius:var(--radius-pill);border:1px solid var(--line-strong);background:var(--glass-bg);box-shadow:inset 0 1px 0 var(--glass-edge),0 18px 40px -16px rgb(0 0 0/.85)}.wd-pin .wd-action{display:block;width:100%}}
+@media (max-width:639px){.wd-pin{display:block;position:sticky;bottom:12px;z-index:2;padding:6px;border-radius:var(--radius-pill);border:1px solid var(--line-strong);background:var(--glass-bg);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-drop-4)}.wd-pin .wd-action{display:block;width:100%}}
 
 .sy{display:grid;grid-template-columns:minmax(0,22rem) minmax(0,1fr);gap:clamp(20px,4vw,48px);align-items:start}
 @media (max-width: 760px){.sy{grid-template-columns:1fr}}
@@ -161,7 +161,7 @@ export const WORLDS_CSS = `
 .sy-art,.sy-map>svg{position:absolute;inset:0;width:100%;height:100%}
 .sy-body{position:absolute;display:flex;flex-direction:column;align-items:center;gap:6px;translate:-50% -28px;padding:0;border:0;background:none;color:var(--text);cursor:pointer;-webkit-tap-highlight-color:transparent}
 .sy-sun{translate:-50% -50%}
-.sy-orb{display:grid;place-items:center;width:56px;height:56px;border-radius:50%;background:var(--bg);border:1px solid var(--line-strong);box-shadow:inset 0 1px 0 var(--glass-edge),0 8px 20px -8px rgb(0 0 0/.8);color:var(--muted);overflow:hidden;transition:box-shadow var(--dur-base) var(--ease-out),border-color var(--dur-base),color var(--dur-base),transform var(--dur-base) var(--ease-out)}
+.sy-orb{display:grid;place-items:center;width:56px;height:56px;border-radius:50%;background:var(--bg);border:1px solid var(--line-strong);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-drop-5);color:var(--muted);overflow:hidden;transition:box-shadow var(--dur-base) var(--ease-out),border-color var(--dur-base),color var(--dur-base),transform var(--dur-base) var(--ease-out)}
 .sy-sun .sy-orb{width:88px;height:88px;border:0;background:radial-gradient(circle at 35% 30%,var(--sun1),var(--sun2));box-shadow:0 0 0 3px color-mix(in srgb,var(--sun1) 30%,transparent),0 0 48px color-mix(in srgb,var(--sun2) 55%,transparent)}
 .sy-sun .sy-label{display:none}
 .sy-face{width:100%;height:100%;object-fit:cover;display:block}
@@ -214,8 +214,8 @@ export const WORLDS_CSS = `
 .wd-step-orb::before{content:"";position:absolute;inset:-10px;border-radius:50%;border:1px dashed color-mix(in srgb,var(--text) 18%,transparent);pointer-events:none}
 .wd-steps li:first-child .wd-step-orb{border-color:color-mix(in srgb,var(--sun1) 60%,transparent);box-shadow:0 0 0 6px var(--bg),0 14px 30px -10px color-mix(in srgb,var(--sun1) 70%,transparent)}
 .wd-step-orb svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
-.wd-steps b{font:700 clamp(1.4rem,3vw,1.9rem)/1 var(--font-display);letter-spacing:-.03em}
-.wd-steps li>span:not(.wd-step-orb){max-width:34ch;color:var(--muted);font-size:.95rem;line-height:1.45;text-wrap:pretty}
+.wd-steps b{font:650 1.2rem/1.2 var(--font-display);letter-spacing:-.03em}
+.wd-steps li>span:not(.wd-step-orb){max-width:34ch;color:var(--muted);font-size:1rem;line-height:1.45;text-wrap:pretty}
 @media (max-width: 560px){.wd-steps{grid-template-columns:1fr}.wd-steps li:not(:last-child)::after{top:56px;bottom:calc(-1 * var(--wd-gap) - 22px);left:22px;right:auto;width:0;border-top:0;border-left:1px dashed color-mix(in srgb,var(--text) 22%,transparent)}.wd-steps li{grid-template-columns:44px 1fr;column-gap:16px}.wd-step-orb{grid-row:span 2}}
 .wd-say{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:16px 32px;margin-top:clamp(28px,4vw,40px);padding:clamp(18px,2.6vw,26px) clamp(18px,2.8vw,30px);border-radius:var(--radius-xl);border:1px solid var(--line);background:var(--glass-bg);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-md)}
 .wd-say-text{margin:0;max-width:62ch;font:500 1.02rem/1.55 var(--font-text);color:var(--text);text-wrap:pretty}
@@ -258,7 +258,7 @@ html:has(.wd-dialog[open]){overflow:hidden}
 .sy-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 /* A planet too small to label shows its name while it is hovered or focused; the name stays in the list too. */
 .sy-dot-body:hover,.sy-dot-body:focus-visible,.sy-quiet-body:hover,.sy-quiet-body:focus-visible{z-index:4}
-.sy-dot-body:hover .sy-sr,.sy-dot-body:focus-visible .sy-sr,.sy-quiet-body:hover .sy-sr,.sy-quiet-body:focus-visible .sy-sr{width:auto;height:auto;overflow:visible;clip-path:none;left:50%;bottom:calc(100% + 8px);translate:-50% 0;padding:5px 10px;border-radius:var(--radius-pill);border:1px solid var(--line-strong);background:var(--surface-solid);box-shadow:0 12px 24px -12px rgb(0 0 0/.9);font:600 .8rem/1.2 var(--font-text);color:var(--text);pointer-events:none}
+.sy-dot-body:hover .sy-sr,.sy-dot-body:focus-visible .sy-sr,.sy-quiet-body:hover .sy-sr,.sy-quiet-body:focus-visible .sy-sr{width:auto;height:auto;overflow:visible;clip-path:none;left:50%;bottom:calc(100% + 8px);translate:-50% 0;padding:5px 10px;border-radius:var(--radius-pill);border:1px solid var(--line-strong);background:var(--surface-solid);box-shadow:var(--shadow-drop-6);font:600 .8rem/1.2 var(--font-text);color:var(--text);pointer-events:none}
 /* What it does for you: one plain line, its number first to the eye. */
 .sy-gives{margin:0;font:600 clamp(1.15rem,2.6vw,1.45rem)/1.3 var(--font-display);letter-spacing:-.02em;text-wrap:balance}
 .sy-gives b{color:var(--accent-text);font-variant-numeric:tabular-nums}
@@ -292,11 +292,11 @@ html:active-view-transition-type(dive-out)::view-transition-new(sy-stage){animat
 a.sk-sun:hover,a.sk-sun:focus-visible{outline:none;scale:1.06;box-shadow:0 0 0 8px color-mix(in srgb,var(--sun1) 26%,transparent),0 0 120px color-mix(in srgb,var(--sun2) 75%,transparent)}
 .sk-body{position:absolute;width:0;height:0;color:var(--text);text-decoration:none;--pr:clamp(28px,5.5cqmin,38px)}
 .sk-body:focus-visible{outline:none}
-.sk-orb{position:absolute;left:0;top:0;translate:-50% -50%;display:grid;place-items:center;width:clamp(56px,11cqmin,76px);aspect-ratio:1;border-radius:50%;background:var(--bg);border:1px solid var(--line-strong);box-shadow:inset 0 1px 0 var(--glass-edge),0 10px 24px -10px rgb(0 0 0/.9);color:var(--muted);overflow:hidden;transition:transform var(--dur-base) var(--ease-out),border-color var(--dur-base),box-shadow var(--dur-base)}
+.sk-orb{position:absolute;left:0;top:0;translate:-50% -50%;display:grid;place-items:center;width:clamp(56px,11cqmin,76px);aspect-ratio:1;border-radius:50%;background:var(--bg);border:1px solid var(--line-strong);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-drop-7);color:var(--muted);overflow:hidden;transition:transform var(--dur-base) var(--ease-out),border-color var(--dur-base),box-shadow var(--dur-base)}
 .sk-orb img{width:100%;height:100%;border-radius:50%;object-fit:cover}
 .sk-moon{position:absolute;display:grid;place-items:center;width:24px;height:24px;translate:-50% -50%;border-radius:50%;background:var(--surface-solid);border:1px solid var(--line-strong);color:var(--muted)}
 .sk-moon .sy-icon{width:13px;height:13px}
-.sk-tag{position:absolute;left:calc(var(--ux,0) * (var(--pr) + 22px));top:calc(var(--uy,0) * (var(--pr) + 22px));display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:8px 13px 8px 12px;border-radius:var(--radius-pill);border:1px solid var(--line-strong);background:var(--surface-solid);box-shadow:inset 0 1px 0 var(--glass-edge),0 12px 24px -14px rgb(0 0 0/.9);white-space:nowrap;text-align:left;transition:border-color var(--dur-base)}
+.sk-tag{position:absolute;left:calc(var(--ux,0) * (var(--pr) + 22px));top:calc(var(--uy,0) * (var(--pr) + 22px));display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:8px 13px 8px 12px;border-radius:var(--radius-pill);border:1px solid var(--line-strong);background:var(--surface-solid);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-drop-8);white-space:nowrap;text-align:left;transition:border-color var(--dur-base)}
 .sk-tag-r{translate:0 -50%}
 .sk-tag-l{translate:-100% -50%;align-items:flex-end;text-align:right}
 .sk-tag-t{translate:-50% -100%;align-items:center;text-align:center}
@@ -350,9 +350,9 @@ a.sk-sun:hover,a.sk-sun:focus-visible{outline:none;scale:1.06;box-shadow:0 0 0 8
 .wd-list .wd-card::after{content:"";grid-area:foot;height:var(--tap-min)}
 .wd-card-top{grid-area:top;display:flex;align-items:center;justify-content:space-between;gap:18px;min-width:0}
 .wd-card-text{display:flex;flex-direction:column;align-items:flex-start;gap:10px;min-width:0}
-.wd-card-top .wd-name{min-width:0;margin:0;font:700 clamp(1.6rem,3.6svmin,2.3rem)/1.02 var(--font-display);letter-spacing:-.035em;overflow-wrap:anywhere}
+.wd-card-top .wd-name{min-width:0;margin:0;font:650 clamp(1.3rem,2.6svmin,1.6rem)/1.05 var(--font-display);letter-spacing:-.035em;overflow-wrap:anywhere}
 .wd-card-top .sy-mini{width:clamp(92px,26svmin,136px)}
-.wd-cell:hover .wd-card{transform:translateY(-3px);border-color:color-mix(in oklch,var(--accent) 45%,transparent);box-shadow:inset 0 1px 0 var(--glass-edge),0 26px 50px -20px rgb(0 0 0/.75),0 8px 40px -12px color-mix(in srgb,var(--sun2) 30%,transparent)}
+.wd-cell:hover .wd-card{transform:translateY(-3px);border-color:color-mix(in oklch,var(--accent) 45%,transparent);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-drop-2),0 8px 40px -12px color-mix(in srgb,var(--sun2) 30%,transparent)}
 .wd-card-copy{position:absolute;left:clamp(18px,3cqmin,28px);bottom:clamp(18px,3cqmin,28px);z-index:1;display:inline-flex;align-items:center;gap:8px;min-height:var(--tap-min);padding:0 18px;border-radius:var(--radius-pill);border:1px solid var(--line-strong);background:none;color:var(--text);font:600 var(--fs-sm)/1 var(--font-text);cursor:pointer;transition:background var(--dur-base),border-color var(--dur-base),transform var(--dur-base) var(--ease-out),box-shadow var(--dur-base)}
 .wd-card-copy svg{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .wd-card-copy:hover{border-color:var(--accent);background:var(--accent-quiet);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 16%,transparent)}
