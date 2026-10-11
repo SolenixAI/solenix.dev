@@ -5,9 +5,8 @@
 //   world  % of sampled points where the 3D world is visible (not under an opaque
 //          or blurred panel). Must be >= MIN_WORLD.
 //   alive  whether the screen changes over time. Every scene must be alive with
-//          motion allowed; demonstrations (DEMO_SCENES) must stay alive with
-//          Reduce Motion on, because reduced motion stops camera movement, not
-//          the demonstration.
+//          motion allowed. A scene named in DEMO_SCENES (none by default) must
+//          also stay alive with Reduce Motion on.
 import { launch } from "./browser.ts"
 import { loadViewports } from "../lib/viewports.ts"
 
@@ -43,7 +42,8 @@ const worldShare = () => {
       total++
       const x = innerWidth * fx, y = innerHeight * fy
       if (!inCanvas(x, y)) continue
-      const stack = document.elementsFromPoint(x, y).filter((e) => e !== document.documentElement && e !== document.body)
+      // An element that holds the canvas paints behind it (a layout wrapper), so it never covers the world.
+      const stack = document.elementsFromPoint(x, y).filter((e) => e !== document.documentElement && e !== document.body && !e.querySelector("canvas"))
       if (!stack.some(covers)) seen++
     }
   return seen / total

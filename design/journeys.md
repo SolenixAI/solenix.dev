@@ -94,7 +94,7 @@ What would raise the low steps:
 - **Tour order (3):** the hero tour and the Start here strip pick "famous" differently. Use one list.
 - **Map (2):** 372 dots shrink to a third of their size on a phone. Open on Cards on small screens.
 - **Share (3):** a link to one discovery previews the whole article. A page and image per discovery, and the phone's share sheet.
-- **Book a call (2):** a quiet line in each discovery panel.
+- **Book a call:** each discovery panel now ends with a quiet Book a call line (done 2026-10-11).
 
 ## 2. The business owner
 
@@ -118,7 +118,7 @@ journey
     Looks for a price, finds only fixed price: 2: Owner
     Taps Solenix platform: being rebuilt, Book a call: 3: Owner
   section Browse
-    Opens Articles: a heading block, cards below: 2: Owner
+    Opens Articles: the newest article live, no headline above it: 3: Owner
     Each card shows its article live: 5: Owner
     A click grows the live page into the article: 5: Owner
   section Act
@@ -130,7 +130,7 @@ What would raise the low steps:
 - **Proof (2):** a real photo and one real client result.
 - **Price (2):** a starting price or a typical range.
 - **Solenix platform (3):** being rebuilt; it opens again with the new platform.
-- **Articles heading (2):** the first screen should be a designed hero, not a block of text.
+- **Articles first screen (3):** the newest article shows live, but nothing says what the section is: add one visible headline and sentence.
 - **Calendar (3):** the booking page leaves the Solenix look.
 
 ## 3. The client

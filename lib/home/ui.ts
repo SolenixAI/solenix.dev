@@ -5,7 +5,7 @@ import { listener } from "./listen";
 import { PICK_EVENT } from "./tools";
 
 // One keyframe of the story: where in the scroll it sits, and the scene values it pins.
-type HomeKey = { sel: string; f: number; pin?: number; gap?: number } & Partial<HomeSceneParams>;
+type HomeKey = { sel: string; f: number; pin?: number } & Partial<HomeSceneParams>;
 
 const clamp = (x: number, a = 0, b = 1) => Math.min(b, Math.max(a, x));
 const smooth = (a: number, b: number, x: number) => { const t = clamp((x - a) / (b - a)); return t * t * (3 - 2 * t); };
@@ -58,14 +58,14 @@ const toolView = (i: number, end: boolean): Partial<HomeSceneParams> => {
   const w = FLY[i] ?? FLY[0], roam = end ? w.b : w.a, az = nearGuide(WORLD_AZ0 + i * WORLD_AZ_STEP + (end ? SCENE_DRIFT : 0));
   return { wsel: i, tx: w.tx, tz: w.tz, el: w.el, dist: w.dist, az, rf: roam[0], rs: roam[1], sp: w.sp, rw: w.rw };
 };
-const PARAMS = Object.keys(KEYS[0]).filter(k => !['sel', 'f', 'pin', 'gap'].includes(k)) as (keyof HomeSceneParams)[];
+const PARAMS = Object.keys(KEYS[0]).filter(k => !['sel', 'f', 'pin'].includes(k)) as (keyof HomeSceneParams)[];
 for (let i = 1; i < KEYS.length; i++) PARAMS.forEach(k => { if (KEYS[i][k] === undefined) KEYS[i][k] = KEYS[i - 1][k]; });
 
 /** Starts the page's UI. The returned stop() removes everything it started. */
 export function startUi(): { S: Solenix; stop: () => void } {
   const root = document.documentElement;
   // The object is made here and filled in below (hero, fly, stops, ...) before any other part reads it.
-  const S = window.solenix = { p: 0, motion: true, vh: innerHeight, scene: {}, sceneIdx: 0, pick: 0 } as Solenix;
+  const S = window.solenix = { p: 0, motion: true, vh: innerHeight, scene: {}, pick: 0 } as Solenix;
   S.smooth = smooth;
   S.hero = HERO;
   S.fly = FLY;
@@ -88,8 +88,6 @@ export function startUi(): { S: Solenix; stop: () => void } {
 
   function layoutKeys() {
     keyY = KEYS.map(K => { const el = $(K.sel)!, top = el.getBoundingClientRect().top + scrollY, h = el.offsetHeight;
-      // Narrow screens: the guide is met in the open gap above its copy, before the copy scrolls over it.
-      if (K.gap && innerWidth < 1100) return top - innerHeight * 0.06;
       return K.pin ? top + K.f * (h - innerHeight) : top + K.f * h - innerHeight * 0.5; });
     const maxY = document.documentElement.scrollHeight - innerHeight; keyY[keyY.length - 1] = Math.min(keyY[keyY.length - 1], maxY);
     for (let i = 1; i < keyY.length; i++) keyY[i] = Math.max(keyY[i], keyY[i - 1] + 1);
@@ -134,7 +132,6 @@ export function startUi(): { S: Solenix; stop: () => void } {
       any = Math.max(any, o); el.style.opacity = o.toFixed(3); el.style.transform = y ? `translateY(${y.toFixed(3)}em)` : ''; };
     put(bblocks[0], 0); bwords.forEach((w, k) => put(w, k + 1)); put(bblocks[1], bwords.length + 1);
     beat.style.visibility = any > 0.01 ? 'visible' : 'hidden';
-    S.retAlpha = S.scene.labels;
     // The journey: one card at a time, keyed to how far the orbit is inked in.
     const jrR = jr.getBoundingClientRect(), inJ = jrR.top < vh * 0.4 && jrR.bottom > vh * 0.3, ink = S.scene.ink;
     const cur = inJ ? Math.max(0, Math.min(4, Math.floor(ink * 5 - 0.4))) : -1;

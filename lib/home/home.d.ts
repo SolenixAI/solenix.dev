@@ -22,7 +22,6 @@ interface Solenix {
   motion: boolean
   vh: number
   scene: HomeSceneParams
-  sceneIdx: number
   smooth: (a: number, b: number, x: number) => number
   hero: { el: number; dist: number; lens: number }
   fly: HomeFlyWorld[]
@@ -33,7 +32,6 @@ interface Solenix {
   stops: HTMLElement[]
   pingN: number
   prCur?: number
-  retAlpha: number
   jCur: number
 }
 

@@ -12,7 +12,7 @@ export type SpaceBinding = {
   wells: readonly SpaceWell[];
   motion: () => boolean;
   story: SpaceStory;
-  openBand: (section: string) => { y0: number; y1: number; stacked: number } | null;
+  openBand: (section: string) => { y0: number; y1: number } | null;
   onFrame: (frame: SpaceFrame) => void;
   onLock: (holding: boolean) => void;
   onPayoff: () => void;

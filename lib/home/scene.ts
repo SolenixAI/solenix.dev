@@ -51,9 +51,9 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
   // Null for any other section.
   function openBand(sec: string) {
     if (sec !== '#tools') return null;
-    const tabs = document.querySelector('#tools .tool-tabs'), panel = document.querySelector('#tools .tool-panel:not([hidden])');
+    const tabs = document.querySelector('#tools .tool-tabs'), panel = document.querySelector('#tools .tool-panel:not([data-off])');
     if (!tabs || !panel) return null;
-    return { y0: tabs.getBoundingClientRect().bottom, y1: panel.getBoundingClientRect().top, stacked: 0 };
+    return { y0: tabs.getBoundingClientRect().bottom, y1: panel.getBoundingClientRect().top };
   }
 
   // The page's labels and markers, placed from each frame after the render. Every value is the scene's, as the frame reports it.

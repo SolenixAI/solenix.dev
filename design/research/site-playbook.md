@@ -24,6 +24,8 @@ Constraints. No smooth-scroll library; snap only as `proximity`, after a device 
 
 ## The six examples, rebuilt around purpose, value and impact
 
+Status (2026-10-10): the examples now live in the homepage tool picker as finished results; the race staging below is history. Their jobs, outputs and connector limits still hold.
+
 **Shopify.** Job: keep best sellers on the shelf, turn dead stock into cash. Output: a reorder email drafted in Gmail and a percentage-off code for slow stock, each behind Approve. By hand: 15 to 25 min (asked, 3 to 5). Connector: reads orders, inventory, analytics; writes products, stock, percentage-off codes; cannot refund or cancel. Shopify's Sidekick covers single-tool stock questions, so chain two tools. Show: SKUs with days-left counters; two glow as they run out, slow movers dim.
 
 **Meta Ads.** Job: stop paying for ads that bring no customers. Output: one approved pause and a paused draft cloned from the best ad. By hand: 15 to 20 min (asked, 3 to 5). Connector: reads spend, ROAS, anomalies; creates ads paused; asks before activation. Docs are silent on confirming pauses and budget edits, so the Approve is Claude's, and Solenix sets Meta's rules that block budget changes. Show: spend streams ending in "bought" or "did not buy"; zero-purchase streams burn out.

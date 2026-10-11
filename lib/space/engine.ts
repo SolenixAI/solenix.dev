@@ -89,8 +89,8 @@ export interface SpaceEnv {
   story: SpaceStory
   /** The bodies that dip a well. At most MAX_WELLS. */
   wells: readonly SpaceWell[]
-  /** The open band of a section, measured from the page: y0 and y1 in CSS pixels, stacked 1 when lanes are stacked. */
-  openBand?: (section: string) => { y0: number; y1: number; stacked: number } | null
+  /** The open band of a section, measured from the page: y0 and y1 in CSS pixels. */
+  openBand?: (section: string) => { y0: number; y1: number } | null
   /** After the render, each frame: the page writes its labels and markers here. */
   onFrame?: (frame: SpaceFrame) => void
   /** Once the first frame is on screen. */
@@ -516,11 +516,10 @@ export function createSpace(env: SpaceEnv): Space {
   const ROAM_RATE = [2.1, 1.2, 0.75];
   // Tool sections: the bodies keep to the open sky. The tallest band of the screen with no small text in it is
   // measured from the page itself; the roam is aimed at that band and sized to fit inside it.
-  const open = { y0: 0, y1: 0, at: -9, k: 0, x: 0, z: 0, sp: 1, size: 1, q: 1, side: 9, deep: 9, stacked: 0 };
+  const open = { y0: 0, y1: 0, at: -9, k: 0, x: 0, z: 0, sp: 1, size: 1, q: 1, side: 9, deep: 9 };
   function measureOpen() {
     const band = env.openBand?.(story.section());
     if (!band) return;
-    open.stacked = band.stacked;
     const y0 = Math.max(0, band.y0), y1 = Math.min(H, band.y1);
     if (y1 - y0 > 48) { open.y0 = y0; open.y1 = y1; }
   }
@@ -674,7 +673,7 @@ export function createSpace(env: SpaceEnv): Space {
     worlds.forEach((m, i) => { const on = fl > 0.01, near = fl * Math.max(0, 1 - Math.abs(wsel - i)); warcs[i].mesh.visible = on;
       toolU.value[i].z = TOOL_M[i] * (0.8 + 0.7 * near);
       // Stacked lanes leave the tool no clear sky of its own, so there it glows softer behind the rows.
-      m.material.uniforms.uGain.value = (0.2 + 0.1 * fl + 0.28 * near) * (1 - 0.5 * open.stacked * near); m.material.uniforms.uSize.value = (1.5 + 0.5 * near) * (0.8 + 0.2 * TOOL_M[i]); if (!on) return;
+      m.material.uniforms.uGain.value = (0.2 + 0.1 * fl + 0.28 * near); m.material.uniforms.uSize.value = (1.5 + 0.5 * near) * (0.8 + 0.2 * TOOL_M[i]); if (!on) return;
       layArc(warcs[i], HUB, m.position, 2.2); warcs[i].mesh.material.uniforms.uAlpha.value = fl * (0.1 + 0.85 * near); });
 
     timeU.value = shownT; finalPass.uniforms.uTime.value = shownT;
