@@ -498,33 +498,6 @@ html.js[data-motion="on"] .hb.arm:not(.play) .hw > span { transform: translateY(
 .fx { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity var(--dur-slow) var(--ease-out); background: radial-gradient(22rem circle at var(--mx, 50%) var(--my, 50%), color-mix(in oklch, var(--accent) 13%, transparent), transparent 62%); }
 .fx-host:hover > .fx { opacity: 1; }
 .btn:active { scale: 0.97; }
-/* What a business runs on: six bodies around the AI. Pick one, pick a tool, see what you can just ask. */
-.tools { display: grid; gap: var(--space-6); padding: clamp(var(--space-5), 3vw, var(--space-7)); background: color-mix(in oklch, var(--bg) 88%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid var(--line); border-radius: var(--radius-2xl); box-shadow: var(--shadow-md), var(--glass-inset); }
-@media (min-width: 900px) { .tools { grid-template-columns: minmax(0, 26rem) minmax(0, 1fr); gap: var(--space-8); align-items: center; } }
-.tools-orbit { position: relative; aspect-ratio: 1; width: min(100%, 26rem); margin-inline: auto; }
-.tools-ring { position: absolute; inset: 9% 20%; border: 1px solid color-mix(in oklch, var(--ring) 32%, transparent); border-radius: 50%; }
-.tools-spokes { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
-.tools-spokes line { stroke: var(--line-strong); stroke-width: 1; vector-effect: non-scaling-stroke; transition: stroke var(--dur-slow); }
-.tools-spokes line.on { stroke: var(--ring); }
-.tools-ai { position: absolute; left: 50%; top: 50%; translate: -50% -50%; display: grid; justify-items: center; gap: 6px; }
-.tools-ai svg { width: clamp(52px, 16vw, 72px); height: auto; filter: drop-shadow(0 0 22px color-mix(in srgb, var(--sun2) 55%, transparent)); }
-.tools-ai b { font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: var(--track-label); color: var(--accent-text); padding: 4px 9px; border-radius: var(--radius-pill); border: 1px solid color-mix(in oklch, var(--accent) 60%, transparent); background: var(--bg); }
-.tools-g { position: absolute; translate: -50% -50%; max-width: 7.5rem; min-height: var(--tap-min); padding: 8px 14px; border-radius: var(--radius-pill); border: 1px solid var(--line-strong); background: var(--bg); color: var(--text); font: var(--fw-semibold) var(--fs-sm)/1.2 var(--font-text); text-align: center; cursor: pointer; transition: border-color var(--dur-fast), background-color var(--dur-fast), box-shadow var(--dur-base); }
-.tools-g:hover { background: color-mix(in oklch, var(--text) 8%, var(--bg)); }
-.tools-g[aria-selected="true"] { border-color: var(--accent); background: color-mix(in oklch, var(--accent) 14%, var(--bg)); box-shadow: 0 0 24px color-mix(in srgb, var(--ring) 35%, transparent); }
-.tools-g:focus-visible, .tools-chip:focus-visible { outline: var(--focus-width) solid var(--focus-color); outline-offset: 3px; }
-.tools-panel { display: grid; gap: var(--space-4); align-content: start; min-width: 0; }
-.tools-t { font: var(--fw-bold) var(--fs-h2)/1.2 var(--font-display); letter-spacing: var(--track-heading); }
-.tools-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.tools-chip { min-height: var(--tap-min); padding: 0 var(--space-4); border-radius: var(--radius-pill); border: 1px solid var(--line-strong); background: transparent; color: var(--text); font: var(--fw-medium) var(--fs-sm)/1.2 var(--font-text); cursor: pointer; transition: border-color var(--dur-fast), background-color var(--dur-fast); }
-.tools-chip:hover { background: color-mix(in oklch, var(--text) 8%, transparent); }
-.tools-chip[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-quiet); }
-.tools-asks { display: grid; gap: var(--space-2); padding-top: var(--space-4); border-top: 1px solid var(--line); min-height: 11rem; align-content: start; }
-.tools-asks ul { list-style: none; margin: 0; padding: 0; display: grid; }
-.tools-asks li { padding-block: var(--space-3); }
-.tools-asks li + li { border-top: 1px solid var(--line); }
-.tools-asks q { font: var(--fw-semibold) var(--fs-h3)/1.3 var(--font-display); letter-spacing: var(--track-heading); quotes: "\201C" "\201D"; text-wrap: balance; }
-.tools-foot { font-size: var(--fs-sm); color: var(--muted); }
 /* ── One world. Below the hero nothing sits on a panel, card or diagram: the scene performs each section
    and the page only annotates it. Copy stands on bare sky on one side; the bodies keep to the other. ── */
 .w-sec { position: relative; padding-block: 12svh; }
@@ -556,11 +529,7 @@ html.js[data-motion="on"] .hb.arm:not(.play) .hw > span { transform: translateY(
 .g-tab, .ring-tag { min-height: var(--tap-min); padding: 0 var(--space-4); border-radius: var(--radius-pill); border: 1px solid var(--line-strong); background: color-mix(in oklch, var(--bg) 72%, transparent); color: var(--text); font: var(--fw-semibold) var(--fs-sm)/1.2 var(--font-text); cursor: pointer; white-space: nowrap; text-shadow: none; transition: border-color var(--dur-fast), background-color var(--dur-fast), box-shadow var(--dur-base); }
 .g-tab:hover, .ring-tag:hover { background: color-mix(in oklch, var(--text) 12%, var(--bg)); }
 .g-tab[aria-selected="true"], .ring-tag[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in oklch, var(--accent) 16%, var(--bg)); box-shadow: 0 0 24px color-mix(in srgb, var(--ring) 35%, transparent); }
-.g-tab:focus-visible, .qa button:focus-visible, .tools-chip:focus-visible { outline: var(--focus-width) solid var(--focus-color); outline-offset: 3px; }
-.tools-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.tools-chip { min-height: var(--tap-min); padding: 0 var(--space-4) 0 var(--space-3); border-radius: var(--radius-pill); border: 1px solid var(--line-strong); background: color-mix(in oklch, var(--bg) 72%, transparent); color: var(--text); font: var(--fw-medium) var(--fs-sm)/1.2 var(--font-text); cursor: pointer; display: inline-flex; align-items: center; gap: var(--space-2); text-shadow: none; transition: border-color var(--dur-fast), background-color var(--dur-fast); }
-.tools-chip:hover { background: color-mix(in oklch, var(--text) 12%, var(--bg)); }
-.tools-chip[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in oklch, var(--accent) 16%, var(--bg)); }
+.g-tab:focus-visible, .qa button:focus-visible { outline: var(--focus-width) solid var(--focus-color); outline-offset: 3px; }
 .lg { width: 18px; height: 18px; flex: none; fill: currentColor; }
 .asks { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); min-height: 5.5rem; align-content: start; }
 .asks q { font: var(--fw-semibold) var(--fs-h2)/1.25 var(--font-display); letter-spacing: var(--track-heading); quotes: "\201C" "\201D"; text-wrap: balance; }
@@ -585,180 +554,46 @@ html.js[data-motion="on"] .hb.arm:not(.play) .hw > span { transform: translateY(
 .qa p { padding-bottom: var(--space-4); font-size: var(--fs-lede); max-width: 28rem; }
 .world .veil { display: none; }
 .tm-note { font-size: var(--fs-xs); color: var(--faint); flex-basis: 100%; }
-/* ── The flybys: the same job run twice, side by side, in real time. Bare type hangs either side of each tool's world:
-   one clicks through the tool by hand, one types the ask. No times are stated; the two clocks show it. ── */
-.race { position: relative; height: 240vh; height: 240svh; }
-.race-pin { position: sticky; top: 0; height: 100vh; height: 100svh; }
-.race-in { height: 100%; max-width: 78rem; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: var(--space-5); padding-top: calc(var(--nav-height) + clamp(1rem, 4vh, 2.5rem)); padding-bottom: clamp(1rem, 3vh, 2rem); }
-.race-head { display: grid; gap: var(--space-3); justify-items: start; max-width: 46rem; text-shadow: 0 0 26px var(--bg), 0 0 10px var(--bg), 0 1px 2px var(--bg); }
-.race-head .h2 { font-size: clamp(1.55rem, 1rem + 2.4vw, 3rem); }
-.sr-race { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-.lanes { display: grid; grid-template-columns: minmax(0, 1fr) clamp(13rem, 25vw, 24rem) minmax(0, 1fr); min-height: 0; height: 100%; max-height: max(27rem, 42vh); align-self: end; }
-/* No panels. Each lane is bare type and hairlines on the sky, one either side of the tool's world, so the
-   universe stays in view behind and between them. A soft shadow of the night keeps every word readable. */
-.lane { min-height: 0; min-width: 0; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: var(--space-3); text-shadow: 0 0 16px var(--bg), 0 0 7px var(--bg), 0 1px 2px var(--bg); }
-.lane.ask { grid-column: 3; }
-.lane > header { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-3); padding-bottom: var(--space-3); border-bottom: 1px solid var(--line-strong); transition: border-color var(--dur-slow); }
-.lane.done > header { border-color: var(--ok); }
-.lane-t { font: var(--fw-semibold) var(--fs-xs)/1 var(--font-mono); letter-spacing: var(--track-eyebrow); text-transform: uppercase; color: var(--muted); }
-.lane.ask .lane-t { color: var(--accent-text); }
-.sw { font: var(--fw-bold) var(--fs-h1)/1 var(--font-display); letter-spacing: var(--track-heading); font-variant-numeric: tabular-nums; color: var(--text); }
-.lane.done .sw { color: var(--ok); }
-.scr { position: relative; min-height: 0; overflow: hidden; display: grid; grid-template-rows: auto minmax(0, 1fr); }
-.scr-bar { display: flex; align-items: center; gap: var(--space-2); min-width: 0; padding-bottom: var(--space-3); font: var(--fw-medium) var(--fs-2xs)/1.2 var(--font-mono); color: var(--muted); }
-.scr-bar .lg { width: 16px; height: 16px; color: var(--text); }
-.scr-bar .crumb { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.scr-bar .ex { margin-left: auto; flex: none; padding: 3px 8px; border-radius: var(--radius-pill); border: 1px dashed var(--line-strong); letter-spacing: var(--track-label); text-transform: uppercase; }
-.rdot { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--sun1); box-shadow: 0 0 10px var(--sun2); }
-.scr-main { display: grid; grid-template-rows: auto minmax(0, 1fr); min-height: 0; }
-.scr-nav { list-style: none; margin: 0; padding: 0 0 var(--space-2); display: flex; gap: var(--space-4); font-size: var(--fs-sm); color: var(--muted); }
-.scr-nav li { padding: 4px 0; border-bottom: 2px solid transparent; }
-.scr-nav li.on { color: var(--text); border-bottom-color: var(--accent); }
-.scr-view { min-width: 0; display: grid; align-content: start; font-size: var(--fs-sm); transition: opacity var(--dur-base); }
-.scr-view.load { opacity: .2; }
-.scr-chip { justify-self: start; margin: var(--space-1) 0 var(--space-2); padding: 4px 10px; border-radius: var(--radius-pill); border: 1px solid var(--line-strong); font: var(--fw-medium) var(--fs-2xs)/1.2 var(--font-mono); color: var(--text); }
-.scr-row { display: flex; justify-content: space-between; gap: var(--space-3); padding: 7px 0; border-top: 1px solid var(--line); color: var(--text); font-variant-numeric: tabular-nums; transition: color var(--dur-fast); }
-.scr-row span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.scr-row span:last-child { flex: none; color: var(--muted); }
-.scr-row.hd, .scr-row.hd span:last-child { border-top: 0; font: var(--fw-semibold) var(--fs-2xs)/1.4 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--muted); }
-.scr-row.on, .scr-row.on span:last-child { color: var(--accent-text); }
-.scr-cur { position: absolute; left: 0; top: 0; width: 12px; height: 12px; margin: -6px; border-radius: 50%; background: var(--text); box-shadow: 0 0 0 5px color-mix(in oklch, var(--text) 22%, transparent), 0 0 18px var(--ring); opacity: 0; pointer-events: none; transition: transform 700ms var(--ease-in-out), opacity 180ms; }
-.lane.go .scr-cur { opacity: 1; }
-.lane-s { margin: 0; min-height: 1.45em; display: flex; align-items: baseline; gap: var(--space-2); font-size: var(--fs-sm); line-height: 1.45; color: var(--muted); }
-.lane-s b { flex: none; font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--text); }
-.lane.done .lane-s b { color: var(--ok); }
-.chat-body { min-height: 0; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-start; gap: var(--space-3); }
-.rmsg { margin: 0; font-size: var(--fs-sm); line-height: 1.45; }
-.rmsg.me { font: var(--fw-semibold) var(--fs-h4)/1.4 var(--font-display); color: var(--text); text-wrap: pretty; }
-.rmsg.me:has(span:empty) { visibility: hidden; }
-.rmsg.me span::before { content: "\201C"; } .lane.sent .rmsg.me span::after { content: "\201D"; }
-.lane.go:not(.sent) .rmsg.me::after { content: ""; display: inline-block; width: 2px; height: 1em; margin-left: 2px; vertical-align: -2px; background: var(--accent-text); }
-.rmsg.st { font: var(--fw-medium) var(--fs-xs)/1.3 var(--font-mono); color: var(--accent-text); }
-.rmsg.ai { display: grid; }
-.rmsg.ai[hidden], .rmsg.st[hidden] { display: none; }
-.rmsg.ai p { margin: 0; padding-top: var(--space-3); border-top: 1px solid var(--line); font-weight: var(--fw-semibold); color: var(--text); }
-.race-note { margin: 0; font-size: var(--fs-xs); line-height: 1.5; color: var(--muted); text-shadow: 0 0 12px var(--bg), 0 1px 2px var(--bg); }
-@media (max-width: 899px) {
-  .race-in { gap: var(--space-3); padding-top: calc(var(--nav-height) + var(--space-3)); padding-bottom: var(--space-3); }
-  .race-head { gap: var(--space-2); }
-  .lanes { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-4); max-height: none; }
-  .lane { gap: var(--space-2); }
-  .lane.ask { grid-column: 1; }
-  .lane > header { padding-bottom: var(--space-2); }
-  .sw { font-size: 1.5rem; }
-  .scr-nav, .scr-row.hd, .rchat .scr-bar { display: none; }
-  .rchat { grid-template-rows: minmax(0, 1fr); }
-  .scr-bar { padding-bottom: var(--space-2); }
-  .scr-row { padding: 4px 0; }
-  .chat-body { justify-content: flex-end; }
-  .rmsg.me { font-size: var(--fs-body); }
-  .lane.done .rmsg.me span { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
-  .lane-s { font-size: var(--fs-xs); }
-  .race-note { font-size: var(--fs-2xs); }
+/* ── The tools: pick one you use and see the finished result at once. The world is the stage: each pick flies the
+   camera to that tool's world, and the words keep to one narrow column (desktop) or the top and bottom edges (phone),
+   shaded by text-shadow, never by a panel. Every panel is in the page, so it reads without script. ── */
+.tools { position: relative; height: 170vh; height: 170svh; }
+.tools-pin { position: sticky; top: 0; height: 100vh; height: 100svh; }
+.tools-in { height: 100%; max-width: 78rem; display: grid; grid-template-columns: minmax(0, 27rem); grid-template-rows: auto auto minmax(0, 1fr) auto; row-gap: var(--space-4); padding-top: calc(var(--nav-height) + clamp(1rem, 4vh, 2.5rem)); padding-bottom: clamp(1rem, 3vh, 2rem); text-shadow: 0 0 26px var(--bg), 0 0 10px var(--bg), 0 1px 2px var(--bg); }
+.tools-in > .h2 { font-size: clamp(1.55rem, 1rem + 2vw, 2.6rem); }
+.tool-tabs { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.tool-tab { display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--tap-min); padding: 0 var(--space-4); border: 1px solid var(--line-strong); border-radius: var(--radius-pill); background: transparent; color: var(--muted); font: var(--fw-semibold) var(--fs-sm)/1 var(--font-text); text-shadow: inherit; cursor: pointer; transition: color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out); }
+.tool-tab:hover { color: var(--text); }
+.tool-tab[aria-selected="true"] { color: var(--accent-text); border-color: var(--accent); }
+.tool-tab:focus-visible { outline: var(--focus-width) solid var(--focus-color); outline-offset: 3px; }
+.tool-panel { align-self: end; display: grid; gap: var(--space-3); }
+.tool-panel[hidden] { display: none; }
+.tp-h { margin: 0; font: var(--fw-bold) var(--fs-h3)/1.2 var(--font-display); letter-spacing: var(--track-heading); }
+.tp-h em { font-style: normal; color: var(--accent-text); }
+.tp-ask { display: grid; gap: var(--space-2); }
+.tp-say { margin: 0; font-size: var(--fs-body); line-height: 1.45; color: var(--muted); }
+.tp-rows { margin-top: var(--space-1); }
+.tp-row { display: flex; justify-content: space-between; gap: var(--space-4); padding: 6px 0; border-top: 1px solid var(--line); font-size: var(--fs-sm); }
+.tp-row span:last-child { color: var(--muted); font-variant-numeric: tabular-nums; text-align: right; }
+.tp-out { margin: var(--space-2) 0 0; font-weight: var(--fw-semibold); color: var(--text); }
+.tp-ok { margin: 0; font-size: var(--fs-sm); color: var(--ok); }
+.tp-hand { order: 3; }
+.tp-hand ol { display: none; }
+.tp-hand .tp-k { margin: 0; font-size: var(--fs-sm); color: var(--muted); }
+.tp-note { order: 4; margin: 0; font-size: var(--fs-2xs); line-height: 1.5; color: var(--muted); }
+.tp-note a { color: var(--accent-text); text-decoration: underline; text-underline-offset: 3px; }
+.tp-ask .tp-k { display: none; }
+.tools-cta { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3) var(--space-4); font-size: var(--fs-sm); }
+@media (max-width: 699px) {
+  .tools-in { grid-template-columns: minmax(0, 1fr); row-gap: var(--space-3); padding-top: calc(var(--nav-height) + var(--space-3)); padding-bottom: var(--space-3); }
+  .tool-tabs { flex-wrap: nowrap; overflow-x: auto; margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter); scrollbar-width: none; }
+  .tool-tab { flex: none; }
+  .tp-say { font-size: var(--fs-sm); }
 }
-/* Short phones: the note and the date chip give their room to the two screens. */
-@media (max-width: 899px) and (max-height: 740px) {
-  .race-note, .scr-chip { display: none; }
-  .lane-s span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .race-in { padding-bottom: var(--space-2); }
-  .race-head .h2 { font-size: 1.35rem; }
-  .scr-row { padding: 2px 0; }
-}
-/* Shopify race: the foot holds the one next step (Book a call) beside the footnote. The footnote may drop on short
-   phones; the next step never does. On phones the answer sits under its own header, not at the bottom of the lane. */
-#fly-shopify .race-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3) var(--space-6); }
-#fly-shopify .race-foot .race-note { flex: 1 1 24rem; max-width: 40rem; }
-#fly-shopify .race-note a { color: var(--accent-text); text-decoration: underline; text-underline-offset: 3px; }
-#fly-shopify .race-cta { margin: 0 0 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3) var(--space-4); font-size: var(--fs-sm); text-shadow: 0 0 12px var(--bg), 0 1px 2px var(--bg); }
-#fly-shopify .race-lead { color: var(--text); }
-#fly-shopify .race-head em { white-space: nowrap; }
-@media (max-width: 899px) { #fly-shopify .race-cta { margin-left: 0; } #fly-shopify .chat-body { justify-content: flex-start; } }
-/* QuickBooks race: the same foot as the Shopify race (one next step, Book a call, beside the footnote). The answer
-   starts its own line under the headline. On phones the by-hand lane takes only the height it needs, so the answer
-   lane keeps its full height when the next step sits under the footnote. */
-#fly-quickbooks .race-head em { display: block; }
-#fly-quickbooks .race-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3) var(--space-6); }
-#fly-quickbooks .race-foot .race-note { flex: 1 1 24rem; max-width: 40rem; }
-#fly-quickbooks .race-note a { color: var(--accent-text); text-decoration: underline; text-underline-offset: 3px; }
-#fly-quickbooks .race-cta { margin: 0 0 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3) var(--space-4); font-size: var(--fs-sm); text-shadow: 0 0 12px var(--bg), 0 1px 2px var(--bg); }
-#fly-quickbooks .race-lead { color: var(--text); }
-@media (max-width: 899px) {
-  #fly-quickbooks .race-cta { margin-left: 0; }
-  #fly-quickbooks .race-in { gap: var(--space-2); }
-  #fly-quickbooks .race-foot { gap: var(--space-2) var(--space-6); }
-  #fly-quickbooks .lanes { grid-template-rows: auto minmax(0, 1fr); gap: var(--space-3); }
-}
-/* Meta race: the header rule becomes the race track. Both lanes start together. Just ask stops at Done and turns green;
-   By hand keeps going, so the gap grows with no number shown. The foot holds the one next step (Book a call) beside a
-   short disclosure. On phones the disclosure shrinks to one line and the lead-in drops; the button never does. */
-#fly-meta .lane > header { position: relative; }
-#fly-meta .lane > header::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--muted); transform: scaleX(0); transform-origin: 0 50%; }
-#fly-meta .lane.ask > header::after { background: var(--accent); }
-#fly-meta .lane.go > header::after { animation: meta-track 60s linear forwards; }
-#fly-meta .lane.ask.done > header::after { animation-play-state: paused; background: var(--ok); }
-@keyframes meta-track { to { transform: scaleX(1); } }
-@media (prefers-reduced-motion: reduce) { #fly-meta .lane > header::after { display: none; } }
-#fly-meta .race-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3) var(--space-6); }
-#fly-meta .race-foot .race-note { flex: 1 1 24rem; max-width: 40rem; font-size: var(--fs-sm); }
-#fly-meta .rn-short { display: none; }
-#fly-meta .race-cta { margin: 0 0 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3) var(--space-4); font-size: var(--fs-sm); text-shadow: 0 0 12px var(--bg), 0 1px 2px var(--bg); }
-#fly-meta .race-lead { color: var(--text); }
-@media (max-width: 899px) {
-  #fly-meta .race-foot .race-note { flex: 1 1 auto; max-width: none; font-size: var(--fs-xs); }
-  #fly-meta .race-cta { margin-left: auto; }
-  #fly-meta .race-lead { display: none; }
-  #fly-meta .rn-long { display: none; }
-  #fly-meta .rn-short { display: inline; }
-}
-@media (max-width: 899px) and (max-height: 740px) { #fly-meta .race-note { display: block; } }
-/* Meta race, motion. Transform and opacity only (60 fps, no layout shift). An entrance plays when a race starts, from
-   40 percent opacity, so nothing is hidden at first paint. Every new row rises in as the screen changes. The done
-   clock beats once. Press and focus answer the touch. The still fallback is the default: no motion, every value shown. */
-@keyframes meta-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-@keyframes meta-enter { from { opacity: .4; transform: translateY(14px); } to { opacity: 1; transform: none; } }
-@keyframes meta-beat { 0% { transform: scale(1); } 40% { transform: scale(1.08); } 100% { transform: scale(1); } }
-@media (prefers-reduced-motion: no-preference) {
-  #fly-meta .lane.go { animation: meta-enter 640ms var(--ease-out) both; }
-  #fly-meta:has(.lane.go) .race-cta { animation: meta-enter 700ms var(--ease-out) 320ms both; }
-  #fly-meta .scr-view .scr-row { animation: meta-rise 380ms var(--ease-out) both; }
-  #fly-meta .scr-view .scr-row:nth-child(2) { animation-delay: 40ms; }
-  #fly-meta .scr-view .scr-row:nth-child(3) { animation-delay: 80ms; }
-  #fly-meta .scr-view .scr-row:nth-child(4) { animation-delay: 120ms; }
-  #fly-meta .scr-view .scr-row:nth-child(5) { animation-delay: 160ms; }
-  #fly-meta .rmsg.ai .scr-row { animation: meta-rise 440ms var(--ease-out) both; }
-  #fly-meta .rmsg.ai .scr-row:nth-child(2) { animation-delay: 90ms; }
-  #fly-meta .rmsg.ai .scr-row:nth-child(3) { animation-delay: 180ms; }
-  #fly-meta .rmsg.ai > p { animation: meta-rise 440ms var(--ease-out) 270ms both; }
-  #fly-meta .lane.ask.done .sw { transform-origin: 100% 50%; animation: meta-beat 520ms var(--ease-out) both; }
-  #fly-meta .race-cta .btn:active { transform: translateY(0) scale(.97); transition-duration: 60ms; }
-}
-/* Gmail race: the foot holds the one next step (Book a call) beside a disclosure, as the Shopify and Meta races do.
-   On phones the disclosure shrinks to one line and the lead-in drops; the button never does. */
-#fly-gmail .race-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3) var(--space-6); }
-#fly-gmail .race-foot .race-note { flex: 1 1 24rem; max-width: 40rem; }
-#fly-gmail .rn-short { display: none; }
-#fly-gmail .race-cta { margin: 0 0 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3) var(--space-4); font-size: var(--fs-sm); text-shadow: 0 0 12px var(--bg), 0 1px 2px var(--bg); }
-#fly-gmail .race-lead { color: var(--text); }
-#fly-gmail .race-head em { white-space: nowrap; }
-@media (max-width: 899px) {
-  #fly-gmail .race-foot .race-note { flex: 1 1 auto; max-width: none; }
-  #fly-gmail .race-cta { margin-left: auto; }
-  #fly-gmail .race-lead { display: none; }
-  #fly-gmail .rn-long { display: none; }
-  #fly-gmail .rn-short { display: inline; }
-  #fly-gmail .lane.done .rmsg.me span { -webkit-line-clamp: 3; }
-}
-/* Phones: the two lanes and the foot fit one screen, so the done line and the button show at 390 by 844. */
-@media (max-width: 899px) {
-  #fly-meta .lanes { gap: var(--space-3); }
-  #fly-meta .lane { gap: 6px; }
-  #fly-meta .lane > header { padding-bottom: 6px; }
-  #fly-meta .scr-bar { padding-bottom: 6px; }
-  #fly-meta .scr-row { padding: 4px 0; }
-  #fly-meta .race-note { font-size: var(--fs-xs); }
-  #fly-meta .chat-body { -webkit-mask-image: linear-gradient(to bottom, transparent 0, currentColor 1.5rem); mask-image: linear-gradient(to bottom, transparent 0, currentColor 1.5rem); }
-}
-html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relative; height: auto; } html:not(.js) .sr-race { position: static; width: auto; height: auto; clip-path: none; white-space: normal; }
+@media (max-width: 699px) and (max-height: 740px) { .tp-say, .tp-note { display: none; } }
+@media (min-width: 700px) and (max-width: 1099px) { .tools-in { grid-template-columns: minmax(0, 24rem); } }
+@media (max-height: 1000px) { .tp-h { display: none; } .tools-in { row-gap: var(--space-3); } }
+html:not(.js) .tools { height: auto; } html:not(.js) .tools-pin { position: relative; height: auto; } html:not(.js) .tool-tabs { display: none; } html:not(.js) .tool-panel[hidden] { display: grid; }
 .world-tag { width: 52px; height: 52px; background: color-mix(in oklch, var(--bg) 88%, transparent); border-color: color-mix(in oklch, var(--accent) 55%, transparent); box-shadow: 0 0 24px color-mix(in srgb, var(--ring) 40%, transparent); }
 .world-tag .lg { width: 26px; height: 26px; }
 @media (max-width: 899px) { .close-sec { align-items: end; } .close-in { padding-block: var(--space-7); } }
@@ -837,200 +672,91 @@ html:not(.js) .race { height: auto; } html:not(.js) .race-pin { position: relati
   </div>
 </section>
 
-<section class="race" id="fly-shopify" data-scene="flyby" data-race="shopify">
-  <div class="race-pin">
-    <div class="wrap race-in">
-      <header class="race-head">
-        <h2 class="h2">Keep your <em>best sellers</em> on the shelf.</h2>
-        <p class="sr-race">By hand: Open Analytics. Open Reports. Find Sales by product. Set the date range to last month. Sort by units sold. Now open Inventory, a separate screen. Check the stock on each product, one at a time. Or just ask: “Pull last month's top 10 sellers by units sold, show current stock for each, and tell me which will run out in 30 days”</p>
-      </header>
-      <div class="lanes" aria-hidden="true">
-        <article class="lane hand">
-          <header><span class="lane-t">By hand</span><span class="sw">0:00</span></header>
-          <div class="scr">
-            <div class="scr-bar"><svg class="lg"><use href="#lg-shopify"/></svg><span class="crumb">Shopify</span><span class="ex">Example</span></div>
-            <div class="scr-main"><ul class="scr-nav"><li>Home</li><li>Orders</li><li>Products</li><li>Analytics</li></ul><div class="scr-view"></div></div>
-            <i class="scr-cur"></i>
-          </div>
-          <p class="lane-s"></p>
-        </article>
-        <article class="lane ask">
-          <header><span class="lane-t">Just ask</span><span class="sw">0:00</span></header>
-          <div class="scr rchat">
-            <div class="scr-bar"><i class="rdot"></i><span class="crumb">Your AI, connected to Shopify</span><span class="ex">Example</span></div>
-            <div class="chat-body"><p class="rmsg me"><span></span></p><p class="rmsg st" hidden></p><div class="rmsg ai" hidden><div class="scr-row"><span>Sea salt caramels</span><span>212 sold · 14 left</span></div><div class="scr-row"><span>Wool mitts</span><span>150 sold · 9 left</span></div><div class="scr-row"><span>Partridgeberry jam</span><span>187 sold · 120 left</span></div><p>Caramels and mitts will run out within 30 days. Reorder those two.</p></div></div>
-          </div>
-          <p class="lane-s"></p>
-        </article>
+<section class="tools" id="tools" data-scene="tools" aria-labelledby="tools-h">
+  <div class="tools-pin">
+    <div class="wrap tools-in">
+      <h2 class="h2" id="tools-h">Pick a tool you use. <em>See what one sentence gets you.</em></h2>
+      <div class="tool-tabs" role="tablist" aria-label="Your tools">
+        <button type="button" role="tab" class="tool-tab" id="tt-quickbooks" aria-controls="tp-quickbooks" aria-selected="true" tabindex="0" data-world="2"><svg class="lg" aria-hidden="true"><use href="#lg-quickbooks"/></svg>QuickBooks</button>
+        <button type="button" role="tab" class="tool-tab" id="tt-shopify" aria-controls="tp-shopify" aria-selected="false" tabindex="-1" data-world="0"><svg class="lg" aria-hidden="true"><use href="#lg-shopify"/></svg>Shopify</button>
+        <button type="button" role="tab" class="tool-tab" id="tt-meta" aria-controls="tp-meta" aria-selected="false" tabindex="-1" data-world="1"><svg class="lg" aria-hidden="true"><use href="#lg-meta"/></svg>Meta Ads</button>
+        <button type="button" role="tab" class="tool-tab" id="tt-microsoftexcel" aria-controls="tp-microsoftexcel" aria-selected="false" tabindex="-1" data-world="4"><svg class="lg" aria-hidden="true"><use href="#lg-microsoftexcel"/></svg>Excel</button>
+        <button type="button" role="tab" class="tool-tab" id="tt-hubspot" aria-controls="tp-hubspot" aria-selected="false" tabindex="-1" data-world="5"><svg class="lg" aria-hidden="true"><use href="#lg-hubspot"/></svg>HubSpot</button>
+        <button type="button" role="tab" class="tool-tab" id="tt-gmail" aria-controls="tp-gmail" aria-selected="false" tabindex="-1" data-world="3"><svg class="lg" aria-hidden="true"><use href="#lg-gmail"/></svg>Gmail</button>
       </div>
-      <div class="race-foot">
-        <p class="race-note">This is a replay with example data. The by-hand pace is typical. It is estimated. It works through <a href="https://help.shopify.com/en/manual/ai-powered-tools/connecting-ai-tools/shopify-connector-for-claude" target="_blank" rel="noopener">Shopify's official connector for Claude</a>.</p>
-        <p class="race-cta"><span class="race-lead">Want this for your business?</span><a class="btn btn-ghost btn-sm" href="/book">Book a call</a></p>
+      <div class="tool-panel" role="tabpanel" id="tp-quickbooks" aria-labelledby="tt-quickbooks">
+        <h3 class="tp-h">Know who owes you. <em>The invoice is ready.</em></h3>
+        <div class="tp-hand"><p class="tp-k">By hand: 5 steps</p><ol><li>Open Reports</li><li>Open the report of who owes you</li><li>Read down the list and decide who to chase</li><li>Open a new invoice, a separate screen</li><li>Fill in the customer, the item, the amount and the date</li></ol></div>
+        <div class="tp-ask">
+          <p class="tp-k">Just ask</p>
+          <p class="tp-say">“Show me who owes us, flag anyone over 60 days, and send Harbour Dental an invoice for the retainer”</p>
+          <div class="tp-rows"><div class="tp-row"><span>Hillside Roofing</span><span>64 days · flagged</span></div><div class="tp-row"><span>East End Yoga</span><span>31 days</span></div><div class="tp-row"><span>Harbour Dental</span><span>12 days</span></div></div>
+          <p class="tp-out">The retainer invoice for Harbour Dental is ready to send.</p>
+          <p class="tp-ok">You check it, then it goes.</p>
+        </div>
+        <p class="tp-note">Example data. Intuit's <a href="https://quickbooks.intuit.com/learn-support/en-us/help-article/accounting-bookkeeping/use-quickbooks-connector-claude/L3YBlo6Ht_US_en_US" target="_blank" rel="noopener">connector for Claude</a> is US-only today. In Canada we connect QuickBooks Online through Intuit's <a href="https://github.com/intuit/quickbooks-online-mcp-server" target="_blank" rel="noopener">open-source QuickBooks server</a>.</p>
       </div>
-    </div>
-  </div>
-</section>
-
-<section class="race" id="fly-meta" data-scene="flyby" data-race="meta">
-  <div class="race-pin">
-    <div class="wrap race-in">
-      <header class="race-head">
-        <h2 class="h2">Which ads worked, and <em>which to pause.</em></h2>
-        <p class="sr-race">By hand: Log into Ads Manager. Set the date range to the last 7 days. Read the spend and the cost per result. Switch to the 7 days before. Compare every campaign by eye, back and forth. Or just ask: “Pull spend, cost per result, and ROAS for all active campaigns over the last 7 days vs. the 7 days before. Tell me which ad sets are underperforming and recommend which to pause.”</p>
-      </header>
-      <div class="lanes" aria-hidden="true">
-        <article class="lane hand">
-          <header><span class="lane-t">By hand</span><span class="sw">0:00</span></header>
-          <div class="scr">
-            <div class="scr-bar"><svg class="lg"><use href="#lg-meta"/></svg><span class="crumb">Meta Ads</span><span class="ex">Example</span></div>
-            <div class="scr-main"><ul class="scr-nav"><li>Campaigns</li><li>Ad sets</li><li>Ads</li><li>Reports</li></ul><div class="scr-view"></div></div>
-            <i class="scr-cur"></i>
-          </div>
-          <p class="lane-s"></p>
-        </article>
-        <article class="lane ask">
-          <header><span class="lane-t">Just ask</span><span class="sw">0:00</span></header>
-          <div class="scr rchat">
-            <div class="scr-bar"><i class="rdot"></i><span class="crumb">Your AI, connected to Meta Ads</span><span class="ex">Example</span></div>
-            <div class="chat-body"><p class="rmsg me"><span></span></p><p class="rmsg st" hidden></p><div class="rmsg ai" hidden><div class="scr-row"><span>Local awareness</span><span>$5.90 → $9.40</span></div><div class="scr-row"><span>New arrivals</span><span>$6.10 → $6.80</span></div><div class="scr-row"><span>Fall sale</span><span>$4.60 → $4.10</span></div><p>Local awareness now costs far more per result. I would pause it.</p></div></div>
-          </div>
-          <p class="lane-s"></p>
-        </article>
+      <div class="tool-panel" role="tabpanel" id="tp-shopify" aria-labelledby="tt-shopify" hidden>
+        <h3 class="tp-h">Keep your <em>best sellers</em> on the shelf.</h3>
+        <div class="tp-hand"><p class="tp-k">By hand: 7 steps</p><ol><li>Open Analytics</li><li>Open Reports</li><li>Find Sales by product</li><li>Set the date range to last month</li><li>Sort by units sold</li><li>Open Inventory, a separate screen</li><li>Check the stock on each product, one at a time</li></ol></div>
+        <div class="tp-ask">
+          <p class="tp-k">Just ask</p>
+          <p class="tp-say">“Pull last month&#x27;s top 10 sellers by units sold, show current stock for each, and tell me which will run out in 30 days”</p>
+          <div class="tp-rows"><div class="tp-row"><span>Sea salt caramels</span><span>212 sold · 14 left</span></div><div class="tp-row"><span>Wool mitts</span><span>150 sold · 9 left</span></div><div class="tp-row"><span>Partridgeberry jam</span><span>187 sold · 120 left</span></div></div>
+          <p class="tp-out">Caramels and mitts will run out within 30 days. Reorder those two.</p>
+          <p class="tp-ok">You decide what to reorder.</p>
+        </div>
+        <p class="tp-note">Example data. Works through <a href="https://help.shopify.com/en/manual/ai-powered-tools/connecting-ai-tools/shopify-connector-for-claude" target="_blank" rel="noopener">Shopify's official connector for Claude</a>.</p>
       </div>
-      <div class="race-foot">
-        <p class="race-note"><span class="rn-long">A replay with example data. Both clocks run in real time on your screen. It works through Meta's own AI access.</span><span class="rn-short">Example data, in real time.</span></p>
-        <p class="race-cta"><span class="race-lead">Want this for your ads?</span><a class="btn btn-ghost btn-sm" href="/book">Book a call</a></p>
+      <div class="tool-panel" role="tabpanel" id="tp-meta" aria-labelledby="tt-meta" hidden>
+        <h3 class="tp-h">Which ads worked, and <em>which to pause.</em></h3>
+        <div class="tp-hand"><p class="tp-k">By hand: 5 steps</p><ol><li>Log into Ads Manager</li><li>Set the date range to the last 7 days</li><li>Read the spend and the cost per result</li><li>Switch to the 7 days before</li><li>Compare every campaign by eye, back and forth</li></ol></div>
+        <div class="tp-ask">
+          <p class="tp-k">Just ask</p>
+          <p class="tp-say">“Pull spend, cost per result, and ROAS for all active campaigns over the last 7 days vs. the 7 days before. Tell me which ad sets are underperforming and recommend which to pause.”</p>
+          <div class="tp-rows"><div class="tp-row"><span>Local awareness</span><span>$5.90 → $9.40</span></div><div class="tp-row"><span>New arrivals</span><span>$6.10 → $6.80</span></div><div class="tp-row"><span>Fall sale</span><span>$4.60 → $4.10</span></div></div>
+          <p class="tp-out">Local awareness now costs far more per result. I would pause it.</p>
+          <p class="tp-ok">You make the call to pause.</p>
+        </div>
+        <p class="tp-note">Example data. Works through Meta's own AI access.</p>
       </div>
-    </div>
-  </div>
-</section>
-
-<section class="race" id="fly-quickbooks" data-scene="flyby" data-race="quickbooks">
-  <div class="race-pin">
-    <div class="wrap race-in">
-      <header class="race-head">
-        <h2 class="h2">Know who owes you. <em>The invoice is ready.</em></h2>
-        <p class="sr-race">By hand: Open Reports. Open the report of who owes you. Read down the list and decide who to chase. Now open a new invoice, a separate screen. Fill in the customer, the item, the amount and the date. Or just ask: “Show me who owes us, flag anyone over 60 days, and send Harbour Dental an invoice for the retainer”</p>
-      </header>
-      <div class="lanes" aria-hidden="true">
-        <article class="lane hand">
-          <header><span class="lane-t">By hand</span><span class="sw">0:00</span></header>
-          <div class="scr">
-            <div class="scr-bar"><svg class="lg"><use href="#lg-quickbooks"/></svg><span class="crumb">QuickBooks</span><span class="ex">Example</span></div>
-            <div class="scr-main"><ul class="scr-nav"><li>Dashboard</li><li>Sales</li><li>Expenses</li><li>Reports</li></ul><div class="scr-view"></div></div>
-            <i class="scr-cur"></i>
-          </div>
-          <p class="lane-s"></p>
-        </article>
-        <article class="lane ask">
-          <header><span class="lane-t">Just ask</span><span class="sw">0:00</span></header>
-          <div class="scr rchat">
-            <div class="scr-bar"><i class="rdot"></i><span class="crumb">Your AI, connected to QuickBooks</span><span class="ex">Example</span></div>
-            <div class="chat-body"><p class="rmsg me"><span></span></p><p class="rmsg st" hidden></p><div class="rmsg ai" hidden><div class="scr-row"><span>Hillside Roofing</span><span>64 days · flagged</span></div><div class="scr-row"><span>East End Yoga</span><span>31 days</span></div><div class="scr-row"><span>Harbour Dental</span><span>12 days</span></div><p>The retainer invoice for Harbour Dental is ready to send.</p></div></div>
-          </div>
-          <p class="lane-s"></p>
-        </article>
+      <div class="tool-panel" role="tabpanel" id="tp-microsoftexcel" aria-labelledby="tt-microsoftexcel" hidden>
+        <h3 class="tp-h">The sales workbook, <em>updated for you.</em></h3>
+        <div class="tp-hand"><p class="tp-k">By hand: 4 steps</p><ol><li>Open the sales workbook</li><li>Select all of the sales data</li><li>Insert a pivot table</li><li>Set up each field, then build the chart</li></ol></div>
+        <div class="tp-ask">
+          <p class="tp-k">Just ask</p>
+          <p class="tp-say">“Add a pivot table of revenue by category this month vs. last, with a bar chart”</p>
+          <div class="tp-rows"><div class="tp-row"><span>Bread</span><span>$3,900 → $4,210</span></div><div class="tp-row"><span>Pastry</span><span>$3,320 → $3,180</span></div><div class="tp-row"><span>Coffee</span><span>$2,410 → $2,640</span></div></div>
+          <p class="tp-out">The pivot table and a bar chart are in the workbook. Your formulas are untouched.</p>
+          <p class="tp-ok">The live workbook is updated.</p>
+        </div>
+        <p class="tp-note">Example data. Claude edits the open Excel file. It cannot yet edit a Google Sheet in place.</p>
       </div>
-      <div class="race-foot">
-        <p class="race-note">A replay with example data. The by-hand pace is estimated. Works through <a href="https://quickbooks.intuit.com/learn-support/en-us/help-article/accounting-bookkeeping/use-quickbooks-connector-claude/L3YBlo6Ht_US_en_US" target="_blank" rel="noopener">Intuit's official connector</a>, US-only for now.</p>
-        <p class="race-cta"><span class="race-lead">Want this for your books?</span><a class="btn btn-ghost btn-sm" href="/book">Book a call</a></p>
+      <div class="tool-panel" role="tabpanel" id="tp-hubspot" aria-labelledby="tt-hubspot" hidden>
+        <h3 class="tp-h">The deals that went quiet, <em>followed up.</em></h3>
+        <div class="tp-hand"><p class="tp-k">By hand: 5 steps</p><ol><li>Open the deals list</li><li>Filter by last activity date, then sort</li><li>Open the first stalled deal and reread it</li><li>Write a follow-up by hand</li><li>Back to the list. Next deal, same again.</li></ol></div>
+        <div class="tp-ask">
+          <p class="tp-k">Just ask</p>
+          <p class="tp-say">“Show every deal with no activity in 14 days and draft a follow-up for each”</p>
+          <div class="tp-rows"><div class="tp-row"><span>Harbour Dental</span><span>Draft ready</span></div><div class="tp-row"><span>Cove Road Cafe</span><span>Draft ready</span></div><div class="tp-row"><span>East End Yoga</span><span>Draft ready</span></div></div>
+          <p class="tp-out">Three deals went quiet. Each one has a follow-up that mentions your last talk.</p>
+          <p class="tp-ok">You read each one and press send.</p>
+        </div>
+        <p class="tp-note">Example data. Works through HubSpot's own connector.</p>
       </div>
-    </div>
-  </div>
-</section>
-
-<section class="race" id="fly-gmail" data-scene="flyby" data-race="gmail">
-  <div class="race-pin">
-    <div class="wrap race-in">
-      <header class="race-head">
-        <h2 class="h2">Your inbox sorted, <em>the invite ready to send.</em></h2>
-        <p class="sr-race">By hand: Open the inbox. Open the first email and read it. Decide: reply today, later, or junk. Back to the inbox. Then the next one, and the next. Or just ask: “Group today's inbox into needs a reply today, can wait, and junk. Then find 30 minutes next week with Harbour Dental and send the invite.”</p>
-      </header>
-      <div class="lanes" aria-hidden="true">
-        <article class="lane hand">
-          <header><span class="lane-t">By hand</span><span class="sw">0:00</span></header>
-          <div class="scr">
-            <div class="scr-bar"><svg class="lg"><use href="#lg-gmail"/></svg><span class="crumb">Gmail and Calendar</span><span class="ex">Example</span></div>
-            <div class="scr-main"><ul class="scr-nav"><li>Inbox</li><li>Starred</li><li>Sent</li><li>Drafts</li></ul><div class="scr-view"></div></div>
-            <i class="scr-cur"></i>
-          </div>
-          <p class="lane-s"></p>
-        </article>
-        <article class="lane ask">
-          <header><span class="lane-t">Just ask</span><span class="sw">0:00</span></header>
-          <div class="scr rchat">
-            <div class="scr-bar"><i class="rdot"></i><span class="crumb">Your AI, connected to Gmail and Calendar</span><span class="ex">Example</span></div>
-            <div class="chat-body"><p class="rmsg me"><span></span></p><p class="rmsg st" hidden></p><div class="rmsg ai" hidden><div class="scr-row"><span>Needs a reply today</span><span>4</span></div><div class="scr-row"><span>Can wait</span><span>9</span></div><div class="scr-row"><span>Junk and newsletters</span><span>16</span></div><p>Tuesday at 10:30 works for you both. The invite is ready to send.</p></div></div>
-          </div>
-          <p class="lane-s"></p>
-        </article>
+      <div class="tool-panel" role="tabpanel" id="tp-gmail" aria-labelledby="tt-gmail" hidden>
+        <h3 class="tp-h">Your inbox sorted, <em>the invite ready to send.</em></h3>
+        <div class="tp-hand"><p class="tp-k">By hand: 4 steps</p><ol><li>Open the inbox</li><li>Open the first email and read it</li><li>Decide: reply today, later, or junk</li><li>Back to the inbox. Then the next one, and the next.</li></ol></div>
+        <div class="tp-ask">
+          <p class="tp-k">Just ask</p>
+          <p class="tp-say">“Group today&#x27;s inbox into needs a reply today, can wait, and junk. Then find 30 minutes next week with Harbour Dental and send the invite.”</p>
+          <div class="tp-rows"><div class="tp-row"><span>Needs a reply today</span><span>4</span></div><div class="tp-row"><span>Can wait</span><span>9</span></div><div class="tp-row"><span>Junk and newsletters</span><span>16</span></div></div>
+          <p class="tp-out">Tuesday at 10:30 works for you both. The invite is ready to send.</p>
+          <p class="tp-ok">Nothing sends without your OK.</p>
+        </div>
+        <p class="tp-note">Example data. Works in the Gmail and Calendar you already use.</p>
       </div>
-      <div class="race-foot">
-        <p class="race-note"><span class="rn-long">A replay with example data. Both clocks run in real time on your screen. It works in the Gmail and Calendar you already use.</span><span class="rn-short">Example data, in real time.</span></p>
-        <p class="race-cta"><span class="race-lead">Want this for your inbox?</span><a class="btn btn-ghost btn-sm" href="/book">Book a call</a></p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="race" id="fly-microsoftexcel" data-scene="flyby" data-race="microsoftexcel">
-  <div class="race-pin">
-    <div class="wrap race-in">
-      <header class="race-head">
-        <h2 class="h2">The sales workbook, <em>updated for you.</em></h2>
-        <p class="sr-race">By hand: Open the sales workbook. Select all of the sales data. Insert a pivot table. Set up each field, then build the chart. Or just ask: “Add a pivot table of revenue by category this month vs. last, with a bar chart”</p>
-      </header>
-      <div class="lanes" aria-hidden="true">
-        <article class="lane hand">
-          <header><span class="lane-t">By hand</span><span class="sw">0:00</span></header>
-          <div class="scr">
-            <div class="scr-bar"><svg class="lg"><use href="#lg-microsoftexcel"/></svg><span class="crumb">Excel</span><span class="ex">Example</span></div>
-            <div class="scr-main"><ul class="scr-nav"><li>Home</li><li>Insert</li><li>Data</li><li>Review</li></ul><div class="scr-view"></div></div>
-            <i class="scr-cur"></i>
-          </div>
-          <p class="lane-s"></p>
-        </article>
-        <article class="lane ask">
-          <header><span class="lane-t">Just ask</span><span class="sw">0:00</span></header>
-          <div class="scr rchat">
-            <div class="scr-bar"><i class="rdot"></i><span class="crumb">Your AI, connected to Excel</span><span class="ex">Example</span></div>
-            <div class="chat-body"><p class="rmsg me"><span></span></p><p class="rmsg st" hidden></p><div class="rmsg ai" hidden><div class="scr-row"><span>Bread</span><span>$3,900 → $4,210</span></div><div class="scr-row"><span>Pastry</span><span>$3,320 → $3,180</span></div><div class="scr-row"><span>Coffee</span><span>$2,410 → $2,640</span></div><p>The pivot table and a bar chart are in the workbook. Your formulas are untouched.</p></div></div>
-          </div>
-          <p class="lane-s"></p>
-        </article>
-      </div>
-      <p class="race-note">A replay with example data. Both clocks run in real time on your screen. Claude edits the open Excel file. It cannot yet edit a Google Sheet in place.</p>
-    </div>
-  </div>
-</section>
-
-<section class="race" id="fly-hubspot" data-scene="flyby" data-race="hubspot">
-  <div class="race-pin">
-    <div class="wrap race-in">
-      <header class="race-head">
-        <h2 class="h2">The deals that went quiet, <em>followed up.</em></h2>
-        <p class="sr-race">By hand: Open the deals list. Filter by last activity date, then sort. Open the first stalled deal and reread it. Write a follow-up by hand. Back to the list. Next deal, same again. Or just ask: “Show every deal with no activity in 14 days and draft a follow-up for each”</p>
-      </header>
-      <div class="lanes" aria-hidden="true">
-        <article class="lane hand">
-          <header><span class="lane-t">By hand</span><span class="sw">0:00</span></header>
-          <div class="scr">
-            <div class="scr-bar"><svg class="lg"><use href="#lg-hubspot"/></svg><span class="crumb">HubSpot</span><span class="ex">Example</span></div>
-            <div class="scr-main"><ul class="scr-nav"><li>Contacts</li><li>Deals</li><li>Tasks</li><li>Reports</li></ul><div class="scr-view"></div></div>
-            <i class="scr-cur"></i>
-          </div>
-          <p class="lane-s"></p>
-        </article>
-        <article class="lane ask">
-          <header><span class="lane-t">Just ask</span><span class="sw">0:00</span></header>
-          <div class="scr rchat">
-            <div class="scr-bar"><i class="rdot"></i><span class="crumb">Your AI, connected to HubSpot</span><span class="ex">Example</span></div>
-            <div class="chat-body"><p class="rmsg me"><span></span></p><p class="rmsg st" hidden></p><div class="rmsg ai" hidden><div class="scr-row"><span>Harbour Dental</span><span>Draft ready</span></div><div class="scr-row"><span>Cove Road Cafe</span><span>Draft ready</span></div><div class="scr-row"><span>East End Yoga</span><span>Draft ready</span></div><p>Three deals went quiet. Each one has a follow-up that mentions your last talk.</p></div></div>
-          </div>
-          <p class="lane-s"></p>
-        </article>
-      </div>
-      <p class="race-note">A replay with example data. Both clocks run in real time on your screen. It works through HubSpot's own connector.</p>
+      <p class="tools-cta"><span>Want this in your tools?</span><a class="btn btn-ghost btn-sm" href="/book">Book a call</a></p>
     </div>
   </div>
 </section>

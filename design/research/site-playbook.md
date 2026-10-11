@@ -4,6 +4,8 @@ Research of 2026-09-30. Every change goes through Impeccable, one named change a
 
 ## Decisions for the homepage
 
+2026-10-10: the six by-hand versus just-ask races are replaced by one tool picker that shows each tool's finished result at once, beside its steps by hand. Decisions 3, 4 and 6 (race clocks, time tapes, measured run times) no longer apply; decision 5 (end on an output, show the approval) lives on in the picker.
+
 Ranked by effect on the founder's three verdicts.
 
 1. **Plan: five equal stops on linear scroll.** Stop 1 holds about 161svh; stops 2 to 4 hold 25 to 29svh each (208 to 248 px on a phone) because the step index follows the eased orbit value. Give each stop 90svh or more, index by linear progress, show 10 words or fewer plus one visual. Metric: PostHog `plan_step_dwell` median 3 s or more per stop; stop 5 reached by 70% of stop 1 viewers. Impact: stops crossed per 500 px flick fall from 2.0 to 2.4 to 0.66. Watch scroll-away: too slow also tires users.

@@ -14,7 +14,7 @@ const $$ = <T extends Element = HTMLElement>(s: string, el: ParentNode = documen
 // The opening is seen from above and pulled back, so all three bodies read as one system pulling apart.
 const HERO = { el: 30, dist: 11.5, lens: 4 };
 // Six tool worlds. Each has its own camera height and distance, and its own place for the three bodies:
-// a → b is where they roam (ahead of / beside the tool, in world units) as you scroll through the section.
+// a → b is where they roam (ahead of / beside the tool, in world units) as you scroll through the tools scene.
 const FLY: HomeFlyWorld[] = [
   { id: 'shopify',        tx: 7.71,   tz: 9.19,   el: 24, dist: 8.6,  a: [-0.8, -2.6], b: [-0.4, 2.6],  sp: 1.0, rw: 1.1 },
   { id: 'meta',           tx: 11.82,  tz: -2.08,  el: 12, dist: 8.2,  a: [5.5, -2.5],  b: [4.5, 2.5],   sp: 1.5, rw: 2.0 },
@@ -33,21 +33,27 @@ const KEYS: HomeKey[] = [
   // 2 · The guide: the AI is lit at the centre; the bodies swing wide around it, unheld.
   { sel: '#guide', f: 0.25, pin: 1, hero: 0, lens: 0, conn: 1, k: 0, free: 0, el: 44, az: 10, dist: 12.5, ox: 0.26, oy: 0.02, poy: 0.02, rf: 0.8, rs: 2.6, sp: 1.3, rw: 1.1, shl: 1 },
   { sel: '#guide', f: 0.9, pin: 1, el: 36, az: 34, dist: 11.5, rf: -0.4, rs: 3.2, sp: 1.4 },
-  // 3 · The flybys: six tool worlds, each its own place and its own view. The bodies come too, still wild.
-  ...FLY.flatMap((w, i) => [
-    { sel: '#fly-' + w.id, f: 0.15, pin: 1, wsel: i, tx: w.tx, tz: w.tz, az: 70 + i * 60, conn: 0, k: 0, free: 0, fly: 1, dim: 1, shl: 0, el: w.el, dist: w.dist, ox: 0, oy: -0.1, poy: -0.08, rf: w.a[0], rs: w.a[1], sp: w.sp, rw: w.rw },
-    { sel: '#fly-' + w.id, f: 0.8, pin: 1, az: 80 + i * 60, rf: w.b[0], rs: w.b[1] } ]),
+  // 3 · The tools: the camera flies to the world of the tool the visitor picks, and on to the next when they pick
+  // again. The bodies come too, still wild. The picked world's values fill these two keys as the scene blends (at).
+  { sel: '#tools', f: 0.15, pin: 1, conn: 0, k: 0, free: 0, fly: 1, dim: 0.6, shl: 0, ox: 0.26, oy: 0.02, poy: 0.12 },
+  { sel: '#tools', f: 0.8, pin: 1 },
   // 4 · The plan: back to the centre. Only here are they steered, and only here does the orbit form.
-  { sel: '#after', f: 0, pin: 1, fly: 0, tx: 0, tz: 0, k: 0.45, free: 0.4, dim: 0, stops: 1, el: 60, az: 394, dist: 9.6, ox: 0.21, oy: 0.02, poy: 0.02, calm: 0.35, rf: 0, rs: 0, sp: 1, rw: 0, shl: 0.85 },
+  { sel: '#after', f: 0, pin: 1, fly: 0, tx: 0, tz: 0, k: 0.45, free: 0.4, dim: 0, stops: 1, el: 60, az: 34, dist: 9.6, ox: 0.21, oy: 0.02, poy: 0.02, calm: 0.35, rf: 0, rs: 0, sp: 1, rw: 0, shl: 0.85 },
   { sel: '#after', f: 0.35, pin: 1, k: 1, free: 1, third: 0.6, poy: -0.02, shl: 0.3 },
-  { sel: '#after', f: 1, pin: 1, k: 1, order: 1, ink: 1, third: 1, calm: 1, el: 64, az: 402 },
+  { sel: '#after', f: 1, pin: 1, k: 1, order: 1, ink: 1, third: 1, calm: 1, el: 64, az: 42 },
   // The promises: down inside the orbit, close, as the bodies glide past in order.
-  { sel: '#promises', f: 0.1, pin: 1, stops: 0, shl: 0, el: 17, az: 438, dist: 8.8, lens: 8, ox: 0.24, oy: 0.03, poy: -0.04 },
-  { sel: '#promises', f: 1, pin: 1, el: 14, az: 510 },
+  { sel: '#promises', f: 0.1, pin: 1, stops: 0, shl: 0, el: 17, az: 78, dist: 8.8, lens: 8, ox: 0.24, oy: 0.03, poy: -0.04 },
+  { sel: '#promises', f: 1, pin: 1, el: 14, az: 150 },
   // 5 · Stable orbit: steering lets go and it holds. Seen whole, from high above.
-  { sel: '#close', f: 0.35, k: 0, agent: 1, lens: 0, el: 56, az: 532, dist: 15, ox: 0.28, oy: 0.08, poy: 0.24, shl: 0.6 },
-  { sel: '#close', f: 1, el: 60, az: 540, dist: 16 }
+  { sel: '#close', f: 0.35, k: 0, agent: 1, lens: 0, el: 56, az: 172, dist: 15, ox: 0.28, oy: 0.08, poy: 0.24, shl: 0.6 },
+  { sel: '#close', f: 1, el: 60, az: 180, dist: 16 }
 ];
+// The picked tool's world, at the start (f 0.15) and end (f 0.8) of the tools scene. Each world is seen from its own
+// side, kept within half a turn of the guide's view so the camera never spins the long way round.
+const toolView = (i: number, end: boolean): Partial<HomeSceneParams> => {
+  const w = FLY[i] ?? FLY[0], roam = end ? w.b : w.a, az = ((70 + i * 60 + (end ? 10 : 0) + 146) % 360) - 146;
+  return { wsel: i, tx: w.tx, tz: w.tz, el: w.el, dist: w.dist, az, rf: roam[0], rs: roam[1], sp: w.sp, rw: w.rw };
+};
 const PARAMS = Object.keys(KEYS[0]).filter(k => !['sel', 'f', 'pin', 'gap'].includes(k)) as (keyof HomeSceneParams)[];
 for (let i = 1; i < KEYS.length; i++) PARAMS.forEach(k => { if (KEYS[i][k] === undefined) KEYS[i][k] = KEYS[i - 1][k]; });
 
@@ -55,7 +61,7 @@ for (let i = 1; i < KEYS.length; i++) PARAMS.forEach(k => { if (KEYS[i][k] === u
 export function startUi(): { S: Solenix; stop: () => void } {
   const root = document.documentElement;
   // The object is made here and filled in below (hero, fly, stops, ...) before any other part reads it.
-  const S = window.solenix = { p: 0, motion: true, vh: innerHeight, scene: {}, sceneIdx: 0 } as Solenix;
+  const S = window.solenix = { p: 0, motion: true, vh: innerHeight, scene: {}, sceneIdx: 0, pick: 0 } as Solenix;
   S.smooth = smooth;
   S.hero = HERO;
   S.fly = FLY;
@@ -89,8 +95,10 @@ export function startUi(): { S: Solenix; stop: () => void } {
     for (let i = 1; i < keyY.length; i++) if (y < keyY[i]) return [i - 1, smooth(0, 1, (y - keyY[i - 1]) / (keyY[i] - keyY[i - 1]))];
     return [KEYS.length - 1, 0];
   }
+  // A key as the scene uses it: the tools keys take the picked world's values.
+  const at = (j: number): HomeKey => KEYS[j].sel === '#tools' ? { ...KEYS[j], ...toolView(S.pick, KEYS[j].f > 0.5) } : KEYS[j];
   function updateScene() {
-    const y = scrollY, [i, t] = sceneAt(y), A = KEYS[i], B = KEYS[Math.min(i + 1, KEYS.length - 1)], sc = S.scene;
+    const y = scrollY, [i, t] = sceneAt(y), A = at(i), B = at(Math.min(i + 1, KEYS.length - 1)), sc = S.scene;
     // Always continuous. Reduced motion changes how the scene moves, never whether it follows the scroll.
     PARAMS.forEach(k => sc[k] = A[k]! + (B[k]! - A[k]!) * t);
     S.sec = t < 0.5 ? A.sel : B.sel;
@@ -136,6 +144,8 @@ export function startUi(): { S: Solenix; stop: () => void } {
   }
   l.on(window, 'scroll', () => { if (!ticking) { ticking = true; scrollRaf = requestAnimationFrame(onScroll); } }, { passive: true });
   l.on(window, 'resize', () => { S.vh = innerHeight; layoutKeys(); onScroll(); });
+  // A new pick in the tools scene moves the camera without a scroll.
+  l.on(window, 'solenix:pick', () => onScroll());
 
   // Section headlines build word by word, once, as their section arrives.
   const hio = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('play'); hio.unobserve(e.target); } }), { threshold: 0.6 });

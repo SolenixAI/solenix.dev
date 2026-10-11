@@ -47,20 +47,13 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
   l.on(window, 'scroll', markDirty, { passive: true });
   l.on(window, 'resize', markDirty);
 
-  // Tool sections: the open band is the space between a race's headline and its lanes, measured from the page.
-  // With the lanes stacked, it is the tallest gap between the rows. Null for a section that is not a race.
+  // The tools scene: the open band is the sky between the tool tabs and the open panel, measured from the page.
+  // Null for any other section.
   function openBand(sec: string) {
-    const el = document.querySelector(sec); if (!el || !el.classList.contains('race')) return null;
-    const head = el.querySelector('.race-head')!.getBoundingClientRect(), lanes = el.querySelector('.lanes')!.getBoundingClientRect();
-    let y0 = head.bottom, y1 = lanes.top;
-    const stacked = el.querySelector('.lane.ask')!.getBoundingClientRect().top > lanes.top + 40 ? 1 : 0;
-    // Lanes stacked: they fill the screen, so take the tallest gap between the rows themselves.
-    if (stacked) {
-      const rows = [...el.querySelectorAll('.race-head, .lane > header, .scr-bar, .scr-nav, .scr-view > *, .rmsg, .lane-s, .race-note')].map(e => e.getBoundingClientRect()).filter(r => r.height > 2 && r.width > 2).sort((a, b) => a.top - b.top);
-      let edge = rows.length ? rows[0].bottom : 0, best = 0;
-      for (const r of rows) { if (r.top - edge > best) { best = r.top - edge; y0 = edge; y1 = r.top; } edge = Math.max(edge, r.bottom); }
-    }
-    return { y0, y1, stacked };
+    if (sec !== '#tools') return null;
+    const tabs = document.querySelector('#tools .tool-tabs'), panel = document.querySelector('#tools .tool-panel:not([hidden])');
+    if (!tabs || !panel) return null;
+    return { y0: tabs.getBoundingClientRect().bottom, y1: panel.getBoundingClientRect().top, stacked: 0 };
   }
 
   // The page's labels and markers, placed from each frame after the render. Every value is the scene's, as the frame reports it.

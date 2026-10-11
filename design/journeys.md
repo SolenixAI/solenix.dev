@@ -111,7 +111,7 @@ journey
   section Understand
     Scrolls as the scene settles: 4: Owner
     Reads talk to one AI, not ten tools: 5: Owner
-    Watches the by-hand versus just-ask races: 5: Owner
+    Picks a tool they use and sees the finished result: 5: Owner
     Reads the five-step plan and the promises: 5: Owner
   section Trust
     Looks for proof, finds a placeholder photo: 2: Owner
