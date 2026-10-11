@@ -9,6 +9,7 @@ const problems = []
 
 // Pages, from the code.
 const pages = new Set<string>()
+const articlePages = new Set<string>() // one per article folder: what "/articles/*" names
 const walk = (dir: string) => {
   for (const name of readdirSync(dir)) {
     const file = path.join(dir, name)
@@ -18,7 +19,7 @@ const walk = (dir: string) => {
       const route = "/" + path.dirname(file).split(path.sep).slice(1).filter((s) => !/^\(.*\)$/.test(s)).join("/")
       if (route.includes("[slug]") && route.startsWith("/articles"))
         for (const a of readdirSync("articles")) {
-          if (!a.startsWith("_") && statSync(path.join("articles", a)).isDirectory()) pages.add(route.replace("[slug]", a))
+          if (!a.startsWith("_") && statSync(path.join("articles", a)).isDirectory()) { pages.add(route.replace("[slug]", a)); articlePages.add(route.replace("[slug]", a)) }
         }
       else pages.add(route)
     }
@@ -28,6 +29,11 @@ walk("app")
 // A redirect that leaves the site (like /book) is a step people take; an old alias of a page is not.
 for (const m of readFileSync("next.config.ts", "utf8").matchAll(/source:\s*["']([^"']+)["'][\s\S]*?destination:\s*["']([^"']+)["']/g))
   if (/^https?:/.test(m[2])) pages.add(m[1])
+
+// "/articles/*" names every article (a folder in articles/), so a new article joins its journeys with no edit to the
+// doc. It names nothing else: not the feed, not the index.
+const ARTICLES = "/articles/*"
+const names = (entry: string, page: string) => (entry === ARTICLES ? articlePages.has(page) : entry === page)
 
 // Journeys, from the doc.
 const doc = readFileSync(DOC, "utf8")
@@ -40,13 +46,11 @@ for (const s of sections) {
   if (!/```mermaid\s*\n\s*journey\b/.test(s)) problems.push(`"${title}" lists pages but has no journey diagram`)
   for (const p of line[1].split(",").map((x) => x.trim()).filter(Boolean)) {
     named.add(p)
-    // "/articles/*" names every page under /articles/, so a new article joins its journeys with no edit here.
-    const ok = p.endsWith("/*") ? [...pages].some((x) => x.startsWith(p.slice(0, -1))) : pages.has(p)
-    if (!ok) problems.push(`"${title}" names ${p}, which is not a page on the site`)
+    if (p.includes("*") && p !== ARTICLES) problems.push(`"${title}" names ${p}: the one wildcard is ${ARTICLES}, every article`)
+    else if (p === ARTICLES ? articlePages.size === 0 : !pages.has(p)) problems.push(`"${title}" names ${p}, which is not a page on the site`)
   }
 }
-const inJourney = (p: string) => named.has(p) || [...named].some((n) => n.endsWith("/*") && p.startsWith(n.slice(0, -1)))
-for (const p of pages) if (!inJourney(p)) problems.push(`${p} belongs to no journey: add it to a journey in ${DOC}`)
+for (const p of pages) if (![...named].some((n) => names(n, p))) problems.push(`${p} belongs to no journey: add it to a journey in ${DOC}`)
 
 // Every step has a feeling from 1 to 5.
 for (const block of doc.matchAll(/```mermaid\s*\n\s*journey\b([\s\S]*?)```/g))

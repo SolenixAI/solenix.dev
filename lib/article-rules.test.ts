@@ -1,33 +1,41 @@
 import { test } from "node:test"
 import assert from "node:assert/strict"
 import { readFileSync } from "node:fs"
-import { articleProblems } from "./article-rules.ts"
+import { articleProblems, pageEdges } from "./article-rules.ts"
 
-const TEMPLATE = readFileSync(new URL("../articles/_template/index.html", import.meta.url), "utf8")
+const read = (p: string) => readFileSync(new URL(p, import.meta.url), "utf8")
+const TEMPLATE = read("../articles/_template/index.html")
 const placeholders = (html: string) => articleProblems("my-new-piece", html).filter((p) => p.includes("template text"))
+const marks = (html: string) => [...html.matchAll(/<[a-z][^>]*\bdata-placeholder\b/gi)].length // marked elements, not mentions in comments
 
-test("a copy of the template that changes nothing fails on every placeholder it still holds", () => {
-  const found = placeholders(TEMPLATE)
-  for (const words of ["Article title", "The headline with one", "Replace with the real thing", "Every fact links to its source"])
-    assert.ok(found.some((p) => p.includes(words)), `expected a problem naming "${words}", got ${JSON.stringify(found)}`)
+test("a copy of the template fails once for every piece of template text it still holds", () => {
+  assert.ok(marks(TEMPLATE) >= 10, "the template marks its placeholder text")
+  assert.equal(placeholders(TEMPLATE).length, marks(TEMPLATE))
+  for (const words of ["Article title", "The headline with one", "Tie the story", "Every fact links to its source"])
+    assert.ok(placeholders(TEMPLATE).some((p) => p.includes(words)), `a problem names "${words}"`)
 })
 
-test("a page whose words are its own passes the placeholder rule", () => {
-  const own = TEMPLATE
-    .replace("Article title", "Gaps between primes")
-    .replace("One sentence a busy owner reads in a feed and wants to open: what this shows and why it matters.", "A new bound on how far apart two primes can sit, drawn as a map you can drag.")
-    .replace("The headline with one <span class=\"grad\">glowing</span> word", "Primes keep their <span class=\"grad\">distance</span>")
-    .replace("Replace with the real thing: a playground, a picture, a map. Show before you tell.", "A map of every prime gap below a million.")
-    .replace("Every fact links to its source, newest first, with its date.", "<a href=\"https://example.org\">A paper</a>, 2026-10-01.")
-    .replace("One plain sentence of what happened, then the open question it raises?", "A new bound arrived this week. How close can two primes sit?")
-    .replace("The live thing itself: a playground, a simulation, the data you can touch.", "Drag the slider to change the range.")
-    .replace("One section, one idea", "What changed")
-    .replace("The one first step →", "See the map →")
-  assert.deepEqual(placeholders(own), [])
+test("a copy with its marks dropped passes the placeholder rule, and so does the real article", () => {
+  assert.deepEqual(placeholders(TEMPLATE.replace(/\s*\bdata-placeholder\b/g, "")), [])
+  assert.deepEqual(articleProblems("proof-flood", read("../articles/proof-flood/index.html")), [])
 })
 
-test("the template's page edge and type follow the design tokens, so a copy starts right", () => {
-  assert.equal(articleProblems("my-new-piece", TEMPLATE).filter((p) => p.includes("page edge")).length, 0)
-  assert.match(TEMPLATE, /\.wrap\{[^}]*padding-inline:var\(--gutter\)/)
-  assert.doesNotMatch(TEMPLATE, /font:17px/)
+test("the page edge is .wrap's left and right padding, read from every form of the property", () => {
+  const edge = (css: string) => pageEdges(`<style>.wrap{${css}}</style>`)
+  assert.deepEqual(edge("padding-inline:var(--gutter)"), ["var(--gutter)", "var(--gutter)"])
+  assert.deepEqual(edge("padding:0 var(--gutter) 96px"), ["var(--gutter)", "var(--gutter)"])
+  assert.deepEqual(edge("padding:0 20px 96px"), ["20px", "20px"])
+  assert.deepEqual(edge("padding:20px"), ["20px", "20px"])
+  assert.deepEqual(edge("padding:var(--space-6) var(--space-4)"), ["var(--space-4)", "var(--space-4)"])
+  assert.deepEqual(edge("padding-left:20px"), ["20px"])
+  assert.deepEqual(edge("padding-block:0 80px"), [])
+})
+
+test("a page edge other than the gutter fails, and the template's own edge passes", () => {
+  const fails = (css: string) => articleProblems("x", TEMPLATE.replace(/\.wrap\{[^}]*\}/, `.wrap{${css}}`)).some((p) => p.includes("page edge"))
+  assert.equal(fails("padding:0 20px 96px"), true)
+  assert.equal(fails("padding:0"), true)
+  assert.equal(fails("padding-right:16px"), true)
+  assert.equal(fails("padding-inline:var(--gutter);padding-bottom:96px"), false)
+  assert.equal(articleProblems("my-new-piece", TEMPLATE).some((p) => p.includes("page edge")), false)
 })
