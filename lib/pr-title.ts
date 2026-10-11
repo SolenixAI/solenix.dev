@@ -6,9 +6,11 @@
 export function prTitleProblems(title: string): string[] {
   const t = title.trim(), out: string[] = []
   if (t.length < 12 || t.length > 120) out.push(`is ${t.length} characters: write one plain sentence of 12 to 120`)
-  if (/^[a-z]+(\([^)]*\))?!?:\s/i.test(t)) out.push(`starts with a commit-type prefix ("${t.split(":")[0]}:"): say what changes, in a sentence`)
-  else if (/^[a-z]/.test(t)) out.push("starts with a lower-case letter: start with a capital, as a sentence does")
+  // A commit type is one of the conventional set, lower case; "Agents: …" is a subject, not a prefix.
+  if (/^(feat|fix|chore|docs|refactor|test|ci|build|perf|style|revert)(\([^)]*\))?!?:\s/.test(t)) out.push(`starts with a commit-type prefix ("${t.split(":")[0]}:"): say what changes, in a sentence`)
+  // A first word in plain lower-case letters is a sentence not started; a code name (next.config, useEffect) is kept as written.
+  else if (/^[a-z]+$/.test(t.split(/\s/)[0])) out.push("starts with a lower-case word: start with a capital, as a sentence does")
   if (/\.$/.test(t) && !/\.\.\.$/.test(t)) out.push("ends with a full stop: titles carry none")
-  if (/^\[?(wip|draft)\b/i.test(t)) out.push("is marked work in progress: open the PR as a draft instead")
+  if (/^\[?wip\b|^\[draft\]|^draft:/i.test(t)) out.push("is marked work in progress: open the PR as a draft instead")
   return out
 }
