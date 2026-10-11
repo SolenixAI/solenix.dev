@@ -26,9 +26,10 @@ grep -rn -E '· v[0-9]|\(v[0-9]\)|/\* v[0-9]|\bv[0-9] ·' DESIGN.md design/token
   | while read -r l; do echo "check: version label: $l"; done | grep . && fail=1
 
 # GitHub main is the one source. Committing on local main is where drift starts: a change GitHub main does not have
-# (by content, so a squash-merged PR is not drift) is lost on the next reset or becomes a second history. A main that
-# is only behind is not drift: pull.ff only brings it up to date. Commits on any other branch cannot drift main, so
-# the check runs only on main. CI checks out a detached merge ref, so it never runs there.
+# is lost on the next reset or becomes a second history. Changes are compared by content (git cherry), so a commit
+# GitHub took as is, or squashed alone, is not drift; several local commits squashed into one still count until main
+# is moved. A main that is only behind is not drift: pull.ff only brings it up to date. Commits on any other branch
+# cannot drift main, so the check runs only on main (on pull requests CI checks out a detached merge ref and skips it).
 if [ "$(git symbolic-ref -q HEAD)" = refs/heads/main ]; then
   if git rev-parse -q --verify refs/remotes/origin/main >/dev/null; then
     ahead=$(git cherry refs/remotes/origin/main refs/heads/main | grep -c '^+')
