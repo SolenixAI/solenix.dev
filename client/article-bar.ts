@@ -33,6 +33,7 @@ else if (bar) {
   document.fonts?.ready.then(fit)
 
   let frame = 0
+  let finished = false
   let shown: string | null | undefined
   const update = () => {
     frame = 0
@@ -60,7 +61,13 @@ else if (bar) {
       if (current) current.textContent = on?.textContent ?? noSection
     }
     const root = document.documentElement
-    if (progress) progress.style.transform = `scaleX(${Math.min(1, root.scrollTop / Math.max(1, root.scrollHeight - innerHeight))})`
+    const scrollable = root.scrollHeight - innerHeight
+    if (progress) progress.style.transform = `scaleX(${Math.min(1, root.scrollTop / Math.max(1, scrollable))})`
+    // Finished: the reader reached the end of a page that scrolls (2px allowed, for fractional scroll). Counted once per view.
+    if (!finished && scrollable > 0 && root.scrollTop >= scrollable - 2) {
+      finished = true
+      window.captureGoal?.("article_read")
+    }
   }
   addEventListener("scroll", () => { frame ||= requestAnimationFrame(update) }, { passive: true })
   addEventListener("resize", update)
@@ -71,10 +78,10 @@ else if (bar) {
   share?.addEventListener("click", async () => {
     const url = location.origin + location.pathname
     if (navigator.share) {
-      try { await navigator.share({ title: document.title, url }) } catch { /* the visitor closed the sheet */ }
+      try { await navigator.share({ title: document.title, url }); window.captureGoal?.("article_shared") } catch { /* the visitor closed the sheet */ }
       return
     }
-    try { await navigator.clipboard.writeText(url); if (shareLabel) shareLabel.textContent = "Link copied" } catch { /* no clipboard */ }
+    try { await navigator.clipboard.writeText(url); if (shareLabel) shareLabel.textContent = "Link copied"; window.captureGoal?.("article_shared") } catch { /* no clipboard */ }
   })
   for (const type of ["mouseleave", "blur"]) share?.addEventListener(type, () => { if (shareLabel) shareLabel.textContent = shareText })
 }
