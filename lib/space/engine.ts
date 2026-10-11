@@ -18,7 +18,7 @@ import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
 export interface Vec3 { x: number; y: number; z: number }
 
-export type { SpaceCard, CardState } from "./cards";
+export type { SpaceCard, CardState, TypeLine } from "./cards";
 
 /** The scroll-driven values a page sets each frame. Each field is read by the engine or by the page's onFrame. */
 export interface SpaceParams {
@@ -265,7 +265,7 @@ export function createSpace(env: SpaceEnv): Space {
   renderer.toneMappingExposure = 0.86;
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 400);
-  const cards = createCards(scene, camera);
+  const cards = createCards(camera);
 
   const additive = { transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending };
   const bodyU = { value: [new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()] };
@@ -706,6 +706,7 @@ export function createSpace(env: SpaceEnv): Space {
     cards.update(env.cards?.() ?? [], dtReal);
     timeU.value = shownT; finalPass.uniforms.uTime.value = shownT;
     composer.render();
+    cards.render(renderer);
 
     // The page's own DOM: its labels and markers, placed from this frame. Read-only for the engine.
     env.onFrame?.({

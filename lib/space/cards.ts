@@ -7,6 +7,9 @@ import * as THREE from 'three';
 
 export type CardState = "plain" | "hot" | "done" | "dim" | "new"
 
+/** A line of type set in the space: a headline (h) or a smaller line (p); em parts take the ember, ex parts are the Example label. */
+export interface TypeLine { size: "h" | "p"; parts: { t: string; em?: boolean; ex?: boolean }[]; px?: number; weight?: number }
+
 /** One card, as the page wants it this frame. */
 export interface SpaceCard {
   id: string
@@ -16,8 +19,14 @@ export interface SpaceCard {
   dx: number
   dy: number
   w: number
-  /** A thing (title and value), something said ("Sort today's inbox"), a reply, or an ask the visitor can tap. */
-  kind: "thing" | "say" | "reply" | "ask"
+  /** A thing (title and value), something said ("Sort today's inbox"), a reply, an ask the visitor can tap, or
+   * words set in the space (type: lines, no card behind them). */
+  kind: "thing" | "say" | "reply" | "ask" | "type"
+  lines?: TypeLine[]
+  /** Type only: where its lines wrap, in canvas pixels (the canvas is 1600 wide). */
+  wrap?: number
+  /** Which edge of the card dx, dy place (default its centre). */
+  align?: "center" | "bottom"
   title: string
   value?: string
   state?: CardState
@@ -39,7 +48,42 @@ function wrap(g: CanvasRenderingContext2D, text: string, max: number): string[] 
   return out;
 }
 
+const TW = 1600;
+// Words set in the space: big Sora headlines with the ember on their em part, a softer line under them. No card
+// behind them; a soft dark halo keeps them readable over the suns.
+function drawType(c: HTMLCanvasElement, lines: TypeLine[], wrapAt = TW - 40): number {
+  const g = c.getContext('2d')!;
+  const px = (l: TypeLine) => l.px ?? (l.size === 'h' ? 132 : 56);
+  const font = (l: TypeLine, ex?: boolean) => ex ? `600 ${Math.round(px(l) * 0.6)}px ${MONO}` : `${l.weight ?? (l.size === 'h' ? 800 : 500)} ${px(l)}px ${SANS}`;
+  const lh = (l: TypeLine) => px(l) * (l.size === 'h' ? 1.0 : 1.45);
+  type Word = { t: string; em?: boolean; ex?: boolean; w: number };
+  const rows: { l: TypeLine; words: Word[] }[] = [];
+  for (const l of lines) {
+    const words: Word[] = [];
+    for (const p of l.parts) for (const t of p.t.split(/\s+/).filter(Boolean)) { g.font = font(l, p.ex); (g as CanvasRenderingContext2D & { letterSpacing: string }).letterSpacing = l.size === 'h' && !p.ex ? '-5px' : '0px'; words.push({ t, em: p.em, ex: p.ex, w: g.measureText(t).width + (p.ex ? 40 : 0) }); }
+    let row: Word[] = [], width = 0; const space = px(l) * 0.27;
+    for (const w of words) { if (row.length && width + space + w.w > wrapAt) { rows.push({ l, words: row }); row = []; width = 0; } width += (row.length ? space : 0) + w.w; row.push(w); }
+    if (row.length) rows.push({ l, words: row });
+  }
+  const H = Math.ceil(rows.reduce((a, r) => a + lh(r.l), 0) + 60);
+  c.width = TW; c.height = H; g.clearRect(0, 0, TW, H);
+  let y = 20;
+  for (const r of rows) {
+    y += lh(r.l); let x = 20; const space = px(r.l) * 0.27, base = y - lh(r.l) * 0.18;
+    for (const w of r.words) {
+      g.font = font(r.l, w.ex); (g as CanvasRenderingContext2D & { letterSpacing: string }).letterSpacing = r.l.size === 'h' && !w.ex ? '-5px' : '0px';
+      g.shadowColor = 'rgba(5,6,10,0.75)'; g.shadowBlur = 28;
+      if (w.ex) { g.shadowBlur = 0; g.strokeStyle = 'rgba(244,242,238,0.3)'; g.lineWidth = 2; g.beginPath(); const ph = px(r.l) * 0.95; g.roundRect(x, base - ph * 0.78, w.w, ph, ph / 2); g.stroke(); g.fillStyle = MUTED; g.fillText(w.t, x + 20, base - ph * 0.12); }
+      else if (w.em) { const gr = g.createLinearGradient(x, 0, x + w.w, 0); gr.addColorStop(0, '#fbbf24'); gr.addColorStop(1, '#f97316'); g.fillStyle = gr; g.fillText(w.t, x, base); }
+      else { g.fillStyle = r.l.size === 'h' ? '#efece6' : '#d6d1ca'; g.fillText(w.t, x, base); }
+      x += w.w + space;
+    }
+  }
+  return H / TW;
+}
+
 function draw(c: HTMLCanvasElement, card: SpaceCard): number {
+  if (card.kind === 'type') return drawType(c, card.lines ?? [], card.wrap);
   const g = c.getContext('2d')!, st = card.state ?? 'plain', pad = 36;
   // Measure first: the card's height follows its words.
   g.font = `600 ${card.kind === 'say' ? 44 : card.kind === 'reply' ? 38 : card.kind === 'ask' ? 34 : 38}px ${SANS}`;
@@ -63,8 +107,11 @@ function draw(c: HTMLCanvasElement, card: SpaceCard): number {
   return H / CW;
 }
 
-/** The cards layer of one space. update() each frame after the camera moves; rect() for a card on screen. */
-export function createCards(scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
+/** The cards layer of one space. update() each frame after the camera moves, render() after the frame is drawn;
+ * rect() for a card on screen. The cards have their own scene, drawn with the same camera after the post passes, so
+ * they stand in the world's space and perspective but stay as crisp as the page's own words (no vignette or grain). */
+export function createCards(camera: THREE.PerspectiveCamera) {
+  const scene = new THREE.Scene();
   const geo = new THREE.PlaneGeometry(1, 1);
   const live = new Map<string, { mesh: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>; key: string; aspect: number; pos: THREE.Vector3; seen: boolean; al: number; w: number; h: number }>();
   const right = new THREE.Vector3(), up = new THREE.Vector3(), want = new THREE.Vector3(), tmp = new THREE.Vector3();
@@ -82,16 +129,17 @@ export function createCards(scene: THREE.Scene, camera: THREE.PerspectiveCamera)
         mesh.renderOrder = 20; mesh.frustumCulled = false; scene.add(mesh);
         e = { mesh, key: '', aspect: 0.2, pos: new THREE.Vector3(), seen: false, al: 0, w: 0, h: 0 }; live.set(c.id, e);
       }
-      const key = `${c.kind}|${c.title}|${c.value ?? ''}|${c.state ?? ''}`;
+      const key = `${c.kind}|${c.title}|${c.value ?? ''}|${c.state ?? ''}|${c.lines ? JSON.stringify(c.lines) : ''}`;
       if (key !== e.key) { e.key = key; e.aspect = draw(e.mesh.material.map!.image as HTMLCanvasElement, c); e.mesh.material.map!.needsUpdate = true; }
       // The view height at the anchor's depth turns the page's units into world units.
       tmp.set(c.at.x, c.at.y, c.at.z);
       const vh = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * Math.max(0.5, tmp.distanceTo(camera.position));
       want.copy(tmp).addScaledVector(right, c.dx * vh).addScaledVector(up, c.dy * vh);
-      if (!e.seen) { e.pos.copy(want); e.seen = true; } else e.pos.lerp(want, k);
       e.w = c.w * vh; e.h = e.w * e.aspect;
+      if (c.align === 'bottom') want.addScaledVector(up, e.h / 2);
+      if (!e.seen) { e.pos.copy(want); e.seen = true; } else e.pos.lerp(want, c.kind === 'type' ? 1 : k);
       // Each card turns a little toward the middle of the view, so a column reads as objects standing in space.
-      e.mesh.position.copy(e.pos); e.mesh.quaternion.copy(camera.quaternion); e.mesh.rotateY(-c.dx * 0.55); e.mesh.scale.set(e.w, e.h, 1);
+      e.mesh.position.copy(e.pos); e.mesh.quaternion.copy(camera.quaternion); if (c.kind !== 'type') e.mesh.rotateY(-c.dx * 0.55); e.mesh.scale.set(e.w, e.h, 1);
       e.al += ((c.state === 'dim' ? 0.45 : 1) * c.alpha - e.al) * k;
       e.mesh.material.opacity = e.al; e.mesh.visible = e.al > 0.004;
     }
@@ -109,6 +157,10 @@ export function createCards(scene: THREE.Scene, camera: THREE.PerspectiveCamera)
     return { x0, y0, x1, y1 };
   }
 
+  function render(renderer: THREE.WebGLRenderer) {
+    const auto = renderer.autoClear; renderer.autoClear = false; renderer.setRenderTarget(null); renderer.clearDepth(); renderer.render(scene, camera); renderer.autoClear = auto;
+  }
+
   function dispose() { for (const e of live.values()) { scene.remove(e.mesh); e.mesh.material.map?.dispose(); e.mesh.material.dispose(); } live.clear(); geo.dispose(); }
-  return { update, where, rect, dispose };
+  return { update, render, where, rect, dispose };
 }

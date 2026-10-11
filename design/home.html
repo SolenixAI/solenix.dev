@@ -101,6 +101,9 @@ html:not(.js) .stage { position: relative; height: auto; min-height: 100svh; }
 .cap-h { margin: 0; font-family: var(--font-display); font-size: clamp(1.75rem, min(4.6vw + 0.9rem, 9svh), 4.6rem); font-weight: var(--fw-black); letter-spacing: var(--track-statement); line-height: 0.98; max-width: 15ch; text-wrap: balance; }
 .cap-hero { font-size: clamp(2rem, min(6.4vw + 1rem, 11svh), 5rem); max-width: 12ch; }
 .cap-h em { font-style: normal; background: var(--grad-headline); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: none; }
+/* While the world draws them, the words are type in the space (lib/home/scene.ts): the page's own words keep their
+   place and stay for screen readers, unseen. */
+.type3d #journey .cap > :is(h1, h2, p, ul) { opacity: 0; }
 .say { margin: 0; font-size: var(--fs-lede); color: var(--text); }
 .fig { margin: 0; display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); font-size: var(--fs-lede); color: var(--text); }
 .fig b { color: var(--text); font-weight: var(--fw-semibold); font-variant-numeric: tabular-nums; }

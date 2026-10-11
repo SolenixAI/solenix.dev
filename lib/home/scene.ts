@@ -3,11 +3,12 @@
 // set by lib/home/ui.ts) and the five tool worlds are this page's. startScene() returns the binding the world takes,
 // and stop(), which removes what this page added.
 import type { SpaceBinding } from "@/lib/space/world";
-import type { SpaceCard, SpaceFrame, SpaceWell, Vec3 } from "@/lib/space/engine";
+import type { SpaceCard, SpaceFrame, SpaceWell, TypeLine, Vec3 } from "@/lib/space/engine";
 import { orbitStop } from "@/lib/space/orbit";
 import { listener } from "./listen";
 import { PROOF, playProof, proofLength } from "./proof";
 import { slotAz, TOOL_WORLDS } from "./worlds";
+import { JOURNEY } from "./journey";
 
 // The tool worlds (lib/home/worlds.ts): each is a well (its mass) at its own place. az is the camera's view of it in
 // reduced motion.
@@ -18,6 +19,8 @@ const RVIEW: Record<string, number[]> = { guide: [44, 12.5], promises: [17, 8.8]
 const STOP_U = [0, 1, 2, 3, 4].map(k => orbitStop(k, 5));
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+// Each stop's tool, if it is a tool stop.
+const JOURNEY_TOOL = JOURNEY.map(s => ('tool' in s.scene ? s.scene.tool : null));
 
 // Each world wears its own mark, shown only while you are beside it.
 function placeAt(e: HTMLElement, p: Vec3, al: number, dy: number, f: SpaceFrame) {
@@ -61,6 +64,32 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
     p.asks.forEach((q, i) => { if (i === a) return; shown.push({ id: own(`ask${i}`), at, dx: x, dy: y, w: w * 0.92, kind: 'ask', title: q.say, alpha: al * m.reply }); y -= w * 0.2; });
     agentAt = m.at === 'say' ? own('say') : m.at ? id(m.at) : null;
   }
+  // The words of each stop, set as type in the world (lib/space/cards.ts). They are read from the page (the stop's
+  // caption: one source), drawn at the caption's own size and place while the stop is on, and left in the world when
+  // the camera moves on, so it passes them. The page's own words stay for screen readers and keyboards.
+  const TW = 1600, CANVAS_H = 132;
+  const capWords = [...document.querySelectorAll<HTMLElement>('#journey .cap')].map(cap => [...cap.querySelectorAll<HTMLElement>(':scope > :is(h1, h2, p, ul)')]);
+  const partsOf = (el: HTMLElement): TypeLine['parts'] => el.tagName === 'UL'
+    ? [{ t: [...el.querySelectorAll('li')].map(li => li.textContent!.trim()).join(' · ') }]
+    : [...el.childNodes].map(n => n instanceof HTMLElement ? (n.classList.contains('ex') ? { t: 'Example', ex: true } : { t: n.textContent!.replace(/\u2011/g, '-'), em: n.tagName === 'EM' }) : { t: (n.textContent ?? '').replace(/\u2011/g, '-') }).filter(p => p.t.trim());
+  let typeOn: SpaceCard | null = null;
+  function words(f: SpaceFrame) {
+    typeOn = null;
+    const els = capWords[S.cur];
+    if (!els || !els.length) return;
+    const rs = els.map(e => e.getBoundingClientRect()).filter(r => r.width > 0);
+    if (!rs.length) return;
+    const left = Math.min(...rs.map(r => r.left)), right = Math.max(...rs.map(r => r.right)), bottom = Math.max(...rs.map(r => r.bottom));
+    const sizes = els.map(e => parseFloat(getComputedStyle(e.tagName === 'UL' ? e.querySelector('li') ?? e : e).fontSize)), big = Math.max(...sizes), K = CANVAS_H / big;
+    const lines: TypeLine[] = els.map((e, i) => ({ size: /^H/.test(e.tagName) ? 'h' : 'p', px: Math.round(sizes[i] * K), weight: +getComputedStyle(e).fontWeight || 600, parts: partsOf(e) }));
+    // The subject this stop is about: its tool's world, or the AI at the centre.
+    const sc = JOURNEY_TOOL[S.cur], wi = sc ? S.fly.findIndex(w => w.id === sc) : -1, at = wi >= 0 ? f.well(wi) : f.hub();
+    const v = f.project(at.x, at.y, at.z); if (v.z > 1) return;
+    const W = f.width, H = f.height, aspect = W / H, wpx = TW / K;
+    const cx = (left - 20 / K + wpx / 2 - W / 2) / H, by = -(bottom + 8 - H / 2) / H;
+    typeOn = { id: `type:${S.cur}`, at, dx: cx - v.x * aspect / 2, dy: by - v.y / 2, w: wpx / H, kind: 'type', title: '', lines, wrap: (right - left) * K + 30, align: 'bottom', alpha: 1 };
+  }
+
   // A tap on an ask in the world plays it.
   const hitAsk = (e: PointerEvent) => {
     if (!last || !S.play) return null;
@@ -69,7 +98,7 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
   };
   l.on(window, 'pointerup', (e: PointerEvent) => { const c = hitAsk(e); if (!c || !S.play) return; const p = PROOF.find(x => x.tool === S.play!.tool)!; S.ask(p.tool, p.asks.findIndex(q => q.say === c.title)); });
   l.on(window, 'pointermove', (e: PointerEvent) => { document.documentElement.style.cursor = hitAsk(e) ? 'pointer' : ''; }, { passive: true });
-  l.add(() => { document.documentElement.style.cursor = ''; });
+  l.add(() => { document.documentElement.style.cursor = ''; document.documentElement.classList.remove('type3d'); });
   const jrEl = document.getElementById('journey')!;
 
   // Revenue, Costs, Time: a small tag under each sun, all the way through. They fade only where the scene is
@@ -96,7 +125,9 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
   function labels(f: SpaceFrame) {
     const sc = f.params, W = f.width, H = f.height, portrait = f.portrait, fl = f.fly, wsel = f.wsel, heroAmt = f.hero, locked = f.locked;
     last = f;
+    if (!document.documentElement.classList.contains('type3d')) document.documentElement.classList.add('type3d');
     work(f);
+    words(f);
     // Beside one world, only its mark shows; seen from afar (no world picked), every world wears its mark.
     worldTags.forEach((e, i) => placeAt(e, f.well(i), fl * (wsel < 0 ? 1 : (portrait ? 0 : 1) * Math.max(0, 1 - Math.abs(wsel - i) * 1.6)), 0, f));
     tagShow = lerp(tagShow, locked || sc.agent > 0.98 ? 1 : 0, 1 - Math.exp(-f.dt * 4));
@@ -141,7 +172,7 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
     },
     openBand,
     onFrame: labels,
-    cards: () => shown,
+    cards: () => (typeOn ? [...shown, typeOn] : shown),
     agentTo: () => agentAt,
     onLock: (holding) => { jrEl.classList.toggle('locked', holding); ui.classList.toggle('locked', holding); },
     onPayoff: () => { ui.classList.remove('lock-pop'); void ui.offsetWidth; ui.classList.add('lock-pop'); },
