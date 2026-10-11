@@ -131,10 +131,8 @@ export function Worlds({ cards, initial, version }: { cards: Card[]; initial: st
 
 function WorldView({ card, onClose, failedOnOpen }: { card: Card; onClose: () => void; failedOnOpen: boolean }) {
   const world = card.entry
-  // A failed copy shows the full sentence, selected, and scrolls to it, so one copy command takes it.
-  const { status, text, copy, fail, blur } = useCopyForAi<HTMLParagraphElement>(world.sentence, () => {
-    requestAnimationFrame(() => text.current?.scrollIntoView({ block: "center" }))
-  })
+  // A failed copy shows the full sentence, selected and in view, so one copy command takes it.
+  const { status, shown, text, copy, fail, blur } = useCopyForAi<HTMLParagraphElement>(world.sentence)
   // The inline action has scrolled off (a long level on a phone): a sticky copy bar stands in for it.
   const [away, setAway] = useState(false)
   const action = useRef<HTMLButtonElement>(null)
@@ -167,7 +165,7 @@ function WorldView({ card, onClose, failedOnOpen }: { card: Card; onClose: () =>
         <div className="wd-copy">
           <p className="wd-outcome">{outcome}</p>
           <button ref={action} type="button" className="wd-action" onBlur={blur} onClick={copy}>{label}</button>
-          <p ref={text} className="wd-run-text" hidden={status !== "failed"}><Sentence text={world.sentence} /></p>
+          <p ref={text} className="wd-copy-sentence" hidden={!shown}><Sentence text={world.sentence} /></p>
           <p role="status" className={status === "failed" ? "wd-copy-note" : "sy-sr"}>
             {status === "failed" ? FAILED : status === "copied" ? COPIED : ""}
           </p>
@@ -187,7 +185,7 @@ function WorldView({ card, onClose, failedOnOpen }: { card: Card; onClose: () =>
 // attribute drives the motion; reduced motion stops it). Its status line says what happened. One quiet line says the
 // steps are public on GitHub; the sentence itself shows only after a failed copy.
 export function HeroAsk({ sentence, repo }: { sentence: string; repo: string }) {
-  const { status, text, copy, blur } = useCopyForAi<HTMLParagraphElement>(sentence)
+  const { status, shown, text, copy, blur } = useCopyForAi<HTMLParagraphElement>(sentence)
   const copied = status === "copied" ? "true" : undefined
   return (
     <div className="wd-ask">
@@ -200,7 +198,7 @@ export function HeroAsk({ sentence, repo }: { sentence: string; repo: string }) 
       <p className="wd-quiet">
         Open source. Read every step on <a href={repo}>GitHub</a>.
       </p>
-      <p ref={text} className="wd-ask-sentence" hidden={status !== "failed"}>
+      <p ref={text} className="wd-ask-sentence" hidden={!shown}>
         <Sentence text={sentence} />
       </p>
     </div>
@@ -227,7 +225,7 @@ export function CopyCard({ id, name, sentence }: { id: string; name: string; sen
 // The sentence the how-it-works steps point to: the core toolkit's, copied from a ghost pill, so this section adds
 // no second solid fill (the hero keeps the page's one).
 export function SentenceCopy({ sentence }: { sentence: string }) {
-  const { status, text, copy, blur } = useCopyForAi<HTMLParagraphElement>(sentence)
+  const { status, shown, text, copy, blur } = useCopyForAi<HTMLParagraphElement>(sentence)
   return (
     <div className="wd-say">
       <p className="wd-say-text">One paste installs the Solenix basics into your AI.</p>
@@ -238,7 +236,7 @@ export function SentenceCopy({ sentence }: { sentence: string }) {
         <span aria-live="polite">{status === "copied" ? COPIED : "Copy for your AI"}</span>
       </button>
       {status === "failed" && <p className="wd-say-note" role="status">{FAILED}</p>}
-      <p ref={text} className="wd-say-raw" hidden={status !== "failed"}><Sentence text={sentence} /></p>
+      <p ref={text} className="wd-say-raw" hidden={!shown}><Sentence text={sentence} /></p>
     </div>
   )
 }

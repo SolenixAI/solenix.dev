@@ -3,14 +3,17 @@
 import { useEffect, useRef, useState } from "react"
 import { createCopyForAi, type CopyStatus } from "@/lib/copy-for-ai"
 
-// `reveal` opens whatever shows the sentence (a disclosure) before a failed copy selects it.
-export function useCopyForAi<T extends HTMLElement = HTMLElement>(sentence: string, reveal?: () => void) {
+// A failed copy shows the sentence (`shown` stays true until a later copy succeeds, so it survives the button losing
+// focus), selects it and scrolls it into view. `onFail` runs on each failure, for a surface that must do more (a card
+// opens its world).
+export function useCopyForAi<T extends HTMLElement = HTMLElement>(sentence: string, onFail?: () => void) {
   const [status, setStatus] = useState<CopyStatus>("idle")
+  const [shown, setShown] = useState(false)
   const [failures, setFailures] = useState(0)
   const text = useRef<T>(null)
-  const revealRef = useRef(reveal)
+  const onFailRef = useRef(onFail)
   useEffect(() => {
-    revealRef.current = reveal
+    onFailRef.current = onFail
   })
   const [controller] = useState(() =>
     createCopyForAi({
@@ -19,16 +22,20 @@ export function useCopyForAi<T extends HTMLElement = HTMLElement>(sentence: stri
         setTimeout: (run, ms) => window.setTimeout(run, ms),
         clearTimeout: (handle) => window.clearTimeout(handle as number),
       },
-      onChange: setStatus,
+      onChange: (next) => {
+        setStatus(next)
+        if (next === "copied") setShown(false)
+      },
       onFail: () => {
-        revealRef.current?.()
+        setShown(true)
+        onFailRef.current?.()
         setFailures((n) => n + 1)
       },
     }),
   )
   // Leaving the page cancels a pending reset.
   useEffect(() => () => controller.blur(), [controller])
-  // A failed copy selects the whole sentence, so one copy command takes it.
+  // A failed copy selects the whole sentence and brings it into view, so one copy command takes it.
   useEffect(() => {
     const el = text.current
     if (status !== "failed" || !el) return
@@ -37,9 +44,11 @@ export function useCopyForAi<T extends HTMLElement = HTMLElement>(sentence: stri
     const selection = window.getSelection()
     selection?.removeAllRanges()
     selection?.addRange(range)
+    el.scrollIntoView({ block: "center" })
   }, [status, failures])
   return {
     status,
+    shown,
     text,
     copy: () => controller.press(sentence),
     fail: () => controller.fail(),

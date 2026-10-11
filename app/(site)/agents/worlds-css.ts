@@ -82,7 +82,7 @@ export const WORLDS_CSS = `
   .wd-hero .wd-ask{grid-area:ask;align-self:start}
   .wd-hero-sky{grid-area:sky;min-height:0;display:grid;place-items:center}
   @media (max-height: 459px){.wd-hero h1{font-size:clamp(1.6rem,6.4cqh,2.6rem)}}
-  @media (max-height: 599px){.wd-quiet,.wd-ask-sentence{display:none}}
+  @media (max-height: 599px){.wd-quiet{display:none}}
   @media (max-height: 319px){.wd-ask-status{display:none}}
 }
 .wd-grid{height:100%;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,19rem),1fr));align-content:safe center;gap:16px;min-height:0}
@@ -137,13 +137,13 @@ export const WORLDS_CSS = `
 .wd-lede{margin:0;max-width:44rem;font-size:clamp(1.05rem,2.4vw,1.25rem);color:var(--muted);text-wrap:pretty}
 .wd-copy{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px 20px;margin-top:8px;padding:20px 20px 20px 24px;border-radius:var(--radius-xl);background:var(--bg);border:1px solid var(--line);box-shadow:inset 0 2px 12px rgb(0 0 0/.35)}
 .wd-outcome{flex:1 1 22rem;max-width:62ch;margin:0;font:500 clamp(1rem,2.2vw,1.125rem)/1.6 var(--font-text);color:var(--text);overflow-wrap:break-word;text-wrap:pretty}
-.wd-run-text{flex:1 1 100%;margin:0;padding:14px 16px;border-radius:var(--radius-lg);background:var(--surface-solid);border:1px solid var(--line);font:500 .95rem/1.7 var(--font-text);color:var(--text);text-wrap:pretty}
+.wd-copy-sentence{flex:1 1 100%;margin:0;padding:14px 16px;border-radius:var(--radius-lg);background:var(--surface-solid);border:1px solid var(--line);font:500 .95rem/1.7 var(--font-text);color:var(--text);text-wrap:pretty}
 .wd-copy code{padding:2px 8px;border-radius:var(--radius-xs);background:var(--surface-solid);border:1px solid var(--line);font:500 .86em/1.7 var(--font-mono);font-variant-ligatures:none;color:var(--accent-text);-webkit-box-decoration-break:clone;box-decoration-break:clone}
 /* Command text: a line breaks only at a space between pieces, never inside a word or between a flag and its value
    (<Sentence> makes each piece one nowrap span). A sentence never widens its column (contain). A piece wider than the
    column overflows into its paragraph's padding first, then scrolls inside that paragraph: the page never scrolls sideways. */
 .wd-sentence{display:block;contain:inline-size}
-.wd-run-text,.wd-ask-sentence,.wd-say-raw{overflow-x:auto}
+.wd-copy-sentence,.wd-ask-sentence,.wd-say-raw{overflow-x:auto}
 .wd-sentence .wd-tok{white-space:nowrap}
 @media (max-width:560px){.wd-copy .wd-action{flex:1 1 100%}}
 .wd-action{flex:none;min-height:var(--tap-min);padding:0 24px;border:0;border-radius:var(--radius-pill);background:var(--accent);color:var(--accent-ink);font:650 var(--fs-sm)/1 var(--font-text);cursor:pointer;box-shadow:0 8px 24px -10px color-mix(in srgb,var(--accent) 70%,transparent);transition:background var(--dur-base),transform var(--dur-base) var(--ease-out)}
@@ -201,7 +201,6 @@ export const WORLDS_CSS = `
 .sy-works span{margin-right:4px}
 .sy-works i{font-style:normal;padding:4px 10px;border-radius:var(--radius-pill);border:1px solid var(--line-strong);color:var(--text)}
 .sy-items{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}
-.sy-items code{display:inline-block;padding:5px 9px;border-radius:var(--radius-xs);background:var(--surface-solid);border:1px solid var(--line);font:500 .78rem/1.2 var(--font-mono);color:var(--text)}
 .sy-items button{min-height:28px;padding:0 10px;border-radius:var(--radius-pill);border:1px dashed var(--line-strong);background:none;color:var(--accent-text);font:500 .78rem/1 var(--font-mono);cursor:pointer}
 .sy-refs{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 0;padding:16px 0 0;border-top:1px solid var(--line);list-style:none}
 .sy-refs a{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 14px;border-radius:var(--radius-pill);border:1px solid var(--line-strong);color:var(--text);font-size:.85rem;text-decoration:none;transition:border-color var(--dur-base)}
