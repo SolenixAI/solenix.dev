@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { POSTHOG_KEY, POSTHOG_OPTIONS, POSTHOG_PROPERTIES } from "@/lib/analytics";
+import { captureGoal, POSTHOG_KEY, POSTHOG_OPTIONS, POSTHOG_PROPERTIES } from "@/lib/analytics";
 
 // Measurement for every page of the public site (one setup, lib/analytics.ts): PostHog on the live site, and Vercel
 // Speed Insights, as the homepage loaded them when it was served as raw HTML. Only the top window measures, so a page
@@ -14,6 +14,11 @@ export function Analytics({ host }: { host: string }) {
       import("posthog-js").then(({ default: posthog }) => {
         posthog.init(POSTHOG_KEY, { ...POSTHOG_OPTIONS });
         posthog.register(POSTHOG_PROPERTIES);
+        window.posthog = posthog;
+        // Every "Book a call" link points at /book: a click on one is the book-call goal.
+        addEventListener("click", (e) => {
+          if ((e.target as Element | null)?.closest?.('a[href="/book"]')) captureGoal("book_call_clicked");
+        });
       });
     }
     const src = "/_vercel/speed-insights/script.js";
