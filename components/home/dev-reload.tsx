@@ -2,20 +2,16 @@
 
 import { useEffect } from "react";
 
-// Development only (app/(site)/page.tsx renders it while `next dev` runs): a saved design/home.html reloads the open
-// tab, as it did when the homepage was served as raw HTML (client/dev-reload.ts). The stream is /dev/reload
-// (app/dev/reload/route.ts). Only the top window listens, so a frame never adds a second connection.
+// Development only (app/(site)/page.tsx renders it while `next dev` runs): the homepage runs the one live-reload
+// client, client/dev-reload.ts, as the raw pages do, so a saved design/home.html reloads the open tab. The script
+// is loaded only here, so production never ships it; it listens once per tab, for the tab's life.
 export function DevReload() {
   useEffect(() => {
-    if (window.self !== window.top) return;
-    let start: string | null = null;
-    const source = new EventSource("/dev/reload");
-    source.addEventListener("hello", (e: MessageEvent<string>) => {
-      if (start !== null && start !== e.data) location.reload();
-      start = e.data;
+    import("@/lib/client.generated").then(({ CLIENT }) => {
+      const script = document.createElement("script");
+      script.textContent = CLIENT["dev-reload"];
+      document.head.append(script);
     });
-    source.addEventListener("change", () => location.reload());
-    return () => source.close();
   }, []);
   return null;
 }
