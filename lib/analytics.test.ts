@@ -6,14 +6,15 @@ import assert from "node:assert/strict"
 import { readdirSync, readFileSync } from "node:fs"
 import { join, relative } from "node:path"
 import { fileURLToPath } from "node:url"
-import { captureGoal, GOALS, type Goal, POSTHOG_KEY, POSTHOG_SNIPPET } from "./analytics.ts"
+import { captureGoal, GOAL_OPTIONS, GOALS, type Goal, POSTHOG_KEY, POSTHOG_SNIPPET } from "./analytics.ts"
 
-// One test per goal: the helper hands PostHog exactly that goal's event name, once.
+// One test per goal: the helper hands PostHog exactly that goal's event name, sent by beacon so a click that
+// leaves the page still delivers it.
 for (const goal of GOALS) {
-  test(`${goal} reaches PostHog by its own name`, () => {
-    const sent: string[] = []
-    captureGoal(goal, (event) => sent.push(event))
-    assert.deepEqual(sent, [goal])
+  test(`${goal} reaches PostHog by its own name, by beacon, at once`, () => {
+    const sent: unknown[][] = []
+    captureGoal(goal, (...args) => sent.push(args))
+    assert.deepEqual(sent, [[goal, GOAL_OPTIONS]])
   })
 }
 
@@ -25,6 +26,10 @@ test("a goal the helper does not know is refused and never sent", () => {
 
 test("the raw pages' snippet names the same goals as the helper", () => {
   assert.ok(POSTHOG_SNIPPET.includes(JSON.stringify(GOALS)))
+})
+
+test("the raw pages' snippet sends goals by beacon too, as the helper does", () => {
+  assert.ok(POSTHOG_SNIPPET.includes(JSON.stringify(GOAL_OPTIONS)))
 })
 
 test("the project token has PostHog's shape, so a missing or cut key fails here, not on the live site", () => {
