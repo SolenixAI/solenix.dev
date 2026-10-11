@@ -38,9 +38,12 @@ saw_pass() {
 
 fresh; expect pass "untouched repo passes"
 
-# Drift: a commit on local main that GitHub main does not have.
-fresh; (cd "$tmp/r" && git checkout -q -B main origin/main && git commit -q --allow-empty -m "local only" && git checkout -q -)
-run_check; saw "local main has 1 commit" "local main ahead of GitHub main fails"
+# Drift: on a local main that holds changes GitHub main does not, the check fails; on a main only behind, it passes.
+# Only the main pointer moves (the copy keeps its files), so the copy's uncommitted rules are the ones tested.
+fresh; (cd "$tmp/r" && git branch -f main HEAD && git symbolic-ref HEAD refs/heads/main)
+run_check; saw "local main has" "local main ahead of GitHub main fails"
+fresh; (cd "$tmp/r" && git branch -f main origin/main~1 && git symbolic-ref HEAD refs/heads/main)
+run_check; saw_pass "" "local main only behind GitHub main passes"
 
 fresh; cp "$tmp/r/design/home.html" "$tmp/r/design/home-v2.html"
 expect fail "versioned file name (design/home-v2.html)"

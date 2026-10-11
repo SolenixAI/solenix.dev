@@ -25,11 +25,17 @@ git ls-files --cached --others --exclude-standard \
 grep -rn -E '· v[0-9]|\(v[0-9]\)|/\* v[0-9]|\bv[0-9] ·' DESIGN.md design/tokens.css app components lib 2>/dev/null \
   | while read -r l; do echo "check: version label: $l"; done | grep . && fail=1
 
-# GitHub main is the one source: a local main that holds commits GitHub does not have has drifted (work lost on the
-# next reset, or a second history). A main that is only behind is not drift: pull.ff only brings it up to date.
-if git rev-parse -q --verify refs/heads/main >/dev/null && git rev-parse -q --verify refs/remotes/origin/main >/dev/null; then
-  ahead=$(git rev-list --count refs/remotes/origin/main..refs/heads/main)
-  [ "$ahead" -eq 0 ] || bad "local main has $ahead commit(s) GitHub main does not: move them to a branch and a PR, then reset main to origin/main"
+# GitHub main is the one source. Committing on local main is where drift starts: a change GitHub main does not have
+# (by content, so a squash-merged PR is not drift) is lost on the next reset or becomes a second history. A main that
+# is only behind is not drift: pull.ff only brings it up to date. Commits on any other branch cannot drift main, so
+# the check runs only on main. CI checks out a detached merge ref, so it never runs there.
+if [ "$(git symbolic-ref -q HEAD)" = refs/heads/main ]; then
+  if git rev-parse -q --verify refs/remotes/origin/main >/dev/null; then
+    ahead=$(git cherry refs/remotes/origin/main refs/heads/main | grep -c '^+')
+    [ "$ahead" -eq 0 ] || bad "local main has $ahead change(s) GitHub main does not: git fetch origin; git switch -c <name> to keep them; open a PR; then git branch -f main origin/main from that branch"
+  else
+    echo "skip: no origin/main to compare local main with (fetch it to check for drift)" >&2
+  fi
 fi
 
 # The site is dark only: the root layout declares dark before first paint, and nothing follows the device.
