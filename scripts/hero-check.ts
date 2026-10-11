@@ -1,4 +1,6 @@
-// Every page's first screen is its hero, and a hero that does not fit the screen has failed.
+// Every page's first screen is its hero, and a hero that does not fit the screen has failed. Its first frame is
+// dark too: with every stylesheet, script, font and image held back, the page still paints the dark ground, so a
+// visitor never sees a white flash while the rest loads.
 // For each page with a hero and each size in design/viewports.json, this opens the page and checks:
 //   the [data-hero] element starts at the top and is exactly one screen tall,
 //   nothing inside it spills out, hides under the nav or sits on other text, the page never scrolls sideways,
@@ -9,6 +11,7 @@
 import { execFileSync, spawn } from "node:child_process"
 import { createServer, type AddressInfo } from "node:net"
 import { readdirSync, statSync } from "node:fs"
+import { inflateSync } from "node:zlib"
 import { launch } from "./browser.ts"
 import { loadViewports } from "../lib/viewports.ts"
 
@@ -112,9 +115,34 @@ const measure = () => {
   return out
 }
 
+// The colour of a 1×1 PNG screenshot: its one row is a filter byte, then red, green and blue.
+const pixel = (png: Buffer) => {
+  const data: Buffer[] = []
+  for (let at = 8; at < png.length; ) {
+    const len = png.readUInt32BE(at), type = png.toString("ascii", at + 4, at + 8)
+    if (type === "IDAT") data.push(png.subarray(at + 8, at + 8 + len))
+    at += 12 + len
+  }
+  const row = inflateSync(Buffer.concat(data))
+  return [row[1], row[2], row[3]]
+}
+// Dark enough to be the ground, not a flash: every channel at 40 or less (the ground is #0b0d12).
+const DARK = 40
+
 const browser = await launch()
 let bad = 0
 try {
+  for (const path of pages) {
+    const page = await browser.newPage({ viewport: sizes[0] })
+    await page.route("**/*", (r) => (["stylesheet", "script", "font", "image", "media"].includes(r.request().resourceType()) ? r.abort() : r.continue()))
+    await page.goto(base + path, { waitUntil: "domcontentloaded" })
+    const { width, height } = sizes[0]
+    for (const [x, y] of [[1, 1], [width / 2, height / 2], [width - 2, height - 2]]) {
+      const rgb = pixel(await page.screenshot({ clip: { x, y, width: 1, height: 1 } }))
+      if (rgb.some((c) => c > DARK)) { console.log(`first frame: ${path} paints rgb(${rgb}) at ${x},${y} before its styles load (the ground is dark)`); bad++; break }
+    }
+    await page.close()
+  }
   for (const path of pages)
     for (const viewport of sizes) {
       const page = await browser.newPage({ viewport })
@@ -132,5 +160,5 @@ try {
   await browser.close()
   server?.kill()
 }
-if (!bad) console.log(`hero: ${pages.length} pages fit all ${sizes.length} screen sizes`)
+if (!bad) console.log(`hero: ${pages.length} pages fit all ${sizes.length} screen sizes, and each first frame is dark`)
 process.exit(bad ? 1 : 0)
