@@ -157,7 +157,7 @@ test("orbit: the maker is the centre, each piece a planet in the fixed order, an
   assert.deepEqual(skills.refs.map((r) => r.label), ["Skills directory"], "the piece's repo is not named again")
   assert.equal(skills.repo?.license, null, "NOASSERTION is no licence")
   const cli = orbit.planets[1]
-  assert.equal(cli.name, "Pro tools")
+  assert.equal(cli.name, "Runs on your computer")
   assert.equal(cli.version, "1.4.0")
   assert.equal(cli.weekly, 500)
   assert.deepEqual(cli.refs.map((r) => r.label), ["Docs", "Package page"])

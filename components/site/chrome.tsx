@@ -15,7 +15,7 @@ export function SiteFooter() {
       <div className="mx-auto flex w-full max-w-wide flex-wrap items-start justify-between gap-6 px-(--gutter)">
         <div className="flex flex-col gap-2">
           <Lockup />
-          <p className="text-xs text-faint">The tech person your business does not have · St. John&apos;s, Newfoundland</p>
+          <p className="text-xs text-faint">One tech expert for small businesses · St. John&apos;s, Newfoundland</p>
         </div>
         <div className="flex flex-col gap-3">
           <a href={NAV.contact.href} className="inline-flex min-h-tap items-center gap-2 font-semibold no-underline hover:underline hover:underline-offset-3">

@@ -45,10 +45,15 @@ function newestHero(a: Article, more: number) {
   const cue = `<a class="sx-cue" href="#more">${more ? "More articles" : "Who made these"} ↓</a>`
   return `
 <header class="sx-hero ar-hero" data-hero data-live-scope>
- <h1 class="sr">Articles: pages you can play with</h1>
- <div class="win">
-  ${live}
-  <div class="win-bar"><span class="win-cap"><b>New</b><span class="win-name">${t}</span><span class="win-hint">Try it right here.</span></span>${enter}</div>
+ <div class="sx-hero-in">
+  <div class="sx-hero-text">
+   <h1>Articles</h1>
+   <p class="sx-sub">Pages you can play with, built with AI.</p>
+  </div>
+  <div class="win">
+   ${live}
+   <div class="win-bar"><span class="win-cap"><b>New</b><span class="win-name">${t}</span><span class="win-hint">Try it right here.</span></span>${enter}</div>
+  </div>
  </div>
  ${cue}
 </header>`
@@ -90,11 +95,14 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background-im
 .ar-hero{padding-top:var(--nav-height)}
 .touched .win-hint{display:none}
 .win{container:win/inline-size;position:relative;height:100%;max-width:100%;margin-inline:auto;display:flex;flex-direction:column;border-radius:var(--radius-2xl);overflow:hidden;background:var(--surface-solid);box-shadow:inset 0 1px 0 var(--glass-edge),0 0 0 1px var(--line-strong),var(--shadow-lg)}
-.win .live{flex:1;min-height:0;aspect-ratio:auto}
+.win .live{flex:none;aspect-ratio:1200/630}
+.ar-hero .win{width:100%;height:auto;align-self:center}
+.ar-hero .sx-hero-in{max-width:min(100%,1040px);grid-template-columns:minmax(0,.85fr) minmax(0,1.4fr)}
+@media (max-width:760px){.ar-hero .sx-hero-in{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto;align-content:start}}
 .win-bar{flex:none;display:flex;gap:10px 16px;align-items:center;justify-content:space-between;padding:8px 8px 8px 20px;border-top:1px solid var(--line)}
 .win-cap{flex:1;display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;min-width:0;color:var(--text)}
 .win-name{min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:650 clamp(1rem,3.2cqmin,1.4rem)/1.15 var(--font-display);letter-spacing:-.01em}
-.win-cap b{display:inline-flex;align-items:center;gap:7px;padding:6px 9px;border-radius:999px;border:1px solid color-mix(in srgb,var(--accent) 40%,transparent);background:color-mix(in srgb,var(--accent) 14%,transparent);font:600 .75rem/1 var(--font-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent-text)}
+.win-cap b{display:inline-flex;align-items:center;gap:7px;padding:6px 9px;border-radius:999px;border:1px solid color-mix(in srgb,var(--accent) 40%,transparent);background:color-mix(in srgb,var(--accent) 14%,transparent);font:600 .72rem/1 var(--font-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent-text)}
 .win-cap b::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent)}
 /* A narrow window (a small or short screen): the article shows its own title right above, so the bar keeps only the action. */
 @container win (max-width:440px){.win-cap{display:none}.win-bar{padding:8px}.enter{flex:1;justify-content:center}}

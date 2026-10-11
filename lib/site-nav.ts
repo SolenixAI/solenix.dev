@@ -63,6 +63,12 @@ const BAR = `position:fixed;z-index:var(--z-nav);top:calc(12px + env(safe-area-i
 
 export const NAV_CSS = `
 html{scroll-padding-top:var(--nav-height)}
+/* One experience across pages: the browser cross-fades the page beneath, and the nav holds still. Where a browser has no cross-document transitions, the page swaps at once on the same dark ground (lib/site-ground.ts). */
+@view-transition{navigation:auto}
+.snav{view-transition-name:site-nav}
+::view-transition-group(site-nav),::view-transition-old(site-nav),::view-transition-new(site-nav){animation:none}
+::view-transition-old(root),::view-transition-new(root){animation-duration:420ms;animation-timing-function:cubic-bezier(.16,1,.3,1)}
+@media (prefers-reduced-motion:reduce){::view-transition-old(root),::view-transition-new(root){animation:none}}
 .snav{${BAR};transform:translateX(-50%);padding:0 var(--space-2) 0 var(--space-4)}
 .snav[data-local]{position:absolute}
 .snav.is-solid{background:color-mix(in srgb,var(--surface-solid) 86%,transparent)}
