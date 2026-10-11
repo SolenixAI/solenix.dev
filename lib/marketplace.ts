@@ -33,7 +33,7 @@ export const catalogKey = (ref: string) => `catalog:${ref}`
 export const FACTS_TAG = "marketplace:facts"
 const MCP_REGISTRY = "https://registry.modelcontextprotocol.io"
 
-export type Pieces = {
+type Pieces = {
   plugin?: { repo: string }
   skills?: { repo: string }
   mcp?: { registry: string }

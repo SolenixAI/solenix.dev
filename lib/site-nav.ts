@@ -34,7 +34,7 @@ export const sunGradient = (id: string) =>
   `<radialGradient id="${id}" cx=".42" cy=".38" r=".62"><stop offset="0" stop-color="var(--sun1)"/><stop offset="1" stop-color="var(--sun2)"/></radialGradient>`
 
 /** The mark's drawing, for an svg that carries its own sun gradient (`id`). */
-export const markInner = (id = "snav-sun") => `<defs>${sunGradient(id)}</defs>${markShapes(`url(#${id})`)}`
+const markInner = (id = "snav-sun") => `<defs>${sunGradient(id)}</defs>${markShapes(`url(#${id})`)}`
 
 /** The mark as a standalone SVG, with its own sun gradient. */
 export const markSvg = (id = "snav-sun") => `<svg viewBox="0 0 32 32" aria-hidden="true">${markInner(id)}</svg>`

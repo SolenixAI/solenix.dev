@@ -11,7 +11,7 @@ const CHEVRON = `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4
 const SHARE = `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v8M5 5l3-3 3 3M3.5 8.5V14h9V8.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`
 
 /** The site nav: style, markup and script, ready to place first in <body>. `local`: the page has its own bar. */
-export function siteNav({ local = false } = {}) {
+function siteNav({ local = false } = {}) {
   return (
     `<style>${NAV_CSS}</style>` + NAV_HTML[local ? "local" : "plain"] +
     `<script>${NAV_FIT}</script><script>${CLIENT["site-nav"]}</script><script type="speculationrules">${NAV_PREFETCH}</script>`
@@ -19,7 +19,7 @@ export function siteNav({ local = false } = {}) {
 }
 
 /** An article's own bar: its title, its sections, Share. Placed after the site nav. */
-export function localNav(title: string, sections: Section[]) {
+function localNav(title: string, sections: Section[]) {
   const items = sections.map((s) => `<a href="#${esc(s.id)}">${esc(s.label)}</a>`).join("")
   return (
     `<header class="lnav" data-lnav>` +

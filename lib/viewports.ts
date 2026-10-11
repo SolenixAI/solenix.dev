@@ -2,7 +2,7 @@
 // Sizes are Playwright viewports ({ width, height }).
 import { readFileSync } from "node:fs"
 
-export type Viewport = { width: number; height: number }
+type Viewport = { width: number; height: number }
 
 export type Viewports = {
   pane: Viewport // the browser pane Jager reviews in

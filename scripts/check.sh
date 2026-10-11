@@ -27,7 +27,7 @@ grep -rn -E '· v[0-9]|\(v[0-9]\)|/\* v[0-9]|\bv[0-9] ·' DESIGN.md design/token
 
 # The site is dark only: the root layout declares dark before first paint, and nothing follows the device.
 # The first-frame ground (lib/site-ground.ts) is a literal by necessity; it must equal --bg in the tokens.
-ground=$(sed -n 's/^export const GROUND = "\(#[0-9a-fA-F]*\)".*/\1/p' lib/site-ground.ts); bg=$(sed -n 's/^[[:space:]]*--bg:[[:space:]]*\(#[0-9a-fA-F]*\);.*/\1/p' design/tokens.css | head -1)
+ground=$(sed -n 's/^\(export \)\{0,1\}const GROUND = "\(#[0-9a-fA-F]*\)".*/\2/p' lib/site-ground.ts); bg=$(sed -n 's/^[[:space:]]*--bg:[[:space:]]*\(#[0-9a-fA-F]*\);.*/\1/p' design/tokens.css | head -1)
 [ -n "$ground" ] && [ "$ground" = "$bg" ] || bad "lib/site-ground.ts GROUND ($ground) must equal --bg in design/tokens.css ($bg)"
 grep -q 'colorScheme: "dark"' app/layout.tsx || bad "app/layout.tsx: the root viewport must declare colorScheme \"dark\" (the site is dark only)"
 grep -rn -E 'light dark|light-dark\(|data-portal' app components lib client articles design/home.html design/tokens.css 2>/dev/null \

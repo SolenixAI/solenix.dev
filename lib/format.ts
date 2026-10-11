@@ -13,7 +13,7 @@ export function ago(ms: number, now = Date.now()) {
   return "on " + day(ms);
 }
 
-export const day = (ms: number) =>
+const day = (ms: number) =>
   new Date(ms).toLocaleDateString("en-CA", { timeZone: TZ, day: "numeric", month: "long", year: "numeric" });
 
 export const count = (n: number) => n.toLocaleString("en-CA");

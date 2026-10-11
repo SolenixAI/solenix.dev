@@ -17,7 +17,7 @@ export const POSTHOG_PROPERTIES = { app: SITE_HOST } as const
 // and ad blockers do not drop the data. next.config.ts builds its rewrites from these values.
 export const POSTHOG_PROXY = "/lumen"
 export const POSTHOG_ASSETS_HOST = POSTHOG_HOST.replace(".i.posthog.com", "-assets.i.posthog.com")
-export const POSTHOG_UI_HOST = POSTHOG_HOST.replace(".i.posthog.com", ".posthog.com")
+const POSTHOG_UI_HOST = POSTHOG_HOST.replace(".i.posthog.com", ".posthog.com")
 
 // Clicks, scroll depth (page-leave), heatmaps and session replay measure each
 // section. Replay masks every input and anything
