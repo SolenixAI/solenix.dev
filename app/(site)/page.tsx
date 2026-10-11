@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { DevReload } from "@/components/home/dev-reload";
 import { HomeBinding } from "@/components/home/binding";
 import { homeSource } from "@/lib/home/source";
+import { homeStructuredData, jsonLd } from "@/lib/structured-data";
 import { HOME_URL, OG_IMAGE } from "@/lib/site-meta";
 
 // The homepage. Its markup and CSS are design/home.html, the one source (lib/home/source.ts); the world's stage and
@@ -26,6 +27,7 @@ export default async function Home() {
     <>
       <link rel="canonical" href={HOME_URL} />
       <meta property="og:url" content={HOME_URL} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(homeStructuredData()) }} />
       <style dangerouslySetInnerHTML={{ __html: css }} />
       <div dangerouslySetInnerHTML={{ __html: body }} />
       <HomeBinding />

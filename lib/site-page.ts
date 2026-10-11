@@ -1,5 +1,6 @@
 import { POSTHOG_SNIPPET, SPEED_INSIGHTS_SNIPPET } from "@/lib/analytics"
 import { headTags, tabTitle } from "@/lib/site-meta"
+import { jsonLd } from "@/lib/structured-data"
 import { fontHead } from "@/lib/site-fonts"
 import { withHero } from "@/lib/site-hero"
 import { withSiteNav } from "@/lib/raw-nav"
@@ -14,7 +15,7 @@ import { withClientScripts } from "@/lib/client-script"
 
 const DEV_RELOAD = "<!--client:dev-reload-->"
 
-export type PageMeta = { title: string; description: string; path: string; cover?: string; type?: "website" | "article" }
+export type PageMeta = { title: string; description: string; path: string; cover?: string; type?: "website" | "article"; structuredData?: object }
 
 export function servePage(html: string, meta: PageMeta) {
   // The browser paints its white default canvas unless it knows at once that the page is dark.
@@ -23,11 +24,13 @@ export function servePage(html: string, meta: PageMeta) {
     fontHead()
   // One tab title for the document and for the link previews, so og:title is always the title the tab shows.
   const tab = tabTitle(meta.title)
+  // The page's structured data (schema.org JSON-LD), when it has any: an article's headline, date and cover.
+  const ld = meta.structuredData ? `<script type="application/ld+json">${jsonLd(meta.structuredData)}</script>` : ""
   const page = html
     .replace(/<meta charset="[^"]*">/i, "")
     .replace(/<head>/i, `<head>${first}`)
     .replace(/<title>([^<]*)<\/title>/, () => `<title>${tab}</title>`)
-    .replace("</head>", `${headTags({ ...meta, title: tab, image: meta.cover })}${POSTHOG_SNIPPET}${SPEED_INSIGHTS_SNIPPET}</head>`)
+    .replace("</head>", `${headTags({ ...meta, title: tab, image: meta.cover })}${ld}${POSTHOG_SNIPPET}${SPEED_INSIGHTS_SNIPPET}</head>`)
   // In development only, every page listens for saves and reloads itself (client/dev-reload.ts, lib/dev-reload.ts).
   // Production gets the same bytes as before: the marker is added only when NODE_ENV is development.
   const live = process.env.NODE_ENV === "development"
