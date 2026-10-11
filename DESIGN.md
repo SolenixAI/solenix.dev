@@ -10,6 +10,8 @@ colors:
   hairline: "#1e222b"
   ember: "#f59e0b"
   sun-gold: "#fbbf24"
+  faint: "#8f8983"
+  ember-ink: "#1a1206"
 ---
 
 # Solenix
@@ -28,6 +30,7 @@ The system behind solenix.dev. Solenix is one tech expert for small businesses i
 - Homepage base: the one journey through the 3D world (#80, 2026-10-11). Never fall below it. Changes go through Impeccable, one named change at a time, and Jager judges each before the next.
 - The hero opens with "Your business is a three-body problem", and a small-business owner must understand in seconds what Solenix does and want to call.
 - The 3D world is the site (2026-10-11). Everything the visitor sees on the homepage lives in the world: each tool's work is 3D objects at that tool's world, and the words are type set in the space. Nothing flat is laid over the scene: no card, panel, caption or tag. Only the nav, Book a call and the screen-reader story are flat. At each tool the AI does the job live in front of the visitor, every time they arrive: the ask, the agent at work, the result, in about four seconds; scrolling on skips it. A line of words is ten words or fewer. The camera glides on one continuous path, the scroll stays native up and down, and the journey ends on the close, never the footer. The visitor has never seen AI do real work. Stops: lib/home/journey.ts; each tool's work: lib/home/proof.ts. <!-- bans: /simulated typing|race clocks?|no live runs?|answers? (shows|appears) at once|answers at once|glass cards|stack held beside|stand in a stack|captions? sit low in the sky|scene (fixed|running) behind/i in PRODUCT.md AGENTS.md GLOSSARY.md .agents/product-marketing.md .impeccable/** design/*.md design/*.html docs/** lib/home/** -->
+- The work stops are roles, not tools (2026-10-11): an owner is also the receptionist, the bookkeeper, the ad manager, the stock manager and the analyst. Each stop speaks to that pain ("You're also the bookkeeper.") and shows the AI doing the job, live, on real use cases. "You don't need to be an expert" stays, on the Talk-to-one stop. <!-- bans: /expert in (QuickBooks|Gmail|Shopify|Meta Ads|Excel|\[tool\])/i in design/*.html design/*.md .impeccable/surfaces/design-home-html.md PRODUCT.md .agents/product-marketing.md lib/home/** -->
 - Keep "From one call to a stable orbit": five stops, slow enough to read, visuals over text, steps never overlapping.
 - The 3D world must keep getting better: never flattened, nothing flat laid over it.
 - Price line: "A fixed price, in writing. Agreed on the call. No surprise invoice." No public prices; value-based per initiative.

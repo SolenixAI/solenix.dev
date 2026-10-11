@@ -520,10 +520,17 @@ export function createSpace(env: SpaceEnv): Space {
   // ── Pointer ──
   const mouse = { x: 0, y: 0, tx: 0, ty: 0, px: -1, py: -1, lastMove: -99 };
   let clockT = 0, shownT = 0, lockT = -99, armed = true, locked = false;
-  const onPointerMove = (e: PointerEvent) => { mouse.tx = e.clientX / innerWidth * 2 - 1; mouse.ty = e.clientY / innerHeight * 2 - 1; mouse.px = e.clientX; mouse.py = e.clientY; mouse.lastMove = clockT; };
-  const onPointerDown = (e: PointerEvent) => { mouse.px = e.clientX; mouse.py = e.clientY; mouse.lastMove = clockT; };
+  // Drag to look round (a mouse): the view turns with the drag and springs back when it is let go, so the story's
+  // camera is never lost. A drag that starts on a link or a button is theirs.
+  const drag = { on: false, x: 0, y: 0, az: 0, el: 0 };
+  const onPointerMove = (e: PointerEvent) => { mouse.tx = e.clientX / innerWidth * 2 - 1; mouse.ty = e.clientY / innerHeight * 2 - 1; mouse.px = e.clientX; mouse.py = e.clientY; mouse.lastMove = clockT;
+    if (drag.on) { drag.az = Math.max(-50, Math.min(50, drag.az - (e.clientX - drag.x) * 0.25)); drag.el = Math.max(-20, Math.min(25, drag.el + (e.clientY - drag.y) * 0.15)); drag.x = e.clientX; drag.y = e.clientY; } };
+  const onPointerUp = () => { drag.on = false; document.documentElement.classList.remove('dragging'); };
+  const onPointerDown = (e: PointerEvent) => { mouse.px = e.clientX; mouse.py = e.clientY; mouse.lastMove = clockT;
+    if (e.pointerType === 'mouse' && e.button === 0 && !(e.target as Element | null)?.closest?.('a, button, input, nav, header')) { drag.on = true; drag.x = e.clientX; drag.y = e.clientY; document.documentElement.classList.add('dragging'); } };
   addEventListener('pointermove', onPointerMove, { passive: true });
   addEventListener('pointerdown', onPointerDown, { passive: true });
+  addEventListener('pointerup', onPointerUp, { passive: true });
   const tmp2 = [0, 0], tgt = new THREE.Vector3(), proj = new THREE.Vector3();
   const ray = new THREE.Raycaster(), plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -SUN_Y), hit = new THREE.Vector3(), ndc = new THREE.Vector2();
 
@@ -616,8 +623,9 @@ export function createSpace(env: SpaceEnv): Space {
     } else { stn = -1; shown.tx = lerp(shown.tx, sc.tx, a); shown.tz = lerp(shown.tz, sc.tz, a); }
     shown.ox = lerp(shown.ox, portrait ? 0 : sc.ox, a); shown.oy = lerp(shown.oy, portrait ? sc.poy : sc.oy, a);
     if (!R) { mouse.x += (mouse.tx - mouse.x) * 0.04; mouse.y += (mouse.ty - mouse.y) * 0.04; } else { mouse.x = mouse.y = 0; }
-    const el = D2R(shown.el + mouse.y * 3 * (1 - sc.calm * 0.5));
-    const az = D2R(shown.az) + (R ? 0 : Math.sin(clockT * 0.045) * 0.1 * (1 - sc.calm)) + mouse.x * 0.05;
+    if (!drag.on) { const back = 1 - Math.exp(-dtReal * 2.5); drag.az -= drag.az * back; drag.el -= drag.el * back; }
+    const el = D2R(shown.el + (R ? 0 : drag.el) + mouse.y * 3 * (1 - sc.calm * 0.5));
+    const az = D2R(shown.az + (R ? 0 : drag.az)) + (R ? 0 : Math.sin(clockT * 0.045) * 0.1 * (1 - sc.calm)) + mouse.x * 0.05;
     tgt.set(shown.tx, lerp(-0.6, SUN_Y, smooth(22, 62, shown.el)), shown.tz);
     // Pulled back through the whole space: every station sits twice as far out, so the system reads at a glance with room round it.
     const cd = shown.dist * ZOOM * (1 - (portrait ? 0.04 : 0.07) * easeIn);
@@ -803,6 +811,7 @@ export function createSpace(env: SpaceEnv): Space {
       if (dipTimer) clearTimeout(dipTimer);
       removeEventListener('pointermove', onPointerMove);
       removeEventListener('pointerdown', onPointerDown);
+      removeEventListener('pointerup', onPointerUp);
       removeEventListener('solenix:motion', sync);
       removeEventListener('resize', resize);
       document.removeEventListener('visibilitychange', sync);

@@ -18,7 +18,7 @@ const rnd = (i: number, k: number) => { const s = Math.sin(i * 127.1 + k * 311.7
 const smooth = (a: number, b: number, x: number) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t) }
 const mix = (a: P3, b: P3, t: number): P3 => ({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t, z: a.z + (b.z - a.z) * t })
 
-// The inbox: 4 need a reply today, 9 can wait, 16 are junk (the same counts as lib/home/proof.ts, Example).
+// The receptionist's day: 29 calls and emails; 9 it answers itself, 4 need you, 16 are junk (the same counts as lib/home/proof.ts, Example).
 const INBOX = { need: 4, wait: 9, junk: 16 }
 const N = INBOX.need + INBOX.wait + INBOX.junk
 const groupOf = (i: number) => (i < INBOX.need ? 0 : i < INBOX.need + INBOX.wait ? 1 : 2)
@@ -49,15 +49,16 @@ function inbox(p: ToolProof, a: number, t: number, T: number): SceneMoment {
   for (let i = 0; i < N; i++) {
     const g = groupOf(i), sorted = a > 0 ? 99 : t - at(i), b = smooth(0, 0.7, sorted)
     const pos = b <= 0 ? loose(i, T) : mix(loose(i, T), settled(i, T, sorted), b)
-    const tone: Tone = b < 0.5 ? "plain" : g === 0 ? "new" : g === 1 ? "plain" : "dim"
+    const tone: Tone = b < 0.5 ? "plain" : g === 0 ? "new" : g === 1 ? "done" : "dim"
     things.push({ id: `mail${i}`, ...pos, size: g === 0 ? 0.24 + 0.16 * b : g === 2 ? 0.24 - 0.06 * b : 0.24, icon: "mail", tone, alpha: g === 2 ? 1 - 0.8 * smooth(0.4, 1.4, sorted) : 1 })
     if (a === 0 && sorted >= 0 && sorted < span / N) agent = loose(i, T)
   }
   const labels: SceneLabel[] = []
-  if (a === 0 && t < s0) labels.push({ id: "count", text: `${N} new emails`, tone: "plain", x: 0, y: 1.6, z: 0 })
+  if (a === 0 && t < s0) labels.push({ id: "count", text: `${N} calls and emails`, tone: "plain", x: 0, y: 1.6, z: 0 })
   if (a > 0 || t >= last) {
     labels.push({ id: "need", text: `${INBOX.need} need you today`, tone: "new", x: 0, y: 1.55, z: 0 })
-    labels.push({ id: "junk", text: `${INBOX.junk} junk, gone`, tone: "dim", x: 0, y: -1.5, z: 0 })
+    labels.push({ id: "junk", text: `${INBOX.junk} junk, gone`, tone: "dim", x: -0.9, y: -1.7, z: 0 })
+    labels.push({ id: "wait", text: `${INBOX.wait} answered for you`, tone: "done", x: 0.9, y: -0.6, z: 0.8 })
   }
   // The second ask: book Harbour Dental. The AI goes to their email and an invite comes out of it, waiting for your OK.
   if (a === 1) {

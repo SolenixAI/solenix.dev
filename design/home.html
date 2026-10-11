@@ -104,6 +104,8 @@ html:not(.js) .stage { position: relative; height: auto; min-height: 100svh; }
 /* While the world draws them, the words are type in the space (lib/home/scene.ts): the page's own words keep their
    place and stay for screen readers, unseen. */
 .type3d #journey .cap > :is(h1, h2, p, ul) { opacity: 0; }
+/* The world can be dragged to look round (a mouse): the cursor says so. */
+@media (hover: hover) and (pointer: fine) { .type3d body { cursor: grab; } .dragging, .dragging body { cursor: grabbing; user-select: none; } }
 .say { margin: 0; font-size: var(--fs-lede); color: var(--text); }
 .fig { margin: 0; display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); font-size: var(--fs-lede); color: var(--text); }
 .fig b { color: var(--text); font-weight: var(--fw-semibold); font-variant-numeric: tabular-nums; }
@@ -232,15 +234,15 @@ html.js[data-motion="on"] .hb.arm:not(.play) .hw > span { transform: translateY(
   <ol class="story">
     <li>Revenue, costs and time, pulled apart by a dozen tools. We put one AI at the centre of the tools you already use. Hours back, every week.</li>
     <li>Each tool you run eats hours you do not get paid for. That is where this starts.</li>
-    <li>We set up the AI agent of your choice for your team and connect it to the tools you already use. You say what you want in plain words, and it gets done in those tools.</li>
-    <li>Example: you ask who owes you money. Hillside Roofing is 64 days late; three clients owe $4,450. Then you ask to invoice Harbour Dental for the retainer, and the invoice is ready for you to check before it goes.</li>
-    <li>Example: you ask to sort today's inbox. Four emails need a reply today, nine can wait, sixteen are junk. Then you ask to book 30 minutes with Harbour Dental: Tuesday at 10:30, and the invite waits for your OK.</li>
-    <li>Example: you ask what runs out this month. Sea salt caramels and wool mitts will run out within 30 days. Then you ask to reorder them, and both reorders are drafted for you to approve.</li>
-    <li>Example: you ask which ad is wasting money. Local awareness now costs far more for each sale than it did. Then you ask to move its budget to the fall sale, and the change waits for your call.</li>
-    <li>Example: you ask what sold best this month. Bread and coffee are up; pastry slipped. Then you ask for a chart, and it is added to your sales sheet.</li>
+    <li>Stop learning ten tools and talk to one. You don't need to be an expert: you ask in plain words, and it gets done in the tools you already use.</li>
+    <li>You are also the receptionist. Example: calls and emails come in while you work. The AI answers nine for you, puts the four that need you on top, and clears sixteen junk. Asked to book Harbour Dental, it finds Tuesday at 10:30 and waits for your OK.</li>
+    <li>You are also the bookkeeper. Example: you ask who owes you money. Hillside Roofing is 64 days late; three clients owe $4,450. Then you ask to invoice Harbour Dental for the retainer, and the invoice is ready for you to check before it goes.</li>
+    <li>You are also the ad manager. Example: you ask which ad is wasting money. Local awareness now costs far more for each sale than it did. Then you ask to move its budget to the fall sale, and the change waits for your call.</li>
+    <li>You are also the stock manager. Example: you ask what runs out this month. Sea salt caramels and wool mitts will run out within 30 days. Then you ask to reorder them, and both reorders are drafted for you to approve.</li>
+    <li>You are also the analyst. Example: you ask what slipped this month. Pastry slipped 4%; bread and coffee are up. Then you ask for a chart, and it is added to your sales sheet.</li>
     <li>On the call, we add up what your tools cost you, in hours and dollars.</li>
     <li>You stop paying for the ones you barely use. The rest move off outdated software.</li>
-    <li>We set up the AI agent of your choice and connect it to your tools. Then we teach your team to use it.</li>
+    <li>We set up any AI agent you choose and connect it to your tools. Then we teach your team to use it.</li>
     <li>It is where your customers decide to call you. We look after it. You own everything.</li>
     <li>Agreed on the call. No surprise invoice.</li>
     <li>Fixed price: one number, in writing, agreed on the call. You own it all: accounts, code and data in your name. Plain English: updates you read in a minute, on your phone. No lock-in: leave any month, keep everything you paid for.</li>
@@ -257,26 +259,26 @@ html.js[data-motion="on"] .hb.arm:not(.play) .hw > span { transform: translateY(
       </li>
       <li class="cap" data-k="2">
         <h2 class="cap-h">Stop learning ten tools. <em>Talk to one.</em></h2>
-        <p class="say">Any AI agent, set up in the tools you use.</p>
+        <p class="say">You don't need to be an expert to use it.</p>
       </li>
       <li class="cap" data-k="3">
-        <h2 class="cap-h">You don't need to be an expert in <em>QuickBooks.</em></h2>
-        <div class="asks vh" data-tool="quickbooks"></div>
-      </li>
-      <li class="cap" data-k="4">
-        <h2 class="cap-h">You don't need to be an expert in <em>Gmail.</em></h2>
+        <h2 class="cap-h">You're also the <em>receptionist.</em></h2>
         <div class="asks vh" data-tool="gmail"></div>
       </li>
-      <li class="cap" data-k="5">
-        <h2 class="cap-h">You don't need to be an expert in <em>Shopify.</em></h2>
-        <div class="asks vh" data-tool="shopify"></div>
+      <li class="cap" data-k="4">
+        <h2 class="cap-h">You're also the <em>bookkeeper.</em></h2>
+        <div class="asks vh" data-tool="quickbooks"></div>
       </li>
-      <li class="cap" data-k="6">
-        <h2 class="cap-h">You don't need to be an expert in <em>Meta Ads.</em></h2>
+      <li class="cap" data-k="5">
+        <h2 class="cap-h">You're also the <em>ad manager.</em></h2>
         <div class="asks vh" data-tool="meta"></div>
       </li>
+      <li class="cap" data-k="6">
+        <h2 class="cap-h">You're also the <em>stock manager.</em></h2>
+        <div class="asks vh" data-tool="shopify"></div>
+      </li>
       <li class="cap" data-k="7">
-        <h2 class="cap-h">You don't need to be an expert in <em>Excel.</em></h2>
+        <h2 class="cap-h">You're also the <em>analyst.</em></h2>
         <div class="asks vh" data-tool="microsoftexcel"></div>
       </li>
       <li class="cap" data-k="8">
@@ -287,7 +289,7 @@ html.js[data-motion="on"] .hb.arm:not(.play) .hw > span { transform: translateY(
         <p class="step">We cut the tools you don't need.</p>
       </li>
       <li class="cap" data-k="10">
-        <p class="step">One AI sits at the centre.</p>
+        <p class="step">Any AI agent, set up in your tools.</p>
       </li>
       <li class="cap" data-k="11">
         <p class="step">We build your website.</p>

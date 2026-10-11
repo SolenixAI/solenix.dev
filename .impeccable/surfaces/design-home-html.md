@@ -28,8 +28,8 @@ Each stop: one scene state, one focal object, one line of words of 10 words or f
 |---|---|---|---|---|
 | 1 | Chaos | Revenue, Costs, Time fling apart | Your business is a three-body problem. | Contrast: the before, vivid |
 | 2 | Tools pull | The tool worlds tug the suns; 6.5 hours a week lost (Example) | Every tool pulls its own way. | Loss aversion: hours you lose |
-| 3 | Talk to one | The AI lights at the centre; every world is joined to it | Stop learning ten tools. Talk to one. + Any AI agent, set up in the tools you use. | Hick's law: ten become one |
-| 4–8 | QuickBooks, Gmail, Shopify, Meta Ads, Excel (TOOL_STOPS) | The camera arrives at the tool's world. The ask types out, the agent flies to each thing and changes it there (the overdue invoice turns red, the inbox sorts, the reorder is drafted, the wasted budget moves, the chart is added), then the answer appears. The other ask waits as a card to tap. | You don't need to be an expert in [tool]. | Vivid proof; you stay in control |
+| 3 | Talk to one | The AI lights at the centre; every world is joined to it | Stop learning ten tools. Talk to one. + You don't need to be an expert to use it. | Hick's law: ten become one |
+| 4–8 | The roles an owner plays (TOOL_STOPS, most worn first): receptionist, bookkeeper, ad manager, stock manager, analyst | The camera arrives at the role's world. The ask types out, and the AI does the job as things in the world: calls and emails swarm and it answers nine itself, lifts the four that need you and clears the junk; invoices line up by days late; ad budget streams as coins and customers spark back, then moves to the ad that works; stock drains over a month and crates refill it; sales bars grow and the one that slipped turns red. The other ask waits as a card to tap. | You're also the [role]. | Pain named, then relieved in front of them |
 | 9–13 | The plan | The figure-eight forms; one stop lights per step | From one call to a stable orbit. + one line per step | Goal gradient |
 | 14 | Promises | Down inside the orbit; the four promises | Four promises, on paper. Fixed price · You own it · Plain English · No lock-in | Regret aversion |
 | Close | Stable orbit | The calm, centred orbit | Let's find your stable orbit. | Peak-end, the prompt at the peak |
@@ -49,7 +49,7 @@ Each stop: one scene state, one focal object, one line of words of 10 words or f
 - Phone first: 375 px is the floor; the first stop fills exactly the first screen.
 
 ## Constraints
-- Approved phrases word for word (design/approved.md): stops 1, 3, 9 and the tool stops 4–8 carry them.
+- Approved phrases word for word (design/approved.md): stops 1, 3 and 9 carry them.
 - No ROI calculator, Motion switch, prices, eyebrows or vendor names. Dark only. Ember is the only solid fill.
 - Page-weight budgets hold (lib/page-weight.ts); 60 fps on a laptop, adaptive on phones.
 

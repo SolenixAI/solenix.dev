@@ -6,10 +6,11 @@
 // A stop's scene is either its own values or a tool world to fly to. Values a stop leaves out carry on from the stop
 // before, so each one names only what changes.
 
-/** The tool stops, by world id (lib/home/worlds.ts), each a job an owner does by hand or pays someone for: the books,
- * the inbox, stock, ads and the numbers. Why these tools: design/research/site-playbook.md (Sources). To add a tool,
+/** The role stops, by the world of the tool each role works in (lib/home/worlds.ts): the hats an owner wears, most
+ * worn first: receptionist (customer service, 54% of owners), bookkeeper (43%), ad manager (marketer, 44%), stock
+ * manager and analyst (survey of 1,000 owners, NY Post 2026-05-21). Why these tools: design/research/site-playbook.md (Sources). To add a tool,
  * follow lib/home/worlds.ts. */
-export const TOOL_STOPS = ["quickbooks", "gmail", "shopify", "meta", "microsoftexcel"] as const
+export const TOOL_STOPS = ["gmail", "quickbooks", "meta", "shopify", "microsoftexcel"] as const
 
 export type JourneyStop = {
   /** What the stop shows, in a few words (for analytics and the tests). */

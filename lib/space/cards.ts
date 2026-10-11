@@ -130,7 +130,13 @@ export function createCards(camera: THREE.PerspectiveCamera) {
         e = { mesh, key: '', aspect: 0.2, pos: new THREE.Vector3(), seen: false, al: 0, w: 0, h: 0 }; live.set(c.id, e);
       }
       const key = `${c.kind}|${c.title}|${c.value ?? ''}|${c.state ?? ''}|${c.lines ? JSON.stringify(c.lines) : ''}`;
-      if (key !== e.key) { e.key = key; e.aspect = draw(e.mesh.material.map!.image as HTMLCanvasElement, c); e.mesh.material.map!.needsUpdate = true; }
+      if (key !== e.key) {
+        const map = e.mesh.material.map!, cv = map.image as HTMLCanvasElement, w0 = cv.width, h0 = cv.height;
+        e.key = key; e.aspect = draw(cv, c);
+        // A texture keeps the size it was first sent at: a card whose canvas grew or shrank needs a new one.
+        if (cv.width !== w0 || cv.height !== h0) map.dispose();
+        map.needsUpdate = true;
+      }
       // The view height at the anchor's depth turns the page's units into world units.
       tmp.set(c.at.x, c.at.y, c.at.z);
       const vh = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * Math.max(0.5, tmp.distanceTo(camera.position));
@@ -143,7 +149,7 @@ export function createCards(camera: THREE.PerspectiveCamera) {
       e.al += ((c.state === 'dim' ? 0.45 : 1) * c.alpha - e.al) * k;
       e.mesh.material.opacity = e.al; e.mesh.visible = e.al > 0.004;
     }
-    for (const [id, e] of live) if (!keep.has(id)) { e.al *= 1 - k; e.mesh.material.opacity = e.al; e.mesh.visible = e.al > 0.004; }
+    for (const [id, e] of live) if (!keep.has(id)) { e.al *= Math.max(0, 1 - k * 2.5); e.mesh.material.opacity = e.al; e.mesh.visible = e.al > 0.004; }
   }
 
   /** Where a card is: its centre in world space, or null. */

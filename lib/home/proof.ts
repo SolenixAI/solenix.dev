@@ -37,12 +37,12 @@ export const PROOF: ToolProof[] = [
   {
     tool: "gmail",
     things: [
-      { id: "reply", label: "Needs a reply today", value: "4" },
-      { id: "wait", label: "Can wait", value: "9" },
+      { id: "reply", label: "Needs you today", value: "4" },
+      { id: "wait", label: "Answered for you", value: "9" },
       { id: "junk", label: "Junk", value: "16" },
     ],
     asks: [
-      { say: "Sort today's inbox", reply: "Four need you today. Sixteen are junk.", states: { reply: "hot", wait: "plain", junk: "dim" }, order: ["reply", "wait", "junk"] },
+      { say: "Answer today's calls and emails", reply: "Nine answered for you. Four need you. Sixteen junk.", states: { reply: "hot", wait: "done", junk: "dim" }, order: ["reply", "wait", "junk"] },
       { say: "Book 30 minutes with Harbour Dental", reply: "Tuesday at 10:30 works. The invite waits for your OK.", states: { reply: "plain" }, adds: [{ id: "invite", label: "Tue 10:30 · Harbour Dental", value: "invite ready" }], order: ["invite", "reply", "wait", "junk"] },
     ],
   },
