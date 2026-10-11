@@ -59,9 +59,11 @@ export function makeDescriber(get: Get, headers: () => Promise<Record<string, st
     try {
       const r = await get(GRAPHQL, { method: "POST", headers: await headers(), body: JSON.stringify({ query }) })
       if (!r.ok) return failed(source, `HTTP ${r.status}`)
-      const repo = (await r.json())?.data?.repository
+      const body = await r.json()
+      const repo = body?.data?.repository
       const texts = files.map((_, i) => repo?.[`f${i}`]?.text)
-      return texts.every((t) => typeof t === "string") ? texts : failed(source, "a file's text did not come back")
+      // GraphQL answers 200 with an errors list when a field fails: its first message is the reason.
+      return texts.every((t) => typeof t === "string") ? texts : failed(source, body?.errors?.[0]?.message ?? "a file's text did not come back")
     } catch (e) {
       return failed(source, e)
     }

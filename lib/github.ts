@@ -25,24 +25,33 @@ export function appJwt(id: string, key: string, now = Date.now()) {
   return `${head}.${body}.${b64url(sig)}`
 }
 
-/** The app's installation token, renewed five minutes before it expires; null when it can't get one. */
+/** The app's installation token, renewed five minutes before it expires; null when it can't get one.
+ * A failed mint is logged once (naming its step), and reads wait a minute before minting again. */
 export function makeToken(app: App, get: Get, now = () => Date.now()) {
   let held: { token: string; until: number } | null = null
   let pending: Promise<string | null> | null = null
+  let retryAt = 0
   const mint = async () => {
-    const auth = { ...BASE, authorization: `Bearer ${appJwt(app.id, app.key, now())}` }
-    const inst = await get(`${API}/orgs/${app.org}/installation`, { headers: auth, cache: "no-store" })
-    if (!inst.ok) return failed("GitHub App installation", `HTTP ${inst.status}`)
-    const { id } = (await inst.json()) as { id: number }
-    const res = await get(`${API}/app/installations/${id}/access_tokens`, { method: "POST", headers: auth, cache: "no-store" })
-    if (!res.ok) return failed("GitHub App token", `HTTP ${res.status}`)
-    const { token, expires_at } = (await res.json()) as { token: string; expires_at: string }
-    held = { token, until: Date.parse(expires_at) - 5 * 60_000 }
-    return token
+    let step = "GitHub App installation"
+    try {
+      const auth = { ...BASE, authorization: `Bearer ${appJwt(app.id, app.key, now())}` }
+      const inst = await get(`${API}/orgs/${app.org}/installation`, { headers: auth, cache: "no-store" })
+      if (!inst.ok) return failed(step, `HTTP ${inst.status}`)
+      const { id } = (await inst.json()) as { id: number }
+      step = "GitHub App token"
+      const res = await get(`${API}/app/installations/${id}/access_tokens`, { method: "POST", headers: auth, cache: "no-store" })
+      if (!res.ok) return failed(step, `HTTP ${res.status}`)
+      const { token, expires_at } = (await res.json()) as { token: string; expires_at: string }
+      held = { token, until: Date.parse(expires_at) - 5 * 60_000 }
+      return token
+    } catch (e) {
+      return failed(step, e)
+    }
   }
   return async (): Promise<string | null> => {
     if (held && now() < held.until) return held.token
-    pending ??= mint().catch((e: unknown) => failed("GitHub App token", e)).finally(() => { pending = null })
+    if (now() < retryAt) return null
+    pending ??= mint().then((token) => { if (!token) retryAt = now() + 60_000; return token }).finally(() => { pending = null })
     return pending
   }
 }
