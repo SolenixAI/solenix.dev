@@ -94,7 +94,7 @@ for f in ["design/home.html", "brand/motion/index.html"] + sorted(glob.glob("art
         print(f"check: {f} is in the inline-script list in scripts/check.sh but holds no inline script: delete it from the list"); bad = 1
     if f not in ALLOWED:
         for line in inline:
-            print(f"check: {f}:{line} hand-written inline <script>: put it in client/<name>.ts and mark the spot with <!--client:<name>--> (lib/client-script.ts)"); bad = 1
+            print(f"check: {f}:{line} hand-written inline <script>: put it in client/<name>.ts and mark the spot with <!--client:<name>--> (lib/client-script.ts); on the brand motion page, in brand/motion/piece.ts"); bad = 1
 sys.exit(bad)
 PY
 # CI workflows: valid (actionlint) and safe (zizmor: pinned actions, least privilege). ACTIONLINT and ZIZMOR name the binaries.
