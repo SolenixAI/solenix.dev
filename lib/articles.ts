@@ -66,5 +66,5 @@ function wrapFragment(html: string) {
   const m = html.match(/^(\s*(?:<meta[^>]*>|<title>[^<]*<\/title>|<link[^>]*>|<style[\s\S]*?<\/style>|\s)*)([\s\S]*)$/i)
   const head = m?.[1] ?? ""
   const body = m?.[2] ?? html
-  return `<!doctype html><html lang="en"><head>${head}</head><body>${body}</body></html>`
+  return `<!doctype html><html lang="en-CA"><head>${head}</head><body>${body}</body></html>`
 }

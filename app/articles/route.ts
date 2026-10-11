@@ -68,7 +68,7 @@ export async function GET() {
       `<link rel="preload" as="image" href="${first.heroPhone}" imagesrcset="${srcset(first.heroPhone, first.heroPhone2x)}" media="(max-width:760px)" fetchpriority="high">`
     : ""
   const html = `<!doctype html>
-<html lang="en"><head>
+<html lang="en-CA"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${title}</title><meta name="description" content="${esc(description)}">
 ${preload}<style>
