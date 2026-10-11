@@ -33,21 +33,20 @@ export function makeSpaceWorld(load: () => Promise<Engine>) {
   let canvas: HTMLCanvasElement | null = null;
   let current: SpaceBinding | null = null;
   let space: Space | null = null;
-  // One probe element for the world's life: the engine reads tokens through it while it runs.
-  let probe: HTMLElement | null = null;
 
   // Creates the engine once the module is in, the canvas is mounted and a page is bound.
   function ensure() {
     if (space || !engine || !current || !stage || !canvas) return;
     const s = stage, c = canvas;
     // Colours come from the design tokens, as the browser resolves them: a probe element gives each token as it computes.
-    const p = (probe ??= document.createElement("i"));
-    p.style.display = "none";
-    document.body.append(p);
+    // The engine reads every token while it starts (lib/space/engine.ts), so the probe lives only for that call.
+    const probe = document.createElement("i");
+    probe.style.display = "none";
+    document.body.append(probe);
     const env: SpaceEnv = {
       canvas: c,
       stage: s,
-      token: (n) => { p.style.color = `var(${n})`; return getComputedStyle(p).color; },
+      token: (n) => { probe.style.color = `var(${n})`; return getComputedStyle(probe).color; },
       motion: () => (current ? current.motion() : false),
       story: {
         params: () => (current ? current.story.params() : NO_PARAMS),
@@ -69,10 +68,9 @@ export function makeSpaceWorld(load: () => Promise<Engine>) {
     try {
       space = engine.createSpace(env);
     } catch (e) {
-      // A world that could not start keeps nothing in the page; the next bind tries again with a new probe.
-      p.remove();
-      probe = null;
       console.error("the 3D world could not start", e);
+    } finally {
+      probe.remove(); // started or not, the world leaves nothing in the page
     }
   }
 

@@ -32,13 +32,17 @@ test("an engine that fails to start leaves no probe in the page, however many ti
   assert.equal(inBody.size, 0)
 })
 
-test("a world that starts keeps exactly one probe through any binds and unbinds", async () => {
+test("a world that starts reads its colours through the probe, then leaves no probe, through any binds", async () => {
   const inBody = fakePage()
-  let started = 0
-  const world = makeSpaceWorld(async () => ({ createSpace: () => { started++; return { setActive() {} } } }) as unknown as Engine)
+  let started = 0, colour = "", during = 0
+  const world = makeSpaceWorld(async () => ({
+    createSpace: (env: { token: (n: string) => string }) => { started++; colour = env.token("--bg"); during = inBody.size; return { setActive() {} } },
+  }) as unknown as Engine)
   world.mount(stage, canvas)
   await tick()
   for (let i = 0; i < 3; i++) { const b = binding(); world.bind(b); world.unbind(b) }
   assert.equal(started, 1)
-  assert.equal(inBody.size, 1)
+  assert.equal(colour, "rgb(0, 0, 0)", "the token is read through the probe")
+  assert.equal(during, 1, "the probe is in the page while the engine starts")
+  assert.equal(inBody.size, 0)
 })
