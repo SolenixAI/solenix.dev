@@ -31,7 +31,7 @@ for (const m of readFileSync("next.config.ts", "utf8").matchAll(/source:\s*["'](
 
 // Journeys, from the doc.
 const doc = readFileSync(DOC, "utf8")
-const named = new Set()
+const named = new Set<string>()
 const sections = doc.split(/\n(?=## )/)
 for (const s of sections) {
   const line = s.match(/^Pages:\s*(.+)$/m)
@@ -40,10 +40,13 @@ for (const s of sections) {
   if (!/```mermaid\s*\n\s*journey\b/.test(s)) problems.push(`"${title}" lists pages but has no journey diagram`)
   for (const p of line[1].split(",").map((x) => x.trim()).filter(Boolean)) {
     named.add(p)
-    if (!pages.has(p)) problems.push(`"${title}" names ${p}, which is not a page on the site`)
+    // "/articles/*" names every page under /articles/, so a new article joins its journeys with no edit here.
+    const ok = p.endsWith("/*") ? [...pages].some((x) => x.startsWith(p.slice(0, -1))) : pages.has(p)
+    if (!ok) problems.push(`"${title}" names ${p}, which is not a page on the site`)
   }
 }
-for (const p of pages) if (!named.has(p)) problems.push(`${p} belongs to no journey: add it to a journey in ${DOC}`)
+const inJourney = (p: string) => named.has(p) || [...named].some((n) => n.endsWith("/*") && p.startsWith(n.slice(0, -1)))
+for (const p of pages) if (!inJourney(p)) problems.push(`${p} belongs to no journey: add it to a journey in ${DOC}`)
 
 // Every step has a feeling from 1 to 5.
 for (const block of doc.matchAll(/```mermaid\s*\n\s*journey\b([\s\S]*?)```/g))

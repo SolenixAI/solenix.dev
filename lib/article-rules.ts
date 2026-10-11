@@ -6,6 +6,20 @@ import { NAV } from "./site-nav.ts"
 export const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 const MAX_BYTES = 8 * 1024 * 1024
 
+// The words articles/_template ships with. A page still holding one was copied and not finished
+// (lib/article-rules.test.ts keeps this list and the template in step).
+const TEMPLATE_TEXT = [
+  "Article title",
+  "One sentence a busy owner reads in a feed",
+  "The headline with one",
+  "One plain sentence of what happened",
+  "The one first step",
+  "The live thing itself",
+  "One section, one idea",
+  "Replace with the real thing",
+  "Every fact links to its source",
+]
+
 // Things that must never reach a public page.
 const PRIVATE: [RegExp, string][] = [
   [/\/Users\/[a-z]/i, "a local file path"],
@@ -34,7 +48,8 @@ export function articleProblems(slug: string, html: string): string[] {
   // The first screen is a hero that the site can check and derive the card and share image from.
   if (!/<[a-z]+\b[^>]*\bdata-hero\b/i.test(html)) out.push(`has no hero: mark the first screen with data-hero (see articles/_template)`)
   // The page edge is the site's: an article's .wrap reads var(--gutter), so it lines up with the nav and every page.
-  if (/\.wrap\s*\{[^}]*padding-inline\s*:\s*\d/.test(html)) out.push(`sets its own page edge: give .wrap padding-inline:var(--gutter)`)
+  if (/\.wrap\s*\{[^}]*padding(?:-inline\s*:\s*\d|\s*:\s*\S+\s+\d)/.test(html)) out.push(`sets its own page edge: give .wrap padding-inline:var(--gutter)`)
+  for (const words of TEMPLATE_TEXT) if (html.includes(words)) out.push(`still holds template text "${words}": replace it with the article's own words`)
   // Colours come from /tokens.css by name, so a brand change reaches every article. A raw colour is a hex code, or a colour
   // function with numbers in it, in the comma or the space syntax: rgb(244 242 238), hsl(), oklch(), color(). Pure black
   // (rgb(0 0 0), rgba(0,0,0,.5)) stays free: a shadow or a scrim is not a brand colour.
