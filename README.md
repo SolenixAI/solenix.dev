@@ -35,7 +35,7 @@ Each commit runs the checks too. `npm install` points git at `.githooks`. The pr
 
 ## Where things are
 
-- The homepage is `app/(site)/page.tsx`. It renders `design/home.html`, the one source for its markup and CSS.
+- The homepage is `app/(site)/page.tsx`. It renders `design/home.html`, the one source for its markup and CSS; the 3D world's stage (sky, canvas, first-frame still) is `components/space/`, shared with the platform page.
 - `app/`: pages and route handlers (Next.js App Router).
 - `design/`: the homepage source, design tokens and the approved phrases.
 - `articles/`: one folder per article. See [articles/README.md](articles/README.md).

@@ -79,8 +79,8 @@ The system behind solenix.dev. Solenix is one tech expert for small businesses i
 ## Imagery
 
 - **Style:** Made of light, not photographs: a night sky with one warm light source, orbit rings, a 32px hairline grid and a sparse starfield, glass panels catching light on their top edge. The signature is the real-physics three.js scene — three plasma suns over a spacetime grid, settling from chaos into the Chenciner–Montgomery figure-eight.
-- **Subjects:** the mark — sun, one orbit ring, one agent dot, the figure-eight orbit drawn from real simulation path data, the three-body night-sky scene (one scene, running behind the whole homepage), status boards, sparklines and timelines with real or Example-labelled data
-- **Treatment:** On the homepage the scene is fixed behind every section and text sits directly in it. Keep text readable by shading the scene behind it and keeping bodies and trails out from behind small text, never by laying a panel over the world. Every page may open in chaos but ends settled.
+- **Subjects:** the mark — sun, one orbit ring, one agent dot, the figure-eight orbit drawn from real simulation path data, the three-body night-sky scene (one scene, running behind the whole homepage; its first-frame still stands behind the platform page), status boards, sparklines and timelines with real or Example-labelled data
+- **Treatment:** On the homepage the scene is fixed behind every section and text sits directly in it; the platform page shows its still the same way. Keep text readable by shading the scene behind it and keeping bodies and trails out from behind small text, never by laying a panel over the world. Every page may open in chaos but ends settled.
 - **Avoid:** stock photography or stock faces, illustrations of people, gradient blobs and purple AI washes, glassmorphism card grids as decoration, AI sparkle icons, an ∞ glyph or a hand-drawn lemniscate in place of the figure-eight, fake client logos or testimonials, light sections
 
 ## Layout
