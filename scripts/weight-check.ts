@@ -1,7 +1,8 @@
 // The page-weight check: open every page the sitemap lists, and the nav's platform page (noindex, so not listed), in
 // one real browser; count what each downloads until it settles, and hold it to its budget (lib/page-weight.ts).
 // Each response is weighed as a visitor gets it: its body gzipped here (images barely shrink), so the result does not
-// depend on whether the local server compresses. Script counts files and the page's inline scripts.
+// depend on whether the local server compresses. Script counts files and the page's inline scripts. Left out: live
+// streams (text/event-stream), which carry a few dozen bytes on open and a short notice per change.
 // Run it against a production build that believes it is the live site, so analytics load as they do for a visitor:
 //   export VERCEL_PROJECT_PRODUCTION_URL=localhost; npm run build && npm start -- -p 3100
 //   node scripts/weight-check.ts http://localhost:3100 [--json]
@@ -45,7 +46,8 @@ try {
         else analytics++
       }
       if (!res || (res.status() >= 300 && res.status() < 400)) return { total: 0, script: 0 } // a redirect carries no body
-      // A live stream (/agents/live) is a connection that stays open, not something downloaded once: it has no body to weigh.
+      // A live stream (/agents/live) is left out: it sends a retry line and the catalog's version (a few dozen bytes),
+      // then one short notice per catalog change while the page is open, and its body cannot be read once it closes.
       if ((await res.headerValue("content-type"))?.startsWith("text/event-stream")) return { total: 0, script: 0 }
       const body = await res.body()
       const total = gz(body)
