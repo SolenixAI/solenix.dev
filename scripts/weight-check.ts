@@ -1,8 +1,9 @@
 // The page-weight check: open every page the sitemap lists, and the nav's platform page (noindex, so not listed), in
 // one real browser; count what each downloads until it settles, and hold it to its budget (lib/page-weight.ts).
 // Each response is weighed as a visitor gets it: its body gzipped here (images barely shrink), so the result does not
-// depend on whether the local server compresses. Script counts files and the page's inline scripts. Left out: live
-// streams (text/event-stream), which carry a few dozen bytes on open and a short notice per change.
+// depend on whether the local server compresses. Script counts files and the page's inline scripts. A response with no
+// body to read (hasReadableBody, lib/page-weight.ts) counts the bytes it sent: a 204, a redirect, an empty body,
+// or a live stream.
 // Run it against a production build that believes it is the live site, so analytics load as they do for a visitor:
 //   export VERCEL_PROJECT_PRODUCTION_URL=localhost; npm run build && npm start -- -p 3100
 //   node scripts/weight-check.ts http://localhost:3100 [--json]
@@ -11,7 +12,7 @@
 // site's own rewrite and are counted; everything else under /lumen (events, flags) is stopped, so no visit is recorded.
 import { gzipSync } from "node:zlib"
 import { launch } from "./browser.ts"
-import { overBudget, type Weight } from "../lib/page-weight.ts"
+import { hasReadableBody, overBudget, type Weight } from "../lib/page-weight.ts"
 import { NAV } from "../lib/site-nav.ts"
 import { POSTHOG_PROXY } from "../lib/analytics.ts"
 
@@ -45,10 +46,15 @@ try {
         if (!res?.ok()) problems.push(`${path}: PostHog's ${new URL(req.url()).pathname} answered ${res?.status() ?? "nothing"}, so analytics were not weighed`)
         else analytics++
       }
-      if (!res || (res.status() >= 300 && res.status() < 400)) return { total: 0, script: 0 } // a redirect carries no body
-      // A live stream (/agents/live) is left out: it sends a retry line and the catalog's version (a few dozen bytes),
-      // then one short notice per catalog change while the page is open, and its body cannot be read once it closes.
-      if ((await res.headerValue("content-type"))?.startsWith("text/event-stream")) return { total: 0, script: 0 }
+      if (!res) return { total: 0, script: 0 }
+      // Asking the browser for the body of a response with none to read fails: it has no body data for that response.
+      // Such a response is weighed by the bytes it sent. /agents/live answers 204 when no Redis is set; with Redis it is
+      // a live stream (a retry line, the catalog's version, one notice per change), and it never ends.
+      const contentType = await res.headerValue("content-type"), contentLength = await res.headerValue("content-length")
+      if (!hasReadableBody(res.status(), contentType, contentLength)) {
+        const sent = (await req.sizes()).responseBodySize
+        return { total: sent, script: req.resourceType() === "script" ? sent : 0 }
+      }
       const body = await res.body()
       const total = gz(body)
       if (req.resourceType() === "script") return { total, script: total }
