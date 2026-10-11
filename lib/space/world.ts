@@ -3,8 +3,8 @@
 // to the world while it is shown and unbinds when it leaves. Nothing is disposed, so the canvas is never torn down;
 // the world only stops drawing while no page is bound to it.
 //
-// The engine module loads in the background when the layout mounts. The engine itself is created the first time a
-// page binds, so a page that shows no world starts none, and the first frame is drawn with that page's own story.
+// The engine module (three.js and the scene, the site's largest script) loads the first time a page binds, so a page
+// that shows no world downloads none of it. The engine is created once it is in, with that page's own story.
 import type { Space, SpaceEnv, SpaceFrame, SpaceParams, SpaceStory, SpaceWell } from "./engine";
 
 /** What a page gives the world while it is shown. Each function is read at the moment it is needed, so the page may change its state. */
@@ -28,7 +28,7 @@ const NO_PARAMS = {} as SpaceParams;
 /** The world, with its engine module loaded by `load` (the site loads ./engine; a test passes a fake). */
 export function makeSpaceWorld(load: () => Promise<Engine>) {
   let engine: Engine | null = null;
-  let loading: Promise<Engine> | null = null;
+  let loading: Promise<Engine | null> | null = null;
   let stage: HTMLElement | null = null;
   let canvas: HTMLCanvasElement | null = null;
   let current: SpaceBinding | null = null;
@@ -75,15 +75,17 @@ export function makeSpaceWorld(load: () => Promise<Engine>) {
   }
 
   return {
-  /** The layout mounts the world: keep its stage and canvas, and load the engine module in the background. */
+  /** The layout mounts the world: keep its stage and canvas. */
   mount(s: HTMLElement, c: HTMLCanvasElement) {
     stage = s;
     canvas = c;
-    void (loading ??= load()).then((m) => { engine = m; ensure(); }, (e) => console.error("the 3D world did not load", e));
+    ensure();
   },
-  /** A page is shown and takes the world: from now on its story and labels draw. */
+  /** A page is shown and takes the world: from now on its story and labels draw. The first bind loads the engine. */
   bind(b: SpaceBinding) {
     current = b;
+    // A load that fails (a chunk gone after a deploy, a dropped connection) is forgotten, so the next bind tries again.
+    loading ??= load().then((m) => { engine = m; ensure(); return m; }, (e) => { console.error("the 3D world did not load", e); loading = null; return null; });
     if (space) space.setActive(true);
     else ensure();
   },
