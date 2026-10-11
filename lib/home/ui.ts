@@ -40,7 +40,7 @@ const KEYS: HomeKey[] = [
   { sel: '#tools', f: 0.8, pin: 1 },
   // 4 · The plan: back to the centre. Only here are they steered, and only here does the orbit form.
   { sel: '#after', f: 0, pin: 1, fly: 0, tx: 0, tz: 0, k: 0.45, free: 0.4, dim: 0, stops: 1, el: 60, az: 34, dist: 9.6, ox: 0.21, oy: 0.02, poy: 0.02, calm: 0.35, rf: 0, rs: 0, sp: 1, rw: 0 },
-  { sel: '#after', f: 0.35, pin: 1, k: 1, free: 1, third: 0.6, poy: -0.02 },
+  { sel: '#after', f: 0.35, pin: 1, k: 1, free: 1, third: 0.6, poy: -0.02, ink: 0.35 },
   { sel: '#after', f: 1, pin: 1, k: 1, order: 1, ink: 1, third: 1, calm: 1, el: 64, az: 42 },
   // The promises: down inside the orbit, close, as the bodies glide past in order.
   { sel: '#promises', f: 0.1, pin: 1, stops: 0, el: 17, az: 78, dist: 8.8, lens: 8, ox: 0.24, oy: 0.03, poy: -0.04 },
@@ -93,21 +93,16 @@ export function startUi(): { S: Solenix; stop: () => void } {
     for (let i = 1; i < keyY.length; i++) keyY[i] = Math.max(keyY[i], keyY[i - 1] + 1);
     placeStops();
   }
-  // Each journey step gets a scroll stop in the middle of the stretch where it shows (design/home.html .jr-stop).
-  // The journey's step follows the orbit's ink, so its stretches are found by walking the scroll; the promises'
-  // steps are even quarters of their section.
+  // A pinned section's steps share its scroll evenly: step k shows through the k-th equal stretch, and its scroll stop
+  // (design/home.html .jr-stop) sits in the middle of that stretch, so one flick moves exactly one step.
+  const stepOf = (sec: HTMLElement, n: number) => Math.min(n - 1, Math.floor(clamp(-sec.getBoundingClientRect().top / (sec.offsetHeight - innerHeight)) * n));
   function placeStops() {
-    const vh = innerHeight;
-    const put = (sec: HTMLElement, mids: number[]) => $$('.jr-stop', sec).forEach((s, k) => { if (mids[k] !== undefined) s.style.top = `${Math.round(mids[k])}px`; });
-    { const top = jr.getBoundingClientRect().top + scrollY, run = jr.offsetHeight - vh, from: number[] = [], to: number[] = [];
-      for (let y = 0; y <= run; y += 4) { const k = stepAt(top + y); if (from[k] === undefined) from[k] = y; to[k] = y; }
-      put(jr, from.map((f, k) => (f + to[k]) / 2)); }
-    { const run = prSec.offsetHeight - vh; put(prSec, [0, 1, 2, 3].map((k) => (k + 0.5) / 4 * run)); }
-  }
-  // The journey card for a scroll position: how far the orbit is inked in at that point, in fifths.
-  function stepAt(y: number) {
-    const [i, t] = sceneAt(y), a = KEYS[i].ink ?? 0, b = KEYS[Math.min(i + 1, KEYS.length - 1)].ink ?? a;
-    return Math.max(0, Math.min(4, Math.floor((a + (b - a) * t) * 5 - 0.4)));
+    $$<HTMLElement>('[data-stops]').forEach(sec => {
+      const at = sec.dataset.stops!.split(' ').map(Number), run = sec.offsetHeight - innerHeight;
+      let stops = $$('.jr-stop', sec);
+      if (stops.length !== at.length) { stops.forEach(s => s.remove()); stops = at.map(() => { const i = document.createElement('i'); i.className = 'jr-stop'; i.setAttribute('aria-hidden', 'true'); sec.prepend(i); return i; }); }
+      stops.forEach((s, k) => { s.style.top = `${Math.round(at[k] * run)}px`; });
+    });
   }
   function sceneAt(y: number): [number, number] {
     if (y <= keyY[0]) return [0, 0];
@@ -149,14 +144,14 @@ export function startUi(): { S: Solenix; stop: () => void } {
       any = Math.max(any, o); el.style.opacity = o.toFixed(3); el.style.transform = y ? `translateY(${y.toFixed(3)}em)` : ''; };
     put(bblocks[0], 0); bwords.forEach((w, k) => put(w, k + 1)); put(bblocks[1], bwords.length + 1);
     beat.style.visibility = any > 0.01 ? 'visible' : 'hidden';
-    // The journey: one card at a time, keyed to how far the orbit is inked in.
-    const jrR = jr.getBoundingClientRect(), inJ = jrR.top < vh * 0.4 && jrR.bottom > vh * 0.3, ink = S.scene.ink;
-    const cur = inJ ? Math.max(0, Math.min(4, Math.floor(ink * 5 - 0.4))) : -1;
+    // The journey: one card at a time, one equal stretch of scroll each; the orbit inks in under it.
+    const jrR = jr.getBoundingClientRect(), inJ = jrR.top < vh * 0.4 && jrR.bottom > vh * 0.3;
+    const cur = inJ ? stepOf(jr, 5) : -1;
     S.jCur = cur;
     jSteps.forEach((li, i) => li.classList.toggle('on', i === Math.max(0, cur) && (inJ || jrR.top < vh)));
     jDots.forEach((d, i) => d.classList.toggle('on', i <= cur));
     // The promises: one at a time. Each one that arrives rings out across the ground.
-    { const pr = prSec.getBoundingClientRect(), inP = pr.top < vh * 0.4 && pr.bottom > vh * 0.3, pc = Math.min(3, Math.floor(clamp(-pr.top / (pr.height - vh)) * 4));
+    { const pr = prSec.getBoundingClientRect(), inP = pr.top < vh * 0.4 && pr.bottom > vh * 0.3, pc = stepOf(prSec, 4);
       pSteps.forEach((li, i) => li.classList.toggle('on', i === pc && (inP || pr.top < vh))); pDots.forEach((d, i) => d.classList.toggle('on', i <= pc));
       if (inP && pc !== S.prCur) { if (S.prCur !== undefined) S.pingN++; S.prCur = pc; } }
   }

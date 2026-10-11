@@ -146,10 +146,10 @@ html[data-motion="on"] .pulse::after { animation: pulse 2.4s var(--ease-out) inf
    The five stops sit on the real orbit; the card shows what you get at each one. ── */
 .jr { position: relative; height: 380vh; height: 380svh; }
 .jr-pin { position: sticky; top: 0; height: 100vh; height: 100svh; }
-/* One stop per step: a flick of the wheel or a swipe lands on the next step and holds there, never flies past it.
-   lib/home/ui.ts places each stop where its step is fully shown. Only these stops snap; the rest of the page scrolls free. */
-html.js { scroll-snap-type: y proximity; }
-.jr-stop { position: absolute; left: 0; top: 0; width: 1px; height: 1px; pointer-events: none; scroll-snap-align: start; scroll-snap-stop: always; }
+/* The page is a journey of stops: one scroll gesture moves to the next scene or step and holds there (lib/home/stepper.ts).
+   Each pinned scene lists its stops (data-stops, as fractions of its pinned scroll); lib/home/ui.ts places a .jr-stop at
+   each. The end of the page (.finale: the close and the footer) is the last stop. */
+.jr-stop { position: absolute; left: 0; top: 0; width: 1px; height: 1px; pointer-events: none; }
 html:not(.js) .jr-stop { display: none; }
 .jr-in { height: 100%; display: grid; grid-template-rows: auto 1fr auto; padding-top: calc(var(--nav-height) + clamp(1.5rem, 6vh, 4rem)); padding-bottom: clamp(2rem, 9vh, 6rem); }
 .jr-head { display: grid; gap: var(--space-4); max-width: 30rem; }
@@ -251,7 +251,10 @@ html:not(.js) #after .jr-steps li { grid-area: auto; }
 .close-sec .close-alt:focus-visible { outline: var(--focus-width) solid var(--focus-color); outline-offset: 3px; border-radius: var(--radius-pill); }
 .photo { width: 36px; height: 36px; border-radius: 50%; border: 1px dashed var(--line-strong); display: grid; place-items: center; font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); color: var(--muted); letter-spacing: .04em; }
 
-footer { border-top: 1px solid var(--line); padding-block: var(--space-7); font-size: var(--fs-sm); color: var(--muted); background: var(--bg); }
+/* The end of the journey: the close and the footer share the last screen, so the scroll ends on the stable orbit. */
+.finale { min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; }
+.finale .close-sec { flex: 1; min-height: 0; }
+footer { border-top: 1px solid var(--line); padding-block: var(--space-6); font-size: var(--fs-sm); color: var(--muted); text-shadow: 0 0 26px var(--bg), 0 0 10px var(--bg), 0 1px 2px var(--bg); }
 footer .wrap { display: flex; flex-wrap: wrap; gap: var(--space-5) var(--space-7); align-items: center; justify-content: space-between; }
 footer ul { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5); }
 footer a { display: inline-flex; align-items: center; min-height: var(--tap-min); text-decoration: none; color: var(--text); }
@@ -405,7 +408,7 @@ html:not(.js) .tools { height: auto; } html:not(.js) .tools-pin { position: rela
 </div>
 
 <div id="main">
-<section class="sky" id="top" data-scene="hero" aria-label="Your business is a three-body problem">
+<section class="sky" id="top" data-scene="hero" data-stops="0 0.75" aria-label="Your business is a three-body problem">
   <span class="anchor" id="settle" aria-hidden="true"></span>
   <div class="stage" data-hero>
     <div class="hero-copy">
@@ -425,7 +428,7 @@ html:not(.js) .tools { height: auto; } html:not(.js) .tools-pin { position: rela
   </div>
 </section>
 
-<section class="jr" id="guide" data-scene="guide">
+<section class="jr" id="guide" data-scene="guide" data-stops="0.3 0.85">
   <div class="jr-pin">
     <div class="wrap jr-in">
       <div class="jr-head">
@@ -440,7 +443,7 @@ html:not(.js) .tools { height: auto; } html:not(.js) .tools-pin { position: rela
   </div>
 </section>
 
-<section class="tools" id="tools" data-scene="tools" aria-labelledby="tools-h">
+<section class="tools" id="tools" data-scene="tools" data-stops="0.45" aria-labelledby="tools-h">
   <div class="tools-pin">
     <div class="wrap tools-in">
       <h2 class="h2" id="tools-h">Pick a tool you use. <em>See what one sentence gets you.</em></h2>
@@ -499,8 +502,7 @@ html:not(.js) .tools { height: auto; } html:not(.js) .tools-pin { position: rela
   </div>
 </section>
 
-<section class="jr" id="after" data-scene="journey">
-  <i class="jr-stop" aria-hidden="true"></i><i class="jr-stop" aria-hidden="true"></i><i class="jr-stop" aria-hidden="true"></i><i class="jr-stop" aria-hidden="true"></i><i class="jr-stop" aria-hidden="true"></i>
+<section class="jr" id="after" data-scene="journey" data-stops="0.1 0.3 0.5 0.7 0.9">
   <div class="jr-pin">
     <div class="wrap jr-in">
       <div class="jr-head">
@@ -521,8 +523,7 @@ html:not(.js) .tools { height: auto; } html:not(.js) .tools-pin { position: rela
   </div>
 </section>
 
-<section class="jr pr" id="promises" data-scene="promises">
-  <i class="jr-stop" aria-hidden="true"></i><i class="jr-stop" aria-hidden="true"></i><i class="jr-stop" aria-hidden="true"></i><i class="jr-stop" aria-hidden="true"></i>
+<section class="jr pr" id="promises" data-scene="promises" data-stops="0.125 0.375 0.625 0.875">
   <div class="jr-pin">
     <div class="wrap jr-in">
       <div class="jr-head">
@@ -539,6 +540,7 @@ html:not(.js) .tools { height: auto; } html:not(.js) .tools-pin { position: rela
   </div>
 </section>
 
+<div class="finale">
 <section class="close-sec" id="close" data-scene="close" aria-labelledby="close-h">
   <div class="wrap close-in">
     <h2 id="close-h" class="rv">Let's find your <em>stable orbit.</em></h2>
@@ -553,17 +555,17 @@ html:not(.js) .tools { height: auto; } html:not(.js) .tools-pin { position: rela
     </div>
   </div>
 </section>
-</div>
-
-<footer>
+<footer role="contentinfo">
   <div class="wrap">
     <!--site:brand-->
-    <p>One AI at the centre of your business. St. John's, Newfoundland and Labrador.</p>
     <ul><!--site:footer-links--></ul>
     <p class="mono" style="font-size: var(--fs-xs);">© 2026 Solenix</p>
     <p class="tm-note">The logos on this page belong to their owners. They are shown because they are tools you may already use; no partnership is implied.</p>
   </div>
 </footer>
+</div>
+</div>
+
 
 </body>
 </html>

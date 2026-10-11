@@ -83,7 +83,7 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
     S.stops.forEach((e, k) => {
       if (sc.stops < 0.01) { e.style.opacity = '0'; return; }
       const o = f.orbit(STOP_U[k]), p = f.project(o.x, o.y, o.z);
-      const sx = (p.x + 1) / 2 * W, sy = (1 - p.y) / 2 * H, lit = sc.ink >= (k + 0.5) / 5 - 0.02;
+      const sx = (p.x + 1) / 2 * W, sy = (1 - p.y) / 2 * H, lit = S.jCur >= k || (S.jCur < 0 && sc.ink >= (k + 0.5) / 5 - 0.02);
       e.style.opacity = (lit ? sc.stops : 0).toFixed(3); e.style.transform = `translate3d(${sx.toFixed(1)}px, ${sy.toFixed(1)}px, 0)`;
       e.classList.toggle('lit', lit); e.classList.toggle('cur', k === S.jCur && !(locked || sc.agent > 0.98)); e.classList.toggle('flip', sx > W - 240);
     });
