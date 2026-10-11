@@ -32,7 +32,7 @@ export function KindIcon({ kind }: { kind: Kind | Part["kind"] }) {
 const Icon = ({ d }: { d: ReactNode }) => <svg viewBox="0 0 24 24" aria-hidden="true" className="sy-glyph">{d}</svg>
 export const StarIcon = () => <Icon d={<path d="m12 3.8 2.5 5.1 5.6.8-4 4 .9 5.6-5-2.7-5 2.7.9-5.6-4-4 5.6-.8z" />} />
 const ForkIcon = () => <Icon d={<><circle cx="6.5" cy="5.5" r="2" /><circle cx="17.5" cy="5.5" r="2" /><circle cx="12" cy="19" r="2" /><path d="M6.5 7.5c0 4 5.5 3.5 5.5 9.5M17.5 7.5c0 4-5.5 3.5-5.5 9.5" /></>} />
-export const DownIcon = () => <Icon d={<path d="M12 4v12m-5-5 5 5 5-5M5 20h14" />} />
+const DownIcon = () => <Icon d={<path d="M12 4v12m-5-5 5 5 5-5M5 20h14" />} />
 const ClockIcon = () => <Icon d={<><circle cx="12" cy="12" r="8.5" /><path d="M12 7.5V12l3 2" /></>} />
 const ScaleIcon = () => <Icon d={<path d="M12 4v16M7 20h10M5 8h14M5 8l-2.5 6a2.5 2.5 0 0 0 5 0zM19 8l-2.5 6a2.5 2.5 0 0 0 5 0z" />} />
 const CheckIcon = () => <Icon d={<path d="m5 12.5 4.5 4.5L19 7.5" />} />

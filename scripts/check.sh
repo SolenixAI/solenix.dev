@@ -41,7 +41,7 @@ fi
 
 # The site is dark only: the root layout declares dark before first paint, and nothing follows the device.
 # The first-frame ground (lib/site-ground.ts) is a literal by necessity; it must equal --bg in the tokens.
-ground=$(sed -n 's/^export const GROUND = "\(#[0-9a-fA-F]*\)".*/\1/p' lib/site-ground.ts); bg=$(sed -n 's/^[[:space:]]*--bg:[[:space:]]*\(#[0-9a-fA-F]*\);.*/\1/p' design/tokens.css | head -1)
+ground=$(sed -n 's/^\(export \)\{0,1\}const GROUND = "\(#[0-9a-fA-F]*\)".*/\2/p' lib/site-ground.ts); bg=$(sed -n 's/^[[:space:]]*--bg:[[:space:]]*\(#[0-9a-fA-F]*\);.*/\1/p' design/tokens.css | head -1)
 [ -n "$ground" ] && [ "$ground" = "$bg" ] || bad "lib/site-ground.ts GROUND ($ground) must equal --bg in design/tokens.css ($bg)"
 grep -q 'colorScheme: "dark"' app/layout.tsx || bad "app/layout.tsx: the root viewport must declare colorScheme \"dark\" (the site is dark only)"
 grep -rn -E 'light dark|light-dark\(|data-portal' app components lib client articles design/home.html design/tokens.css 2>/dev/null \
@@ -130,6 +130,8 @@ git grep -n -I -E 'class(Name)?="[^"]*\b(eyebrow|sx-kicker|kicker)\b' -- app com
   | while read -r l; do echo "check: an eyebrow or kicker above a heading (banned; let the heading speak): ${l:0:120}"; done | grep . && fail=1
 # Types: the compiler checks the whole repo (the page scripts were compiled at the top).
 npx tsc --noEmit || fail=1
+# Dead code: a file, export or dependency nothing uses is removed, not kept "just in case" (knip.json names the entries).
+npx --no-install knip --no-progress --no-config-hints || fail=1
 # Unit tests, next to the module they test (lib/**/*.test.ts, any depth), with Node's own test runner.
 node --test 'lib/**/*.test.ts' >/dev/null 2>&1 || { node --test 'lib/**/*.test.ts'; fail=1; }
 # The hero fit check opens pages in a browser, so locally it runs when something that shapes a first

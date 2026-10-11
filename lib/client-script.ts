@@ -7,7 +7,7 @@
 
 import { CLIENT, CLIENT_MODULES } from "./client.generated.ts"
 
-export function clientScript(name: string): string {
+function clientScript(name: string): string {
   if (!(name in CLIENT)) throw new Error(`<!--client:${name}--> names no script: there is no client/${name}.ts`)
   return `<script${CLIENT_MODULES.includes(name) ? ` type="module"` : ""}>${CLIENT[name as keyof typeof CLIENT]}</script>`
 }

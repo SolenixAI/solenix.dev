@@ -39,7 +39,7 @@ function commandPieces(command: string): string[] {
 // A sentence a visitor copies, with its command in code. The screen shows it only after a failed copy, selected for a
 // copy by hand; every surface renders it here (worlds-css.ts keeps each piece whole), so a line breaks only at a space
 // between two pieces.
-export function Sentence({ text }: { text: string }) {
+function Sentence({ text }: { text: string }) {
   return (
     <span className="wd-sentence">
       {text.split("`").map((part, i) => (i % 2 ? <code key={i}>{commandPieces(part).map((piece, j) => <Fragment key={j}>{j > 0 && " "}<span className="wd-tok">{piece}</span></Fragment>)}</code> : part))}

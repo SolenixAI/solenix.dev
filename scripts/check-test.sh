@@ -38,6 +38,11 @@ saw_pass() {
 
 fresh; expect pass "untouched repo passes"
 
+# Dead code: an export nothing imports fails.
+fresh; echo 'export const unusedHelper = () => 1' >> "$tmp/r/lib/format.ts"
+run_check; saw "unusedHelper" "an export nothing uses (dead code) fails"
+fresh; printf 'export const usedHereOnly = 2\nexport const twice = usedHereOnly * 2\n' >> "$tmp/r/lib/format.ts"
+run_check; saw "usedHereOnly" "an export used only in its own file fails (drop the export)"
 # Drift: on a local main that holds changes GitHub main does not, the check fails; on a main only behind, it passes.
 # Only the main pointer moves (the copy keeps its files), so the copy's uncommitted rules are the ones tested; HEAD is
 # put on main, and update-ref works whichever branch the repo itself is on.
