@@ -41,12 +41,14 @@ const servesHere = (port: number) => {
 const freePort = () => new Promise<number>((resolve) => {
   const s = createServer().listen(0, () => { const { port } = s.address() as AddressInfo; s.close(() => resolve(port)) })
 })
-let server
+let server: ReturnType<typeof spawn> | undefined
+const stopServer = () => { if (server?.pid) try { process.kill(-server.pid) } catch { /* already gone */ } }
 if (!(await up()) || (!given && !servesHere(3000))) {
   const port = await freePort()
   base = `http://localhost:${port}`
   execFileSync("node", ["scripts/vendor.ts"]); execFileSync("node", ["--no-warnings", "scripts/build-client.ts"]) // what predev does for npm run dev
-  server = spawn("npx", ["next", "dev", "-p", String(port)], { stdio: "ignore" })
+  // Its own process group, so stopping it stops next dev too, not only npx: no server outlives the check.
+  server = spawn("npx", ["next", "dev", "-p", String(port)], { stdio: "ignore", detached: true })
   for (let i = 0; i < 120 && !(await up()); i++) await new Promise((r) => setTimeout(r, 500))
 }
 
@@ -62,7 +64,7 @@ const pages = (await Promise.all(candidates.map(async (p) => ((await isPage(p)) 
 // No page answering means no server, not a pass: a check that measured nothing must never say all is well.
 if (!pages.length) {
   console.log(`hero: no page answered at ${base} (the dev server did not start), so nothing was checked`)
-  server?.kill()
+  stopServer()
   process.exit(1)
 }
 
@@ -171,7 +173,7 @@ try {
     }
 } finally {
   await browser.close()
-  server?.kill()
+  stopServer()
 }
 if (!bad) console.log(`hero: ${pages.length} pages fit all ${sizes.length} screen sizes, and each first frame is dark`)
 process.exit(bad ? 1 : 0)
