@@ -25,6 +25,13 @@ git ls-files --cached --others --exclude-standard \
 grep -rn -E '· v[0-9]|\(v[0-9]\)|/\* v[0-9]|\bv[0-9] ·' DESIGN.md design/tokens.css app components lib 2>/dev/null \
   | while read -r l; do echo "check: version label: $l"; done | grep . && fail=1
 
+# GitHub main is the one source: a local main that holds commits GitHub does not have has drifted (work lost on the
+# next reset, or a second history). A main that is only behind is not drift: pull.ff only brings it up to date.
+if git rev-parse -q --verify refs/heads/main >/dev/null && git rev-parse -q --verify refs/remotes/origin/main >/dev/null; then
+  ahead=$(git rev-list --count refs/remotes/origin/main..refs/heads/main)
+  [ "$ahead" -eq 0 ] || bad "local main has $ahead commit(s) GitHub main does not: move them to a branch and a PR, then reset main to origin/main"
+fi
+
 # The site is dark only: the root layout declares dark before first paint, and nothing follows the device.
 # The first-frame ground (lib/site-ground.ts) is a literal by necessity; it must equal --bg in the tokens.
 ground=$(sed -n 's/^export const GROUND = "\(#[0-9a-fA-F]*\)".*/\1/p' lib/site-ground.ts); bg=$(sed -n 's/^[[:space:]]*--bg:[[:space:]]*\(#[0-9a-fA-F]*\);.*/\1/p' design/tokens.css | head -1)

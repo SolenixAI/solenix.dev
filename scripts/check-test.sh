@@ -38,6 +38,10 @@ saw_pass() {
 
 fresh; expect pass "untouched repo passes"
 
+# Drift: a commit on local main that GitHub main does not have.
+fresh; (cd "$tmp/r" && git checkout -q -B main origin/main && git commit -q --allow-empty -m "local only" && git checkout -q -)
+run_check; saw "local main has 1 commit" "local main ahead of GitHub main fails"
+
 fresh; cp "$tmp/r/design/home.html" "$tmp/r/design/home-v2.html"
 expect fail "versioned file name (design/home-v2.html)"
 
