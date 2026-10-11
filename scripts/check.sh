@@ -201,6 +201,8 @@ if [ "$code" = "200" ]; then
   pages=$(curl -s -m 20 "${site%/}/sitemap.xml" | grep -o '<loc>[^<]*</loc>' | sed -E 's#<loc>https?://[^/]+##; s#</loc>##' | sort -u)
   [ -n "$pages" ] || bad "the sitemap lists no pages, so the Voice check could not read them"
   for page in $pages; do python3 scripts/voice-check.py "${site%/}$page" || fail=1; done
+  # Every link and asset on those pages answers, the redirects land, and each head says what the page is (lib/page-audit.ts).
+  node --no-warnings scripts/link-check.ts "${site%/}" || fail=1
 fi
 
 exit $fail

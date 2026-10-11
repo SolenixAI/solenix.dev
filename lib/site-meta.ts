@@ -47,6 +47,7 @@ export function headTags(page: { title: string; description: string; path: strin
     `<link rel="apple-touch-icon" href="${ICONS.apple}">` +
     `<meta property="og:type" content="website">` +
     `<meta property="og:site_name" content="Solenix">` +
+    `<link rel="canonical" href="${SITE_URL}${page.path}">` +
     `<meta property="og:url" content="${SITE_URL}${page.path}">` +
     `<meta property="og:title" content="${esc(page.title)}">` +
     `<meta property="og:description" content="${esc(page.description)}">` +
