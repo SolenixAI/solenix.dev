@@ -7,7 +7,7 @@ interface HomeSceneParams {
   el: number; az: number; dist: number; ox: number; oy: number; poy: number
   calm: number; dim: number; labels: number; conn: number; agent: number; stops: number
   tx: number; tz: number; fly: number; wsel: number; hero: number; lens: number
-  rf: number; rs: number; sp: number; rw: number; shl: number
+  rf: number; rs: number; sp: number; rw: number
 }
 
 /** A tool world the camera flies to: its place, its view, and where the three bodies roam beside it. */

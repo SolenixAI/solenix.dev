@@ -146,6 +146,11 @@ html[data-motion="on"] .pulse::after { animation: pulse 2.4s var(--ease-out) inf
    The five stops sit on the real orbit; the card shows what you get at each one. ── */
 .jr { position: relative; height: 380vh; height: 380svh; }
 .jr-pin { position: sticky; top: 0; height: 100vh; height: 100svh; }
+/* One stop per step: a flick of the wheel or a swipe lands on the next step and holds there, never flies past it.
+   lib/home/ui.ts places each stop where its step is fully shown. Only these stops snap; the rest of the page scrolls free. */
+html.js { scroll-snap-type: y proximity; }
+.jr-stop { position: absolute; left: 0; top: 0; width: 1px; height: 1px; pointer-events: none; scroll-snap-align: start; scroll-snap-stop: always; }
+html:not(.js) .jr-stop { display: none; }
 .jr-in { height: 100%; display: grid; grid-template-rows: auto 1fr auto; padding-top: calc(var(--nav-height) + clamp(1.5rem, 6vh, 4rem)); padding-bottom: clamp(2rem, 9vh, 6rem); }
 .jr-head { display: grid; gap: var(--space-4); max-width: 30rem; }
 .jr-head .h2 { font-size: clamp(2.1rem, 4.4vw, 3.6rem); }
@@ -495,6 +500,7 @@ html:not(.js) .tools { height: auto; } html:not(.js) .tools-pin { position: rela
 </section>
 
 <section class="jr" id="after" data-scene="journey">
+  <i class="jr-stop" aria-hidden="true"></i><i class="jr-stop" aria-hidden="true"></i><i class="jr-stop" aria-hidden="true"></i><i class="jr-stop" aria-hidden="true"></i><i class="jr-stop" aria-hidden="true"></i>
   <div class="jr-pin">
     <div class="wrap jr-in">
       <div class="jr-head">
@@ -516,6 +522,7 @@ html:not(.js) .tools { height: auto; } html:not(.js) .tools-pin { position: rela
 </section>
 
 <section class="jr pr" id="promises" data-scene="promises">
+  <i class="jr-stop" aria-hidden="true"></i><i class="jr-stop" aria-hidden="true"></i><i class="jr-stop" aria-hidden="true"></i><i class="jr-stop" aria-hidden="true"></i>
   <div class="jr-pin">
     <div class="wrap jr-in">
       <div class="jr-head">

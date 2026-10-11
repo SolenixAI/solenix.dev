@@ -26,27 +26,27 @@ const FLY: HomeFlyWorld[] = [
 ];
 const KEYS: HomeKey[] = [
   // 1 · Chaos
-  { sel: '.sky', f: 0, pin: 1, k: 0, free: 0, order: 0, ink: 0, third: 0, el: HERO.el, az: 0, dist: HERO.dist, ox: 0.25, oy: 0.05, poy: 0.2, calm: 0, dim: 0, labels: 0, conn: 0, agent: 0, stops: 0, tx: 0, tz: 0, fly: 0, wsel: 0, hero: 1, lens: HERO.lens, rf: 0, rs: 0, sp: 1, rw: 0, shl: 0 },
+  { sel: '.sky', f: 0, pin: 1, k: 0, free: 0, order: 0, ink: 0, third: 0, el: HERO.el, az: 0, dist: HERO.dist, ox: 0.25, oy: 0.05, poy: 0.2, calm: 0, dim: 0, labels: 0, conn: 0, agent: 0, stops: 0, tx: 0, tz: 0, fly: 0, wsel: 0, hero: 1, lens: HERO.lens, rf: 0, rs: 0, sp: 1, rw: 0 },
   { sel: '.sky', f: 0.55, pin: 1, labels: 1, el: 33, az: -12, dist: 11.2, ox: 0.25, oy: 0.05 },
   { sel: '.sky', f: 1, pin: 1, labels: 0, el: 36, az: -24, dist: 11.8 },
   // From here to the plan nothing is steered. The three bodies stay wild and range across the world:
   // rf / rs place them ahead of or beside where the camera looks, sp spreads them, rw lets each one wander.
   // 2 · The guide: the AI is lit at the centre; the bodies swing wide around it, unheld.
-  { sel: '#guide', f: 0.25, pin: 1, hero: 0, lens: 0, conn: 1, k: 0, free: 0, el: 44, az: 10, dist: 12.5, ox: 0.26, oy: 0.02, poy: 0.02, rf: 0.8, rs: 2.6, sp: 1.3, rw: 1.1, shl: 1 },
+  { sel: '#guide', f: 0.25, pin: 1, hero: 0, lens: 0, conn: 1, k: 0, free: 0, el: 44, az: 10, dist: 12.5, ox: 0.26, oy: 0.02, poy: 0.02, rf: 0.8, rs: 2.6, sp: 1.3, rw: 1.1 },
   { sel: '#guide', f: 0.9, pin: 1, el: 36, az: 34, dist: 11.5, rf: -0.4, rs: 3.2, sp: 1.4 },
   // 3 · The tools: the camera flies to the world of the tool the visitor picks, and on to the next when they pick
   // again. The bodies come too, still wild. The picked world's values fill these two keys as the scene blends (at).
-  { sel: '#tools', f: 0.15, pin: 1, conn: 0, k: 0, free: 0, fly: 1, dim: 0.6, shl: 0, ox: 0.26, oy: 0.02, poy: 0.12 },
+  { sel: '#tools', f: 0.15, pin: 1, conn: 0, k: 0, free: 0, fly: 1, dim: 0.6, ox: 0.26, oy: 0.02, poy: 0.12 },
   { sel: '#tools', f: 0.8, pin: 1 },
   // 4 · The plan: back to the centre. Only here are they steered, and only here does the orbit form.
-  { sel: '#after', f: 0, pin: 1, fly: 0, tx: 0, tz: 0, k: 0.45, free: 0.4, dim: 0, stops: 1, el: 60, az: 34, dist: 9.6, ox: 0.21, oy: 0.02, poy: 0.02, calm: 0.35, rf: 0, rs: 0, sp: 1, rw: 0, shl: 0.85 },
-  { sel: '#after', f: 0.35, pin: 1, k: 1, free: 1, third: 0.6, poy: -0.02, shl: 0.3 },
+  { sel: '#after', f: 0, pin: 1, fly: 0, tx: 0, tz: 0, k: 0.45, free: 0.4, dim: 0, stops: 1, el: 60, az: 34, dist: 9.6, ox: 0.21, oy: 0.02, poy: 0.02, calm: 0.35, rf: 0, rs: 0, sp: 1, rw: 0 },
+  { sel: '#after', f: 0.35, pin: 1, k: 1, free: 1, third: 0.6, poy: -0.02 },
   { sel: '#after', f: 1, pin: 1, k: 1, order: 1, ink: 1, third: 1, calm: 1, el: 64, az: 42 },
   // The promises: down inside the orbit, close, as the bodies glide past in order.
-  { sel: '#promises', f: 0.1, pin: 1, stops: 0, shl: 0, el: 17, az: 78, dist: 8.8, lens: 8, ox: 0.24, oy: 0.03, poy: -0.04 },
+  { sel: '#promises', f: 0.1, pin: 1, stops: 0, el: 17, az: 78, dist: 8.8, lens: 8, ox: 0.24, oy: 0.03, poy: -0.04 },
   { sel: '#promises', f: 1, pin: 1, el: 14, az: 150 },
   // 5 · Stable orbit: steering lets go and it holds. Seen whole, from high above.
-  { sel: '#close', f: 0.35, k: 0, agent: 1, lens: 0, el: 56, az: 172, dist: 15, ox: 0.28, oy: 0.08, poy: 0.24, shl: 0.6 },
+  { sel: '#close', f: 0.35, k: 0, agent: 1, lens: 0, el: 56, az: 172, dist: 15, ox: 0.28, oy: 0.08, poy: 0.24 },
   { sel: '#close', f: 1, el: 60, az: 180, dist: 16 }
 ];
 // The picked tool's world, at the start (f 0.15) and end (f 0.8) of the tools scene. Each world is seen from its own
@@ -91,6 +91,23 @@ export function startUi(): { S: Solenix; stop: () => void } {
       return K.pin ? top + K.f * (h - innerHeight) : top + K.f * h - innerHeight * 0.5; });
     const maxY = document.documentElement.scrollHeight - innerHeight; keyY[keyY.length - 1] = Math.min(keyY[keyY.length - 1], maxY);
     for (let i = 1; i < keyY.length; i++) keyY[i] = Math.max(keyY[i], keyY[i - 1] + 1);
+    placeStops();
+  }
+  // Each journey step gets a scroll stop in the middle of the stretch where it shows (design/home.html .jr-stop).
+  // The journey's step follows the orbit's ink, so its stretches are found by walking the scroll; the promises'
+  // steps are even quarters of their section.
+  function placeStops() {
+    const vh = innerHeight;
+    const put = (sec: HTMLElement, mids: number[]) => $$('.jr-stop', sec).forEach((s, k) => { if (mids[k] !== undefined) s.style.top = `${Math.round(mids[k])}px`; });
+    { const top = jr.getBoundingClientRect().top + scrollY, run = jr.offsetHeight - vh, from: number[] = [], to: number[] = [];
+      for (let y = 0; y <= run; y += 4) { const k = stepAt(top + y); if (from[k] === undefined) from[k] = y; to[k] = y; }
+      put(jr, from.map((f, k) => (f + to[k]) / 2)); }
+    { const run = prSec.offsetHeight - vh; put(prSec, [0, 1, 2, 3].map((k) => (k + 0.5) / 4 * run)); }
+  }
+  // The journey card for a scroll position: how far the orbit is inked in at that point, in fifths.
+  function stepAt(y: number) {
+    const [i, t] = sceneAt(y), a = KEYS[i].ink ?? 0, b = KEYS[Math.min(i + 1, KEYS.length - 1)].ink ?? a;
+    return Math.max(0, Math.min(4, Math.floor((a + (b - a) * t) * 5 - 0.4)));
   }
   function sceneAt(y: number): [number, number] {
     if (y <= keyY[0]) return [0, 0];
