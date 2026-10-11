@@ -62,7 +62,7 @@ flowchart LR
 
 **As** someone who knows no math and taps a link in a social app on my phone, **I want** to understand what happened and play with one result, **so that** I feel I got it and I remember who made the page.
 
-Pages: /articles/proof-flood
+Pages: /articles/*
 
 ```mermaid
 journey
@@ -243,7 +243,7 @@ Lowest steps to raise:
 
 **As** a person or an agent making an article, **I want** to add one folder and have everything else happen, **so that** a new article is right the first time.
 
-Pages: /articles, /articles/proof-flood
+Pages: /articles, /articles/*
 
 ```mermaid
 journey
@@ -266,7 +266,7 @@ What would raise the low steps:
 
 Every page's first screen is its hero. A hero that does not fit the screen has failed as a hero.
 
-Pages: /, /articles, /articles/proof-flood
+Pages: /, /articles, /articles/*
 
 ```mermaid
 journey
