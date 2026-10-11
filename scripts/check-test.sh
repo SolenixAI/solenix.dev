@@ -17,6 +17,8 @@ fresh() {
   # Dependencies are installed in the repo, not in the copy (node_modules is ignored): link them, or tsc fails in every copy.
   [ -e "$root/node_modules" ] && ln -sfn "$root/node_modules" "$tmp/r/node_modules"
 }
+# edit <sed expression> <file>: changes the file in place, the same on macOS (BSD sed) and Linux (GNU sed).
+edit() { sed -i.bak "$1" "$2" && rm -f "$2.bak"; }
 expect() { # expect <pass|fail> <name>
   if (cd "$tmp/r" && bash scripts/check.sh >/dev/null 2>&1); then got=pass; else got=fail; fi
   if [ "$got" = "$1" ]; then pass=$((pass + 1)); echo "ok    $2"; else fail=$((fail + 1)); echo "WRONG $2 (expected check to $1, it did $got)"; fi
@@ -39,25 +41,33 @@ fresh; expect pass "untouched repo passes"
 fresh; cp "$tmp/r/design/home.html" "$tmp/r/design/home-v2.html"
 expect fail "versioned file name (design/home-v2.html)"
 
-fresh; sed -i '' 's#</body>#<p>Get started</p></body>#' "$tmp/r/design/home.html"
+fresh; edit 's#</body>#<p>Get started</p></body>#' "$tmp/r/design/home.html"
 expect fail "banned word on the page (\"Get started\")"
 
-fresh; sed -i '' 's#</body>#<script>console.log(1)</script></body>#' "$tmp/r/design/home.html"
+fresh; edit 's#</body>#<script>console.log(1)</script></body>#' "$tmp/r/design/home.html"
 expect fail "a hand-written inline script on the homepage"
 
-fresh; sed -i '' 's#</body>#<a>Tools we use</a></body>#' "$tmp/r/design/home.html"
+fresh; edit 's#</body>#<a>Tools we use</a></body>#' "$tmp/r/design/home.html"
 expect fail "old label \"Tools we use\""
 
 fresh; echo 'export default function P(){return null}' > "$tmp/r/app/route.ts"
 expect fail "a second homepage (app/route.ts)"
 
-fresh; sed -i '' 's|colorScheme: "dark"|colorScheme: "light dark"|' "$tmp/r/app/layout.tsx"
+fresh; edit 's|colorScheme: "dark"|colorScheme: "light dark"|' "$tmp/r/app/layout.tsx"
 expect fail "the root layout follows the device (the site is dark only)"
 
-fresh; sed -i '' 's|<Analytics host={SITE_HOST} />||' "$tmp/r/app/(site)/layout.tsx"
+# The first-frame check: with no ground and no dark colour scheme, a page's first frame is white. CI=1 runs the browser check.
+fresh; edit 's|<style href="site-ground" precedence="high">{GROUND_CSS}</style>||' "$tmp/r/app/(site)/layout.tsx"
+edit 's|colorScheme: "dark"|colorScheme: "light"|' "$tmp/r/app/layout.tsx"
+# The browser check starts the site, and the dev server will not run on node_modules linked from outside the copy:
+# this case gets a real (copy-on-write) copy.
+rm "$tmp/r/node_modules" && cp -cR "$root/node_modules" "$tmp/r/node_modules" 2>/dev/null || cp -R "$root/node_modules" "$tmp/r/node_modules"
+run_check CI=1; saw "first frame:" "a page with no dark ground paints a bright first frame"
+
+fresh; edit 's|<Analytics host={SITE_HOST} />||' "$tmp/r/app/(site)/layout.tsx"
 expect fail "homepage analytics removed"
 
-fresh; sed -i '' 's|<SpaceWorld />||' "$tmp/r/app/(site)/layout.tsx"
+fresh; edit 's|<SpaceWorld />||' "$tmp/r/app/(site)/layout.tsx"
 expect fail "the 3D world not mounted in the layout"
 
 # A locked skill: the check must name it (the exit code alone also fails on unrelated rules in a bare clone).
@@ -74,7 +84,7 @@ fresh; echo "- The portal follows the device (light or dark)." >> "$tmp/r/AGENTS
 run_check; saw "contradicts the theme decision" "AGENTS.md says the portal follows the device (the old theme decision comes back)"
 
 # The design-findings baseline runs from the launcher in this repo, on a machine with no Impeccable plugin (CI has none).
-fresh; for i in 1 2 3 4 5 6; do sed -i '' 's|</body>|<div style="box-shadow: 0 0 40px #f59e0b"></div></body>|' "$tmp/r/design/home.html"; done
+fresh; for i in 1 2 3 4 5 6; do edit 's|</body>|<div style="box-shadow: 0 0 40px #f59e0b"></div></body>|' "$tmp/r/design/home.html"; done
 run_check HOME="$tmp/nohome" IMPECCABLE_HOME="$HOME/.impeccable"
 saw "check: impeccable found" "homepage design findings above the Impeccable baseline (no plugin on the machine)"
 
@@ -104,7 +114,7 @@ fresh; printf '<p style="background: rgb(0 0 0 / 50%%)">x</p>\n' >> "$tmp/r/arti
 expect pass "an article with pure black (rgb(0 0 0 / 50%)) still passes"
 
 # Every resource a page loads comes from solenix.dev: images, frames, video, objects, srcset candidates, CSS and module URLs.
-fresh; sed -i '' 's|</body>|<img src="https://cdn.example.test/img.png" alt=""><iframe src="https://cdn.example.test/frame"></iframe><video poster="https://cdn.example.test/poster.jpg"></video><img src="/a.png" srcset="/a.png 1x, https://cdn.example.test/second.png 2x" alt=""><object data="https://cdn.example.test/object.swf"></object></body>|' "$tmp/r/design/home.html"
+fresh; edit 's|</body>|<img src="https://cdn.example.test/img.png" alt=""><iframe src="https://cdn.example.test/frame"></iframe><video poster="https://cdn.example.test/poster.jpg"></video><img src="/a.png" srcset="/a.png 1x, https://cdn.example.test/second.png 2x" alt=""><object data="https://cdn.example.test/object.swf"></object></body>|' "$tmp/r/design/home.html"
 run_check
 saw "cdn.example.test/img.png" "an image from another host (img src)"
 saw "cdn.example.test/frame" "a frame from another host (iframe src)"
@@ -113,7 +123,7 @@ saw "cdn.example.test/second.png" "a second srcset candidate from another host"
 saw "cdn.example.test/object.swf" "an object from another host (object data)"
 fresh; printf '.probe{background:url(//cdn.example.test/bg.png)}\n' >> "$tmp/r/design/tokens.css"
 printf 'export const mod = import("//cdn.example.test/mod.js")\n' > "$tmp/r/lib/import-probe.ts"
-sed -i '' 's|</body>|<script type="importmap">{"imports":{"probe":"//cdn.example.test/map.js"}}</script></body>|' "$tmp/r/design/home.html"
+edit 's|</body>|<script type="importmap">{"imports":{"probe":"//cdn.example.test/map.js"}}</script></body>|' "$tmp/r/design/home.html"
 run_check
 saw "//cdn.example.test/bg.png" "a protocol-relative CSS url()"
 saw "an ES import from another host" "a protocol-relative ES import"
@@ -132,19 +142,19 @@ expect fail "an industry page (app/(site)/law)"
 fresh; rm "$tmp/r/.agents/product-marketing.md"; ln -s ../PRODUCT.md "$tmp/r/.agents/product-marketing.md"
 expect fail "the marketing context is a link to PRODUCT.md"
 
-fresh; sed -i '' 's/^\*\*One-liner:\*\*.*/**One-liner:** Solenix is a tech expert for small businesses./' "$tmp/r/.agents/product-marketing.md"
+fresh; edit 's/^\*\*One-liner:\*\*.*/**One-liner:** Solenix is a tech expert for small businesses./' "$tmp/r/.agents/product-marketing.md"
 expect fail "the one-liner in the marketing context differs from PRODUCT.md"
 
-fresh; sed -i '' 's/^\*\*One-liner:\*\*.*/**One-liner:** Solenix is one tech expert for small businesses./' "$tmp/r/.agents/product-marketing.md"
+fresh; edit 's/^\*\*One-liner:\*\*.*/**One-liner:** Solenix is one tech expert for small businesses./' "$tmp/r/.agents/product-marketing.md"
 expect fail "the one-liner in the marketing context is trimmed (drops the location)"
 
-fresh; sed -i '' 's/^\*\*Target companies:\*\*.*/**Target companies:** small businesses./' "$tmp/r/.agents/product-marketing.md"
+fresh; edit 's/^\*\*Target companies:\*\*.*/**Target companies:** small businesses./' "$tmp/r/.agents/product-marketing.md"
 expect fail "the audience in the marketing context is trimmed (drops the location)"
 
-fresh; sed -i '' 's/^\*\*Target companies:\*\*.*/**Target companies:** small businesses in Newfoundland./' "$tmp/r/.agents/product-marketing.md"
+fresh; edit 's/^\*\*Target companies:\*\*.*/**Target companies:** small businesses in Newfoundland./' "$tmp/r/.agents/product-marketing.md"
 expect fail "the audience in the marketing context differs from PRODUCT.md"
 
-fresh; sed -i '' 's#</body>#<p>Care plans from $199/month</p></body>#' "$tmp/r/design/home.html"
+fresh; edit 's#</body>#<p>Care plans from $199/month</p></body>#' "$tmp/r/design/home.html"
 expect fail "a public price on the homepage"
 
 fresh; printf "import * as THREE from 'three'\nexport const world = THREE\n" > "$tmp/r/lib/second-world.ts"

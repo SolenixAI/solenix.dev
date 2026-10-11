@@ -1,5 +1,8 @@
-// Every page's first screen is its hero, and a hero that does not fit the screen has failed.
-// For each page with a hero and each size in design/viewports.json, this opens the page and checks:
+// Every page's first screen is its hero, and a hero that does not fit the screen has failed. Its first frame is
+// dark too: with every stylesheet, script, font and image held back, the page still paints dark (the site's ground,
+// or the browser's own dark from color-scheme on an article), so a visitor never sees a bright flash while the rest loads.
+// For every page, at the first size in design/viewports.json, it checks that first frame. Then for each page with a
+// hero and each size, it opens the page and checks:
 //   the [data-hero] element starts at the top and is exactly one screen tall,
 //   nothing inside it spills out, hides under the nav or sits on other text, the page never scrolls sideways,
 //   and the headline (its h1) has 12 words or fewer.
@@ -9,6 +12,7 @@
 import { execFileSync, spawn } from "node:child_process"
 import { createServer, type AddressInfo } from "node:net"
 import { readdirSync, statSync } from "node:fs"
+import { inflateSync } from "node:zlib"
 import { launch } from "./browser.ts"
 import { loadViewports } from "../lib/viewports.ts"
 
@@ -37,12 +41,14 @@ const servesHere = (port: number) => {
 const freePort = () => new Promise<number>((resolve) => {
   const s = createServer().listen(0, () => { const { port } = s.address() as AddressInfo; s.close(() => resolve(port)) })
 })
-let server
+let server: ReturnType<typeof spawn> | undefined
+const stopServer = () => { if (server?.pid) try { process.kill(-server.pid) } catch { /* already gone */ } }
 if (!(await up()) || (!given && !servesHere(3000))) {
   const port = await freePort()
   base = `http://localhost:${port}`
   execFileSync("node", ["scripts/vendor.ts"]); execFileSync("node", ["--no-warnings", "scripts/build-client.ts"]) // what predev does for npm run dev
-  server = spawn("npx", ["next", "dev", "-p", String(port)], { stdio: "ignore" })
+  // Its own process group, so stopping it stops next dev too, not only npx: no server outlives the check.
+  server = spawn("npx", ["next", "dev", "-p", String(port)], { stdio: "ignore", detached: true })
   for (let i = 0; i < 120 && !(await up()); i++) await new Promise((r) => setTimeout(r, 500))
 }
 
@@ -55,6 +61,12 @@ const isPage = async (path: string) => {
   return type.startsWith("text/html")
 }
 const pages = (await Promise.all(candidates.map(async (p) => ((await isPage(p)) ? p : null)))).filter((p): p is string => p !== null)
+// No page answering means no server, not a pass: a check that measured nothing must never say all is well.
+if (!pages.length) {
+  console.log(`hero: no page answered at ${base} (the dev server did not start), so nothing was checked`)
+  stopServer()
+  process.exit(1)
+}
 
 const measure = () => {
   const hero = [...document.querySelectorAll("[data-hero]")].find((e) => e.getClientRects().length) // the one shown
@@ -112,9 +124,40 @@ const measure = () => {
   return out
 }
 
+// The colour of a 1×1 PNG screenshot: its one row is a filter byte, then red, green and blue. With one pixel every
+// PNG filter leaves the value as it is. Anything but a 1×1, 8-bit RGB or RGBA image is refused, never misread.
+const firstPixelRGB = (png: Buffer) => {
+  const width = png.readUInt32BE(16), height = png.readUInt32BE(20), depth = png[24], colour = png[25]
+  if (width !== 1 || height !== 1 || depth !== 8 || (colour !== 2 && colour !== 6))
+    throw new Error(`hero-check: expected a 1×1 8-bit RGB(A) screenshot, got ${width}×${height}, depth ${depth}, colour type ${colour}`)
+  const data: Buffer[] = []
+  for (let at = 8; at < png.length; ) {
+    const len = png.readUInt32BE(at), type = png.toString("ascii", at + 4, at + 8)
+    if (type === "IDAT") data.push(png.subarray(at + 8, at + 8 + len))
+    at += 12 + len
+  }
+  const row = inflateSync(Buffer.concat(data))
+  return [row[1], row[2], row[3]]
+}
+// Dark, not a flash: every channel at 40 or less (the site's ground is #0b0d12; the browser's dark is #121212).
+const DARK = 40
+
 const browser = await launch()
 let bad = 0
 try {
+  for (const path of pages) {
+    const size = sizes[0]
+    const page = await browser.newPage({ viewport: size })
+    await page.route("**/*", (r) => (["stylesheet", "script", "font", "image", "media"].includes(r.request().resourceType()) ? r.abort() : r.continue()))
+    await page.goto(base + path, { waitUntil: "domcontentloaded" })
+    const { width, height } = size
+    // Three points across the screen (top-left, centre, bottom-right): a ground that covers only part of it still fails.
+    for (const [x, y] of [[1, 1], [width / 2, height / 2], [width - 2, height - 2]]) {
+      const rgb = firstPixelRGB(await page.screenshot({ clip: { x, y, width: 1, height: 1 } }))
+      if (rgb.some((c) => c > DARK)) { console.log(`first frame: ${path} paints rgb(${rgb}) at ${x},${y} before its styles load (the ground is dark)`); bad++; break }
+    }
+    await page.close()
+  }
   for (const path of pages)
     for (const viewport of sizes) {
       const page = await browser.newPage({ viewport })
@@ -130,7 +173,7 @@ try {
     }
 } finally {
   await browser.close()
-  server?.kill()
+  stopServer()
 }
-if (!bad) console.log(`hero: ${pages.length} pages fit all ${sizes.length} screen sizes`)
+if (!bad) console.log(`hero: ${pages.length} pages fit all ${sizes.length} screen sizes, and each first frame is dark`)
 process.exit(bad ? 1 : 0)
