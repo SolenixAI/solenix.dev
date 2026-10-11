@@ -173,7 +173,7 @@ PY
 # Fix findings and lower the baseline; never raise it.
 # The launcher ships in this repo (.claude/skills/impeccable); on its first run it downloads its pinned, sha256-checked engine.
 IMP=${IMPECCABLE:-.claude/skills/impeccable/scripts/impeccable}
-IMPECCABLE_BASELINE=7
+IMPECCABLE_BASELINE=6
 if [ -x "$IMP" ]; then
   det=$(mktemp)
   "$IMP" detect --json --no-advisory design/home.html >"$det" 2>/dev/null; rc=$?
