@@ -88,10 +88,13 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
   const title = entry ? `${entry.name} for your AI` : "Agents Marketplace"
   const description = entry ? `${entry.for} One sentence sets it up in any AI agent, the makers' way.` : "Set up your AI the makers' way: one sentence installs what a tool's makers built for AI, in any AI agent."
   const url = `${SITE_URL}/agents${entry ? `?world=${entry.id}` : ""}`
+  // A world's link previews that world's own picture (app/(site)/agents/og); the marketplace keeps the site picture.
+  const image = entry ? { url: `${SITE_URL}/agents/og?world=${entry.id}`, width: 1200, height: 630, alt: `${entry.name} for your AI` } : OG_IMAGE
   return {
     title, description,
     alternates: { canonical: url, types: { "application/json": "/agents/worlds.json" } },
-    openGraph: { title: `${title} · Solenix`, description, url, locale: "en_CA", images: [OG_IMAGE] },
+    openGraph: { title: `${title} · Solenix`, description, url, locale: "en_CA", images: [image] },
+    twitter: { card: "summary_large_image", images: [image.url] },
   }
 }
 
@@ -105,6 +108,15 @@ export default async function Agents({ searchParams }: { searchParams: Promise<{
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(agentsSchema(catalog)) }} />
       <style dangerouslySetInnerHTML={{ __html: HERO_CSS + WORLDS_CSS + WAIT_CSS }} />
+      {entry && (
+        <noscript>
+          <section>
+            <h2>{entry.name}</h2>
+            <p>{entry.for}</p>
+            <p>{entry.sentence}</p>
+          </section>
+        </noscript>
+      )}
       <header className="sx-hero wd-hero" data-hero>
         <div className="sx-hero-in">
           <div className="sx-hero-text">

@@ -51,7 +51,7 @@ function newestHero(a: Article, more: number) {
   ${live}
   <div class="win-bar"><span class="win-cap"><b>New</b><time class="win-date" datetime="${a.date}">${esc(day(a.date))}</time><span class="win-name">${t}</span><span class="win-hint">Try it right here.</span></span>${enter}</div>
  </div>
- ${cue}
+ ${cue}<a class="btn hero-book" href="/book">Book a call</a>
 </header>`
 }
 
@@ -101,7 +101,8 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background-im
 /* A narrow window (a small or short screen): the article shows its own title right above, so the bar keeps only the action. */
 @container win (max-width:440px){.win-cap{display:none}.win-bar{padding:8px}.enter{flex:1;justify-content:center}}
 .win-hint{font:400 .9rem/1.2 var(--font-text);color:var(--muted)}
-.win-date{font:500 .8rem ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--faint);letter-spacing:.06em}@container (max-width:480px){.win-hint{display:none}}
+.win-date{font:500 .8rem ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--faint);letter-spacing:.06em}
+.hero-book{position:absolute;left:max(16px,4vw);bottom:var(--cue-gap);min-height:var(--tap-min)}@container (max-width:480px){.win-hint{display:none}}
 .card{position:relative;display:grid;grid-template-rows:auto 1fr;border-radius:var(--radius-xl);overflow:hidden;background:var(--glass-bg);border:1px solid var(--line);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-md);color:var(--text);text-decoration:none;transition:transform .4s var(--ease-out),border-color .4s var(--ease-out),box-shadow .4s var(--ease-out)}
 .card:hover{transform:translateY(-3px);border-color:color-mix(in oklch,var(--accent) 45%,transparent);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-lg),0 28px 60px -28px color-mix(in srgb,var(--sun2) 45%,transparent)}
 .cover{position:relative;aspect-ratio:1200/630;overflow:hidden;background:var(--bg2);border-bottom:1px solid var(--line)}

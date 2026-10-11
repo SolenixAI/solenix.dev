@@ -28,6 +28,10 @@ export default function Platform() {
           <div className="sx-hero-text">
             <h1>The {title} is being rebuilt.</h1>
             <p className="sx-sub">Until it opens, start with one call. A fixed price, in writing, agreed on the call.</p>
+            <p style={{ display: "inline-flex", alignItems: "center", gap: 8, width: "fit-content", margin: 0, padding: "6px 12px", borderRadius: 999, border: "1px solid var(--line-strong)", font: "600 0.8rem/1 var(--font-mono)", color: "#fbbf24" }}>
+              <span aria-hidden="true" style={{ width: 8, height: 8, borderRadius: "50%", background: "#fbbf24" }} />
+              Building
+            </p>
             <div>
               <Button asChild size="lg">
                 <a href="/book">Book a call</a>
