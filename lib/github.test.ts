@@ -52,3 +52,35 @@ test("only a body signed with the shared secret counts as GitHub's", () => {
   assert.equal(signedByGitHub("other", body, sig), false)
   assert.equal(signedByGitHub("s3cret", body, null), false)
 })
+
+test("a token that cannot be minted logs one line with the step and the status, and gives null", async (t) => {
+  const warn = t.mock.method(console, "warn", () => {})
+  const token = makeToken({ id: "1", key: privateKey, org: "o" }, async () => json({ message: "Not Found" }, 404), () => 0)
+  assert.equal(await token(), null)
+  assert.equal(warn.mock.callCount(), 1)
+  assert.match(String(warn.mock.calls[0].arguments[0]), /GitHub App installation.*404/)
+})
+
+test("each mint step names itself when it fails: a bad installation answer is the installation, a refused token is the token", async (t) => {
+  const warn = t.mock.method(console, "warn", () => {})
+  const garbled = makeToken({ id: "1", key: privateKey, org: "o" }, async () => new Response("<html>", { status: 200 }), () => 0)
+  assert.equal(await garbled(), null)
+  const refused = makeToken({ id: "1", key: privateKey, org: "o" }, async (url) => (url.endsWith("/installation") ? json({ id: 7 }) : json({}, 403)), () => 0)
+  assert.equal(await refused(), null)
+  assert.match(String(warn.mock.calls[0].arguments[0]), /GitHub App installation/)
+  assert.match(String(warn.mock.calls[1].arguments[0]), /GitHub App token.*403/)
+})
+
+test("after a failed mint, reads wait a minute before minting again: no request, no log", async (t) => {
+  const warn = t.mock.method(console, "warn", () => {})
+  let clock = 0, calls = 0
+  const token = makeToken({ id: "1", key: privateKey, org: "o" }, async () => { calls++; return json({}, 401) }, () => clock)
+  assert.equal(await token(), null)
+  clock = 59_000
+  assert.equal(await token(), null)
+  assert.equal(calls, 1, "no second request inside the minute")
+  assert.equal(warn.mock.callCount(), 1)
+  clock = 61_000
+  await token()
+  assert.equal(calls, 2, "it tries again after the minute")
+})

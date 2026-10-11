@@ -76,3 +76,34 @@ test("a cached read that fails after answering keeps its last real answer", asyn
   up = false
   assert.deepEqual(await fresh("https://x/catalog", {}, cached), { sha: "a1" }, "a bad revalidation never blanks the catalog")
 })
+
+test("a failed read leaves one log line with the source and its reason, and gives the last answer", async (t) => {
+  const warn = t.mock.method(console, "warn", () => {})
+  let status = 200
+  const fresh = makeFresh(async () => (status === 200 ? answer(200, { stars: 3 }) : answer(status)))
+  assert.deepEqual(await fresh("https://x/down"), { stars: 3 })
+  assert.equal(warn.mock.callCount(), 0, "a good read is silent")
+  status = 503
+  assert.deepEqual(await fresh("https://x/down"), { stars: 3 }, "the last real answer stays")
+  assert.equal(warn.mock.callCount(), 1)
+  assert.match(String(warn.mock.calls[0].arguments[0]), /https:\/\/x\/down.*503/)
+})
+
+test("a source that throws, or answers with a body that is not JSON, logs once and gives null", async (t) => {
+  const warn = t.mock.method(console, "warn", () => {})
+  const thrown = makeFresh(() => { throw new Error("socket hang up") })
+  assert.equal(await thrown("https://x/throws"), null)
+  const garbled = makeFresh(async () => new Response("<html>", { status: 200 }))
+  assert.equal(await garbled("https://x/garbled"), null)
+  assert.equal(warn.mock.callCount(), 2)
+  assert.match(String(warn.mock.calls[0].arguments[0]), /https:\/\/x\/throws.*socket hang up/)
+  assert.match(String(warn.mock.calls[1].arguments[0]), /https:\/\/x\/garbled/)
+})
+
+test("an unchanged source (304) is not a failed read: nothing is logged", async (t) => {
+  const warn = t.mock.method(console, "warn", () => {})
+  const fresh = makeFresh(async (_url, init) => ((init.headers as Record<string, string>)["if-none-match"] ? answer(304) : answer(200, { a: 1 }, '"e"')))
+  await fresh("https://x/same")
+  await fresh("https://x/same")
+  assert.equal(warn.mock.callCount(), 0)
+})
