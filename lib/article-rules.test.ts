@@ -24,6 +24,11 @@ test("a copy that drops the marks but keeps the words still fails; one with its 
   assert.deepEqual(articleProblems("proof-flood", read("../articles/proof-flood/index.html")), [])
 })
 
+test("template text with its spacing changed is still template text", () => {
+  const spaced = TEMPLATE.replace(/\s*\bdata-placeholder\b/g, "").replace("One section, one idea", "One  section,\n  one idea")
+  assert.ok(placeholders(spaced).some((p) => p.includes("One section, one idea")))
+})
+
 test("an article's own sentence that merely contains template words is not template text", () => {
   const page = TEMPLATE.replace(/\s*\bdata-placeholder\b/g, "").replace("<h1>The headline with one", "<h1>An Article title explained, and the headline with one")
   assert.equal(placeholders(page).some((p) => p.includes("The headline with one")), false)

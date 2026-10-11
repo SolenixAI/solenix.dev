@@ -1,4 +1,6 @@
 import { readFileSync } from "node:fs"
+import { dirname, join } from "node:path"
+import { fileURLToPath } from "node:url"
 import { NAV } from "./site-nav.ts"
 
 // The rules every article must pass, in one place. Two gates use them:
@@ -22,18 +24,20 @@ const PRIVATE: [RegExp, string][] = [
 let templateTexts: string[] | null = null
 // The template, found from this module where the file exists beside it, else from the repo root (a bundled build).
 const readTemplate = () => {
-  try { return readFileSync(new URL("../articles/_template/index.html", import.meta.url), "utf8") }
+  try { return readFileSync(join(dirname(fileURLToPath(import.meta.url)), "../articles/_template/index.html"), "utf8") }
   catch { return readFileSync("articles/_template/index.html", "utf8") }
 }
+// Text as words: runs of spaces and line breaks count as one space, so spacing never hides template text.
+const words = (t: string) => t.replace(/\s+/g, " ").trim()
 // Each element of a page marked data-placeholder, as its tag and its whole text (a meta tag's content).
 const marked = (html: string) => [...html.matchAll(/<([a-z][a-z0-9]*)\b([^>]*\bdata-placeholder\b[^>]*)>([^<]*)/gi)]
-  .map((m) => ({ tag: m[1].toLowerCase(), text: (m[1].toLowerCase() === "meta" ? (m[2].match(/content="([^"]*)"/)?.[1] ?? "") : m[3]).trim() }))
+  .map((m) => ({ tag: m[1].toLowerCase(), text: words(m[1].toLowerCase() === "meta" ? (m[2].match(/content="([^"]*)"/)?.[1] ?? "") : m[3]) }))
 export const placeholderTexts = (template = readTemplate()): string[] => marked(template).map((m) => m.text).filter(Boolean)
 // Every whole piece of text on a page: each run of text between tags, and each meta tag's content. A template text
 // counts only when a whole piece equals it, so an article's own prose that happens to contain it never trips the rule.
 const pieces = (html: string) => new Set([
-  ...[...html.matchAll(/>([^<]+)</g)].map((m) => m[1].trim()),
-  ...[...html.matchAll(/<meta\b[^>]*\bcontent="([^"]*)"/gi)].map((m) => m[1].trim()),
+  ...[...html.matchAll(/>([^<]+)</g)].map((m) => words(m[1])),
+  ...[...html.matchAll(/<meta\b[^>]*\bcontent="([^"]*)"/gi)].map((m) => words(m[1])),
 ].filter(Boolean))
 const short = (t: string) => (t.length > 48 ? `${t.slice(0, 45)}…` : t)
 
