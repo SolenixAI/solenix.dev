@@ -104,6 +104,8 @@ html:not(.js) .stage { position: relative; height: auto; min-height: 100svh; }
 /* While the world draws them, the words are type in the space (lib/home/scene.ts): the page's own words keep their
    place and stay for screen readers, unseen. */
 .type3d #journey .cap > :is(h1, h2, p, ul) { opacity: 0; }
+/* A screen too short for the opening's second line keeps only the headline and the call. */
+@media (max-height: 420px) { .cap-hero + .say { display: none; } }
 /* The world can be dragged to look round (a mouse): the cursor says so. */
 @media (hover: hover) and (pointer: fine) { .type3d body { cursor: grab; } .dragging, .dragging body { cursor: grabbing; user-select: none; } }
 .say { margin: 0; font-size: var(--fs-lede); color: var(--text); }
@@ -251,6 +253,7 @@ html.js[data-motion="on"] .hb.arm:not(.play) .hw > span { transform: translateY(
     <ol class="caps wrap">
       <li class="cap on" data-k="0">
         <h1 class="cap-h cap-hero">Your business is a <em>three&#8209;body problem.</em></h1>
+        <p class="say">AI can now do the jobs you do by hand.</p>
         <a class="btn btn-primary" href="/book">Book a call</a>
       </li>
       <li class="cap" data-k="1">

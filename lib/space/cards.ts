@@ -21,7 +21,7 @@ export interface SpaceCard {
   w: number
   /** A thing (title and value), something said ("Sort today's inbox"), a reply, an ask the visitor can tap, or
    * words set in the space (type: lines, no card behind them). */
-  kind: "thing" | "say" | "reply" | "ask" | "type"
+  kind: "thing" | "say" | "reply" | "ask" | "pill" | "type"
   lines?: TypeLine[]
   /** Type only: where its lines wrap, in canvas pixels (the canvas is 1600 wide). */
   wrap?: number
@@ -82,12 +82,24 @@ function drawType(c: HTMLCanvasElement, lines: TypeLine[], wrapAt = TW - 40): nu
   return H / TW;
 }
 
+// A name to tap: a pill with the word in it, the ember edge saying it can be pressed.
+function drawPill(c: HTMLCanvasElement, text: string): number {
+  const g = c.getContext('2d')!, font = `650 64px ${SANS}`;
+  g.font = font; const w = Math.ceil(g.measureText(text).width + 96), H = 112;
+  c.width = w; c.height = H; g.font = font;
+  g.beginPath(); g.roundRect(3, 3, w - 6, H - 6, (H - 6) / 2); g.fillStyle = 'rgba(16,19,26,0.92)'; g.fill();
+  g.lineWidth = 4; g.strokeStyle = 'rgba(251,191,36,0.75)'; g.stroke();
+  g.fillStyle = PAPER; g.textBaseline = 'middle'; g.fillText(text, 48, H / 2 + 3);
+  return H / w;
+}
+
 function draw(c: HTMLCanvasElement, card: SpaceCard): number {
   if (card.kind === 'type') return drawType(c, card.lines ?? [], card.wrap);
   const g = c.getContext('2d')!, st = card.state ?? 'plain', pad = 36;
   // Measure first: the card's height follows its words.
   g.font = `600 ${card.kind === 'say' ? 44 : card.kind === 'reply' ? 38 : card.kind === 'ask' ? 34 : 38}px ${SANS}`;
   const lines = wrap(g, card.kind === 'say' || card.kind === 'ask' ? `“${card.title}”` : card.title, CW - pad * 2);
+  if (card.kind === 'pill') return drawPill(c, card.title);
   const lh = card.kind === 'say' ? 54 : 46, valueH = card.value ? 44 : 0, H = Math.ceil(pad * 2 + lines.length * lh + valueH);
   c.width = CW; c.height = H;
   g.clearRect(0, 0, CW, H);

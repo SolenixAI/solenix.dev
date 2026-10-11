@@ -115,13 +115,23 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
     typeOn = { id: `type:${S.cur}`, at, dx: cx - v.x * aspect / 2, dy: by - v.y / 2, w: wpx / H, kind: 'type', title: '', lines, wrap: (right - left) * K + 30, align: 'bottom', alpha: 1 };
   }
 
+  // Where to start: on the Talk-to-one stop each role's world wears its name, and a tap flies there.
+  const ROLE_OF: Record<string, string> = { gmail: 'Receptionist', quickbooks: 'Bookkeeper', meta: 'Ad manager', shopify: 'Stock manager', microsoftexcel: 'Analyst' };
+  function roles(f: SpaceFrame): SpaceCard[] {
+    if (JOURNEY[S.cur]?.id !== 'talk-to-one') return [];
+    return TOOL_WORLDS.map((w, i) => { const at = f.well(i); return { id: `role:${w.id}`, at: { x: at.x, y: at.y + 0.9, z: at.z }, dx: 0, dy: 0.06, w: (ROLE_OF[w.id].length + 3) * (f.portrait ? 0.0105 : 0.0085), kind: 'pill' as const, title: ROLE_OF[w.id], alpha: 1 }; });
+  }
+  const goRole = (tool: string) => { const k = JOURNEY.findIndex(s => 'tool' in s.scene && s.scene.tool === tool), j = document.getElementById('journey')!, st = j.querySelector<HTMLElement>('.stage')!;
+    scrollTo({ top: j.getBoundingClientRect().top + scrollY + ((k + 0.5) / JOURNEY.length) * (j.offsetHeight - st.offsetHeight), behavior: S.motion ? 'smooth' : 'instant' }); };
+  let roleCards: SpaceCard[] = [];
+
   // A tap on an ask in the world plays it.
   const hitAsk = (e: PointerEvent) => {
-    if (!last || !S.play) return null;
-    for (const c of shown) if (c.kind === 'ask' && c.alpha > 0.5) { const r = last.cardRect(c.id); if (r && e.clientX >= r.x0 && e.clientX <= r.x1 && e.clientY >= r.y0 && e.clientY <= r.y1) return c; }
+    if (!last) return null;
+    for (const c of [...shown, ...roleCards]) if ((c.kind === 'ask' || c.kind === 'pill') && c.alpha > 0.5) { const r = last.cardRect(c.id); if (r && e.clientX >= r.x0 && e.clientX <= r.x1 && e.clientY >= r.y0 && e.clientY <= r.y1) return c; }
     return null;
   };
-  l.on(window, 'pointerup', (e: PointerEvent) => { const c = hitAsk(e); if (!c || !S.play) return; const p = PROOF.find(x => x.tool === S.play!.tool)!; S.ask(p.tool, p.asks.findIndex(q => q.say === c.title)); });
+  l.on(window, 'pointerup', (e: PointerEvent) => { const c = hitAsk(e); if (c?.id.startsWith('role:')) return goRole(c.id.slice(5)); if (!c || !S.play) return; const p = PROOF.find(x => x.tool === S.play!.tool)!; S.ask(p.tool, p.asks.findIndex(q => q.say === c.title)); });
   l.on(window, 'pointermove', (e: PointerEvent) => { document.documentElement.style.cursor = hitAsk(e) ? 'pointer' : ''; }, { passive: true });
   l.add(() => { document.documentElement.style.cursor = ''; document.documentElement.classList.remove('type3d'); });
   const jrEl = document.getElementById('journey')!;
@@ -153,6 +163,7 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
     if (!document.documentElement.classList.contains('type3d')) document.documentElement.classList.add('type3d');
     work(f);
     words(f);
+    roleCards = roles(f);
     // Beside one world, only its mark shows; seen from afar (no world picked), every world wears its mark.
     worldTags.forEach((e, i) => placeAt(e, f.well(i), fl * (wsel < 0 ? 1 : (portrait ? 0 : 1) * Math.max(0, 1 - Math.abs(wsel - i) * 1.6)), 0, f));
     tagShow = lerp(tagShow, locked || sc.agent > 0.98 ? 1 : 0, 1 - Math.exp(-f.dt * 4));
@@ -197,7 +208,7 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
     },
     openBand,
     onFrame: labels,
-    cards: () => (typeOn ? [...shown, typeOn] : shown),
+    cards: () => [...shown, ...roleCards, ...(typeOn ? [typeOn] : [])],
     sprites: () => things,
     agentTo: () => agentAt,
     onLock: (holding) => { jrEl.classList.toggle('locked', holding); ui.classList.toggle('locked', holding); },
