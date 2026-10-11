@@ -21,7 +21,10 @@ Each article is one **self-contained, interactive page**: its own design, data a
 1. Copy `articles/_template/` to `articles/<your-slug>/` (lower-case words joined by hyphens).
 2. Write `index.html`. Keep the three required tags at the top: `<title>`, `<meta name="description">`, `<meta name="article:published_time">`.
 3. Run `npm run dev` and open `http://localhost:3000/articles/<your-slug>`.
-4. Run `npm run check`. It must print nothing.
+4. Replace every piece of template text (each element marked `data-placeholder`) with the article's own words, and drop the mark. The check names any that is left.
+5. For a playground or any script, write it as `client/<name>.ts` and put `<!--client:<name>-->` in the page where it runs. A hand-written `<script>` fails the check (`lib/client-script.ts` says why).
+6. Run `npm run check`. It must print nothing. No edit to `design/journeys.md` is needed: its journeys name every article as `/articles/*`.
+7. After its first screen changes, run `npm run article-covers` with the dev server up: it re-takes the card, the share image and the stills the live window shows first, so they match the page.
 
 The process around it (claim check, screenshot sweep, publish decision, launch) lives in Linear: start a project from the **Article** template.
 
@@ -39,6 +42,8 @@ The rules, from `lib/article-rules.ts`:
 * a mobile viewport tag
 * page under 8 MB
 * no private data: local file paths, private email or inbox names, localhost links, internal Linear references, secret keys
+* no template text left over from `articles/_template`
+* `.wrap`'s left and right padding is `var(--gutter)` in every form (padding, padding-inline, padding-left, padding-right)
 * no nav of its own: the site adds the one nav
 * no raw colours: name a token, `var(--name)`, from `design/tokens.css`
 * nothing loaded from another host: fonts and libraries come from npm through `scripts/vendor.ts` (`npm run check` fails otherwise)
@@ -60,4 +65,4 @@ A page written without `<html>` (an artifact draft) is wrapped in a document aut
 * Colour and type come from the tokens by name; the check stops a raw value.
 * Show before you tell: a picture or playground before each block of text.
 * Every fact links to its source, with its date.
-* End on one action: Book a call.
+* End on one action: Book a call. The template's closing card keeps its Book a call button; only its marked heading and line are yours to write.
