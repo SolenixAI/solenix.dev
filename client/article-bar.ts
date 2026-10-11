@@ -68,8 +68,8 @@ else if (bar) {
     const root = document.documentElement
     const scrollable = root.scrollHeight - innerHeight
     if (progress) progress.style.transform = `scaleX(${Math.min(1, root.scrollTop / Math.max(1, scrollable))})`
-    // Finished: the reader moved the page after their own input and reached the end of a page that scrolls (2px allowed, for fractional scroll). Counted once per view.
-    if (!finished && inputAt !== null && root.scrollTop !== inputAt && scrollable > 0 && root.scrollTop > 0 && root.scrollTop >= scrollable - 2) {
+    // Finished: the reader moved down the page after their own input and reached the end of a page that scrolls (2px allowed, for fractional scroll). Counted once per view.
+    if (!finished && inputAt !== null && root.scrollTop > inputAt && scrollable > 0 && root.scrollTop > 0 && root.scrollTop >= scrollable - 2) {
       finished = true
       window.captureGoal?.("article_read")
     }
