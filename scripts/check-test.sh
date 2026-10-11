@@ -43,6 +43,20 @@ fresh; echo 'export const unusedHelper = () => 1' >> "$tmp/r/lib/format.ts"
 run_check; saw "unusedHelper" "an export nothing uses (dead code) fails"
 fresh; printf 'export const usedHereOnly = 2\nexport const twice = usedHereOnly * 2\n' >> "$tmp/r/lib/format.ts"
 run_check; saw "usedHereOnly" "an export used only in its own file fails (drop the export)"
+# Drift: on a local main that holds changes GitHub main does not, the check fails; on a main only behind, it passes.
+# Only the main pointer moves (the copy keeps its files), so the copy's uncommitted rules are the ones tested; HEAD is
+# put on main, and update-ref works whichever branch the repo itself is on.
+# A commit on top of GitHub main that adds one file, made without touching the copy's files or index.
+local_only() {
+  local idx="$tmp/drift-index"; GIT_INDEX_FILE=$idx git read-tree origin/main
+  GIT_INDEX_FILE=$idx git update-index --add --cacheinfo "100644,$(echo drift | git hash-object -w --stdin),drift.txt"
+  GIT_AUTHOR_NAME=t GIT_AUTHOR_EMAIL=t@t GIT_COMMITTER_NAME=t GIT_COMMITTER_EMAIL=t@t git commit-tree "$(GIT_INDEX_FILE=$idx git write-tree)" -p origin/main -m "local only"
+  rm -f "$idx"
+}
+fresh; (cd "$tmp/r" && git symbolic-ref HEAD refs/heads/main && git update-ref refs/heads/main "$(local_only)")
+run_check; saw "local main has" "local main ahead of GitHub main fails"
+fresh; (cd "$tmp/r" && git symbolic-ref HEAD refs/heads/main && git update-ref refs/heads/main origin/main~1)
+expect pass "local main only behind GitHub main passes"
 
 fresh; cp "$tmp/r/design/home.html" "$tmp/r/design/home-v2.html"
 expect fail "versioned file name (design/home-v2.html)"

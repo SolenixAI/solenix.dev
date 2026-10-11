@@ -2,6 +2,7 @@
 // browser's clipboard and timers, and the one element that holds the full sentence, which a failed copy selects.
 import { useEffect, useRef, useState } from "react"
 import { createCopyForAi, type CopyStatus } from "@/lib/copy-for-ai"
+import { captureGoal } from "@/lib/analytics"
 
 // A failed copy shows the sentence (`shown` stays true until a later copy succeeds, so it survives the button losing
 // focus), selects it and scrolls it into view. `onFail` runs on each failure, for a surface that must do more (a card
@@ -24,7 +25,10 @@ export function useCopyForAi<T extends HTMLElement = HTMLElement>(sentence: stri
       },
       onChange: (next) => {
         setStatus(next)
-        if (next === "copied") setShown(false)
+        if (next === "copied") {
+          setShown(false)
+          captureGoal("copied_for_ai")
+        }
       },
       onFail: () => {
         setShown(true)
