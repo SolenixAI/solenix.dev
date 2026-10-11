@@ -16,11 +16,5 @@ export function ago(ms: number, now = Date.now()) {
 export const day = (ms: number) =>
   new Date(ms).toLocaleDateString("en-CA", { timeZone: TZ, day: "numeric", month: "long", year: "numeric" });
 
-export const today = () =>
-  new Date().toLocaleDateString("en-CA", { timeZone: TZ, weekday: "long", day: "numeric", month: "long" });
-
 export const count = (n: number) => n.toLocaleString("en-CA");
 
-/** "https://www.Example.ca/about" → "example.ca" */
-export const cleanDomain = (raw: string) =>
-  raw.trim().toLowerCase().replace(/^https?:\/\//, "").replace(/\/.*$/, "").replace(/^www\./, "");

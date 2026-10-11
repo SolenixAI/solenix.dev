@@ -1,6 +1,5 @@
 import { createHmac, createSign, timingSafeEqual } from "node:crypto"
 import { failed } from "./failed.ts"
-import { fresh } from "./fresh.ts"
 import { GITHUB_ORG } from "./site-meta.ts"
 
 /**
@@ -66,9 +65,6 @@ export async function githubHeaders(): Promise<Record<string, string>> {
   const token = (app && (await app())) || env.GITHUB_TOKEN
   return token ? { ...BASE, authorization: `Bearer ${token}` } : BASE
 }
-
-/** A live GitHub read (lib/fresh: asks every time; an unchanged answer is a free 304 with a key). */
-export const github = async <T = unknown>(path: string) => fresh<T>(`${API}/${path}`, await githubHeaders())
 
 /** Whether a webhook body really came from GitHub: its HMAC-SHA256 under the shared secret. */
 export function signedByGitHub(secret: string, body: string, signature: string | null) {

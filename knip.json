@@ -1,0 +1,14 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": ["scripts/*.ts", "client/*.ts", "lib/**/*.test.ts", "brand/motion/piece.ts", "brand/motion/render.ts"],
+  "project": ["app/**/*.{ts,tsx}", "components/**/*.{ts,tsx}", "lib/**/*.ts", "client/*.ts", "scripts/*.ts", "brand/motion/*.ts"],
+  "ignoreExportsUsedInFile": true,
+  "ignoreDependencies": [
+    "@fontsource-variable/sora",
+    "@fontsource-variable/jetbrains-mono",
+    "tailwindcss",
+    "tw-animate-css",
+    "shadcn"
+  ],
+  "ignoreBinaries": ["vercel"]
+}

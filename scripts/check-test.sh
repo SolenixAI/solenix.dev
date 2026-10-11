@@ -38,6 +38,10 @@ saw_pass() {
 
 fresh; expect pass "untouched repo passes"
 
+# Dead code: an export nothing imports fails.
+fresh; echo 'export const unusedHelper = () => 1' >> "$tmp/r/lib/format.ts"
+run_check; saw "unusedHelper" "an export nothing uses (dead code) fails"
+
 fresh; cp "$tmp/r/design/home.html" "$tmp/r/design/home-v2.html"
 expect fail "versioned file name (design/home-v2.html)"
 

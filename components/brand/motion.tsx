@@ -32,39 +32,3 @@ export function Reveals() {
   return null
 }
 
-/**
- * A number counting up to its value on first view. The final value is what
- * renders on the server, so it is correct before, during and after.
- */
-export function CountUp({ value, className }: { value: number; className?: string }) {
-  const ref = useRef<HTMLSpanElement>(null)
-  const [shown, setShown] = useState(value)
-
-  useEffect(() => {
-    const el = ref.current
-    if (!el || still() || !("IntersectionObserver" in window)) return
-    const io = new IntersectionObserver(
-      ([e]) => {
-        if (!e?.isIntersecting) return
-        io.disconnect()
-        const t0 = performance.now()
-        const tick = (now: number) => {
-          const p = Math.min(1, (now - t0) / 1200)
-          setShown(Math.round(value * (1 - Math.pow(1 - p, 3))))
-          if (p < 1) requestAnimationFrame(tick)
-        }
-        setShown(0)
-        requestAnimationFrame(tick)
-      },
-      { threshold: 0.15 }
-    )
-    io.observe(el)
-    return () => io.disconnect()
-  }, [value])
-
-  return (
-    <span ref={ref} className={className}>
-      {shown.toLocaleString("en-CA")}
-    </span>
-  )
-}

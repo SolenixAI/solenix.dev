@@ -116,6 +116,8 @@ git grep -n -I -E 'class(Name)?="[^"]*\b(eyebrow|sx-kicker|kicker)\b' -- app com
   | while read -r l; do echo "check: an eyebrow or kicker above a heading (banned; let the heading speak): ${l:0:120}"; done | grep . && fail=1
 # Types: the compiler checks the whole repo (the page scripts were compiled at the top).
 npx tsc --noEmit || fail=1
+# Dead code: a file, export or dependency nothing uses is removed, not kept "just in case" (knip.json names the entries).
+npx --no-install knip --no-progress --no-config-hints || fail=1
 # Unit tests, next to the module they test (lib/**/*.test.ts, any depth), with Node's own test runner.
 node --test 'lib/**/*.test.ts' >/dev/null 2>&1 || { node --test 'lib/**/*.test.ts'; fail=1; }
 # The hero fit check opens pages in a browser, so locally it runs when something that shapes a first
