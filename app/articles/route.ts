@@ -1,4 +1,5 @@
 import { listArticles, type Article } from "@/lib/articles"
+import { ARTICLES_PAGE } from "@/lib/articles-page"
 import { servePage } from "@/lib/site-page"
 import { CLIENT } from "@/lib/client.generated"
 
@@ -56,8 +57,7 @@ function newestHero(a: Article, more: number) {
 
 export async function GET() {
   const [first, ...rest] = await listArticles()
-  const title = "Articles"
-  const description = "Stories about what AI can do now, told as pages you can play with."
+  const { title, description } = ARTICLES_PAGE
   const hero = first
     ? newestHero(first, rest.length)
     : `<header class="sx-hero" data-hero><div class="sx-hero-in"><div class="sx-hero-text"><h1>Pages you can play with, on their way</h1><p class="sx-sub">The first one is almost ready.</p></div></div></header>`

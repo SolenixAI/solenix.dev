@@ -23,3 +23,10 @@ test("a page without a type is a website", () => {
   assert.ok(head.includes('<meta property="og:type" content="website">'))
   assert.equal(head.includes('og:type" content="article"'), false)
 })
+
+test("the link preview's Twitter tags carry the page's title and description", () => {
+  const title = tabTitle("Articles: pages you can play with")
+  const head = headTags({ title, description: DESCRIPTION, path: "/articles" })
+  assert.ok(head.includes(`<meta name="twitter:title" content="${title}">`), "twitter:title is the title")
+  assert.ok(head.includes(`<meta name="twitter:description" content="${DESCRIPTION}">`), "twitter:description is the description")
+})

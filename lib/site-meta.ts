@@ -61,6 +61,8 @@ export function headTags(page: { title: string; description: string; path: strin
     `<meta property="og:image:height" content="${OG_IMAGE.height}">` +
     `<meta property="og:image:alt" content="${esc(page.image ? page.title : OG_IMAGE.alt)}">` +
     `<meta name="twitter:card" content="summary_large_image">` +
+    `<meta name="twitter:title" content="${esc(page.title)}">` +
+    `<meta name="twitter:description" content="${esc(page.description)}">` +
     `<meta name="twitter:image" content="${img}">`
   )
 }
