@@ -212,11 +212,23 @@ code=$(curl -s -o /dev/null -m 5 -w '%{http_code}' "$site" 2>/dev/null)
 [ "$code" = "000" ] || [ "$code" = "200" ] \
   || bad "local site is broken: $site answers $code (restart the dev server; if it stays broken, move .next/dev aside)"
 # Copy lives in the homepage source, the React pages, the articles and the metadata: the Voice check reads every page
-# the sitemap lists, as the local site renders it, whenever that site is up.
-if [ "$code" = "200" ]; then
+# the sitemap lists, as the local site renders it, whenever that site is up and is this checkout. A site named by
+# SITE_URL (CI) is taken as this checkout's; a local :3000 counts only when its server runs in this folder, as
+# hero-check decides, so a branch is never judged by another branch's pages.
+here=yes
+if [ -z "${SITE_URL:-}" ] && [ "$code" = "200" ]; then
+  here=no
+  for pid in $(lsof -tiTCP:3000 -sTCP:LISTEN 2>/dev/null); do
+    [ "$(lsof -a -p "$pid" -d cwd -Fn 2>/dev/null | sed -n 's/^n//p')" = "$PWD" ] && here=yes
+  done
+  [ "$here" = yes ] || echo "check: :3000 serves another checkout, so the Voice and link checks are skipped here (run them with this checkout's server)"
+fi
+if [ "$code" = "200" ] && [ "$here" = yes ]; then
   pages=$(curl -s -m 20 "${site%/}/sitemap.xml" | grep -o '<loc>[^<]*</loc>' | sed -E 's#<loc>https?://[^/]+##; s#</loc>##' | sort -u)
   [ -n "$pages" ] || bad "the sitemap lists no pages, so the Voice check could not read them"
   for page in $pages; do python3 scripts/voice-check.py "${site%/}$page" || fail=1; done
+  # Every link and asset on those pages answers, the redirects land, and each head says what the page is (lib/page-audit.ts).
+  node --no-warnings scripts/link-check.ts "${site%/}" || fail=1
 fi
 
 exit $fail

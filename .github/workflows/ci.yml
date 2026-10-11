@@ -59,7 +59,11 @@ jobs:
       - run: npx playwright install --with-deps chromium
       # Some checks read the site as it renders (every page's copy against the Voice rules, the local-site check):
       # start it once, as `npm run dev` does on a laptop, and wait until it answers.
+      # The site reads the Agents Marketplace catalog from GitHub; with this run's read-only token it is not limited to
+      # 60 anonymous reads an hour shared by every job on the runner, so its pages and worlds.json answer as on Vercel.
       - name: Start the site for the checks that read it
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           npm run dev > "$RUNNER_TEMP/dev.log" 2>&1 &
           for _ in $(seq 1 120); do curl -sf -o /dev/null http://localhost:3000/ && exit 0; sleep 1; done

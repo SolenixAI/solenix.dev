@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { Button } from "@/components/ui/button"
 import { HERO_CSS } from "@/lib/site-hero"
-import { OG_IMAGE } from "@/lib/site-meta"
+import { OG_IMAGE, SITE_URL } from "@/lib/site-meta"
 import { NAV } from "@/lib/site-nav"
 
 // solenix.dev/app: the platform page. The platform is being rebuilt from scratch, so the nav's platform button
@@ -14,7 +14,7 @@ const description = `The ${title} is being rebuilt from scratch. Book a call and
 export const metadata: Metadata = {
   title,
   description,
-  alternates: { canonical: "/app" },
+  alternates: { canonical: `${SITE_URL}/app` },
   robots: { index: false },
   openGraph: { title: `${title} · Solenix`, description, url: "/app", images: [OG_IMAGE] },
 }
