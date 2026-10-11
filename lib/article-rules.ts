@@ -28,7 +28,7 @@ export function articleProblems(slug: string, html: string): string[] {
     out.push(`<meta name="article:published_time" content="YYYY-MM-DD"> is missing or not a date`)
   if (!/<meta name="viewport"[^>]*width=device-width/i.test(html)) out.push(`<meta name="viewport" content="width=device-width, initial-scale=1"> is missing`)
   if (Buffer.byteLength(html) > MAX_BYTES) out.push(`page is larger than 8 MB`)
-  // The site adds the nav (lib/site-nav.ts); a page that brings its own would show two.
+  // The site adds the nav (lib/raw-nav.ts); a page that brings its own would show two.
   if (/<nav\b|class="f?nav"/i.test(html) || html.includes(NAV.platform.label))
     out.push(`holds its own nav: remove it; the site adds one, and lists each id + data-nav="Label" as a link`)
   // The first screen is a hero that the site can check and derive the card and share image from.

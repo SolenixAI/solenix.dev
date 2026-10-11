@@ -13,7 +13,7 @@ type Hub = { clients: Set<Client>; started: number; timer?: ReturnType<typeof se
 const KEY = "__solenixDevReload"
 const hubs = globalThis as typeof globalThis & { [KEY]?: Hub }
 const encoder = new TextEncoder()
-const LIB_FILE = /^(client\.generated\.ts|site-[\w-]+\.ts)$/
+const LIB_FILE = /^((client|nav)\.generated\.ts|site-[\w-]+\.ts|raw-nav\.ts)$/
 const isHidden = (file: string) => file.split(path.sep).some((part) => part.startsWith("."))
 
 function hub(): Hub {

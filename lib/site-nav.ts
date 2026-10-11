@@ -1,12 +1,13 @@
 // The site nav: the one source of truth for every page on solenix.dev.
-// Pages hold no nav markup, style or script. The server adds this nav to each page:
-//   raw HTML pages (homepage, Articles, each article) through lib/site-page.ts,
-//   React pages through components/site/chrome.tsx.
+// Pages hold no nav markup, style or script. The nav header is built once (navHeader below) and drawn on
+//   raw HTML pages (Articles, each article) by lib/raw-nav.ts, through lib/site-page.ts,
+//   React pages by components/site/nav.tsx.
 // The links, the mark, the platform button and the footer links all come from NAV below.
-// An article gets its own bar too (localNav): its title, its sections and Share. The sections come from
+// An article gets its own bar too (localNav, lib/raw-nav.ts): its title, its sections and Share. The sections come from
 // the page: each element with id and data-nav="Label". The site nav stays the same on every page.
 // scripts/sot-check.ts fails the commit if any nav copy appears anywhere else.
 
+import { createElement as h, type ReactNode } from "react"
 import { CLIENT } from "./client.generated.ts"
 
 export const NAV = {
@@ -21,7 +22,7 @@ export const NAV = {
   contact: { href: "mailto:hello@solenix.dev", label: "hello@solenix.dev" },
 }
 
-const esc = (s: unknown) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;")
+export const esc = (s: unknown) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;")
 
 /** The mark's shapes (DESIGN.md §12): sun, one orbit ring, one agent dot. `fill` paints the sun. */
 export const markShapes = (fill: string) =>
@@ -119,11 +120,8 @@ html{scroll-padding-top:var(--nav-height)}
 `.trim()
 
 // The nav's behaviour lives in client/site-fit.ts (fit and scroll state, every page with the nav) and, on
-// the raw pages only, client/site-nav.ts (the current page). The article bar's is client/article-bar.ts.
-// They are TypeScript, compiled by scripts/build-client.ts and inlined right after their markup, so they
-// run before the first paint.
-const CHEVRON = `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`
-const SHARE = `<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v8M5 5l3-3 3 3M3.5 8.5V14h9V8.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+// the raw pages only, client/site-nav.ts (the current page). They are TypeScript, compiled by
+// scripts/build-client.ts and placed right after the markup, so they run before the first paint.
 
 // The next page is fetched as soon as a pointer rests on its link (or a finger goes down), so the
 // move is near instant. Fetch only: nothing runs until the visitor really goes. The analytics and API
@@ -133,48 +131,27 @@ export const NAV_PREFETCH = JSON.stringify({ prefetch: [{ where: { and: [{ href_
 /** The fit and scroll script every page with the nav runs, right after the markup (client/site-fit.ts). */
 export const NAV_FIT = CLIENT["site-fit"]
 
-/** The site nav: style, markup and script, ready to place first in <body>. `local`: the page has its own bar. */
-export function siteNav({ local = false } = {}) {
-  const links = NAV.links.map((l) => `<a${l.wide ? ` class="wide"` : ""} href="${l.href}">${esc(l.label)}</a>`).join("")
+export type NavItem = (typeof NAV.links)[number]
+
+/** The site nav's header: the mark, the links, the platform button. The one markup for every page.
+ * `link` draws each link: a plain anchor on the raw pages (plainLink), NavLink on the React pages.
+ * `local`: the page has its own bar too. The fit script sets the header's layout classes before React
+ * hydrates, so React leaves its attributes as they are (suppressHydrationWarning). */
+export function navHeader(link: (l: NavItem) => ReactNode, { local = false } = {}) {
   const p = NAV.platform
-  return (
-    `<style>${NAV_CSS}</style>` +
-    `<header class="snav" data-snav${local ? " data-local" : ""}>` +
-    `<a class="snav-brand" href="${NAV.home.href}" aria-label="${esc(NAV.home.aria)}">${markSvg()}<span>${esc(NAV.home.label)}</span></a>` +
-    `<nav class="snav-links" aria-label="Main">${links}</nav>` +
-    `<a class="snav-act" href="${p.href}" aria-label="${esc(p.aria)}"><span class="snav-orb" aria-hidden="true"><i></i></span><span class="long">${esc(p.label)}</span><span class="short">${esc(p.short)}</span></a>` +
-    `</header><script>${NAV_FIT}</script><script>${CLIENT["site-nav"]}</script><script type="speculationrules">${NAV_PREFETCH}</script>`
-  )
+  return h("header", { className: "snav", "data-snav": "", "data-local": local ? "" : undefined, suppressHydrationWarning: true },
+    h("a", { className: "snav-brand", href: NAV.home.href, "aria-label": NAV.home.aria },
+      h("svg", { viewBox: "0 0 32 32", "aria-hidden": "true", dangerouslySetInnerHTML: { __html: markInner() } }),
+      h("span", null, NAV.home.label)),
+    h("nav", { className: "snav-links", "aria-label": "Main" }, NAV.links.map(link)),
+    h("a", { className: "snav-act", href: p.href, "aria-label": p.aria },
+      h("span", { className: "snav-orb", "aria-hidden": "true" }, h("i")),
+      h("span", { className: "long" }, p.label),
+      h("span", { className: "short" }, p.short)))
 }
 
-/** An article's own bar: its title, its sections, Share. Placed after the site nav. */
-export function localNav(title: string, sections: Section[]) {
-  const items = sections.map((s) => `<a href="#${esc(s.id)}">${esc(s.label)}</a>`).join("")
-  return (
-    `<header class="lnav" data-lnav>` +
-    `<a class="lnav-home" href="${NAV.home.href}" aria-label="${esc(NAV.home.aria)}">${markSvg("lnav-sun")}</a>` +
-    `<a class="lnav-title" href="#">${esc(title)}</a>` +
-    `<nav class="lnav-in" aria-label="On this page">${items}</nav>` +
-    `<button class="lnav-cur" type="button" popovertarget="lnav-list" aria-label="Sections on this page"><span class="lab">Sections</span>${CHEVRON}</button>` +
-    `<button class="lnav-share" type="button">${SHARE}<span class="lab" aria-live="polite">Share</span></button>` +
-    `<i class="lnav-prog" aria-hidden="true"></i>` +
-    `<div class="lnav-list" id="lnav-list" popover><nav aria-label="Sections">${items}</nav></div>` +
-    `</header><script>${CLIENT["article-bar"]}</script>`
-  )
-}
-
-/**
- * Add the site chrome to a raw HTML page: the nav first in <body> (after a skip link, if any),
- * and the markers a page may use: <!--site:brand--> (the mark and name, linked home),
- * <!--site:footer-links--> (the footer links as <li> items), <!--site:mark--> (the mark alone) and <!--site:sun--> (the sun's
- * light, id "site-sun").
- */
-export function withSiteNav(html: string): string {
-  const sections = pageSections(html)
-  const title = (html.match(/<title>([^<]*)<\/title>/)?.[1] ?? "").replace(/\s*·\s*Solenix$/, "")
-  const nav = siteNav({ local: sections.length > 0 }) + (sections.length ? localNav(title, sections) : "")
-  return fillSiteMarkers(html.replace(/(<body[^>]*>\s*(?:<a class="skip"[^>]*>[^<]*<\/a>)?)/i, `$1${nav}`))
-}
+/** A nav link as a plain anchor, for the raw pages: client/site-nav.ts marks the current one. */
+export const plainLink = (l: NavItem) => h("a", { key: l.href, className: l.wide ? "wide" : undefined, href: l.href }, l.label)
 
 /** The markers a page's markup may hold: <!--site:brand--> (the mark and name, linked home), <!--site:footer-links--> (the footer
  * links), <!--site:mark--> (the mark alone, no link) and <!--site:sun--> (the sun's light as a gradient with id "site-sun",

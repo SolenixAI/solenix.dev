@@ -1,6 +1,6 @@
 "use client"
 
-import { Fragment, useEffect, useRef, useState, type ReactNode } from "react"
+import { Fragment, useEffect, useEffectEvent, useRef, useState, type ReactNode } from "react"
 import { flushSync } from "react-dom"
 import { useRouter } from "next/navigation"
 import type { Entry } from "@/lib/marketplace"
@@ -101,25 +101,24 @@ export function Worlds({ cards, initial, version }: { cards: Card[]; initial: st
     if (history.state?.world) history.back()
     else { history.replaceState(null, "", location.pathname); if (open) morph(open, false, () => setOpen(null)) }
   }
-  useEffect(() => {
-    const onClick = (e: MouseEvent) => {
-      const a = (e.target as Element).closest<HTMLAnchorElement>("a[data-world]")
-      if (!a || e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0 || !cards.some((c) => c.entry.id === a.dataset.world)) return
-      e.preventDefault()
-      origin.current = a
-      show(a.dataset.world!)
-    }
-    document.addEventListener("click", onClick)
-    return () => document.removeEventListener("click", onClick)
+  // One listener each for the page's life; useEffectEvent lets them read the current cards without rebinding.
+  const onClick = useEffectEvent((e: MouseEvent) => {
+    const a = (e.target as Element).closest<HTMLAnchorElement>("a[data-world]")
+    if (!a || e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0 || !cards.some((c) => c.entry.id === a.dataset.world)) return
+    e.preventDefault()
+    origin.current = a
+    show(a.dataset.world!)
+  })
+  const onOpen = useEffectEvent((e: Event) => {
+    const { id, failed } = (e as CustomEvent<{ id: string; failed: boolean }>).detail
+    if (cards.some((c) => c.entry.id === id)) show(id, failed)
   })
   useEffect(() => {
-    const onOpen = (e: Event) => {
-      const { id, failed } = (e as CustomEvent<{ id: string; failed: boolean }>).detail
-      if (cards.some((c) => c.entry.id === id)) show(id, failed)
-    }
-    document.addEventListener(OPEN_WORLD, onOpen)
-    return () => document.removeEventListener(OPEN_WORLD, onOpen)
-  })
+    const click = (e: MouseEvent) => onClick(e), open = (e: Event) => onOpen(e)
+    document.addEventListener("click", click)
+    document.addEventListener(OPEN_WORLD, open)
+    return () => { document.removeEventListener("click", click); document.removeEventListener(OPEN_WORLD, open) }
+  }, [])
 
   return (
     <dialog ref={dialog} className="wd-dialog" aria-labelledby="wd-title" onCancel={(e) => { e.preventDefault(); hide() }} onClick={(e) => { if (e.target === e.currentTarget) hide() }}

@@ -2,13 +2,13 @@ import { POSTHOG_SNIPPET, SPEED_INSIGHTS_SNIPPET } from "@/lib/analytics"
 import { headTags } from "@/lib/site-meta"
 import { fontHead } from "@/lib/site-fonts"
 import { withHero } from "@/lib/site-hero"
-import { withSiteNav } from "@/lib/site-nav"
+import { withSiteNav } from "@/lib/raw-nav"
 import { withClientScripts } from "@/lib/client-script"
 
 // Every page served as raw HTML (Articles, each article) goes out through here,
 // so each one gets the same things and no page has to remember them:
 //   dark from the first byte, the design tokens, the fonts (from the site itself), "Title · Solenix" in the tab,
-//   tab icons and link-preview tags, measurement, the site nav (lib/site-nav.ts), for a page
+//   tab icons and link-preview tags, measurement, the site nav (lib/raw-nav.ts), for a page
 //   that uses it the hero frame (lib/site-hero.ts), and the page's own scripts: each
 //   <!--client:name--> marker becomes the compiled client/name.ts (lib/client-script.ts).
 
