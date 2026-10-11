@@ -36,8 +36,9 @@ function commandPieces(command: string): string[] {
   return pieces
 }
 
-// A sentence a visitor copies, with its command in code. Every surface renders it here (worlds-css.ts keeps each piece
-// whole), so a line breaks only at a space between two pieces.
+// A sentence a visitor copies, with its command in code. The screen shows it only after a failed copy, selected for a
+// copy by hand; every surface renders it here (worlds-css.ts keeps each piece whole), so a line breaks only at a space
+// between two pieces.
 export function Sentence({ text }: { text: string }) {
   return (
     <span className="wd-sentence">
@@ -130,12 +131,8 @@ export function Worlds({ cards, initial, version }: { cards: Card[]; initial: st
 
 function WorldView({ card, onClose, failedOnOpen }: { card: Card; onClose: () => void; failedOnOpen: boolean }) {
   const world = card.entry
-  const run = useRef<HTMLDetailsElement>(null)
-  // A failed copy opens the full sentence (its disclosure) and selects it, so one copy command takes it.
-  const { status, text, copy, fail, blur } = useCopyForAi<HTMLParagraphElement>(world.sentence, () => {
-    if (run.current) run.current.open = true
-    run.current?.scrollIntoView({ block: "center" })
-  })
+  // A failed copy shows the full sentence, selected and in view, so one copy command takes it.
+  const { status, shown, text, copy, fail, blur } = useCopyForAi<HTMLParagraphElement>(world.sentence)
   // The inline action has scrolled off (a long level on a phone): a sticky copy bar stands in for it.
   const [away, setAway] = useState(false)
   const action = useRef<HTMLButtonElement>(null)
@@ -153,7 +150,7 @@ function WorldView({ card, onClose, failedOnOpen }: { card: Card; onClose: () =>
     return () => cancelAnimationFrame(frame)
   }, [])
   const label = status === "copied" ? COPIED : "Copy for your AI"
-  // The visible line says only what the AI does for the visitor. The full text, with its command, sits behind "See what it runs".
+  // The visible line says only what the AI does for the visitor. The full text, with its command, travels in the copy.
   const outcome = world.part === "toolkit"
     ? "After you paste it, your AI gets the basics it needs and shows you it works."
     : `After you paste it, your AI sets up ${world.name} for you and shows you it works.`
@@ -168,10 +165,7 @@ function WorldView({ card, onClose, failedOnOpen }: { card: Card; onClose: () =>
         <div className="wd-copy">
           <p className="wd-outcome">{outcome}</p>
           <button ref={action} type="button" className="wd-action" onBlur={blur} onClick={copy}>{label}</button>
-          <details ref={run} className="wd-run">
-            <summary>See what it runs</summary>
-            <p ref={text} className="wd-run-text"><Sentence text={world.sentence} /></p>
-          </details>
+          <p ref={text} className="wd-copy-sentence" hidden={!shown}><Sentence text={world.sentence} /></p>
           <p role="status" className={status === "failed" ? "wd-copy-note" : "sy-sr"}>
             {status === "failed" ? FAILED : status === "copied" ? COPIED : ""}
           </p>
@@ -189,10 +183,9 @@ function WorldView({ card, onClose, failedOnOpen }: { card: Card; onClose: () =>
 
 // The hero's one action. The button copies the full sentence, every time, and answers the press and the copy (a data
 // attribute drives the motion; reduced motion stops it). Its status line says what happened. One quiet line says the
-// steps are public, and its toggle shows the sentence for anyone who wants to read it first.
+// steps are public on GitHub; the sentence itself shows only after a failed copy.
 export function HeroAsk({ sentence, repo }: { sentence: string; repo: string }) {
-  const [open, setOpen] = useState(false)
-  const { status, text, copy, blur } = useCopyForAi<HTMLParagraphElement>(sentence, () => setOpen(true))
+  const { status, shown, text, copy, blur } = useCopyForAi<HTMLParagraphElement>(sentence)
   const copied = status === "copied" ? "true" : undefined
   return (
     <div className="wd-ask">
@@ -203,12 +196,9 @@ export function HeroAsk({ sentence, repo }: { sentence: string; repo: string }) 
         {status === "copied" ? COPIED : status === "failed" ? FAILED : ""}
       </span>
       <p className="wd-quiet">
-        Open source. Read every step on <a href={repo}>GitHub</a>.{" "}
-        <button type="button" className="wd-quiet-toggle" aria-expanded={open} aria-controls="wd-what" onClick={() => setOpen((o) => !o)}>
-          See what it runs {open ? "−" : "+"}
-        </button>
+        Open source. Read every step on <a href={repo}>GitHub</a>.
       </p>
-      <p ref={text} id="wd-what" className="wd-ask-sentence" hidden={!open}>
+      <p ref={text} className="wd-ask-sentence" hidden={!shown}>
         <Sentence text={sentence} />
       </p>
     </div>
@@ -235,10 +225,7 @@ export function CopyCard({ id, name, sentence }: { id: string; name: string; sen
 // The sentence the how-it-works steps point to: the core toolkit's, copied from a ghost pill, so this section adds
 // no second solid fill (the hero keeps the page's one).
 export function SentenceCopy({ sentence }: { sentence: string }) {
-  const more = useRef<HTMLDetailsElement>(null)
-  const { status, text, copy, blur } = useCopyForAi<HTMLParagraphElement>(sentence, () => {
-    if (more.current) more.current.open = true
-  })
+  const { status, shown, text, copy, blur } = useCopyForAi<HTMLParagraphElement>(sentence)
   return (
     <div className="wd-say">
       <p className="wd-say-text">One paste installs the Solenix basics into your AI.</p>
@@ -249,10 +236,7 @@ export function SentenceCopy({ sentence }: { sentence: string }) {
         <span aria-live="polite">{status === "copied" ? COPIED : "Copy for your AI"}</span>
       </button>
       {status === "failed" && <p className="wd-say-note" role="status">{FAILED}</p>}
-      <details ref={more} className="wd-say-more">
-        <summary>See what it runs</summary>
-        <p ref={text} className="wd-say-raw"><Sentence text={sentence} /></p>
-      </details>
+      <p ref={text} className="wd-say-raw" hidden={!shown}><Sentence text={sentence} /></p>
     </div>
   )
 }
