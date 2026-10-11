@@ -4,6 +4,8 @@ import { POSTHOG_ASSETS_HOST, POSTHOG_HOST, POSTHOG_PROXY } from "./lib/analytic
 const nextConfig: NextConfig = {
   // PostHog through the site's own domain (lib/analytics.ts). Its API paths end in slashes.
   skipTrailingSlashRedirect: true,
+  // The dev badge sat on page content in every review screenshot; build errors still show as an overlay.
+  devIndicators: false,
   // Makers' GitHub avatars on /agents, served through the site's own image optimiser.
   images: { remotePatterns: [{ protocol: "https", hostname: "avatars.githubusercontent.com", pathname: "/u/**" }] },
   async rewrites() {

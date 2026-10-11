@@ -4,7 +4,7 @@ Research of 2026-09-30. Every change goes through Impeccable, one named change a
 
 ## Decisions for the homepage
 
-2026-10-10: the six by-hand versus just-ask races are replaced by one tool picker that shows each tool's finished result at once, beside its steps by hand. Decisions 3, 4 and 6 (race clocks, time tapes, measured run times) no longer apply; decision 5 (end on an output, show the approval) lives on in the picker.
+2026-10-10: the six by-hand versus just-ask races are replaced by one tool picker that shows each tool's finished result at once, beside its steps by hand. Decisions 3, 4 and 6 (race clocks, time tapes, measured run times) no longer apply. Decision 2's race hero is the picker's first tool; its connector point stands. Decision 5 (end on an output, show the approval) lives on in the picker.
 
 Ranked by effect on the founder's three verdicts.
 

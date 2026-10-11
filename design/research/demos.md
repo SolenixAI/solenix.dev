@@ -2,7 +2,9 @@
 
 Method: live pages opened in a browser on 2026-09-30 (DOM counts, screenshots). `<.>` marks anything not verified. Effort sizes are my estimates `<.>`.
 
-Starting point: `design/home.html` already runs two stopwatches per race (Shopify race, lines 740–770). What it lacks is the tool's real screens, and the tool's world as a place.
+Status (2026-10-10): superseded for the homepage. The races this research shaped were replaced by one tool picker that shows each finished result at once; its principles 3 to 6 (the tool's own words, dull specifics, the approval gate, Example labels) carry over. Kept as research.
+
+Starting point at the time: `design/home.html` ran two stopwatches per race.
 
 ## 1. Ten demos worth studying
 

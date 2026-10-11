@@ -39,7 +39,7 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
   // Revenue, Costs, Time: a small tag under each sun, all the way through. They fade only where the scene is
   // dimmed behind reading text, and step apart if two suns pass close together. On the journey the step is the
   // subject, so the tags step back until the orbit holds.
-  let tagShow = 1, tagW = [90, 90, 90];
+  let tagShow = 1, tagW = [90, 90, 90], tagH = 28;
   // The hero box runs from the headline to the button, as wide as the widest line, so no tag lands on any of it.
   const heroBeat = document.querySelector<HTMLElement>('.sky .beat'), heroBeatH = heroBeat && heroBeat.querySelector<HTMLElement>('.beat-h'), heroBlocks = [...document.querySelectorAll<HTMLElement>('.hero-copy .wrap > *')], readBlocks: Record<string, HTMLElement[]> = { '#guide': [...document.querySelectorAll<HTMLElement>('#guide .jr-head, #guide .guide-say')], '#close': [...document.querySelectorAll<HTMLElement>('#close .close-in > *')] };
   let heroBox = [0, 0, 0, 0], readBox: Record<string, number[][]> = {}, heroBoxDirty = true;
@@ -69,7 +69,9 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
     const bd = [0, 1, 2].map(i => f.offOrbit(i));
     const pos = [0, 1, 2].map(i => { const B = f.sun(i), v = f.project(B.x, B.y, B.z), rad = f.sunRadiusPx(i);
       return { i, vis: 1 - Math.max(heroAmt, Math.min(1, sc.rw)) * smooth(1.02, 1.16, Math.abs(v.x)), x: (v.x + 1) / 2 * W, y: (1 - v.y) / 2 * H + lerp(margin, Math.max(margin, Math.min(rad, H * 0.22) + 18), heroAmt) }; }).sort((p0, p1) => p0.y - p1.y);
-    for (let n = 1; n < 3; n++) for (let m = 0; m < n; m++) if (Math.abs(pos[n].x - pos[m].x) < 92 && pos[n].y - pos[m].y < 24) pos[n].y = pos[m].y + 24;
+    // Two tags that would touch: the lower one steps down by a whole tag, so neither hides the other.
+    const step = tagH + 6;
+    for (let n = 1; n < 3; n++) for (let m = 0; m < n; m++) if (Math.abs(pos[n].x - pos[m].x) < (tagW[pos[n].i] + tagW[pos[m].i]) / 2 + 8 && pos[n].y - pos[m].y < step) pos[n].y = pos[m].y + step;
     pos.forEach(pp => { const e = tags[pp.i], hw = tagW[pp.i] / 2 + 10, x = Math.min(Math.max(pp.x, hw), W - hw);
       const clear = (bx: number[]) => Math.max(bx[0] - (x + hw), (x - hw) - bx[2], bx[1] - (pp.y + 12), (pp.y - 12) - bx[3]);
       const rb = readBox[S.sec], gap = rb ? Math.min(...rb.map(clear)) : clear(heroBox);
@@ -102,7 +104,7 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
     onFrame: labels,
     onLock: (holding) => { jrEl.classList.toggle('locked', holding); ui.classList.toggle('locked', holding); },
     onPayoff: () => { ui.classList.remove('lock-pop'); void ui.offsetWidth; ui.classList.add('lock-pop'); },
-    onResize: () => { tagW = tags.map(e => e.offsetWidth || 90); },
+    onResize: () => { tagW = tags.map(e => e.offsetWidth || 90); tagH = tags[0]?.offsetHeight || 28; },
   };
   return { binding, stop: () => l.stop() };
 }

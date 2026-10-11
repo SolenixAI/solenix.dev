@@ -2,6 +2,7 @@
 // No WebGL here: the page still reads in full if the 3D world fails to load. startUi() runs when the homepage mounts
 // (lib/home/attach.ts); its stop() removes every listener, observer and timer it started. Types: lib/home/home.d.ts.
 import { listener } from "./listen";
+import { PICK_EVENT } from "./tools";
 
 // One keyframe of the story: where in the scroll it sits, and the scene values it pins.
 type HomeKey = { sel: string; f: number; pin?: number; gap?: number } & Partial<HomeSceneParams>;
@@ -49,9 +50,12 @@ const KEYS: HomeKey[] = [
   { sel: '#close', f: 1, el: 60, az: 180, dist: 16 }
 ];
 // The picked tool's world, at the start (f 0.15) and end (f 0.8) of the tools scene. Each world is seen from its own
-// side, kept within half a turn of the guide's view so the camera never spins the long way round.
+// side: the six sit 60° apart round the centre, the first seen from 70°, and the camera drifts 10° across the scene.
+// The angle is kept within half a turn of the guide's view (34°), so the camera never spins the long way round.
+const WORLD_AZ0 = 70, WORLD_AZ_STEP = 60, SCENE_DRIFT = 10, GUIDE_AZ = 34;
+const nearGuide = (az: number) => ((az - GUIDE_AZ + 180) % 360 + 360) % 360 - 180 + GUIDE_AZ;
 const toolView = (i: number, end: boolean): Partial<HomeSceneParams> => {
-  const w = FLY[i] ?? FLY[0], roam = end ? w.b : w.a, az = ((70 + i * 60 + (end ? 10 : 0) + 146) % 360) - 146;
+  const w = FLY[i] ?? FLY[0], roam = end ? w.b : w.a, az = nearGuide(WORLD_AZ0 + i * WORLD_AZ_STEP + (end ? SCENE_DRIFT : 0));
   return { wsel: i, tx: w.tx, tz: w.tz, el: w.el, dist: w.dist, az, rf: roam[0], rs: roam[1], sp: w.sp, rw: w.rw };
 };
 const PARAMS = Object.keys(KEYS[0]).filter(k => !['sel', 'f', 'pin', 'gap'].includes(k)) as (keyof HomeSceneParams)[];
@@ -145,7 +149,7 @@ export function startUi(): { S: Solenix; stop: () => void } {
   l.on(window, 'scroll', () => { if (!ticking) { ticking = true; scrollRaf = requestAnimationFrame(onScroll); } }, { passive: true });
   l.on(window, 'resize', () => { S.vh = innerHeight; layoutKeys(); onScroll(); });
   // A new pick in the tools scene moves the camera without a scroll.
-  l.on(window, 'solenix:pick', () => onScroll());
+  l.on(window, PICK_EVENT, () => onScroll());
 
   // Section headlines build word by word, once, as their section arrives.
   const hio = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('play'); hio.unobserve(e.target); } }), { threshold: 0.6 });

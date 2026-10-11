@@ -466,7 +466,7 @@ export function createSpace(env: SpaceEnv): Space {
   const bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.4, 0.42, 0.9);
   composer.addPass(bloom);
   composer.addPass(new OutputPass());
-  const finalPass = new ShaderPass({ uniforms: { tDiffuse: { value: null }, uTime: { value: 0 }, uRes: { value: new THREE.Vector2(1, 1) }, uCA: { value: 0.008 }, uGrain: { value: 0.045 }, uShade: { value: 0 }, uShadeL: { value: 0 }, uShadeB: { value: 0 }, uPort: { value: 0 } },
+  const finalPass = new ShaderPass({ uniforms: { tDiffuse: { value: null }, uTime: { value: 0 }, uRes: { value: new THREE.Vector2(1, 1) }, uCA: { value: 0 }, uGrain: { value: 0.045 }, uShade: { value: 0 }, uShadeL: { value: 0 }, uShadeB: { value: 0 }, uPort: { value: 0 } },
     vertexShader: `varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.); }`,
     fragmentShader: `uniform sampler2D tDiffuse; uniform float uTime,uCA,uGrain,uShade,uShadeL,uShadeB,uPort; uniform vec2 uRes; varying vec2 vUv;
       float h(vec2 p){ return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453); }
@@ -575,7 +575,7 @@ export function createSpace(env: SpaceEnv): Space {
     const heroAmt = R ? heroR : sc.hero;
     const fovS = fov0 + (R ? story.hero.lens * heroR : sc.lens) * lensK, fov = fovS + 5 * warp - 1.5 * easeIn;
     if (Math.abs(fov - camera.fov) > 0.01) { camera.fov = fov; camera.updateProjectionMatrix(); }
-    finalPass.uniforms.uCA.value = 0.008 + 0.02 * warp + 0.012 * swell;
+    finalPass.uniforms.uCA.value = 0.02 * warp + 0.012 * swell;
     finalPass.uniforms.uShade.value = heroAmt; finalPass.uniforms.uShadeL.value = sc.shl; finalPass.uniforms.uShadeB.value = R ? (stn > 0 ? 1 : 0) : sc.fly; finalPass.uniforms.uPort.value = portrait ? 1 : 0;
     gridU.uChaos.value = 1 - sc.free; gridU.uDepth.value = lerp(0.95, 0.6, sc.calm);
 
