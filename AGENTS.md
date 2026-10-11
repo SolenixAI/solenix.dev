@@ -20,7 +20,7 @@ The five triage roles use the default label names. See `docs/agents/triage-label
 
 ### Domain docs
 
-Single-context: one `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
+Single-context: `GLOSSARY.md` and `docs/adr/` at the repo root, made when first needed (none yet). See `docs/agents/domain.md`.
 
 ### Engines
 

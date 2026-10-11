@@ -1,7 +1,7 @@
 # Product Marketing Context
 
-**Document version:** v2
-**Last updated:** 2026-10-10
+**Document version:** v3
+**Last updated:** 2026-10-11
 
 ## Product Overview
 **One-liner:** Solenix is one tech expert for small businesses, based in St. John's, Newfoundland and Labrador.
@@ -11,7 +11,7 @@
 **Business model:** A fixed price in writing, agreed on the call, with no surprise invoice. Value-based per initiative. No public price. Public "from" price: not set yet.
 
 ## Target Audience
-**Target companies:** small businesses, based in St. John's, Newfoundland and Labrador.
+**Target companies:** small businesses in Newfoundland and Labrador.
 **Decision-makers:** The business owner. Whether a separate buyer exists: not set yet.
 **Primary use case:** One AI at the centre of the tools a business already uses, with the unused tools cut.
 **Jobs to be done:**
@@ -111,7 +111,7 @@ Evidence for each objection, in order:
 ## Switching Dynamics
 **Push:** Too many tools. Lost hours. Reddit: "pay for a tool once … rather than juggling x amount of tools" ([source](https://www.reddit.com/r/SmallBusinessCanada/comments/1uskpmc/on_have_you_implemented_ai_for_your_small/)).
 **Pull:** One accountable local person. A fixed price in writing.
-**Habit:** Basic ChatGPT on their own. Free Meta AI replies.
+**Habit:** Little or no AI use: at most a quick try of a free chatbot, or free Meta AI replies.
 **Anxiety:** AI backlash, accuracy, privacy, cost, and past bad freelancers.
 
 ## Customer Language
@@ -129,7 +129,7 @@ Reddit post dates are approximate.
 - Not set yet. No customer has described Solenix yet.
 
 **Words to use:** one AI at the centre; the tools you already use; the unused tools cut; your team taught; your website built; a fixed price in writing; no surprise invoice; you own everything; a local person in St. John's; the stable orbit; hours back; Book a call.
-**Words to avoid:** provision, onboard, deploy, web presence, digital experience, managed service, maintenance retainer, leveraging, cutting-edge, transformative, unlock, "10× faster", "Learn more", "Get started", "Submit", "book a discovery call", "pricing structure", "users", "the client" (say "you"), "Tools we use" (say "Agents Marketplace"), limited spots, deadlines, "AI replaces your lawyer or accountant". Source: the Vocabulary list in DESIGN.md. Never show a command, repo path, file name or tool jargon on the site.
+**Words to avoid:** DESIGN.md, Voice & Tone › Vocabulary (Avoid), plus "Tools we use" (say "Agents Marketplace"). Never show a command, repo path, file name or tool jargon on the site.
 **Glossary:**
 | Term | Meaning |
 |------|---------|
@@ -137,7 +137,7 @@ Reddit post dates are approximate.
 | Three-body problem | The metaphor for a business whose tools pull on each other. Solenix finds the stable orbit. |
 | Fixed price in writing | The price agreed on the call, in writing. No surprise invoice. |
 | Book a call | The conversion action. It opens a real booking page. |
-| Agents Marketplace | Open-source worlds for AI tools. One sentence in any AI sets one up. |
+| Agents Marketplace | Open-source worlds for AI tools. One sentence in any AI agent that can run commands sets one up. |
 | Solenix platform | The nav button to /app. It is being rebuilt, and it is not open yet. |
 
 ## Brand Voice
@@ -171,11 +171,12 @@ Reddit post dates are approximate.
 | Linear, team Solenix | Plans, outcomes, booked-call work | Linear MCP | 2026-10-10: issue read |
 
 ## Goals
-**Business goal:** Booked calls a week (the north star). Target: not set yet.
+**Business goal:** Booked calls a week (the money goal, PRODUCT.md Goals). Target: not set yet.
 **Conversion action:** Book a call.
 **Current metrics:** Not set yet. The measure is booked calls per week: Book a call clicks, then booked calls.
 
 ## Changelog
 *Newest first. One line per revision: what changed and why.*
+- v3 (2026-10-11) — The homepage's work stops are roles shown live (DESIGN.md Decisions); the audience line matches PRODUCT.md; the habit line says how little AI they use; the avoid list points at DESIGN.md.
 - v2 (2026-10-10) — Data Sources: the five places real numbers live, each with its maker's tool and a dated read-only check, so no skill guesses a metric.
 - v1 (2026-10-10) — Initial context. Replaces the link to PRODUCT.md with a full context; facts come from PRODUCT.md and the approved competitor and objection research.

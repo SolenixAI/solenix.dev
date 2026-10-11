@@ -10,7 +10,7 @@ A 20-second vertical video (1080×1920, 30 fps, with sound) for Reels, TikTok an
 - `index.html`: the page that draws it: one canvas, and `piece.js`, which `make.sh` compiles from `piece.ts` (git ignores it).
 - `sound.py`: the soundtrack and sound effects, synthesized in D and synced to the timeline.
 - `render.ts`: draws each frame in the GPU browser (`scripts/browser.ts`), from the page `make.sh` serves on port 8812.
-- `logos.json`: the six tool logos, taken from `design/home.html`.
+- `logos.json`: the six tool logos the video uses (the homepage now shows five; HubSpot is the video's alone).
 - `make.sh`: compiles `piece.ts`, serves the repo, renders every frame, then builds `out/solenix-three-body.mp4` and its cover image. The `out/` folder is not committed. Requires node, python3 and ffmpeg.
 
 The finished video, its cover and its caption are in the Solenix Google Drive: [Brand videos](https://drive.google.com/drive/folders/1Ry7xEpzQiIeqGpEijozHgWkBt8PzKu9g).

@@ -107,11 +107,11 @@ journey
   title The business owner, today
   section Arrive
     Lands on the three-body hero: 4: Owner
-    Reads the line under it and sees Book a call: 4: Owner
+    Reads what AI can do now, and sees Book a call: 4: Owner
   section Understand
-    Scrolls as the scene settles: 4: Owner
+    Glides through the world as it settles: 4: Owner
     Reads talk to one AI, not ten tools: 5: Owner
-    Picks a tool they use and sees the finished result: 5: Owner
+    Watches the AI do each role's job live: 5: Owner
     Reads the five-step plan and the promises: 5: Owner
   section Trust
     Looks for proof, finds a placeholder photo: 2: Owner
@@ -166,7 +166,7 @@ journey
     Reads the orbit labels API, Command line and Connector: 2: Owner
   section Set up
     Sees the main button Copy for your AI: 4: Owner
-    Reads the sentence with npx skills add in it: 2: Owner
+    Sees Copy for your AI; the sentence shows only if the copy fails: 3: Owner
     Pastes it into a chat window with no terminal: 1: Owner, AI
     Pastes it into an AI that has a terminal: 3: Owner, AI
     Signs in once and sees the AI prove it works: 3: Owner, AI
@@ -176,11 +176,11 @@ journey
 ```
 
 Lowest steps to raise:
-- **Pasting into a chat with no terminal (1):** the sentence in the Vercel world card runs `npx skills add`. ChatGPT and Claude chat cannot run it. Under the sentence, add one plain line: "Chat only? Book a call and we set it up." The line links to Book a call.
+- **Pasting into a chat with no terminal (1), done 2026-10-11 (the page says "Using an AI chat in a browser? It can't run the setup. Book a call"):** the sentence in the Vercel world card runs `npx skills add`. ChatGPT and Claude chat cannot run it. Under the sentence, add one plain line: "Chat only? Book a call and we set it up." The line links to Book a call.
 - **Top bar on a phone (2):** the header at 390 px shows Articles and Platform only. Keep Agents Marketplace in the top bar at phone width.
 - **Orbit labels (2):** the Vercel orbit in the world card shows API, Command line and Connector with version numbers. Add one plain line under each label, for example: "Command line: runs commands on your computer."
 - **Counts (2):** the world cards show 3.9M per week and 16.4K stars. Add a plain word beside each number, or move the numbers into the card details.
-- **Talk to Solenix (2):** the /agents page has no Book a call. Add it in the page header, beside the Solenix platform link.
+- **Talk to Solenix (2), partly done 2026-10-11 (Book a call is in the chat note under the copy; the page header still has none):** the /agents page has no Book a call. Add it in the page header, beside the Solenix platform link.
 
 ### 5b. The developer
 
