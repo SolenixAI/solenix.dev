@@ -56,6 +56,14 @@ expect fail "a second homepage (app/route.ts)"
 fresh; edit 's|colorScheme: "dark"|colorScheme: "light dark"|' "$tmp/r/app/layout.tsx"
 expect fail "the root layout follows the device (the site is dark only)"
 
+# The first-frame check: with no ground and no dark colour scheme, a page's first frame is white. CI=1 runs the browser check.
+fresh; edit 's|<style href="site-ground" precedence="high">{GROUND_CSS}</style>||' "$tmp/r/app/(site)/layout.tsx"
+edit 's|colorScheme: "dark"|colorScheme: "light"|' "$tmp/r/app/layout.tsx"
+# The browser check starts the site, and the dev server will not run on node_modules linked from outside the copy:
+# this case gets a real (copy-on-write) copy.
+rm "$tmp/r/node_modules" && cp -cR "$root/node_modules" "$tmp/r/node_modules" 2>/dev/null || cp -R "$root/node_modules" "$tmp/r/node_modules"
+run_check CI=1; saw "first frame:" "a page with no dark ground paints a bright first frame"
+
 fresh; edit 's|<Analytics host={SITE_HOST} />||' "$tmp/r/app/(site)/layout.tsx"
 expect fail "homepage analytics removed"
 

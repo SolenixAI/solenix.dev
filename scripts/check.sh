@@ -120,7 +120,7 @@ npx tsc --noEmit || fail=1
 node --test 'lib/**/*.test.ts' >/dev/null 2>&1 || { node --test 'lib/**/*.test.ts'; fail=1; }
 # The hero fit check opens pages in a browser, so locally it runs when something that shapes a first
 # screen changes; in CI it always runs.
-if [ -n "${CI:-}" ] || git diff --cached --name-only | grep -qE '^(articles/|app/\(site\)/|app/articles/|components/(home|site|space)/|design/(home\.html|tokens\.css|viewports\.json)|lib/(home|space)/|lib/site-(nav|hero|page)|lib/raw-nav|scripts/hero-check)'; then
+if [ -n "${CI:-}" ] || git diff --cached --name-only | grep -qE '^(articles/|app/\(site\)/|app/articles/|app/layout\.tsx|app/not-found\.tsx|lib/site-ground\.ts|components/(home|site|space)/|design/(home\.html|tokens\.css|viewports\.json)|lib/(home|space)/|lib/site-(nav|hero|page)|lib/raw-nav|scripts/hero-check)'; then
   node scripts/hero-check.ts || fail=1
 fi
 node scripts/brand-images.ts --check || fail=1

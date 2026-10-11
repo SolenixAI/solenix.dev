@@ -1,7 +1,8 @@
 // Every page's first screen is its hero, and a hero that does not fit the screen has failed. Its first frame is
-// dark too: with every stylesheet, script, font and image held back, the page still paints the dark ground, so a
-// visitor never sees a white flash while the rest loads.
-// For each page with a hero and each size in design/viewports.json, this opens the page and checks:
+// dark too: with every stylesheet, script, font and image held back, the page still paints dark (the site's ground,
+// or the browser's own dark from color-scheme on an article), so a visitor never sees a bright flash while the rest loads.
+// For every page, at the first size in design/viewports.json, it checks that first frame. Then for each page with a
+// hero and each size, it opens the page and checks:
 //   the [data-hero] element starts at the top and is exactly one screen tall,
 //   nothing inside it spills out, hides under the nav or sits on other text, the page never scrolls sideways,
 //   and the headline (its h1) has 12 words or fewer.
@@ -58,6 +59,12 @@ const isPage = async (path: string) => {
   return type.startsWith("text/html")
 }
 const pages = (await Promise.all(candidates.map(async (p) => ((await isPage(p)) ? p : null)))).filter((p): p is string => p !== null)
+// No page answering means no server, not a pass: a check that measured nothing must never say all is well.
+if (!pages.length) {
+  console.log(`hero: no page answered at ${base} (the dev server did not start), so nothing was checked`)
+  server?.kill()
+  process.exit(1)
+}
 
 const measure = () => {
   const hero = [...document.querySelectorAll("[data-hero]")].find((e) => e.getClientRects().length) // the one shown
@@ -115,8 +122,12 @@ const measure = () => {
   return out
 }
 
-// The colour of a 1×1 PNG screenshot: its one row is a filter byte, then red, green and blue.
-const pixel = (png: Buffer) => {
+// The colour of a 1×1 PNG screenshot: its one row is a filter byte, then red, green and blue. With one pixel every
+// PNG filter leaves the value as it is. Anything but a 1×1, 8-bit RGB or RGBA image is refused, never misread.
+const firstPixelRGB = (png: Buffer) => {
+  const width = png.readUInt32BE(16), height = png.readUInt32BE(20), depth = png[24], colour = png[25]
+  if (width !== 1 || height !== 1 || depth !== 8 || (colour !== 2 && colour !== 6))
+    throw new Error(`hero-check: expected a 1×1 8-bit RGB(A) screenshot, got ${width}×${height}, depth ${depth}, colour type ${colour}`)
   const data: Buffer[] = []
   for (let at = 8; at < png.length; ) {
     const len = png.readUInt32BE(at), type = png.toString("ascii", at + 4, at + 8)
@@ -126,19 +137,21 @@ const pixel = (png: Buffer) => {
   const row = inflateSync(Buffer.concat(data))
   return [row[1], row[2], row[3]]
 }
-// Dark enough to be the ground, not a flash: every channel at 40 or less (the ground is #0b0d12).
+// Dark, not a flash: every channel at 40 or less (the site's ground is #0b0d12; the browser's dark is #121212).
 const DARK = 40
 
 const browser = await launch()
 let bad = 0
 try {
   for (const path of pages) {
-    const page = await browser.newPage({ viewport: sizes[0] })
+    const size = sizes[0]
+    const page = await browser.newPage({ viewport: size })
     await page.route("**/*", (r) => (["stylesheet", "script", "font", "image", "media"].includes(r.request().resourceType()) ? r.abort() : r.continue()))
     await page.goto(base + path, { waitUntil: "domcontentloaded" })
-    const { width, height } = sizes[0]
+    const { width, height } = size
+    // Three points across the screen (top-left, centre, bottom-right): a ground that covers only part of it still fails.
     for (const [x, y] of [[1, 1], [width / 2, height / 2], [width - 2, height - 2]]) {
-      const rgb = pixel(await page.screenshot({ clip: { x, y, width: 1, height: 1 } }))
+      const rgb = firstPixelRGB(await page.screenshot({ clip: { x, y, width: 1, height: 1 } }))
       if (rgb.some((c) => c > DARK)) { console.log(`first frame: ${path} paints rgb(${rgb}) at ${x},${y} before its styles load (the ground is dark)`); bad++; break }
     }
     await page.close()
