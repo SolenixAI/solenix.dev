@@ -42,9 +42,9 @@ export interface SpaceStory {
   params: () => SpaceParams
   hero: { el: number; dist: number; lens: number }
   stations: readonly SpaceStation[]
-  /** Reduced motion: the camera [elevation, distance] held while the scroll is in a section, by its selector. */
+  /** Reduced motion: the camera [elevation, distance] held while the scroll is in a section, by the section's name. */
   views: Readonly<Record<string, readonly number[]>>
-  /** The selector of the section the scroll is in. */
+  /** The name of the section the scroll is in. */
   section: () => string
   /** A count the page raises to make the grid ring out (for example each new promise). */
   pings: () => number
@@ -326,7 +326,7 @@ export function createSpace(env: SpaceEnv): Space {
   deepSky.rotation.x = 1.02; deepSky.frustumCulled = false; deepSky.renderOrder = -1; scene.add(deepSky);
 
   // Spacetime: each of the three suns and each well body dips its own well. A well ends a short way out
-  // (WELL_R), so nine bodies make nine wells, not one basin, and the lines show only where space is bent.
+  // (WELL_R), so each body makes its own well, not one basin, not one basin, and the lines show only where space is bent.
   const toolU = { value: env.wells.map((w, i) => new THREE.Vector3(w.x, w.z, TOOL_M[i])) };
   const gridU = { uB: bodyU, uT: toolU, uLens: lensU, uAsp: aspU, uC: { value: new THREE.Vector3() }, uLock: { value: 99 }, uTime: timeU, uDepth: { value: 0.95 }, uChaos: { value: 1 }, uBase: { value: -0.35 }, uSoft: { value: 0.3 }, uR: { value: 1 / Math.sqrt(WELL_R * WELL_R + 0.3) }, uCell: { value: 0.5 },
     uLine: { value: C.text.clone().multiplyScalar(0.34) }, uWarm: { value: C.sun2.clone() }, uAlpha: { value: 1 } };
@@ -432,7 +432,7 @@ export function createSpace(env: SpaceEnv): Space {
     void main(){ float edge=1.-abs(vS); edge=smoothstep(0.,1.,edge); float head=smoothstep(.9,1.,vT); gl_FragColor=vec4(mix(uCol,uHot,head)*edge*uAlpha*(.55+head*1.2),1.); }`, false);
   guide.mesh.renderOrder = 2;
 
-  // Wires: arcs from each tool to the others, and up to AI above the centre. Pulses travel along them.
+  // Wires: arcs between the suns, and up to AI above the centre. Pulses travel along them.
   const HUB = new THREE.Vector3(0, 0.95, 0);   // the AI: at the centre, above where the orbit crosses
   const arcs = Array.from({ length: 6 }, (_, i) => ribbon(40, (i < 3 ? C.sun1 : C.ring).clone(), i < 3 ? 0.034 : 0.028, ARC_FRAG, false));
   function layArc(r: Ribbon, a: THREE.Vector3, b: THREE.Vector3, lift: number) {
@@ -566,7 +566,7 @@ export function createSpace(env: SpaceEnv): Space {
     // Physics comes straight from the scroll: how hard we steer, how free the suns are.
     ctl.k = sc.k; ctl.soft = lerp(0.35, 0, sc.free); ctl.conf = 1 - sc.free;
     const dNow = offOrbit();
-    // Once the orbit has formed, steering lets go; if anything knocks it off, it comes back and the readout says so.
+    // Once the orbit has formed, steering lets go; if anything knocks it off, it comes back.
     if (sc.order > 0.9 && dNow > 0.006) ctl.k = Math.max(ctl.k, Math.min(1, 0.35 + dNow * 8));
     const pn = story.pings() | 0;
     if (pn !== pingSeen) { pingSeen = pn; pingT = clockT; }
@@ -694,7 +694,7 @@ export function createSpace(env: SpaceEnv): Space {
 
     // Wires and the AI hub: the connections that do the steering.
     const B = bodyU.value, pairs = [[B[0], B[1]], [B[1], B[2]], [B[2], B[0]], [B[0], HUB], [B[1], HUB], [B[2], HUB]];
-    // Tool-to-tool wires show only while we connect; the wires to the AI at the centre stay once it holds the orbit.
+    // Sun-to-sun wires show only while we connect; the wires to the AI at the centre stay once it holds the orbit.
     const aiA = Math.max(sc.conn, sc.free * 0.5);
     pairs.forEach(([p0, p1], i) => { const al = i < 3 ? sc.conn : aiA; arcs[i].mesh.visible = al > 0.002; if (al > 0.002) { layArc(arcs[i], p0, p1, i < 3 ? 0.25 + p0.distanceTo(p1) * 0.18 : 0.35); arcs[i].mesh.material.uniforms.uAlpha.value = al * 0.8; } });
     hub.position.copy(HUB); hub.material.uniforms.uGain.value = Math.max(sc.conn, sc.free * 0.75) * 0.9 + 1.1 * swell;
@@ -757,7 +757,7 @@ export function createSpace(env: SpaceEnv): Space {
   };
   const offOrbitAt = (i: number): number => Math.hypot(disp[i * 2] - eight.p[i * 2], disp[i * 2 + 1] - eight.p[i * 2 + 1]);
 
-  // ── Loop: runs whenever the tab is shown and motion is allowed. The space never switches off. ──
+  // ── Loop: runs while the tab is shown and a page is bound (setActive); reduced motion is handled inside frame(). ──
   let running = false, last = 0, raf = 0, slow = 0, fast = 0, dipTimer: ReturnType<typeof setTimeout> | 0 = 0, disposed = false, active = true;
   function tick(now: number) {
     raf = requestAnimationFrame(tick);

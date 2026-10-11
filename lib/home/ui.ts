@@ -19,7 +19,7 @@ const HERO = { el: 30, dist: 11.5, lens: 4 };
 // The tool worlds (lib/home/worlds.ts), as the camera flies to them: each world's place, view and the place beside it
 // where the three bodies roam.
 const FLY: HomeFlyWorld[] = TOOL_WORLDS.map(w => ({ id: w.id, tx: w.x, tz: w.z, el: w.el, dist: w.dist, a: w.roam, sp: w.sp, rw: w.rw }));
-// A tool world is seen from its own side: its slot's angle plus 30 degrees, kept within half a turn of the guide's view
+// A tool world is seen from its own side: its slot's angle plus 30 degrees, kept within half a turn of the plan's view
 // (34 degrees) so the camera never spins the long way round.
 const GUIDE_AZ = 34;
 const nearGuide = (az: number) => ((az - GUIDE_AZ + 180) % 360 + 360) % 360 - 180 + GUIDE_AZ;
@@ -161,7 +161,6 @@ export function startUi(): { S: Solenix; stop: () => void } {
   l.add(() => io.disconnect());
   $$('.rv').forEach(el => { if (el.getBoundingClientRect().top > innerHeight) { el.classList.add('arm'); io.observe(el); } });
 
-  // The headline is on screen from the first frame: it never hides and replays.
   const fonts = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
 
   layoutKeys();

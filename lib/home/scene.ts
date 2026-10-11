@@ -14,9 +14,10 @@ import { JOURNEY } from "./journey";
 // The tool worlds (lib/home/worlds.ts): each is a well (its mass) at its own place. az is the camera's view of it in
 // reduced motion.
 const WELLS: SpaceWell[] = TOOL_WORLDS.map(w => ({ x: w.x, z: w.z, mass: w.mass, az: slotAz(w.slot) + 30 }));
-// The reduced-motion view of each section: [elevation, distance].
+// The reduced-motion view of the sections that need their own: [elevation, distance] (the rest use the hero, a
+// station or the calm default).
 const RVIEW: Record<string, number[]> = { guide: [44, 12.5], promises: [17, 8.8] };
-// The five stops of "After you book" sit on the real orbit, in the order the ink reaches them.
+// The plan's five stops sit on the real orbit, in the order the ink reaches them.
 const STOP_U = [0, 1, 2, 3, 4].map(k => orbitStop(k, 5));
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
@@ -134,7 +135,6 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
   l.on(window, 'pointerup', (e: PointerEvent) => { const c = hitAsk(e); if (c?.id.startsWith('role:')) return goRole(c.id.slice(5)); if (!c || !S.play) return; const p = PROOF.find(x => x.tool === S.play!.tool)!; S.ask(p.tool, p.asks.findIndex(q => q.say === c.title)); });
   l.on(window, 'pointermove', (e: PointerEvent) => { document.documentElement.style.cursor = hitAsk(e) ? 'pointer' : ''; }, { passive: true });
   l.add(() => { document.documentElement.style.cursor = ''; document.documentElement.classList.remove('type3d'); });
-  const jrEl = document.getElementById('journey')!;
 
   // Revenue, Costs, Time: a small tag under each sun, all the way through. They fade only where the scene is
   // dimmed behind reading text, and step apart if two suns pass close together. On the journey the step is the
@@ -211,7 +211,7 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
     cards: () => [...shown, ...roleCards, ...(typeOn ? [typeOn] : [])],
     sprites: () => things,
     agentTo: () => agentAt,
-    onLock: (holding) => { jrEl.classList.toggle('locked', holding); ui.classList.toggle('locked', holding); },
+    onLock: (holding) => { ui.classList.toggle('locked', holding); },
     onPayoff: () => { ui.classList.remove('lock-pop'); void ui.offsetWidth; ui.classList.add('lock-pop'); },
     onResize: () => { tagW = tags.map(e => e.offsetWidth || 90); tagH = tags[0]?.offsetHeight || 28; },
   };
