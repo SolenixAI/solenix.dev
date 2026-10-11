@@ -90,7 +90,7 @@ export async function landed(base: string, path: string, ms = 10_000, own: strin
   }
 }
 
-/** Every page the sitemap on `base` lists: its head, and every link and asset on it. Links are checked a few at a time,
+/** Every page the sitemap on `base` lists: its head, and every link and asset on it. Links are checked six at a time,
  * and the whole run stops at `deadline` ms with what it found, so it always ends. */
 export async function auditSite(base: string, { own = [] as string[], ms = 10_000, deadline = 120_000 } = {}) {
   base = base.replace(/\/$/, "")
@@ -106,11 +106,17 @@ export async function auditSite(base: string, { own = [] as string[], ms = 10_00
     let html: string
     try { html = await get(page) } catch (e) { problems.push(`${page} did not load (${e instanceof Error ? e.message : e})`); continue }
     for (const p of seoProblems(html)) problems.push(`${page} ${p}`)
-    const links = internalLinks(html, base + page, own)
-    for (const link of links) if (!seen.has(link)) seen.set(link, landed(base, link, ms, own))
+    const links = internalLinks(html, base + page, own), queue = links.filter((l) => !seen.has(l))
+    // Six at a time, and none started after the deadline.
+    const worker = async () => {
+      for (let l = queue.shift(); l !== undefined; l = queue.shift())
+        if (Date.now() <= stop) await seen.set(l, landed(base, l, ms, own)).get(l)
+    }
+    await Promise.all(Array.from({ length: 6 }, worker))
     for (const link of links) {
-      const r = await seen.get(link)!
-      if (!r.ok) problems.push(`${page} links to ${link}, which ${r.why}`)
+      const r = seen.get(link)
+      if (!r) problems.push(`stopped after ${deadline / 1000} s, before checking ${link} on ${page}`)
+      else if (!(await r).ok) problems.push(`${page} links to ${link}, which ${(await r).why}`)
     }
   }
   return { pages: pages.length, links: seen.size, problems }
