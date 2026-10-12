@@ -28,6 +28,9 @@ h2{font:700 var(--fs-h2)/var(--lh-heading) var(--font-display);letter-spacing:-.
 section{padding-top:72px;display:grid;gap:20px}
 .card{padding:28px;border-radius:20px;background:var(--glass-bg);border:1px solid var(--line);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-md)}
 :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+/* The first screen sits on the sky's own still, under a veil in the page colour: the same picture /agents and /app show. */
+header[data-hero]{background:linear-gradient(color-mix(in srgb,var(--bg) 35%,transparent),color-mix(in srgb,var(--bg) 35%,transparent)),image-set(url(/space/poster.webp) 1x,url(/space/poster@2x.webp) 2x) 80% 45%/cover no-repeat var(--bg)}
+@media (max-aspect-ratio:3/4){header[data-hero]{background:linear-gradient(color-mix(in srgb,var(--bg) 35%,transparent),color-mix(in srgb,var(--bg) 35%,transparent)),image-set(url(/space/poster-phone.webp) 1x,url(/space/poster-phone@2x.webp) 2x) 50% 40%/cover no-repeat var(--bg)}}
 </style>
 </head>
 <body>
