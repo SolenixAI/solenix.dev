@@ -22,7 +22,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Home() {
-  const { css, body, description } = await homeSource();
+  const { css, body } = await homeSource();
   return (
     <>
       <link rel="canonical" href={HOME_URL} />
