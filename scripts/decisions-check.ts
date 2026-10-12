@@ -15,7 +15,9 @@ const bans: Ban[] = []
 for (const line of section.split("\n")) {
   const m = line.match(/<!-- bans: \/(.+)\/([a-z]*) in (.+?) -->/)
   if (!m) continue
-  const decision = line.replace(/^- /, "").replace(/<!--.*-->/, "").trim().split(/[.;(]/)[0]
+  // The comment sits at the end of its line, so the decision is what comes before its first "<!--".
+  const cut = line.indexOf("<!--")
+  const decision = (cut < 0 ? line : line.slice(0, cut)).replace(/^- /, "").trim().split(/[.;(]/)[0]
   bans.push({ decision, re: new RegExp(m[1], m[2].replace("g", "")), globs: m[3].trim().split(/\s+/) })
 }
 if (!bans.length) { console.log("decisions: DESIGN.md has no Decisions with bans (the check reads nothing)"); process.exit(1) }
