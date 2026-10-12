@@ -46,20 +46,25 @@ function newestHero(a: Article, more: number) {
   const cue = `<a class="sx-cue" href="#more">${more ? "More articles" : "Who made these"} ↓</a>`
   return `
 <header class="sx-hero ar-hero" data-hero data-live-scope>
- <h1 class="sr">AI articles: pages you can play with</h1>
- <div class="win">
-  ${live}
-  <div class="win-bar"><span class="win-cap"><b>New</b><time class="win-date" datetime="${a.date}">${esc(day(a.date))}</time><span class="win-name">${t}</span><span class="win-hint">Try it right here.</span></span>${enter}</div>
+ <div class="sx-hero-in">
+  <div class="sx-hero-text">
+   <h1>AI articles</h1>
+   <p class="sx-sub">Pages you can play with, built with AI.</p>
+  </div>
+  <div class="win">
+   ${live}
+   <div class="win-bar"><span class="win-cap"><b>New</b><span class="win-name">${t}</span><span class="win-hint">Try it right here.</span></span>${enter}</div>
+  </div>
  </div>
- ${cue}<a class="btn hero-book" href="/book">Book a call</a>
+ ${cue}
 </header>`
 }
 
 export async function GET() {
   const all = await listArticles()
   const [first, ...rest] = all
-  const title = "AI articles you can play with"
-  const description = "Stories about what AI can do now, told as pages you can play with. Made by Solenix in St. John's, Newfoundland and Labrador."
+  const title = "Articles"
+  const description = "Stories about what AI can do now, told as pages you can play with."
   const hero = first
     ? newestHero(first, rest.length)
     : `<header class="sx-hero" data-hero><div class="sx-hero-in"><div class="sx-hero-text"><h1>Pages you can play with, on their way</h1><p class="sx-sub">The first one is almost ready.</p></div></div></header>`
@@ -70,7 +75,7 @@ export async function GET() {
       `<link rel="preload" as="image" href="${first.heroPhone}" imagesrcset="${srcset(first.heroPhone, first.heroPhone2x)}" media="(max-width:760px)" fetchpriority="high">`
     : ""
   const html = `<!doctype html>
-<html lang="en-CA"><head>
+<html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${title}</title><meta name="description" content="${esc(description)}">
 ${preload}<style>
@@ -92,7 +97,10 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background-im
 .ar-hero{padding-top:var(--nav-height)}
 .touched .win-hint{display:none}
 .win{container:win/inline-size;position:relative;height:100%;max-width:100%;margin-inline:auto;display:flex;flex-direction:column;border-radius:var(--radius-2xl);overflow:hidden;background:var(--surface-solid);box-shadow:inset 0 1px 0 var(--glass-edge),0 0 0 1px var(--line-strong),var(--shadow-lg)}
-.win .live{flex:1;min-height:0;aspect-ratio:auto}
+.win .live{flex:none;aspect-ratio:1200/630}
+.ar-hero .win{width:100%;height:auto;align-self:center}
+.ar-hero .sx-hero-in{max-width:min(100%,1040px);grid-template-columns:minmax(0,.85fr) minmax(0,1.4fr)}
+@media (max-width:760px){.ar-hero .sx-hero-in{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto;align-content:start}}
 .win-bar{flex:none;display:flex;gap:10px 16px;align-items:center;justify-content:space-between;padding:8px 8px 8px 20px;border-top:1px solid var(--line)}
 .win-cap{flex:1;display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;min-width:0;color:var(--text)}
 .win-name{min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:650 clamp(1rem,3.2cqmin,1.4rem)/1.15 var(--font-display);letter-spacing:-.01em}
@@ -101,8 +109,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background-im
 /* A narrow window (a small or short screen): the article shows its own title right above, so the bar keeps only the action. */
 @container win (max-width:440px){.win-cap{display:none}.win-bar{padding:8px}.enter{flex:1;justify-content:center}}
 .win-hint{font:400 .9rem/1.2 var(--font-text);color:var(--muted)}
-.win-date{font:500 .8rem ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--faint);letter-spacing:.06em}
-.hero-book{position:absolute;left:max(16px,4vw);bottom:var(--cue-gap);min-height:var(--tap-min)}@container (max-width:480px){.win-hint{display:none}}
+@container (max-width:480px){.win-hint{display:none}}
 .card{position:relative;display:grid;grid-template-rows:auto 1fr;border-radius:var(--radius-xl);overflow:hidden;background:var(--glass-bg);border:1px solid var(--line);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-md);color:var(--text);text-decoration:none;transition:transform .4s var(--ease-out),border-color .4s var(--ease-out),box-shadow .4s var(--ease-out)}
 .card:hover{transform:translateY(-3px);border-color:color-mix(in oklch,var(--accent) 45%,transparent);box-shadow:inset 0 1px 0 var(--glass-edge),var(--shadow-lg),0 28px 60px -28px color-mix(in srgb,var(--sun2) 45%,transparent)}
 .cover{position:relative;aspect-ratio:1200/630;overflow:hidden;background:var(--bg2);border-bottom:1px solid var(--line)}
@@ -148,7 +155,7 @@ footer p{margin:0;color:var(--muted);max-width:34rem}
 ${hero}
 <div class="wrap" id="more">
 ${list}
-<footer><p>Solenix built these pages with AI. For your business, we set up one AI at the centre of the tools you already use. We cut the tools you don't need and teach your team. A fixed price, in writing.</p><a class="btn primary" href="/book">Book a call</a></footer>
+<footer><p>Solenix built these pages with AI. For your business, we put one AI at the centre of the tools you already use, cut the ones you don't, and teach your team. A fixed price, in writing.</p><a class="btn primary" href="/book">Book a call</a></footer>
 </div><script>${CLIENT["articles-live"]}</script></body></html>`
-  return servePage(html, { title, description, path: "/articles", cover: first?.cover, schema: articlesSchema(all) })
+  return servePage(html, { title, description, path: "/articles", schema: articlesSchema(all) })
 }

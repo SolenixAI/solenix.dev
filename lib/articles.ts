@@ -2,8 +2,8 @@ import { existsSync } from "node:fs"
 import { readdir, readFile } from "node:fs/promises"
 import path from "node:path"
 import { servePage } from "@/lib/site-page"
-import { SLUG, articleProblems } from "@/lib/article-rules"
 import { articleSchema } from "@/lib/site-schema"
+import { SLUG, articleHead, articleProblems } from "@/lib/article-rules"
 
 // Articles are self-contained interactive pages: one folder per article in articles/,
 // holding index.html and whatever data it loads. Adding an article = adding a folder.
@@ -28,14 +28,14 @@ export async function readArticle(slug: string): Promise<{ meta: Article; html: 
   // Build gate: a page that breaks the article rules fails the build, so it can never ship.
   const problems = articleProblems(slug, html)
   if (problems.length) throw new Error(`articles/${slug}:\n  - ${problems.join("\n  - ")}`)
-  const pick = (re: RegExp) => html.match(re)?.[1]?.trim() ?? ""
+  const head = articleHead(html)
   // The file's URL if it exists, else undefined.
   const still = (file: string) => existsSync(path.join(process.cwd(), "public/articles", slug, file)) ? `/articles/${slug}/${file}` : undefined
   const meta: Article = {
     slug,
-    title: pick(/<title>([^<]*)<\/title>/) || slug,
-    description: pick(/<meta name="description" content="([^"]*)"/),
-    date: pick(/<meta name="article:published_time" content="([^"]*)"/),
+    title: head.title || slug,
+    description: head.description,
+    date: head.published,
     path: `/articles/${slug}`,
     // From npm run article-covers; also the share image.
     cover: still("cover.png"),

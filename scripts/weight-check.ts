@@ -1,8 +1,9 @@
 // The page-weight check: open every page the sitemap lists, and the nav's platform page (noindex, so not listed), in
 // one real browser; count what each downloads until it settles, and hold it to its budget (lib/page-weight.ts).
 // Each response is weighed as a visitor gets it: its body gzipped here (images barely shrink), so the result does not
-// depend on whether the local server compresses. Script counts files and the page's inline scripts. Left out: live
-// streams (text/event-stream), which carry a few dozen bytes on open and a short notice per change.
+// depend on whether the local server compresses. Script counts files and the page's inline scripts. A response with no
+// body to read (hasReadableBody, lib/page-weight.ts) counts the bytes it sent: a 204, a redirect, an empty body,
+// or a live stream.
 // Run it against a production build that believes it is the live site, so analytics load as they do for a visitor:
 //   export VERCEL_PROJECT_PRODUCTION_URL=localhost; npm run build && npm start -- -p 3100
 //   node scripts/weight-check.ts http://localhost:3100 [--json]
@@ -11,7 +12,7 @@
 // site's own rewrite and are counted; everything else under /lumen (events, flags) is stopped, so no visit is recorded.
 import { gzipSync } from "node:zlib"
 import { launch } from "./browser.ts"
-import { overBudget, type Weight } from "../lib/page-weight.ts"
+import { hasReadableBody, overBudget, type Weight } from "../lib/page-weight.ts"
 import { NAV } from "../lib/site-nav.ts"
 import { POSTHOG_PROXY } from "../lib/analytics.ts"
 
@@ -26,6 +27,13 @@ const paths = [...new Set([...listed, NAV.platform.href])]
 const gz = (b: Buffer | string) => gzipSync(b).length
 const inlineScripts = (html: string) => [...html.matchAll(/<script\b(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script[^>]*>/gi)].map((m) => m[1]).join("")
 
+// A page has settled when no request has been in flight for QUIET_MS, or stops at SETTLE_LIMIT_MS and says so. Playwright's
+// networkidle is not used: it also waits for every child frame to settle, and /articles has a preview iframe that can keep
+// it from ever being reached while nothing is in flight on the page. EventSource streams are left out, as Playwright leaves
+// them out of its own network-idle rule.
+const QUIET_MS = 500
+const SETTLE_LIMIT_MS = 30_000
+
 const browser = await launch()
 const weights: Weight[] = [], problems: string[] = []
 try {
@@ -37,28 +45,56 @@ try {
       return file ? r.continue() : r.abort()
     })
     const page = await context.newPage()
+    const inFlight = new Set<object>() // every request in any frame, from its start until it finishes or fails
+    let lastChange = Date.now()
+    const done = (req: object) => { inFlight.delete(req); lastChange = Date.now() }
+    page.on("request", (req) => { if (req.resourceType() !== "eventsource") { inFlight.add(req); lastChange = Date.now() } })
+    page.on("requestfailed", done)
+    // Waits until nothing has been in flight for QUIET_MS. False when SETTLE_LIMIT_MS passes first.
+    const settle = async (): Promise<boolean> => {
+      const end = Date.now() + SETTLE_LIMIT_MS
+      while (inFlight.size > 0 || Date.now() - lastChange < QUIET_MS) {
+        if (Date.now() > end) return false
+        await page.waitForTimeout(50)
+      }
+      return true
+    }
     const pending: Promise<{ total: number; script: number } | null>[] = []
     let analytics = 0 // PostHog files that arrived: every page on the live host loads them, so none means the measure is short
-    page.on("requestfinished", (req) => pending.push((async () => {
-      const res = await req.response()
-      if (new URL(req.url()).pathname.startsWith(POSTHOG_PROXY + "/")) {
-        if (!res?.ok()) problems.push(`${path}: PostHog's ${new URL(req.url()).pathname} answered ${res?.status() ?? "nothing"}, so analytics were not weighed`)
-        else analytics++
-      }
-      if (!res || (res.status() >= 300 && res.status() < 400)) return { total: 0, script: 0 } // a redirect carries no body
-      // A live stream (/agents/live) is left out: it sends a retry line and the catalog's version (a few dozen bytes),
-      // then one short notice per catalog change while the page is open, and its body cannot be read once it closes.
-      if ((await res.headerValue("content-type"))?.startsWith("text/event-stream")) return { total: 0, script: 0 }
-      const body = await res.body()
-      const total = gz(body)
-      if (req.resourceType() === "script") return { total, script: total }
-      if (req.resourceType() === "document") return { total, script: gz(inlineScripts(body.toString("utf8"))) }
-      return { total, script: 0 }
-    })().catch((e) => { problems.push(`${path}: could not weigh ${req.url()} (${e instanceof Error ? e.message : e})`); return null })))
-    const res = await page.goto(base + path, { waitUntil: "networkidle", timeout: 60_000 })
+    page.on("requestfinished", (req) => {
+      done(req)
+      pending.push((async () => {
+        const res = await req.response()
+        if (new URL(req.url()).pathname.startsWith(POSTHOG_PROXY + "/")) {
+          if (!res?.ok()) problems.push(`${path}: PostHog's ${new URL(req.url()).pathname} answered ${res?.status() ?? "nothing"}, so analytics were not weighed`)
+          else analytics++
+        }
+        if (!res) return { total: 0, script: 0 }
+        // A live stream (/agents/live) is left out before anything is read from its response: its request type says so, and
+        // once the page leaves the stream's headers and body are gone (reading them then fails).
+        if (req.resourceType() === "eventsource") return { total: 0, script: 0 }
+        // Asking the browser for the body of a response with none to read fails: it has no body data for that response.
+        // Such a response is weighed by the bytes it sent. /agents/live answers 204 when no Redis is set; with Redis it is
+        // a live stream (a retry line, the catalog's version, one notice per change), and it never ends.
+        const contentType = await res.headerValue("content-type"), contentLength = await res.headerValue("content-length")
+        if (!hasReadableBody(res.status(), contentType, contentLength)) {
+          const sent = (await req.sizes()).responseBodySize
+          return { total: sent, script: req.resourceType() === "script" ? sent : 0 }
+        }
+        const body = await res.body()
+        const total = gz(body)
+        if (req.resourceType() === "script") return { total, script: total }
+        if (req.resourceType() === "document") return { total, script: gz(inlineScripts(body.toString("utf8"))) }
+        return { total, script: 0 }
+      })().catch((e) => { problems.push(`${path}: could not weigh ${req.url()} (${e instanceof Error ? e.message : e})`); return null }))
+    })
+    const res = await page.goto(base + path, { waitUntil: "load", timeout: 60_000 })
     if (!res?.ok()) { problems.push(`${path} answered ${res?.status() ?? "nothing"}`); await context.close(); continue }
-    await page.waitForTimeout(3_000) // what loads after the first idle (the 3D engine, analytics) counts too
-    await page.waitForLoadState("networkidle")
+    if (!(await settle())) problems.push(`${path}: ${inFlight.size} request(s) still in flight after ${SETTLE_LIMIT_MS / 1000} s`)
+    await page.waitForTimeout(3_000) // what loads after the first settle (the 3D engine, analytics) counts too
+    if (!(await settle())) problems.push(`${path}: ${inFlight.size} request(s) still in flight after ${SETTLE_LIMIT_MS / 1000} s`)
+    // A body read starts when its response finishes, so reads can still be added while others run: wait until none is left.
+    for (let seen = -1; seen !== pending.length; ) { seen = pending.length; await Promise.all(pending) }
     const parts = await Promise.all(pending)
     if (!analytics) problems.push(`${path} loaded no PostHog file, so its analytics were not weighed (is the build the live host?)`)
     const w: Weight = { path, total: 0, script: 0, requests: parts.length }

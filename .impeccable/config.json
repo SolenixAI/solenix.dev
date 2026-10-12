@@ -1,3 +1,18 @@
 {
-  "buildPath": "comp"
+  "buildPath": "comp",
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "gradient-text",
+        "value": "*",
+        "files": [
+          "articles/proof-flood/index.html"
+        ],
+        "createdAt": "2026-10-11T21:47:07.007Z",
+        "reason": "DESIGN.md approves the headline gradient (sun gold to ember on the headline emphasis word); the detector cannot read that decision"
+      }
+    ]
+  }
 }

@@ -7,7 +7,7 @@ import { sunGradient } from "@/lib/site-nav";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: { default: "Solenix · the tech person your business does not have", template: "%s · Solenix" },
+  title: { default: "Solenix · One tech expert for small businesses", template: "%s · Solenix" },
   description:
     "One person who knows which of your tools already talk to each other, sets up AI on them, teaches your team, and keeps it all running. St. John's, Newfoundland.",
   icons: ICONS,
