@@ -60,7 +60,7 @@ export function articleHead(html: string) {
   return {
     title: pick(/<title>([^<]*)<\/title>/),
     description: pick(/<meta name="description" content="([^"]*)"/),
-    published: pick(/<meta name="article:published_time" content="([^"]*)"/),
+    published: pick(/<meta property="article:published_time" content="([^"]*)"/),
   }
 }
 
@@ -74,7 +74,7 @@ export function articleProblems(slug: string, html: string): string[] {
   const description = head.description
   if (description.length < 50 || description.length > 200) out.push(`<meta name="description"> must be 50–200 characters (now ${description.length})`)
   if (!/^\d{4}-\d{2}-\d{2}$/.test(head.published))
-    out.push(`<meta name="article:published_time" content="YYYY-MM-DD"> is missing or not a date`)
+    out.push(`<meta property="article:published_time" content="YYYY-MM-DD"> is missing or not a date`)
   if (!/<meta name="viewport"[^>]*width=device-width/i.test(html)) out.push(`<meta name="viewport" content="width=device-width, initial-scale=1"> is missing`)
   if (Buffer.byteLength(html) > MAX_BYTES) out.push(`page is larger than 8 MB`)
   // The site adds the nav (lib/raw-nav.ts); a page that brings its own would show two.
