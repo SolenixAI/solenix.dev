@@ -38,7 +38,8 @@ export function makeToken(app: App, get: Get, now = () => Date.now()) {
       if (!inst.ok) return failed(step, `HTTP ${inst.status}`)
       const { id } = (await inst.json()) as { id: number }
       step = "GitHub App token"
-      const res = await get(`${API}/app/installations/${id}/access_tokens`, { method: "POST", headers: auth, cache: "no-store" })
+      // Read-only, whatever the App holds: release automation may give the App write, and the site only reads.
+      const res = await get(`${API}/app/installations/${id}/access_tokens`, { method: "POST", headers: { ...auth, "content-type": "application/json" }, body: JSON.stringify({ permissions: { contents: "read", metadata: "read" } }), cache: "no-store" })
       if (!res.ok) return failed(step, `HTTP ${res.status}`)
       const { token, expires_at } = (await res.json()) as { token: string; expires_at: string }
       held = { token, until: Date.parse(expires_at) - 5 * 60_000 }
