@@ -789,7 +789,7 @@ export function createSpace(env: SpaceEnv): Space {
   requestAnimationFrame(() => { if (!disposed) env.onReady?.(); }); // only once a real frame is on screen
 
   // Leaving (reload, link, close): some browsers drop a WebGL canvas's image while the page unloads and composite it
-  // as white for a frame. Hiding the canvas then shows the poster beneath it (the world's own still) instead.
+  // as white for a frame. Hiding the canvas then shows the stage beneath it, which is the page colour.
   const onPageHide = () => { canvas.style.visibility = 'hidden'; };
   const onPageShow = (e: PageTransitionEvent) => { if (e.persisted) canvas.style.visibility = ''; };
   addEventListener('beforeunload', onPageHide);

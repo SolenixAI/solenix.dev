@@ -25,11 +25,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Sora, per DESIGN.md §2: served from the site itself (lib/site-fonts.ts); never swaps. */}
         <link rel="preload" href={FONT_PRELOAD} as="font" type="font/woff2" crossOrigin="" />
         <link rel="stylesheet" href={FONT_CSS} />
-        {/* Before first paint: mark the page as scripted, so reveals can hide safely. */}
+        {/* Before first paint: mark the page as scripted, so reveals can hide safely. Where WebGL runs, mark it type3d
+            too: the world sets every visible word as 3D type, so the page's own words never show and never hand off
+            to it (DESIGN.md, Decisions). lib/space/world.ts takes the mark off if the world cannot start. */}
         <script
           dangerouslySetInnerHTML={{
             __html:
-              "document.documentElement.classList.add('js')",
+              "(function(){var d=document.documentElement;d.classList.add('js');try{var g=document.createElement('canvas').getContext('webgl2');if(g){d.classList.add('type3d');var x=g.getExtension('WEBGL_lose_context');if(x)x.loseContext()}}catch(e){}})()",
           }}
         />
       </head>
