@@ -20,7 +20,7 @@ The five triage roles use the default label names. See `docs/agents/triage-label
 
 ### Domain docs
 
-Single-context: one `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
+Single-context: `GLOSSARY.md` and `docs/adr/` at the repo root, made when first needed (none yet). See `docs/agents/domain.md`.
 
 ### Engines
 
@@ -35,3 +35,7 @@ Never use Anthropic's look-alike packs, even when they load: `engineering:*`, `m
 ### Skills
 
 Every skill is model-invocable for every agent. After any skills install or update, run `scripts/unlock-skills.sh`.
+
+### Jager's decisions
+
+One home: DESIGN.md, Decisions; his latest word wins. When he corrects anything, edit or add its line there first, in the same turn, and end it with `<!-- bans: /words of the replaced rule/i in <globs> -->`. The gate (`scripts/decisions-check.ts`) then fails every file that still says the old rule, so no correction is ever needed twice.

@@ -24,7 +24,7 @@ How the engineering skills consume this repo's domain documentation when explori
 
 ## Layout
 
-This repo is **single-context**: one `GLOSSARY.md` and one `docs/adr/` at the repo root. Evidence: `package.json` has no `workspaces` field, and there is no `pnpm-workspace.yaml`.
+This repo is **single-context**: one `GLOSSARY.md` and one `docs/adr/` at the repo root, made when first needed (none yet). Evidence: `package.json` has no `workspaces` field, and there is no `pnpm-workspace.yaml`.
 
 ## Before exploring, read these
 

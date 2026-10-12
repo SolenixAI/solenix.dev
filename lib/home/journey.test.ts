@@ -6,14 +6,16 @@ import { test } from "node:test"
 import assert from "node:assert/strict"
 import { readFileSync } from "node:fs"
 import { fileURLToPath } from "node:url"
-import { JOURNEY, TOOL_STOPS } from "./journey.ts"
+import { JOURNEY, PLAN_STEPS } from "./journey.ts"
+import { TOOL_WORLDS } from "./worlds.ts"
 
 const html = readFileSync(fileURLToPath(new URL("../../design/home.html", import.meta.url)), "utf8")
 const caps = [...html.matchAll(/<li class="cap(?: on)?" data-k="(\d+)">([\s\S]*?)<\/li>\n/g)].map((m) => ({ k: +m[1], body: m[2] }))
 const text = (s: string) => s.replace(/<span class="ex">[\s\S]*?<\/span>/g, "").replace(/<svg[\s\S]*?<\/svg>/g, "")
   .replace(/<span class="no">[\s\S]*?<\/span>/g, "").replace(/<[^>]+>/g, " ").replace(/&#8209;/g, "-").replace(/&[a-z]+;/g, " ")
 const words = (s: string) => text(s).split(/\s+/).filter((w) => /[a-z0-9]/i.test(w)).length
-const lines = (body: string) => [...body.matchAll(/<(h1|h2|p|ul)\b[^>]*>([\s\S]*?)<\/\1>/g)].map((m) => m[2])
+const lines = (body: string) => [...body.matchAll(/<(h1|h2|p|ul)\b[^>]*>([\s\S]*?)<\/\1>/g), ...body.matchAll(/<ol\b[^>]*>([\s\S]*?)<\/ol>/g)]
+  .flatMap((m) => (m[0].startsWith("<ol") ? [...m[1].matchAll(/<li>([\s\S]*?)<\/li>/g)].map((li) => li[1]) : [m[2]]))
 
 test("there is one caption per stop, in order", () => {
   assert.equal(caps.length, JOURNEY.length)
@@ -42,12 +44,27 @@ test("the story in words has one full sentence per stop, for screen readers and 
 test("each tool stop flies to a tool world that exists, and holds that tool's asks", () => {
   JOURNEY.forEach((s, k) => {
     if (!("tool" in s.scene)) return
-    assert.ok(TOOL_STOPS.includes(s.scene.tool))
-    assert.match(caps[k].body, new RegExp(`class="asks" data-tool="${s.scene.tool}"`), `stop ${k} holds its tool's asks`)
+    const tool = s.scene.tool
+    assert.ok(TOOL_WORLDS.some((w) => w.id === tool), `stop ${k}: no world ${tool}`)
+    assert.match(caps[k].body, new RegExp(`class="asks(?: vh)?" data-tool="${tool}"`), `stop ${k} holds its tool's asks`)
   })
 })
 
-test("the plan's five steps are five stops in a row", () => {
-  const steps = JOURNEY.map((s) => s.step).filter((s) => s !== undefined)
-  assert.deepEqual(steps, [0, 1, 2, 3, 4])
+test("the plan is one stop, and its words hold one line per step on the orbit", () => {
+  const plan = JOURNEY.flatMap((s, k) => (s.sec === "plan" ? [k] : []))
+  assert.equal(plan.length, 1)
+  const steps = caps[plan[0]].body.match(/<ol class="steps">([\s\S]*?)<\/ol>/)?.[1] ?? ""
+  assert.equal((steps.match(/<li>/g) ?? []).length, PLAN_STEPS)
+})
+
+test("the page's fallback stop count is the journey's: the scroll is one screen per stop before the script runs", () => {
+  assert.match(html, new RegExp(`\\.journey \\{[^}]*var\\(--n, ${JOURNEY.length}\\)`))
+})
+
+test("the page's stylesheet is whole: every rule opens and closes, so no broken rule swallows the ones after it", () => {
+  for (const css of [...html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)].map((m) => m[1].replace(/\/\*[\s\S]*?\*\//g, ""))) {
+    let depth = 0
+    css.split("\n").forEach((l, i) => { for (const ch of l) { if (ch === "{") depth++; if (ch === "}") depth--; assert.ok(depth >= 0, `a stray } at style line ${i + 1}: ${l.trim().slice(0, 60)}`) } })
+    assert.equal(depth, 0, "a rule is never closed")
+  }
 })

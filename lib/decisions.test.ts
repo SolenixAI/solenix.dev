@@ -33,3 +33,16 @@ test("a path covers the files under it and nothing that only shares its start", 
   assert.equal(inScope("application/page.tsx", ["app"]), false)
   assert.equal(inScope("design/home.html.bak", ["design/home.html"]), false)
 })
+
+test("a path may be a glob: one star stays in a folder, two stars reach every folder under it", () => {
+  assert.equal(inScope("lib/home/journey.ts", ["lib/home/**"]), true)
+  assert.equal(inScope("lib/home/a/b.ts", ["lib/home/**"]), true)
+  assert.equal(inScope("design/home.html", ["design/*.html"]), true)
+  assert.equal(inScope("design/old/home.html", ["design/*.html"]), false)
+  assert.equal(inScope("lib/site-meta.ts", ["lib/site-*.ts"]), true)
+})
+
+test("the line that declares a ban is never a hit, so a decision may name the rule it replaced", () => {
+  const [ban] = bansIn(LINE)
+  assert.deepEqual(hitsIn(ban, [{ path: "app/DESIGN.md", text: LINE.replace("A rule.", "Acme is gone.") }]), [])
+})

@@ -2,7 +2,7 @@
 //   node --test lib/home/labels.test.ts
 import { test } from "node:test"
 import assert from "node:assert/strict"
-import { placeStack, placeTags, type Box, type Smooth, type Sun } from "./labels.ts"
+import { placeTags, type Box, type Smooth, type Sun } from "./labels.ts"
 
 // A straight ramp, so each opacity in a test is the number it reads as.
 const linear: Smooth = (a, b, x) => Math.min(1, Math.max(0, (x - a) / (b - a)))
@@ -65,24 +65,4 @@ test("a tag halfway out of the fade shows halfway", () => {
 test("show scales the opacity of every tag", () => {
   const places = tags([{ i: 0, x: 200, y: 100, vis: 1 }], { show: 0.5 })
   assert.equal(at(places, 0).opacity, 0.5)
-})
-
-test("a stack sits on the world's left when it fits there", () => {
-  const p = placeStack({ wx: 500, wy: 300, width: 1280, height: 800, sw: 200, sh: 180, portrait: false, band: null })
-  assert.deepEqual(p, { x: 244, y: 210 }) // 500 - 56 - 200; 300 - 180 / 2
-})
-
-test("a stack sits on the world's right when the left will not fit", () => {
-  const p = placeStack({ wx: 100, wy: 300, width: 1280, height: 800, sw: 200, sh: 180, portrait: false, band: null })
-  assert.equal(p.x, 156) // 100 + 56
-})
-
-test("on a phone a stack is centred under its world, inside the viewport", () => {
-  const p = placeStack({ wx: 195, wy: 300, width: 390, height: 800, sw: 200, sh: 180, portrait: true, band: null })
-  assert.deepEqual(p, { x: 95, y: 340 }) // 195 - 100; 300 + 40
-})
-
-test("a stack stays in the open sky between the nav and the words", () => {
-  const p = placeStack({ wx: 500, wy: 100, width: 1280, height: 800, sw: 200, sh: 180, portrait: false, band: { y0: 120, y1: 600 } })
-  assert.equal(p.y, 120) // held at the top of the band, not above it
 })

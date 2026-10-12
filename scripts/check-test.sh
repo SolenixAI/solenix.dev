@@ -101,7 +101,14 @@ locked_named .agents/skills/tdd/agents/openai.yaml "a skill locked again for Cod
 
 # The theme decision is dark only (DESIGN.md). A doc that says the portal follows the device contradicts it.
 fresh; echo "- The portal follows the device (light or dark)." >> "$tmp/r/AGENTS.md"
-run_check; saw "contradicts the theme decision" "AGENTS.md says the portal follows the device (the old theme decision comes back)"
+run_check; saw "contradicts a decision (DESIGN.md: The site is dark only" "AGENTS.md says the portal follows the device (the old theme decision comes back)"
+
+# A replaced rule comes back in a brief (the 3D world is the site; the old instant-answer rule is banned).
+fresh; echo "- No simulated typing: a result shows the moment its stop is reached." >> "$tmp/r/.impeccable/surfaces/design-home-html.md"
+run_check; saw "contradicts a decision (DESIGN.md: The 3D world is the site" "a brief brings back the replaced no-live-work rule"
+# A vendor named as the AI we set up, in the homepage copy.
+fresh; python3 -c "import sys; p=sys.argv[1]; s=open(p).read(); open(p,'w').write(s.replace('</body>', '<p>We set up ChatGPT.</p></body>', 1))" "$tmp/r/design/home.html"
+run_check; saw "contradicts a decision (DESIGN.md: Offer: one AI agent" "the homepage names a vendor as the AI we set up"
 
 # The design-findings baseline runs from the launcher in this repo, on a machine with no Impeccable plugin (CI has none).
 fresh; for i in 1 2 3 4 5 6; do edit 's|</body>|<div style="box-shadow: 0 0 40px #f59e0b"></div></body>|' "$tmp/r/design/home.html"; done

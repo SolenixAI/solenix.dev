@@ -10,10 +10,10 @@ const D2R = (d: number) => (d * Math.PI) / 180
 type World = { id: string; slot: number; stop: number; mass: number; el: number; dist: number; roam: [number, number]; sp: number; rw: number }
 
 const WORLDS: World[] = [
-  { id: "shopify", slot: 0, stop: 2, mass: 1, el: 24, dist: 8.6, roam: [-0.8, -2.6], sp: 1.0, rw: 1.1 },
-  { id: "meta", slot: 1, stop: 3, mass: 0.8, el: 12, dist: 8.2, roam: [5.5, -2.5], sp: 1.5, rw: 2.0 },
-  { id: "quickbooks", slot: 2, stop: 0, mass: 1.2, el: 56, dist: 11.5, roam: [0.5, 0], sp: 2.0, rw: 1.6 },
-  { id: "gmail", slot: 3, stop: 1, mass: 0.85, el: 30, dist: 7.4, roam: [1.2, 3.0], sp: 1.0, rw: 1.0 },
+  { id: "shopify", slot: 0, stop: 3, mass: 1, el: 24, dist: 8.6, roam: [-0.8, -2.6], sp: 1.0, rw: 1.1 },
+  { id: "meta", slot: 1, stop: 2, mass: 0.8, el: 12, dist: 8.2, roam: [5.5, -2.5], sp: 1.5, rw: 2.0 },
+  { id: "quickbooks", slot: 2, stop: 1, mass: 1.2, el: 56, dist: 11.5, roam: [0.5, 0], sp: 2.0, rw: 1.6 },
+  { id: "gmail", slot: 3, stop: 0, mass: 0.85, el: 30, dist: 7.4, roam: [1.2, 3.0], sp: 1.0, rw: 1.0 },
   { id: "microsoftexcel", slot: 4, stop: 4, mass: 1.1, el: 16, dist: 10.5, roam: [3.5, -3.6], sp: 1.3, rw: 2.0 },
 ]
 

@@ -108,7 +108,7 @@ function installClock(seed: number) {
       canvasHash = text(`${canvas.width}x${canvas.height}`, fnv(px, 0x811c9dc5))
     }
     const lines: string[] = []
-    for (const el of document.querySelectorAll<HTMLElement>(".body-tag, .world-tag, .stop-mk, #journey, .world, #gl")) lines.push(`${el.id}.${el.className}|${el.style.opacity}|${el.style.transform}|${el.style.visibility}`)
+    for (const el of document.querySelectorAll<HTMLElement>(".body-tag, .world-tag, #journey, .world, #gl")) lines.push(`${el.id}.${el.className}|${el.style.opacity}|${el.style.transform}|${el.style.visibility}`)
     lines.push(`ui:${document.querySelector<HTMLElement>(".body-tag")?.parentElement?.className ?? ""}`)
     return [canvasHash, text(lines.join("\n"), 0x811c9dc5)]
   }

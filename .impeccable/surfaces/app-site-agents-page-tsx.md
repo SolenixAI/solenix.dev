@@ -13,7 +13,7 @@ Mode: Persuade
 Anyone who uses an AI agent, developer or not, and agents themselves. Set up a tool's whole world in their AI with one paste.
 
 ## Action and proof
-- Action: Copy for your AI, paste into Claude, Codex, Cursor or another agent, and it is installed.
+- Action: Copy for your AI, paste into any AI agent that can run commands, and it is installed.
 - Proof: each world's live GitHub stars, the pieces its makers built, and the setup readable on GitHub.
 
 ## Direction
@@ -22,7 +22,7 @@ The sky hero (the core toolkit as the sun, worlds in orbit), world cards, a worl
 ## Constraints
 - A number sits only on what it measures.
 - No command or jargon on screen. The machinery travels in what the visitor copies.
-- Claims name the agents it works in.
+- Claims say it works in any AI agent that can run commands; no vendor is named.
 
 ## Open
 - The copies-and-installs target (PRODUCT.md Goals).

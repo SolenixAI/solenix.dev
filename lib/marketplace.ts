@@ -17,7 +17,11 @@ export const MARKETPLACE_REF = process.env.MARKETPLACE_REF ?? "main"
 export { catalogKey, FACTS_TAG } from "@/lib/marketplace/read"
 export type { Entry, Kind, Orbit, Part, Piece } from "@/lib/marketplace/read"
 
-const market = makeMarketplace({ get: (url, init) => fetch(url, init), headers: githubHeaders, marketplace: MARKETPLACE_SLUG, ref: MARKETPLACE_REF })
+// Every marketplace read goes through this one get, so each has a time limit: a source that hangs is a failed read
+// (lib/fresh gives its last answer), never a page that waits. /agents once waited 30 s on one read.
+const READ_LIMIT_MS = 5000
+const get = (url: string, init: RequestInit) => fetch(url, { ...init, signal: init.signal ?? AbortSignal.timeout(READ_LIMIT_MS) })
+const market = makeMarketplace({ get, headers: githubHeaders, marketplace: MARKETPLACE_SLUG, ref: MARKETPLACE_REF })
 
 /** Which version of the catalog a branch holds right now (its file's git hash); null when unreadable. */
 export const catalogVersion = market.catalogVersion
