@@ -66,8 +66,8 @@ export function makeSpaceWorld(load: () => Promise<Engine>) {
       cards: () => current?.cards?.() ?? [],
       sprites: () => current?.sprites?.() ?? [],
       agentTo: () => current?.agentTo?.() ?? null,
-      onReady: () => s.classList.add("gl-on"),
-      onNoWebGL: () => s.classList.add("gl-off"),
+      onReady: () => { s.classList.add("gl-on"); document.documentElement.classList.add("gl-on"); },
+      onNoWebGL: () => { s.classList.add("gl-off"); document.documentElement.classList.remove("type3d"); },
       onLock: (holding) => current?.onLock(holding),
       onPayoff: () => current?.onPayoff(),
       onResize: () => current?.onResize(),
@@ -76,6 +76,7 @@ export function makeSpaceWorld(load: () => Promise<Engine>) {
       space = engine.createSpace(env);
     } catch (e) {
       console.error("the 3D world could not start", e);
+      document.documentElement.classList.remove("type3d"); // the page's own words show instead
     } finally {
       probe.remove(); // started or not, the world leaves nothing in the page
     }

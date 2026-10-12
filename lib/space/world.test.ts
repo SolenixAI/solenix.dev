@@ -6,13 +6,17 @@ import { makeSpaceWorld, type SpaceBinding } from "./world.ts"
 
 type Engine = Parameters<typeof makeSpaceWorld>[0] extends () => Promise<infer E> ? E : never
 
-// The page: only what the world touches. `inBody` holds the elements appended to <body> and not removed.
+// The page: only what the world touches. `inBody` holds the elements appended to <body> and not removed; `marks`
+// holds the classes on <html>, which start with type3d as the root layout's pre-paint script sets it.
+const marks = new Set<string>()
 function fakePage() {
   const inBody = new Set<object>()
+  marks.clear(); marks.add("type3d")
   const g = globalThis as unknown as Record<string, unknown>
   g.document = {
     createElement: () => { const el = { style: {} as Record<string, string>, remove: () => { inBody.delete(el) } }; return el },
     body: { append: (el: object) => { inBody.add(el) } },
+    documentElement: { classList: { add: (c: string) => { marks.add(c) }, remove: (c: string) => { marks.delete(c) } } },
   }
   g.getComputedStyle = () => ({ color: "rgb(0, 0, 0)" })
   return inBody
@@ -29,6 +33,7 @@ test("an engine that fails to start leaves no probe in the page, however many ti
   world.mount(stage, canvas)
   for (let i = 0; i < 3; i++) { const b = binding(); world.bind(b); await tick(); world.unbind(b) }
   assert.equal(inBody.size, 0)
+  assert.equal(marks.has("type3d"), false, "the page's own words show when the world cannot start")
 })
 
 test("a world that starts reads its colours through the probe, then leaves no probe, through any binds", async () => {

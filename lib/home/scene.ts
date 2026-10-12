@@ -150,7 +150,7 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
   };
   l.on(window, 'pointerup', (e: PointerEvent) => { const c = hitAsk(e); if (c?.id.startsWith('role:')) return goRole(c.id.slice(5)); if (c?.kind !== 'ask' || !S.play) return; const p = PROOF.find(x => x.tool === S.play!.tool)!; S.ask(p.tool, p.asks.findIndex(q => q.say === c.title)); });
   l.on(window, 'pointermove', (e: PointerEvent) => { document.documentElement.style.cursor = hitAsk(e) ? 'pointer' : ''; }, { passive: true });
-  l.add(() => { document.documentElement.style.cursor = ''; document.documentElement.classList.remove('type3d'); });
+  l.add(() => { document.documentElement.style.cursor = ''; });
 
   // Revenue, Costs, Time: a small tag under each sun, all the way through. They fade only where the scene is
   // dimmed behind reading text, and step apart if two suns pass close together. On the journey the step is the
@@ -176,7 +176,6 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
   function labels(f: SpaceFrame) {
     const sc = f.params, W = f.width, H = f.height, portrait = f.portrait, fl = f.fly, wsel = f.wsel, heroAmt = f.hero, locked = f.locked;
     last = f;
-    if (!document.documentElement.classList.contains('type3d')) document.documentElement.classList.add('type3d');
     work(f);
     words(f);
     roleCards = roles(f);
