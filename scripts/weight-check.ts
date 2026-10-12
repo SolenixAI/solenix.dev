@@ -70,6 +70,9 @@ try {
           else analytics++
         }
         if (!res) return { total: 0, script: 0 }
+        // A live stream (/agents/live) is left out before anything is read from its response: its request type says so, and
+        // once the page leaves the stream's headers and body are gone (reading them then fails).
+        if (req.resourceType() === "eventsource") return { total: 0, script: 0 }
         // Asking the browser for the body of a response with none to read fails: it has no body data for that response.
         // Such a response is weighed by the bytes it sent. /agents/live answers 204 when no Redis is set; with Redis it is
         // a live stream (a retry line, the catalog's version, one notice per change), and it never ends.

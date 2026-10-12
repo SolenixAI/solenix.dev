@@ -11,7 +11,7 @@ function Mark({ className }: { className?: string }) {
 /** The lockup: mark plus "Solenix" in the display face at the brand weight. */
 export function Lockup({ href = NAV.home.href, label = NAV.home.aria, sub }: { href?: string; label?: string; sub?: string }) {
   return (
-    <a href={href} aria-label={label} className="inline-flex shrink-0 items-center gap-2 font-display font-brand tracking-[-0.01em] no-underline">
+    <a href={href} aria-label={label} className="inline-flex min-h-11 shrink-0 items-center gap-2 font-display font-brand tracking-[-0.01em] no-underline">
       <Mark />
       {sub ? (
         <span className="grid leading-tight">

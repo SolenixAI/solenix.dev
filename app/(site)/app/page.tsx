@@ -28,9 +28,12 @@ export default function Platform() {
           <div className="sx-hero-text">
             <h1>The {title} is being rebuilt.</h1>
             <p className="sx-sub">Your own AI, on the tools you already use. Until it opens, we set it up with you on a call.</p>
-            <div>
+            <div className="flex flex-wrap items-center gap-3">
               <Button asChild size="lg">
                 <a href="/book">Book a call</a>
+              </Button>
+              <Button asChild variant="outline" size="lg">
+                <a href="/agents">See the Agents Marketplace</a>
               </Button>
             </div>
           </div>
