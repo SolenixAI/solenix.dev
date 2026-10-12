@@ -92,7 +92,9 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background-im
 .enter svg{width:16px;height:16px}
 .live.play iframe{pointer-events:auto}
 /* Window: no words above it. The live article fills the first screen; a bar names it and lets you in. */
-.ar-hero{padding-top:var(--nav-height)}
+/* The sky's own still is the first screen's backdrop: the same picture /agents and /app show, under a veil in the page colour. */
+.ar-hero{padding-top:var(--nav-height);background:linear-gradient(color-mix(in srgb,var(--bg) 35%,transparent),color-mix(in srgb,var(--bg) 35%,transparent)),url(/space/poster.webp) 80% 45%/cover no-repeat var(--bg)}
+@media (max-aspect-ratio:3/4){.ar-hero{background:linear-gradient(color-mix(in srgb,var(--bg) 35%,transparent),color-mix(in srgb,var(--bg) 35%,transparent)),url(/space/poster-phone.webp) 50% 40%/cover no-repeat var(--bg)}}
 .touched .win-hint{display:none}
 .win{container:win/inline-size;position:relative;height:100%;max-width:100%;margin-inline:auto;display:flex;flex-direction:column;border-radius:var(--radius-2xl);overflow:hidden;background:var(--surface-solid);box-shadow:inset 0 1px 0 var(--glass-edge),0 0 0 1px var(--line-strong),var(--shadow-lg)}
 .win .live{flex:none;aspect-ratio:1200/630}
