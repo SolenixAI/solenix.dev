@@ -78,6 +78,10 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
       const place = (q: { x: number; y: number; z: number }) => ({ x: o.x + (q.x * rx + q.z * fx) * k, y: o.y + q.y * k, z: o.z + (q.x * rz + q.z * fz) * k });
       for (const th of live.things) things.push({ id: id(th.id), ...place(th), size: th.size * k, aspect: th.aspect, icon: th.icon, tone: th.tone, alpha: al * th.alpha });
       sceneAgent = place;
+      // Each thing that has a name wears it under it, small, in the world.
+      for (const th of live.things) if (th.label && th.alpha > 0.05) { const q = place({ x: th.x, y: th.y - th.size * 0.75, z: th.z }); shown.push({ id: id(`name-${th.id}`), at: q, dx: 0, dy: 0, w: 0.2, kind: 'type', title: '', lines: [{ size: 'p', px: 110, weight: 600, parts: [{ t: th.label, em: th.tone === 'new' }] }], alpha: al * th.alpha }); }
+      // The AI wears its name while it works, so no one wonders what is moving.
+      if (live.agent) shown.push({ id: own('ai'), at: place({ ...live.agent, y: live.agent.y + 0.55 }), dx: 0, dy: 0, w: 0.075, kind: 'pill', title: 'AI', alpha: al });
       for (const lb of live.labels) shown.push({ id: id(`label-${lb.id}`), at: place(lb), dx: 0, dy: 0, w: 0.34, kind: 'type', title: '', lines: [{ size: 'p', px: 150, weight: 650, parts: [{ t: lb.text, em: lb.tone === 'new' }] }], alpha: al });
     } else {
       const y0 = f.portrait ? -0.1 : 0.22;

@@ -133,7 +133,16 @@ export function startUi(): { S: Solenix; stop: () => void } {
     const lastPlan = JOURNEY.reduce((m, s, k) => (s.step !== undefined ? k : m), -1);
     S.jCur = stop?.step ?? (cur > lastPlan ? 4 : -1);
   }
-  l.on(window, 'scroll', () => { if (!ticking) { ticking = true; scrollRaf = requestAnimationFrame(onScroll); } }, { passive: true });
+  // When the scroll comes to rest between two stops, the world finishes the move to the stop the page is on, so the
+  // visitor always lands on a scene (never between two worlds). The page itself does not move.
+  let restT = 0;
+  function settle() {
+    const k = S.cur; if (k >= JOURNEY.length) return;
+    const [a, b] = stopAt(k), j = keyY, y = j[k * 2] + (j[k * 2 + 1] - j[k * 2]) * 0.5;
+    if (a <= b && Number.isFinite(y)) { const [i, t] = sceneAt(y), A = KEYS[i], B = KEYS[Math.min(i + 1, KEYS.length - 1)]; PARAMS.forEach(p => S.scene[p] = A[p]! + (B[p]! - A[p]!) * t); }
+  }
+  l.on(window, 'scroll', () => { clearTimeout(restT); restT = window.setTimeout(settle, 180); if (!ticking) { ticking = true; scrollRaf = requestAnimationFrame(onScroll); } }, { passive: true });
+  l.add(() => clearTimeout(restT));
   l.on(window, 'resize', () => { S.vh = innerHeight; layoutKeys(); onScroll(); });
 
   // The close's headline builds word by word, once, as it arrives.

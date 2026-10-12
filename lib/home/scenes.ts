@@ -9,7 +9,7 @@ import { pace } from "./proof"
 type Tone = "plain" | "hot" | "done" | "dim" | "new"
 type Icon = "mail" | "invoice" | "box" | "coin" | "bar" | "spark"
 type P3 = { x: number; y: number; z: number }
-type SceneThing = P3 & { id: string; size: number; icon: Icon; tone: Tone; alpha: number; aspect?: number }
+type SceneThing = P3 & { id: string; size: number; icon: Icon; tone: Tone; alpha: number; aspect?: number; label?: string }
 type SceneLabel = P3 & { id: string; text: string; tone: Tone }
 export type SceneMoment = { things: SceneThing[]; agent: P3 | null; labels: SceneLabel[] }
 
@@ -77,14 +77,14 @@ const agentOver = (p: ToolProof, a: number, t: number, n: number) => { const { s
 
 // The books: the invoices drift round the world; asked who owes, the AI lines them up by how late they are. The one
 // past 60 days burns red at the top; the paid one turns green and falls away.
-const BOOKS = [{ id: "hillside", days: 64, tone: "hot" as Tone }, { id: "eastend", days: 31, tone: "plain" as Tone }, { id: "harbour", days: 12, tone: "plain" as Tone }, { id: "cove", days: 0, tone: "done" as Tone }]
+const BOOKS = [{ id: "hillside", days: 64, tone: "hot" as Tone, label: "Hillside Roofing · $2,400" }, { id: "eastend", days: 31, tone: "plain" as Tone, label: "East End Yoga · $850" }, { id: "harbour", days: 12, tone: "plain" as Tone, label: "Harbour Dental · $1,200" }, { id: "cove", days: 0, tone: "done" as Tone, label: "Cove Road Cafe · paid" }]
 function books(p: ToolProof, a: number, t: number, T: number): SceneMoment {
   const things: SceneThing[] = [], labels: SceneLabel[] = [], { last } = pace(p, a), n = BOOKS.length
   BOOKS.forEach((b, k) => {
     const ang = (k / n) * Math.PI * 2 + T * 0.2, free = { x: Math.cos(ang) * 1.9, y: 0.3 + 0.15 * Math.sin(T + k), z: Math.sin(ang) * 1.9 }
     const lined = b.days ? { x: -1.5 + k * 1.0, y: 0.2 + (b.days / 64) * 1.5, z: 0.6 } : { x: 1.6, y: -1.6, z: 0.6 }
     const f = a > 0 ? 1 : smooth(0, 0.7, t - visit(p, a, k, n))
-    things.push({ id: b.id, ...mix(free, lined, f), size: b.tone === "hot" && f > 0.5 ? 0.62 : 0.42, icon: "invoice", tone: f > 0.5 ? b.tone : "plain", alpha: b.days ? 1 : 1 - 0.6 * f })
+    things.push({ id: b.id, ...mix(free, lined, f), size: b.tone === "hot" && f > 0.5 ? 0.62 : 0.42, icon: "invoice", tone: f > 0.5 ? b.tone : "plain", alpha: b.days ? 1 : 1 - 0.6 * f, label: b.label })
   })
   if (a > 0 || t >= last) { labels.push({ id: "owed", text: "$4,450 owed to you", tone: "new", x: 0, y: -1.0, z: 0.6 }); labels.push({ id: "late", text: "64 days late", tone: "hot", x: -1.5, y: 2.4, z: 0.6 }) }
   // Asked to invoice Harbour Dental: a new invoice comes out of the world and waits beside theirs for your OK.
@@ -95,7 +95,7 @@ function books(p: ToolProof, a: number, t: number, T: number): SceneMoment {
 
 // The shop: each product is a stack of boxes that a month of sales drains, day by day. Two run out; the jam does not.
 // Asked to reorder, crates fall in and the two stacks fill again, waiting for your OK.
-const STOCK = [{ id: "caramels", boxes: 7, out: 5 }, { id: "mitts", boxes: 5, out: 4.5 }, { id: "jam", boxes: 8, out: 99 }]
+const STOCK = [{ id: "caramels", boxes: 7, out: 5, name: "Sea salt caramels" }, { id: "mitts", boxes: 5, out: 4.5, name: "Wool mitts" }, { id: "jam", boxes: 8, out: 99, name: "Partridgeberry jam" }]
 function shop(p: ToolProof, a: number, t: number, T: number): SceneMoment {
   const things: SceneThing[] = [], labels: SceneLabel[] = [], { s0, last } = pace(p, a)
   const day = a > 0 ? 30 : 30 * smooth(s0, last, t), refill = a === 1 ? smooth(s0, last, t) : 0
@@ -106,6 +106,7 @@ function shop(p: ToolProof, a: number, t: number, T: number): SceneMoment {
       const y = -0.6 + b * 0.34 + (back && !there ? 2.5 * (1 - smooth(0, 1, refill * st.boxes - b)) : 0)
       things.push({ id: `${st.id}${b}`, x, y, z: 0.5, size: 0.36, icon: "box", tone: back && !there ? "done" : st.out < 30 && day >= st.out ? "hot" : "plain", alpha: there || back ? 1 : 0 })
     }
+    labels.push({ id: `name-${st.id}`, text: st.name, tone: "plain", x, y: -1.05 - (k % 2) * 0.35, z: 0.5 })
     if (st.out < 30 && day >= st.out && refill === 0) things.push({ id: `${st.id}-empty`, x, y: -0.6, z: 0.5, size: 0.4, icon: "box", tone: "hot", alpha: 0.5 + 0.3 * Math.sin(T * 4) })
   })
   labels.push({ id: "day", text: a > 0 ? "Next 30 days" : `Day ${Math.round(day)} of 30`, tone: "plain", x: 0, y: 2.6, z: 0.5 })
@@ -117,13 +118,13 @@ function shop(p: ToolProof, a: number, t: number, T: number): SceneMoment {
 
 // The ads: the budget streams out as coins to three ads, and customers spark back from each. One ad eats coins and
 // sends back almost no one. Asked to move its budget, the stream swings to the fall sale, which lights up.
-const ADS = [{ id: "local", ang: 0.6, sales: 1 }, { id: "arrivals", ang: 2.6, sales: 3 }, { id: "fall", ang: 4.4, sales: 5 }]
+const ADS = [{ id: "local", ang: 0.6, sales: 1, name: "Local awareness" }, { id: "arrivals", ang: 2.6, sales: 3, name: "New arrivals" }, { id: "fall", ang: 4.4, sales: 5, name: "Fall sale" }]
 function ads(p: ToolProof, a: number, t: number, T: number): SceneMoment {
   const things: SceneThing[] = [], labels: SceneLabel[] = [], { last } = pace(p, a), moved = a === 1 ? smooth(pace(p, a).s0, last, t) : 0
   ADS.forEach((ad, k) => {
     const at = { x: Math.cos(ad.ang) * 1.8, y: 0.5, z: Math.sin(ad.ang) * 1.8 }, seen = a > 0 ? 1 : smooth(0, 0.6, t - visit(p, a, k, ADS.length))
     const tone: Tone = ad.id === "local" ? (moved > 0.5 ? "dim" : seen > 0.5 ? "hot" : "plain") : ad.id === "fall" && moved > 0.5 ? "done" : "plain"
-    things.push({ id: ad.id, ...at, size: 0.6, icon: "spark", tone, alpha: 1 })
+    things.push({ id: ad.id, ...at, size: 0.6, icon: "spark", tone, alpha: 1, label: ad.name })
     // The coins out: the local ad gets the most until the budget moves; then the fall sale does.
     const coins = ad.id === "local" ? Math.round(7 * (1 - moved)) + 1 : ad.id === "fall" ? 3 + Math.round(5 * moved) : 3
     for (let c = 0; c < 8; c++) { const u = (T * 0.45 + c / 8) % 1; things.push({ id: `${ad.id}-c${c}`, ...mix({ x: 0, y: 0.2, z: 0 }, at, u), size: 0.2, icon: "coin", tone: "new", alpha: c < coins ? Math.sin(u * Math.PI) : 0 }) }
@@ -139,12 +140,13 @@ function ads(p: ToolProof, a: number, t: number, T: number): SceneMoment {
 
 // The numbers: each product's month grows out of the grid as a bar. The one that slipped turns red. Asked for a
 // chart, the bars settle into one, in your sales sheet.
-const SALES = [{ id: "bread", v: 4210, tone: "plain" as Tone }, { id: "pastry", v: 3180, tone: "hot" as Tone }, { id: "coffee", v: 2640, tone: "plain" as Tone }]
+const SALES = [{ id: "bread", v: 4210, tone: "plain" as Tone, name: "Bread" }, { id: "pastry", v: 3180, tone: "hot" as Tone, name: "Pastry" }, { id: "coffee", v: 2640, tone: "plain" as Tone, name: "Coffee" }]
 function numbers(p: ToolProof, a: number, t: number): SceneMoment {
   const things: SceneThing[] = [], labels: SceneLabel[] = [], { last } = pace(p, a)
   SALES.forEach((b, k) => {
     const g = a > 0 ? 1 : smooth(0, 0.8, t - visit(p, a, k, SALES.length)), hgt = Math.max(0.02, (b.v / 4210) * 1.8 * (0.15 + 0.85 * g)), w = 0.55
     things.push({ id: b.id, x: -1.0 + k * 1.0, y: -0.4 + hgt / 2, z: 0.6, size: w, aspect: hgt / w, icon: "bar", tone: a === 1 && t >= last ? "done" : g > 0.5 ? b.tone : "plain", alpha: 0.9 })
+    labels.push({ id: `name-${b.id}`, text: b.name, tone: "plain", x: -1.0 + k * 1.0, y: -0.75, z: 0.6 })
   })
   if (a === 0 && t >= last) labels.push({ id: "slip", text: "Pastry slipped 4%", tone: "hot", x: 0, y: 2.0, z: 0.6 })
   if (a === 1 && t >= last) labels.push({ id: "chart", text: "Chart added to your sales sheet", tone: "new", x: 0, y: 2.0, z: 0.6 })

@@ -607,7 +607,8 @@ export function createSpace(env: SpaceEnv): Space {
     const heroAmt = R ? heroR : sc.hero;
     const fovS = fov0 + (R ? story.hero.lens * heroR : sc.lens) * lensK, fov = fovS - 1.5 * easeIn;
     if (Math.abs(fov - camera.fov) > 0.01) { camera.fov = fov; camera.updateProjectionMatrix(); }
-    finalPass.uniforms.uShadeB.value = R ? (stn > 0 ? 1 : 0) : sc.fly;
+    // No shade over the world at a tool: the work is what the visitor came to see (it greyed everything, 2026-10-11).
+    finalPass.uniforms.uShadeB.value = 0;
     gridU.uChaos.value = 1 - sc.free; gridU.uDepth.value = lerp(0.95, 0.6, sc.calm);
 
     // One continuous camera move, eased so a fast flick still glides.
@@ -661,7 +662,7 @@ export function createSpace(env: SpaceEnv): Space {
       suns[b].position.copy(v);
       // Warm and dramatic, but never so bright it swallows the body, its trail or a label.
       const u = suns[b].material.uniforms;
-      u.uSize.value = lerp(1.75, portrait ? 1.35 : 1.25, sc.calm) * lerp(1, open.size, open.k) * (1 - 0.35 * sc.fly); u.uGain.value = (lerp(0.72, 0.62, sc.calm) + 0.3 * swell) * (1 - 0.7 * sc.fly); u.uFlare.value = lerp(0.45, 0.18, sc.calm);
+      u.uSize.value = lerp(1.75, portrait ? 1.35 : 1.25, sc.calm) * lerp(1, open.size, open.k) * (1 - 0.35 * sc.fly); u.uGain.value = (lerp(0.72, 0.62, sc.calm) + 0.3 * swell) * (1 - 0.45 * sc.fly); u.uFlare.value = lerp(0.45, 0.18, sc.calm);
       // Lens strength for this sun, in screen units, shrinking with distance.
       proj.copy(v).project(camera); lensU.value[b].set(proj.x, proj.y, proj.z < 1 ? 0.05 * 11 / (shown.dist * ZOOM) : 0);
     }
