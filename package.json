@@ -14,6 +14,7 @@
     "check:test": "bash scripts/check-test.sh",
     "share-images": "node scripts/share-images.ts",
     "article-covers": "node scripts/article-covers.ts",
+    "space-stills": "node scripts/space-stills.ts",
     "brand": "node scripts/brand-images.ts",
     "hero-check": "node scripts/hero-check.ts",
     "predev": "node scripts/vendor.ts && node --no-warnings scripts/build-client.ts",
