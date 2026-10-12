@@ -5,6 +5,7 @@ export const WORLDS_CSS = `
 .wd-hero .sx-hero-in>*{min-width:0}
 .wd-hero :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 .wd-hero h1{font-size:clamp(2.6rem,1.9rem + 3vw,5rem)}
+.wd-hero{padding-top:calc(var(--nav-height) + var(--space-6))}
 /* A very short hero (a phone held sideways) keeps the headline and the action; the sentence steps aside. */
 @container (max-height:420px){.wd-hero .sx-sub{display:none}}
 
