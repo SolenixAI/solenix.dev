@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react"
 import { ago, count } from "@/lib/format"
 import { flushSync } from "react-dom"
 import type { Kind, Orbit, Part, Piece } from "@/lib/marketplace"
+import { addressFor, crumbsOf, diveOf, enterPart, initialPath, levelOf, type Path } from "@/lib/agents/drill"
 
 // A world as a small solar system: the maker is the sun, each piece a planet on one orbit ring (the
 // Solenix mark: a sun, one ring, one agent dot). Pick any body and its sub-world opens beside it:
@@ -96,49 +97,31 @@ function dive(from: HTMLElement | null, direction: "in" | "out", update: () => v
   document.startViewTransition(() => flushSync(update))
 }
 
-type Level = { kind: "world" } | { kind: "piece"; piece: Piece } | { kind: "part"; piece: Piece; part: Part }
-
 /** A world you can dive into: the world, then any piece's own world, then any part inside it. */
 export function System({ orbit, world, initial }: { orbit: Orbit; world: string; initial?: string | null }) {
-  const pieceOf = (id: string | null | undefined) => orbit.planets.find((p) => p.id === id)
-  const [path, setPath] = useState<string[]>(() => (pieceOf(initial) ? [initial!] : []))
+  const [path, setPath] = useState<Path>(() => initialPath(orbit, initial))
   const stage = useRef<HTMLDivElement>(null)
   const moved = useRef(false) // set by a drill-down; the first render does not move focus
   // The server hands over only the piece, so a link with a part lands on the piece here, then steps in.
-  useEffect(() => {
-    const q = new URLSearchParams(location.search)
-    const part = q.get("part")
-    if (q.get("world") !== world || !part) return
-    setPath((p) => (p.length === 1 && pieceOf(p[0])?.parts.some((x) => x.id === part) ? [p[0], part] : p))
-  }, [])
+  useEffect(() => { setPath((p) => enterPart(orbit, p, world, location.search)) }, [])
   // Focus follows the drill-down: the new level's heading takes it, so a keyboard or screen reader reader keeps their place.
   useEffect(() => {
     if (!moved.current) return
     moved.current = false
     stage.current?.querySelector<HTMLElement>("[data-level-title]")?.focus({ preventScroll: true })
   }, [path])
-  const piece = pieceOf(path[0])
-  const part = piece?.parts.find((x) => x.id === path[1])
-  const level: Level = part && piece ? { kind: "part", piece, part } : piece ? { kind: "piece", piece } : { kind: "world" }
+  const level = levelOf(orbit, path)
   // The address names where you are (?world=vercel&piece=skills&part=ai-sdk), so a link lands there.
   // It replaces the entry rather than adding one: Back still closes the world.
-  const go = (next: string[], from: HTMLElement | null) => {
+  const go = (next: Path, from: HTMLElement | null) => {
     // A new level opens at its top: on a phone the title, the trail and the copy action are what a reader needs first.
     const dialog = from?.closest("dialog")
     moved.current = true
-    dive(from, next.length >= path.length ? "in" : "out", () => { setPath(next); dialog?.scrollTo({ top: 0 }) })
-    const q = new URLSearchParams(location.search)
-    if (q.get("world") !== world) return
-    q.delete("piece"); q.delete("part")
-    if (next[0]) q.set("piece", next[0])
-    if (next[1]) q.set("part", next[1])
-    history.replaceState(history.state, "", `?${q}`)
+    dive(from, diveOf(path, next), () => { setPath(next); dialog?.scrollTo({ top: 0 }) })
+    const address = addressFor(world, location.search, next)
+    if (address) history.replaceState(history.state, "", address)
   }
-  const crumbs: { label: string; to: string[] }[] = [
-    { label: orbit.sun.name, to: [] },
-    ...(piece ? [{ label: piece.name, to: [piece.id] }] : []),
-    ...(part && piece ? [{ label: part.name, to: [piece.id, part.id] }] : []),
-  ]
+  const crumbs = crumbsOf(orbit, path)
   return (
     <div className="sy">
       {/* The trail shows once you are inside a piece: at the world level it would be one lone name. */}
