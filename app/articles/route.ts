@@ -1,6 +1,6 @@
 import { listArticles, type Article } from "@/lib/articles"
+import { ARTICLES_PAGE } from "@/lib/articles-page"
 import { servePage } from "@/lib/site-page"
-import { articlesSchema } from "@/lib/site-schema"
 import { CLIENT } from "@/lib/client.generated"
 
 // solenix.dev/articles: every article, newest first and featured, built from the pages themselves.
@@ -61,10 +61,8 @@ function newestHero(a: Article, more: number) {
 }
 
 export async function GET() {
-  const all = await listArticles()
-  const [first, ...rest] = all
-  const title = "Articles"
-  const description = "Stories about what AI can do now, told as pages you can play with."
+  const [first, ...rest] = await listArticles()
+  const { title, description } = ARTICLES_PAGE
   const hero = first
     ? newestHero(first, rest.length)
     : `<header class="sx-hero" data-hero><div class="sx-hero-in"><div class="sx-hero-text"><h1>Pages you can play with, on their way</h1><p class="sx-sub">The first one is almost ready.</p></div></div></header>`
@@ -75,7 +73,7 @@ export async function GET() {
       `<link rel="preload" as="image" href="${first.heroPhone}" imagesrcset="${srcset(first.heroPhone, first.heroPhone2x)}" media="(max-width:760px)" fetchpriority="high">`
     : ""
   const html = `<!doctype html>
-<html lang="en"><head>
+<html lang="en-CA"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${title}</title><meta name="description" content="${esc(description)}">
 ${preload}<style>
@@ -94,7 +92,9 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background-im
 .enter svg{width:16px;height:16px}
 .live.play iframe{pointer-events:auto}
 /* Window: no words above it. The live article fills the first screen; a bar names it and lets you in. */
-.ar-hero{padding-top:var(--nav-height)}
+/* The sky's own still is the first screen's backdrop: the same picture /agents and /app show, under a veil in the page colour. */
+.ar-hero{padding-top:var(--nav-height);background:linear-gradient(color-mix(in srgb,var(--bg) 35%,transparent),color-mix(in srgb,var(--bg) 35%,transparent)),url(/space/poster.webp) 80% 45%/cover no-repeat var(--bg)}
+@media (max-aspect-ratio:3/4){.ar-hero{background:linear-gradient(color-mix(in srgb,var(--bg) 35%,transparent),color-mix(in srgb,var(--bg) 35%,transparent)),url(/space/poster-phone.webp) 50% 40%/cover no-repeat var(--bg)}}
 .touched .win-hint{display:none}
 .win{container:win/inline-size;position:relative;height:100%;max-width:100%;margin-inline:auto;display:flex;flex-direction:column;border-radius:var(--radius-2xl);overflow:hidden;background:var(--surface-solid);box-shadow:inset 0 1px 0 var(--glass-edge),0 0 0 1px var(--line-strong),var(--shadow-lg)}
 .win .live{flex:none;aspect-ratio:1200/630}
@@ -157,5 +157,5 @@ ${hero}
 ${list}
 <footer><p>Solenix built these pages with AI. For your business, we put one AI at the centre of the tools you already use, cut the ones you don't, and teach your team. A fixed price, in writing.</p><a class="btn primary" href="/book">Book a call</a></footer>
 </div><script>${CLIENT["articles-live"]}</script></body></html>`
-  return servePage(html, { title, description, path: "/articles", schema: articlesSchema(all) })
+  return servePage(html, { title, description, path: "/articles" })
 }
