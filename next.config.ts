@@ -21,6 +21,12 @@ const nextConfig: NextConfig = {
     return [
       { source: "/index.html", destination: "/", permanent: true },
       { source: "/agents.html", destination: "/agents", permanent: true },
+      // skipTrailingSlashRedirect is on, so Next answers "/agents/" and "/agents" alike. Each page's slashed form
+      // answers a permanent redirect to the slashless one. The paths are named one by one: PostHog's proxy paths end in
+      // slashes, and a pattern for every trailing slash would redirect them too.
+      { source: "/agents/", destination: "/agents", permanent: true },
+      { source: "/articles/", destination: "/articles", permanent: true },
+      { source: "/articles/proof-flood/", destination: "/articles/proof-flood", permanent: true },
       // Book a call: Jager's booking page on the jager@solenix.dev calendar.
       {
         source: "/book",

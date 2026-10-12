@@ -32,7 +32,7 @@ Each surface serves its own person, with its own purpose; each page gets its own
 
 Solenix is one tech expert for small businesses, based in St. John's, Newfoundland and Labrador. It puts one AI at the centre of the tools a business already uses, cuts the tools it does not need, teaches the team, and builds the website. Success: the owner gets hours back every week, and the business runs without them chasing tools.
 
-Marketing and selling are the point of every surface: work that nobody knows exists has no value. Each page is made to be found, shared and acted on.
+Marketing and selling are the point of every surface: work that nobody knows exists has no value. Each page is made to be found, shared and acted on. The one exception is a holding page while the platform is being rebuilt: `/app` is kept out of search until it opens.
 
 ## Positioning
 

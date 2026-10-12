@@ -8,7 +8,7 @@ import type { Orbit, Part, Piece } from "@/lib/marketplace"
 const part = (id: string, name: string): Part => ({ id, kind: "skill", name, blurb: null, href: "" })
 const piece = (id: string, name: string, kind: Piece["kind"], parts: Part[] = []): Piece => ({
   id, kind, name, blurb: null, href: "", repo: null, version: null, updated: null, weekly: null,
-  contents: [], items: [], parts, gives: null, works: [], refs: [],
+  contents: [], items: [], parts, gives: null, refs: [],
 })
 const skills = piece("skills", "Skills", "skills", [part("ai-sdk", "AI SDK"), part("next", "Next")])
 const orbit: Orbit = { sun: piece("vercel", "Vercel", "maker"), planets: [skills, piece("cli", "CLI", "cli")] }

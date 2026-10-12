@@ -186,8 +186,7 @@ test("a plugin reads its version from its manifest, counts its contents from its
   const plugin = orbit.planets[0]
   assert.equal(plugin.version, "2.0.0")
   assert.deepEqual(plugin.contents, [{ label: "agents", n: 1 }, { label: "commands", n: 1 }, { label: "connector", n: 1 }, { label: "hooks", n: 1 }])
-  assert.deepEqual(plugin.works, ["Claude", "Cursor"])
-  assert.equal(plugin.gives, `One install gives your AI everything ${MAKER} built for it, in Claude and Cursor.`)
+  assert.equal(plugin.gives, `One install gives your AI everything ${MAKER} built for it.`)
   assert.deepEqual(plugin.parts.map((p) => [p.kind, p.name]), [["agent", "Reviewer"], ["command", "Ship"]])
   assert.deepEqual(plugin.refs, [{ label: "Docs", href: "https://plugin.example.test/docs" }], "the repo's own link is not repeated")
 })

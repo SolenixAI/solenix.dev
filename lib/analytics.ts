@@ -15,7 +15,7 @@ export const POSTHOG_PROPERTIES = { app: SITE_HOST } as const
 // The four goal events. Each goal is one event, set as a conversion goal in PostHog web analytics. One helper
 // sends them: captureGoal below for React pages, and window.captureGoal in the snippet further down, which the
 // raw pages (articles) use. Both take their names from GOALS and their options from GOAL_OPTIONS, so they cannot drift apart.
-export const GOALS = ["book_call_clicked", "copied_for_ai", "article_read", "article_shared"] as const
+export const GOALS = ["book_call_clicked", "copied_for_ai", "article_read", "article_shared", "page_not_found"] as const
 export type Goal = (typeof GOALS)[number]
 // A goal can be the click that leaves the page (a /book link). The beacon, sent at once, reaches the project even
 // when the page navigates away first (PostHog: transport "sendBeacon" with send_instantly, before navigation).

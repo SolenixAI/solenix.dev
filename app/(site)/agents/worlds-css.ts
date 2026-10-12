@@ -184,9 +184,6 @@ export const WORLDS_CSS = `
 .sy-stats span{color:var(--muted);font-family:var(--font-text);font-size:.85rem}
 .sy-glyph{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .sy-stats .sy-glyph{color:var(--accent-text)}
-.sy-works{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0;font-size:.85rem;color:var(--muted)}
-.sy-works span{margin-right:4px}
-.sy-works i{font-style:normal;padding:4px 10px;border-radius:var(--radius-pill);border:1px solid var(--line-strong);color:var(--text)}
 .sy-items{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}
 .sy-items button{min-height:28px;padding:0 10px;border-radius:var(--radius-pill);border:1px dashed var(--line-strong);background:none;color:var(--accent-text);font:500 .78rem/1 var(--font-mono);cursor:pointer}
 .sy-refs{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 0;padding:16px 0 0;border-top:1px solid var(--line);list-style:none}

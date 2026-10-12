@@ -75,7 +75,7 @@ html{scroll-padding-top:var(--nav-height)}
 .snav-links{flex:none;display:flex;align-items:center;gap:var(--space-1);margin-left:auto}
 .snav-links a,.lnav-in a{flex:none;display:inline-flex;align-items:center;min-height:var(--tap-min);padding:0 var(--space-3);border-radius:var(--radius-pill);color:var(--muted);white-space:nowrap}
 .snav-links a:hover,.lnav-in a:hover,.lnav-list a:hover{background:var(--line);color:var(--text)}
-.snav-links a[aria-current],.lnav-in a[aria-current],.lnav-list a[aria-current]{color:var(--accent-text);background:var(--accent-quiet)}
+.snav-links a[aria-current],.lnav-in a[aria-current],.lnav-list a[aria-current],.snav-act[aria-current="page"]{color:var(--accent-text);background:var(--accent-quiet)}
 .snav-act{flex:none;display:inline-flex;align-items:center;gap:10px;min-height:var(--tap-min);margin-left:var(--space-2);padding:0 var(--space-4) 0 var(--space-3);border-radius:var(--radius-pill);border:1px solid var(--line-strong);font-weight:600;white-space:nowrap}
 .snav-act:hover,.lnav-share:hover,.lnav-cur:hover{background:var(--line)}
 .snav-act .short{display:none}
@@ -103,7 +103,7 @@ html{scroll-padding-top:var(--nav-height)}
 .lnav.is-on{visibility:visible}
 .lnav-home{flex:none;display:inline-flex;align-items:center;justify-content:center;width:var(--tap-min);height:var(--tap-min);border-radius:50%}
 .lnav-home svg{display:block;width:26px;height:26px}
-.lnav-title{flex:none;display:inline-flex;align-items:center;min-height:var(--tap-min);padding-right:var(--space-3);font:var(--fw-brand) 1rem/1 var(--font-display);letter-spacing:-.01em;white-space:nowrap}
+.lnav-title{flex:0 1 auto;min-width:0;display:block;overflow:hidden;text-overflow:ellipsis;min-height:var(--tap-min);line-height:var(--tap-min);padding-right:var(--space-3);font:var(--fw-brand) 1rem/1 var(--font-display);letter-spacing:-.01em;white-space:nowrap}
 .lnav-in{flex:none;display:flex;align-items:center;gap:2px;margin-left:auto}
 .lnav-cur,.lnav-share{flex:none;display:inline-flex;align-items:center;gap:8px;min-height:var(--tap-min);border-radius:var(--radius-pill);background:none;color:inherit;font:inherit;cursor:pointer;white-space:nowrap}
 .lnav-cur{display:none;margin-left:auto;padding:0 var(--space-3);border:0;color:var(--accent-text)}
@@ -142,18 +142,24 @@ export type NavItem = (typeof NAV.links)[number]
  * `link` draws each link: a plain anchor on the raw pages (plainLink), NavLink on the React pages.
  * `local`: the page has its own bar too. The fit script sets the header's layout classes before React
  * hydrates, so React leaves its attributes as they are (suppressHydrationWarning). */
-export function navHeader(link: (l: NavItem) => ReactNode, { local = false } = {}) {
+export function navHeader(link: (l: NavItem) => ReactNode, { local = false, act }: { local?: boolean; act?: (props: PlatformProps, inner: ReactNode[]) => ReactNode } = {}) {
   const p = NAV.platform
+  const props: PlatformProps = { className: "snav-act", href: p.href, "aria-label": p.aria }
+  const inner = [
+    h("span", { key: "orb", className: "snav-orb", "aria-hidden": "true" }, h("i")),
+    h("span", { key: "long", className: "long" }, p.label),
+    h("span", { key: "short", className: "short" }, p.short),
+  ]
   return h("header", { className: "snav", "data-snav": "", "data-local": local ? "" : undefined, suppressHydrationWarning: true },
     h("a", { className: "snav-brand", href: NAV.home.href, "aria-label": NAV.home.aria },
       h("svg", { viewBox: "0 0 32 32", "aria-hidden": "true", dangerouslySetInnerHTML: { __html: markInner() } }),
       h("span", null, NAV.home.label)),
     h("nav", { className: "snav-links", "aria-label": "Main" }, NAV.links.map(link)),
-    h("a", { className: "snav-act", href: p.href, "aria-label": p.aria },
-      h("span", { className: "snav-orb", "aria-hidden": "true" }, h("i")),
-      h("span", { className: "long" }, p.label),
-      h("span", { className: "short" }, p.short)))
+    act ? act(props, inner) : h("a", props, ...inner))
 }
+
+/** The platform button's anchor attributes; a React page passes `act` to mark it current (components/site/platform-link.tsx). */
+export type PlatformProps = { className: string; href: string; "aria-label": string }
 
 /** A nav link as a plain anchor, for the raw pages: client/site-nav.ts marks the current one. */
 export const plainLink = (l: NavItem) => h("a", { key: l.href, className: l.wide ? "wide" : undefined, href: l.href }, navText(l.label, "short" in l ? l.short : undefined))

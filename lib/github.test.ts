@@ -84,3 +84,14 @@ test("after a failed mint, reads wait a minute before minting again: no request,
   await token()
   assert.equal(calls, 2, "it tries again after the minute")
 })
+
+test("the site asks for read-only tokens, whatever the App holds for release automation", async () => {
+  let asked = ""
+  const get: Get = async (url, init) => {
+    if (url.endsWith("/installation")) return json({ id: 7 })
+    asked = String(init.body)
+    return json({ token: "x", expires_at: new Date(Date.now() + 3600_000).toISOString() })
+  }
+  await makeToken({ id: "1", key: privateKey, org: "o" }, get)()
+  assert.deepEqual(JSON.parse(asked), { permissions: { contents: "read", metadata: "read" } })
+})

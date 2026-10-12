@@ -13,6 +13,8 @@
 export const SITE_URL = process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "https://solenix.dev"
 /** The site's host with no protocol: what the live-site checks compare a page's hostname with (lib/analytics.ts, scripts/origin-check.ts). */
 export const SITE_HOST = new URL(SITE_URL).hostname
+/** The homepage's address, with its slash: the one root form the sitemap and the homepage's canonical link both use. */
+export const HOME_URL = `${SITE_URL}/`
 /** The GitHub org that owns Solenix's repos, its GitHub App and the Agents Marketplace. */
 export const GITHUB_ORG = "SolenixAI"
 /** The Agents Marketplace repo (owner/name): the catalog the site reads. */
@@ -36,8 +38,11 @@ export const ICONS = {
 
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;")
 
-/** The same icons and preview tags as <head> markup, for a page Next.js does not render. */
-export function headTags(page: { title: string; description: string; path: string; image?: string }) {
+/** A page's tab title: its own title with the site's name once, "Title · Solenix" (the one form every page's title takes). */
+export const tabTitle = (title: string) => (title.includes("Solenix") ? title : `${title} · Solenix`)
+
+/** The same icons and preview tags as <head> markup, for a page Next.js does not render. `title` is the tab title (tabTitle). */
+export function headTags(page: { title: string; description: string; path: string; image?: string; type?: "website" | "article" }) {
   const icons = ICONS.icon
     .map((i) => `<link rel="icon" href="${i.url}"${"sizes" in i ? ` sizes="${i.sizes}"` : ""}${"type" in i ? ` type="${i.type}"` : ""}${"media" in i ? ` media="${i.media}"` : ""}>`)
     .join("")
@@ -45,7 +50,7 @@ export function headTags(page: { title: string; description: string; path: strin
   return (
     icons +
     `<link rel="apple-touch-icon" href="${ICONS.apple}">` +
-    `<meta property="og:type" content="website">` +
+    `<meta property="og:type" content="${page.type ?? "website"}">` +
     `<meta property="og:site_name" content="Solenix">` +
     `<link rel="canonical" href="${SITE_URL}${page.path}">` +
     `<meta property="og:url" content="${SITE_URL}${page.path}">` +
@@ -56,6 +61,8 @@ export function headTags(page: { title: string; description: string; path: strin
     `<meta property="og:image:height" content="${OG_IMAGE.height}">` +
     `<meta property="og:image:alt" content="${esc(page.image ? page.title : OG_IMAGE.alt)}">` +
     `<meta name="twitter:card" content="summary_large_image">` +
+    `<meta name="twitter:title" content="${esc(page.title)}">` +
+    `<meta name="twitter:description" content="${esc(page.description)}">` +
     `<meta name="twitter:image" content="${img}">`
   )
 }

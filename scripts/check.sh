@@ -52,8 +52,6 @@ grep -rn -E 'color-scheme[[:space:]]*:[^;}]*(light[^;}]*dark|dark[^;}]*light)' a
 # light-dark() pairs are written once, in design/tokens.css (the design's contract); a pair written anywhere else is a second copy of a colour.
 grep -rn -E 'light-dark\(' app components lib 2>/dev/null \
   | while read -r l; do echo "check: a light-dark() pair outside design/tokens.css (pairs are written once, in the tokens): ${l:0:80}"; done | grep . && fail=1
-# Jager's decisions (DESIGN.md, Decisions): no file may say what a decision replaced (each decision's bans).
-node --no-warnings scripts/decisions-check.ts || fail=1
 
 # No on-page Motion switch; the OS reduced-motion setting is the control.
 grep -n -E 'motion-toggle|class="word">Motion<' design/*.html 2>/dev/null \
@@ -71,6 +69,8 @@ grep -rn ">Tools we use<" app components design/*.html 2>/dev/null | while read 
 # Every article passes the article rules (lib/article-rules.ts; the build enforces the same rules).
 node scripts/article-check.ts || fail=1
 node scripts/sot-check.ts || fail=1
+# Every decision in DESIGN.md that names a ban (<!-- bans: ... -->) holds in every file it names (lib/decisions.ts).
+node --no-warnings scripts/decisions-check.ts || fail=1
 node scripts/journey-check.ts || fail=1
 node scripts/origin-check.ts || fail=1
 # Every skill is model-invocable for every agent; a skills install or update can lock one again (scripts/unlock-skills.sh fixes it).

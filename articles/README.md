@@ -19,7 +19,7 @@ Each article is one **self-contained, interactive page**: its own design, data a
 ## Add an article
 
 1. Copy `articles/_template/` to `articles/<your-slug>/` (lower-case words joined by hyphens).
-2. Write `index.html`. Keep the three required tags at the top: `<title>`, `<meta name="description">`, `<meta name="article:published_time">`.
+2. Write `index.html`. Keep the three required tags at the top: `<title>`, `<meta name="description">`, `<meta property="article:published_time">`.
 3. Run `npm run dev` and open `http://localhost:3000/articles/<your-slug>`.
 4. Replace every piece of template text (each element marked `data-placeholder`) with the article's own words, and drop the mark. The check names any that is left.
 5. For a playground or any script, write it as `client/<name>.ts` and put `<!--client:<name>-->` in the page where it runs. A hand-written `<script>` fails the check (`lib/client-script.ts` says why).

@@ -103,8 +103,6 @@ export type Piece = {
   parts: Part[]
   /** What it does for you, in one plain sentence with live numbers. */
   gives: string | null
-  /** The AI apps it ships a package for, read from its manifests. */
-  works: string[]
   refs: Link[]
 }
 export type Orbit = { sun: Piece; planets: Piece[] }
@@ -113,7 +111,6 @@ export type Orbit = { sun: Piece; planets: Piece[] }
 const sentence = (marketplace: string, name: string, skill: string) =>
   `Set up ${name} for me. Run \`npx skills add ${marketplace} --skill ${skill}\`, then follow the ${skill} skill.`
 const asRepo = (f: RepoFacts): Piece["repo"] => ({ slug: f.slug, stars: f.stars, forks: f.forks, license: f.license, avatar: f.avatar })
-const list = (xs: string[]) => (xs.length < 2 ? xs.join("") : `${xs.slice(0, -1).join(", ")} and ${xs.at(-1)}`)
 const slugOf = (url: string | undefined) => url?.match(/github\.com[/:]([^/]+\/[^/.#]+)/)?.[1] ?? null
 const repoUrl = (slug: string) => `https://github.com/${slug}`
 const gitHub = (slug: string): Link => ({ label: "Source on GitHub", href: repoUrl(slug) })
@@ -121,8 +118,7 @@ const npmPage = (name: string): Link => ({ label: "Package page", href: `https:/
 const spec = (specs: Specs, k: keyof Specs, label: string): Link[] => (specs[k] ? [{ label, href: specs[k] }] : [])
 const skillsHow = (specs: Specs) => spec(specs, "skills", "How skills work")
 
-// What a plugin repo ships, read from its file tree: skills, agents, commands, and one manifest per AI app.
-const APPS: Record<string, string> = { claude: "Claude", cursor: "Cursor", codex: "Codex", kimi: "Kimi", copilot: "Copilot", gemini: "Gemini", opencode: "OpenCode", windsurf: "Windsurf" }
+// What a plugin repo ships, read from its file tree: skills, agents and commands. One install gives the AI all of it.
 function inventory(paths: string[]) {
   const under = (dir: string, file: RegExp) => paths.filter((p) => p.startsWith(`${dir}/`) && file.test(p.slice(dir.length + 1)))
   const skills = under("skills", /^[^/]+\/SKILL\.md$/).map((p) => p.split("/")[1])
@@ -131,12 +127,11 @@ function inventory(paths: string[]) {
     { label: "agents", n: under("agents", /^[^/]+\.md$/).length },
     { label: "commands", n: under("commands", /^[^/]+\.md$/).length },
   ].filter((c) => c.n > 0)
-  const works = paths.map((p) => p.match(/^\.([a-z]+)-plugin\/plugin\.json$/)?.[1]).filter((a): a is string => !!a).map((a) => APPS[a] ?? a)
-  return { skills, contents, works, mcp: paths.includes(".mcp.json"), hooks: paths.some((p) => p.startsWith("hooks/")) }
+  return { skills, contents, mcp: paths.includes(".mcp.json"), hooks: paths.some((p) => p.startsWith("hooks/")) }
 }
 
 const emptyPiece = (s: Pick<Piece, "id" | "kind" | "name" | "href">): Piece =>
-  ({ blurb: null, repo: null, version: null, updated: null, weekly: null, contents: [], items: [], parts: [], gives: null, works: [], refs: [], ...s })
+  ({ blurb: null, repo: null, version: null, updated: null, weekly: null, contents: [], items: [], parts: [], gives: null, refs: [], ...s })
 const api = (docs: string, maker: string): Piece => ({ ...emptyPiece({ id: "api", kind: "api", name: "Connects directly", href: docs }), gives: `Anything else ${maker} can do, your AI can reach directly.`, refs: [{ label: "API reference", href: docs }] })
 
 // Each link is named once: the repo already links itself (owner/name), so a piece's links never repeat
@@ -195,8 +190,8 @@ export function makeMarketplace({ get, headers, marketplace, ref }: Deps) {
     try { version = m?.content ? JSON.parse(Buffer.from(m.content, "base64").toString("utf8")).version ?? null : null } catch (e) { failed(`${slug} ${manifest}`, e) }
     const extra = [...(s.mcp ? [{ label: "connector", n: 1 }] : []), ...(s.hooks ? [{ label: "hooks", n: 1 }] : [])]
     return { ...emptyPiece({ id: "plugin", kind: "plugin", name: "Extends your AI", href: repoUrl(slug) }), blurb: f.blurb, repo: asRepo(f), version, updated: f.pushed,
-      contents: [...s.contents, ...extra], works: s.works, parts,
-      gives: `One install gives your AI everything ${maker} built for it${s.works.length ? `, in ${list(s.works)}` : ""}.`,
+      contents: [...s.contents, ...extra], parts,
+      gives: `One install gives your AI everything ${maker} built for it.`,
       refs: [gitHub(slug), ...(f.homepage ? [{ label: "Docs", href: f.homepage }] : []), ...spec(specs, "plugin", "How add-ons work")] }
   }
   async function skills(slug: string, { maker, specs }: Ctx): Promise<Piece> {

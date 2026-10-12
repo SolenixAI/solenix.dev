@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description:
     "One person who knows which of your tools already talk to each other, sets up AI on them, teaches your team, and keeps it all running. St. John's, Newfoundland.",
   icons: ICONS,
-  openGraph: { type: "website", siteName: "Solenix", images: [OG_IMAGE] },
+  openGraph: { type: "website", siteName: "Solenix", locale: "en_CA", images: [OG_IMAGE] },
   twitter: { card: "summary_large_image", images: [OG_IMAGE.url] },
 };
 

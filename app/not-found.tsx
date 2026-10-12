@@ -3,10 +3,14 @@ import { Button } from "@/components/ui/button"
 import { SiteHeader } from "@/components/site/chrome"
 import { HERO_CSS } from "@/lib/site-hero"
 import { GROUND_CSS } from "@/lib/site-ground"
+import { SITE_HOST } from "@/lib/site-meta"
+import { Analytics } from "@/app/(site)/analytics"
+import { NotFoundCapture } from "@/components/site/not-found-capture"
 
 // Any address the site does not have: one screen, in the site's own sky and nav, that says so in plain words
-// and offers the two places most people were looking for.
-export const metadata: Metadata = { title: "Page not found", robots: { index: false } }
+// and offers the two places most people were looking for. Next writes <meta name="robots" content="noindex"> for every 404
+// itself, so this page sets no robots tag: a second one would be a copy.
+export const metadata: Metadata = { title: "Page not found" }
 
 export default function NotFound() {
   return (
@@ -14,6 +18,8 @@ export default function NotFound() {
       <style href="site-ground" precedence="high">{GROUND_CSS}</style>
       <style dangerouslySetInnerHTML={{ __html: HERO_CSS }} />
       <SiteHeader />
+      <Analytics host={SITE_HOST} />
+      <NotFoundCapture />
       <main id="content">
         <header className="sx-hero" data-hero>
           <div className="sx-hero-in">
