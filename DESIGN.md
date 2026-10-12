@@ -35,6 +35,8 @@ The system behind solenix.dev. Solenix is one tech expert for small businesses i
 - The site is dark only.
 - No Motion switch.
 - Offer: one AI at the centre of the tools they already use; cut unused tools; teach; build the website. Claims land on time or money.
+- The AI is the customer's own agent: "the AI agent of your choice". Customer copy never names a vendor as the AI we set up. (Jager, 2026-10-11) <!-- bans: /\b(Claude|ChatGPT|Codex|Cursor)\b/ in design/home.html app lib -->
+
 - "Agents Marketplace" (never "Tools we use"): works with any AI, one copy-paste prompt per tool, GitHub stars for open source.
 - Book a call opens a real booking page, never mailto.
 - Nav: one floating glass pill on every page (homepage, Articles, each article, the React pages), with Articles in it on every screen size. Its one source is `lib/site-nav.ts`; the server adds it to each page and no page holds a copy (`scripts/sot-check.ts` fails a commit that adds one). The sign-in button is "Solenix platform" ("Platform" on phones) with a small orbiting dot. Moving between pages is seamless: no white or black frame, ever. The browser holds the old page until the new one can paint, the nav stays put, and the page beneath cross-fades with the browser's own blend (a hand-made fade-out and fade-in drift apart and flash). Nothing waits on a timer: first-screen content is never hidden for a reveal, and a page starts loading on the click. Every page declares `color-scheme: dark` first. (2026-10-09)
@@ -65,7 +67,7 @@ The system behind solenix.dev. Solenix is one tech expert for small businesses i
 
 ### Messaging pillars
 - You don't need to be an expert anymore — not in Excel, not in Shopify, not in ads. The owner brings the intent and the judgement; the AI, connected to their tools, brings the expertise. ("Just say what you want." / "Stop learning ten tools. Talk to one.")
-- The offer: one AI at the centre of your business. We set up Claude or ChatGPT for your team and connect it to the tools you already use (shop, books, ads, email, files), so you just ask and it gets done in those systems — then we teach you to use it. The tools are the bodies pulling on each other; the AI at the centre is what makes the orbit stable. For owners who have barely used AI: plain words only. Along the way we cut the tools they pay for but barely use, move them off outdated, expensive software, and bring scattered information into one place they can just ask.
+- The offer: one AI at the centre of your business. We set up the AI agent of your choice for your team and connect it to the tools you already use (shop, books, ads, email, files), so you just ask and it gets done in those systems — then we teach you to use it. The tools are the bodies pulling on each other; the AI at the centre is what makes the orbit stable. For owners who have barely used AI: plain words only. Along the way we cut the tools they pay for but barely use, move them off outdated, expensive software, and bring scattered information into one place they can just ask.
 - Every claim lands on one of three things an owner cares about: **time saved, money saved, or money made** (cost × latency). Say which one, in their numbers where we have them.
 - Your business is a three-body problem: a dozen tools pulling on each other. We find the stable orbit and keep it there.
 - One tech expert for small businesses in Newfoundland & Labrador — one AI at the centre of the tools you already use, the unused tools cut, your team taught, your website built.

@@ -8,7 +8,7 @@ import { SITE_URL } from "@/lib/site-meta"
 export default function robots(): MetadataRoute.Robots {
   if (process.env.VERCEL_ENV && process.env.VERCEL_ENV !== "production") return { rules: { userAgent: "*", disallow: "/" } }
   return {
-    rules: { userAgent: "*", allow: "/", disallow: ["/api/", "/lumen/"] },
+    rules: { userAgent: "*", allow: "/", disallow: ["/api/", "/dev/", "/lumen/", "/agents/live"] },
     sitemap: `${SITE_URL}/sitemap.xml`,
   }
 }

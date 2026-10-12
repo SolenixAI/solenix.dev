@@ -72,6 +72,8 @@ grep -rn ">Tools we use<" app components design/*.html 2>/dev/null | while read 
 # Every article passes the article rules (lib/article-rules.ts; the build enforces the same rules).
 node scripts/article-check.ts || fail=1
 node scripts/sot-check.ts || fail=1
+# Every decision in DESIGN.md that names a ban (<!-- bans: ... -->) holds in every file it names (lib/decisions.ts).
+node --no-warnings scripts/decisions-check.ts || fail=1
 node scripts/journey-check.ts || fail=1
 node scripts/origin-check.ts || fail=1
 # Every skill is model-invocable for every agent; a skills install or update can lock one again (scripts/unlock-skills.sh fixes it).

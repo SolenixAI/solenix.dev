@@ -22,12 +22,12 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Home() {
-  const { css, body } = await homeSource();
+  const { css, body, description } = await homeSource();
   return (
     <>
       <link rel="canonical" href={HOME_URL} />
       <meta property="og:url" content={HOME_URL} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(homeStructuredData()) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(homeStructuredData(description)) }} />
       <style dangerouslySetInnerHTML={{ __html: css }} />
       <div dangerouslySetInnerHTML={{ __html: body }} />
       <HomeBinding />

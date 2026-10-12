@@ -219,7 +219,6 @@ function SubWorld({ s, onPart }: { s: Piece; onPart?: (x: Part, el: HTMLElement)
       {s.gives && <Gives text={s.gives} />}
       {s.blurb && s.blurb !== s.gives && !MACHINERY.test(s.blurb) && <p className="sy-blurb">{s.blurb}</p>}
       {stats.length > 0 && <ul className="sy-stats">{stats}</ul>}
-      {s.works.length > 0 && <p className="sy-works"><span>Packaged for</span>{s.works.map((w) => <i key={w}>{w}</i>)}</p>}
       {onPart && groups.map((g) => (
         <div key={g.k} className="sy-group">
           <p className="sy-group-head"><KindIcon kind={g.k} /><b>{g.xs.length}</b> {g.k}{g.xs.length === 1 ? "" : "s"}</p>

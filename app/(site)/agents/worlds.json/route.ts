@@ -11,7 +11,7 @@ export async function GET() {
     return { id: e.id, part: e.part, name: e.name, maker: e.maker, for: e.for, site: e.site, sentence: e.sentence, setup: e.setup, page: `${SITE_URL}/agents?world=${e.id}`, maker_source: sun, pieces: planets }
   }))
   return Response.json({
-    about: "Paste a part's sentence into any AI agent; it installs everything that tool's makers built for AI, then proves it works.",
+    about: "Paste a part's sentence into any AI agent; it installs what that tool's makers built for AI, then proves it works.",
     source: MARKETPLACE_REPO,
     specs: catalog[0]?.specs ?? {},
     read: new Date().toISOString(),
