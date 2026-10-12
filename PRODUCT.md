@@ -4,8 +4,8 @@
 
 The one record of what Solenix is, for every person and agent who designs, builds or markets it.
 Impeccable reads it as PRODUCT.md; Corey Haines' marketing skills read their own file,
-`.agents/product-marketing.md`, and the gate (scripts/sot-check.ts) keeps its one-liner and audience equal to this file. Visual decisions live in DESIGN.md; user journeys
-in design/journeys.md. Confirmed with Jager on 2026-10-08; anything not yet decided says so.
+`.agents/product-marketing.md`, and the gate (scripts/sot-check.ts) keeps its one-liner and audience equal to this file. Jager's decisions (every one, with the words of the rules they replaced) live in DESIGN.md, Decisions; user journeys
+in design/journeys.md. Confirmed with Jager; latest change 2026-10-11; anything not yet decided says so.
 
 ## North star
 
@@ -16,6 +16,8 @@ Solenix bridges the gap between all the best technology that exists and the peop
 web
 
 ## Users
+
+Solenix serves small businesses in Newfoundland and Labrador.
 
 Each surface serves its own person, with its own purpose; each page gets its own brief.
 
@@ -43,7 +45,7 @@ The gap Solenix closes, in everything it builds: on one side, all the best techn
 - A call first: "From one call to a stable orbit." Book a call opens a real booking page.
 - Price: "A fixed price, in writing. Agreed on the call. No surprise invoice." No public prices; value-based per initiative.
 - The Solenix platform (`/app`) is being rebuilt from scratch. Until it opens, /app says so and offers Book a call.
-- Open source: the Agents Marketplace (SolenixAI/agents-marketplace) holds the worlds we stand behind; one sentence in any AI sets one up, the makers' way. solenix.dev/agents renders it live.
+- Open source: the Agents Marketplace (SolenixAI/agents-marketplace) holds the worlds we stand behind; one sentence in any AI agent that can run commands sets one up, the makers' way. solenix.dev/agents renders it live.
 
 ## Goals
 
@@ -53,7 +55,7 @@ Each surface, and each section inside it, has its own purpose, value and impact,
 |---|---|---|---|
 | Homepage `/` | Sell AI and websites to small-business owners, from Solenix as their AI and software consultant: everything is possible almost instantly with AI and the right foundation | Booked calls per week (Book a call clicks, then booked calls): the money goal | not set yet |
 | Articles | Show what AI makes possible, so people read it and pass it on | Reads and shares per article | not set yet |
-| Agents Marketplace `/agents` | Set up any tool's world in any AI with one copy-paste | Copies, installs and downloads per world: the reach goal | not set yet |
+| Agents Marketplace `/agents` | Set up any tool's world in any AI agent that can run commands, with one copy-paste | Copies, installs and downloads per world: the reach goal | not set yet |
 
 ## Capabilities and Constraints
 
@@ -71,10 +73,10 @@ Each surface, and each section inside it, has its own purpose, value and impact,
 
 ## Evidence on Hand
 
-- Our own builds: The Proof Flood (articles/proof-flood), the homepage's 3D three-body world, the homepage's tool stops (ask in plain words; the answer shows at once, beside the tool's world).
+- Our own builds: The Proof Flood (articles/proof-flood), the homepage's 3D three-body world, the homepage's tool stops (the AI does the job live, in front of the visitor, at that tool's world in the 3D space).
 - Open-source numbers: Agents Marketplace tools with live GitHub stars and update dates (lib/marketplace.ts).
 - Live data wherever it exists: real numbers read at view time, never typed in.
-- Not yet: client results, testimonials, a founder photo ("Photo to come"). Never invent them.
+- Not yet: client results, testimonials, a founder photo (left out until there is one). Never invent them.
 
 ## Product Principles
 

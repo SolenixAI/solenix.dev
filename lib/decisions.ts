@@ -2,6 +2,8 @@
 // what the decision forbids and where. Every file under those paths must be free of the words, so a decision reaches
 // every copy it could be contradicted by, not only the document it was written in. scripts/decisions-check.ts runs it.
 
+import { matchesGlob } from "node:path"
+
 export type Ban = { line: number; pattern: RegExp; paths: string[] }
 export type File = { path: string; text: string }
 
@@ -13,11 +15,14 @@ export function bansIn(markdown: string): Ban[] {
   })
 }
 
-/** Whether a file is one of the paths, or lies under one of them (a folder names everything inside it). */
-export const inScope = (file: string, paths: string[]) => paths.some((p) => file === p || file.startsWith(`${p}/`))
+/** Whether a file is one of the paths, lies under one of them (a folder names everything inside it), or matches one
+ * as a glob (`*` stays in one folder, `**` reaches every folder under it). */
+export const inScope = (file: string, paths: string[]) =>
+  paths.some((p) => file === p || file.startsWith(`${p}/`) || (/[*?[]/.test(p) && matchesGlob(file, p)))
 
-/** Each line of the files that the pattern matches, as "path:line: text" (the text trimmed to 120 characters). */
+/** Each line of the files that the pattern matches, as "path:line: text" (the text trimmed to 120 characters). A line
+ * that declares a ban is skipped, so a decision may name the rule it replaced. */
 export function hitsIn(ban: Ban, files: File[]): string[] {
   return files.flatMap((f) => f.text.split("\n").flatMap((line, i) =>
-    ban.pattern.test(line) ? [`${f.path}:${i + 1}: ${line.trim().slice(0, 120)}`] : []))
+    !line.includes("<!-- bans:") && ban.pattern.test(line) ? [`${f.path}:${i + 1}: ${line.trim().slice(0, 120)}`] : []))
 }

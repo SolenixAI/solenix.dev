@@ -19,7 +19,7 @@ const HERO = { el: 30, dist: 11.5, lens: 4 };
 // The tool worlds (lib/home/worlds.ts), as the camera flies to them: each world's place, view and the place beside it
 // where the three bodies roam.
 const FLY: HomeFlyWorld[] = TOOL_WORLDS.map(w => ({ id: w.id, tx: w.x, tz: w.z, el: w.el, dist: w.dist, a: w.roam, sp: w.sp, rw: w.rw }));
-// A tool world is seen from its own side: its slot's angle plus 30 degrees, kept within half a turn of the guide's view
+// A tool world is seen from its own side: its slot's angle plus 30 degrees, kept within half a turn of the plan's view
 // (34 degrees) so the camera never spins the long way round.
 const GUIDE_AZ = 34;
 const nearGuide = (az: number) => ((az - GUIDE_AZ + 180) % 360 + 360) % 360 - 180 + GUIDE_AZ;
@@ -29,7 +29,7 @@ const toolView = (i: number): Partial<HomeSceneParams> => {
 };
 // Each stop holds still through the middle of its stretch of scroll, and the world moves only between stops, so a
 // stop is never skipped past and the scroll stays the visitor's own. Each stop owns an equal share of the scroll; HOLD
-// of its share is still.
+// of its share is still, so the visitor rests on each stop long enough for it to play (things flashed by at 0.3).
 const HOLD = 0.55;
 const stopAt = (k: number): [number, number] => { const n = JOURNEY.length, c = (k + 0.5) / n, h = HOLD / n / 2;
   return [Math.max(0, c - h), Math.min(1, c + h)]; };
@@ -48,7 +48,7 @@ for (let i = 1; i < KEYS.length; i++) PARAMS.forEach(k => { if (KEYS[i][k] === u
 export function startUi(): { S: Solenix; stop: () => void } {
   const root = document.documentElement;
   // The object is made here and filled in below (hero, fly, stops, ...) before any other part reads it.
-  const S = window.solenix = { motion: true, vh: innerHeight, scene: {}, cur: 0, jCur: -1 } as Solenix;
+  const S = window.solenix = { motion: true, scene: {}, cur: 0, planAt: -1 } as Solenix;
   S.smooth = smooth;
   S.hero = HERO;
   S.fly = FLY;
@@ -70,7 +70,7 @@ export function startUi(): { S: Solenix; stop: () => void } {
   }
   l.on(reduce, 'change', applyMotion);
 
-  const journey = $('#journey')!, stage = $('.stage', journey)!, caps = $$('.cap', journey), ticks = $$('.jticks i', journey);
+  const journey = $('#journey')!, stage = $('.stage', journey)!, caps = $$('.cap', journey);
   const finale = $('.finale')!;
   journey.style.setProperty('--n', String(JOURNEY.length));
   // The pinned stage is the unit: each stop's stretch of scroll is measured from it, so a phone's moving toolbar never
@@ -93,18 +93,20 @@ export function startUi(): { S: Solenix; stop: () => void } {
     PARAMS.forEach(k => sc[k] = A[k]! + (B[k]! - A[k]!) * t);
   }
 
-  S.stops = $$('.stop-mk'); S.pingN = 0; S.jCur = -1; S.cur = 0; S.asked = {};
-  // The asks at each tool stop: plain words a visitor would say. A tap answers at once, in the world (lib/home/scene.ts).
-  // Arriving at a tool, its first ask is already answered, so every visitor sees one answer.
+  S.pingN = 0; S.planAt = -1; S.cur = 0; S.asked = {}; S.play = null;
+  // The asks at each tool stop: plain words a visitor would say. The world shows them and plays each one live
+  // (lib/home/scene.ts, lib/home/proof.ts playProof); these buttons carry them for keyboards and screen readers.
+  // Arriving at a tool plays its ask again, every time, so every visitor watches the work happen.
   const asks = $$('.asks', journey).map(box => { const p = PROOF.find(x => x.tool === box.dataset.tool)!;
     const reply = document.createElement('p'); reply.className = 'reply'; reply.setAttribute('aria-live', 'polite');
     const btns = p.asks.map((a, i) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'ask'; b.textContent = `“${a.say}”`;
       b.setAttribute('aria-pressed', 'false'); l.on(b, 'click', () => answer(p.tool, i)); return b; });
     box.replaceChildren(...btns, reply);
     return { tool: p.tool, btns, reply, p }; });
+  S.ask = answer;
   function answer(tool: string, i: number) {
     const a = asks.find(x => x.tool === tool); if (!a) return;
-    S.asked[tool] = i; a.btns.forEach((b, k) => b.setAttribute('aria-pressed', String(k === i)));
+    S.asked[tool] = i; S.play = { tool, ask: i, at: performance.now() }; a.btns.forEach((b, k) => b.setAttribute('aria-pressed', String(k === i)));
     a.reply.textContent = a.p.asks[i].reply + ' ';
     const ex = document.createElement('span'); ex.className = 'ex'; ex.textContent = 'Example'; a.reply.append(ex);
   }
@@ -120,19 +122,27 @@ export function startUi(): { S: Solenix; stop: () => void } {
       if (JOURNEY[cur]?.sec === 'promises') S.pingN++;
       S.cur = cur;
       caps.forEach((c, k) => c.classList.toggle('on', k === cur));
-      ticks.forEach((d, k) => d.classList.toggle('on', k === cur));
+      // Arriving at the plan lights its steps one at a time from now (lib/home/scene.ts).
+      if (JOURNEY[cur]?.sec === 'plan') S.planAt = performance.now();
       journey.dataset.stop = JOURNEY[cur]?.id ?? 'close';
       const sc = JOURNEY[cur]?.scene, tool = sc && 'tool' in sc ? sc.tool : null;
-      // The first answer is there the moment the stop is: nothing to wait for.
-      if (tool && S.asked[tool] === undefined) answer(tool, 0);
+      // Each arrival plays the tool's ask again, live.
+      if (tool) answer(tool, S.asked[tool] ?? 0);
     }
     const stop = JOURNEY[cur];
     S.sec = stop ? stop.sec : 'close';
-    const lastPlan = JOURNEY.reduce((m, s, k) => (s.step !== undefined ? k : m), -1);
-    S.jCur = stop?.step ?? (cur > lastPlan ? 4 : -1);
   }
-  l.on(window, 'scroll', () => { if (!ticking) { ticking = true; scrollRaf = requestAnimationFrame(onScroll); } }, { passive: true });
-  l.on(window, 'resize', () => { S.vh = innerHeight; layoutKeys(); onScroll(); });
+  // When the scroll comes to rest between two stops, the world finishes the move to the stop the page is on, so the
+  // visitor always lands on a scene (never between two worlds). The page itself does not move.
+  let restT = 0;
+  function settle() {
+    const k = S.cur; if (k >= JOURNEY.length) return;
+    const [a, b] = stopAt(k), j = keyY, y = j[k * 2] + (j[k * 2 + 1] - j[k * 2]) * 0.5;
+    if (a <= b && Number.isFinite(y)) { const [i, t] = sceneAt(y), A = KEYS[i], B = KEYS[Math.min(i + 1, KEYS.length - 1)]; PARAMS.forEach(p => S.scene[p] = A[p]! + (B[p]! - A[p]!) * t); }
+  }
+  l.on(window, 'scroll', () => { clearTimeout(restT); restT = window.setTimeout(settle, 180); if (!ticking) { ticking = true; scrollRaf = requestAnimationFrame(onScroll); } }, { passive: true });
+  l.add(() => clearTimeout(restT));
+  l.on(window, 'resize', () => { layoutKeys(); onScroll(); });
 
   // The close's headline builds word by word, once, as it arrives.
   const hio = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('play'); hio.unobserve(e.target); } }), { threshold: 0.6 });
@@ -159,7 +169,6 @@ export function startUi(): { S: Solenix; stop: () => void } {
   l.add(() => io.disconnect());
   $$('.rv').forEach(el => { if (el.getBoundingClientRect().top > innerHeight) { el.classList.add('arm'); io.observe(el); } });
 
-  // The headline is on screen from the first frame: it never hides and replays.
   const fonts = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
 
   layoutKeys();

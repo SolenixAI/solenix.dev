@@ -12,7 +12,6 @@
 :root {
   --page-bg: var(--bg);            /* resolved at :root, so it survives into the dark sky */
     --track-hero: -0.045em;
-  --section-pad: clamp(5rem, 14vh, 10rem);
 }
 
 /* The site layout marks its pages dark with data-theme. tokens.css declares its tokens on :root and [data-theme], but
@@ -30,8 +29,6 @@ h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; }
 p { text-wrap: pretty; }
 a { color: inherit; }
 img, svg { display: block; }
-.skip { position: absolute; left: var(--space-4); top: -100px; z-index: var(--z-skip); background: var(--surface-solid); color: var(--text); padding: var(--space-3) var(--space-4); border-radius: var(--radius-pill); }
-.skip:focus { top: var(--space-4); }
 .wrap { max-width: var(--container-wide); margin-inline: auto; padding-inline: var(--gutter); }
 
 .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
@@ -58,37 +55,19 @@ html { background: var(--bg); }
 footer { position: relative; z-index: 2; } /* inside main, above the scene's tags (.scene-ui) */
 .stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; pointer-events: none; }
 .stage a, .stage button { pointer-events: auto; }
-.stop-mk { position: absolute; left: 0; top: 0; opacity: 0; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%; display: grid; place-items: center; font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: .04em; color: var(--muted); background: color-mix(in oklch, var(--bg) 82%, transparent); border: 1px solid var(--line-strong); will-change: transform, opacity; transition: background-color var(--dur-slow), color var(--dur-slow), border-color var(--dur-slow), box-shadow var(--dur-slow); }
-.stop-mk span { position: absolute; left: calc(100% + 10px); top: 50%; translate: 0 -50%; white-space: nowrap; padding: 5px 9px; border-radius: var(--radius-xs); background: color-mix(in oklch, var(--bg) 82%, transparent); border: 1px solid var(--line-strong); color: var(--text); letter-spacing: var(--track-label); text-transform: uppercase; opacity: 0; transition: opacity var(--dur-slow); }
-.stop-mk.flip span { left: auto; right: calc(100% + 10px); }
-.stop-mk { transition: width var(--dur-slow) var(--ease-out), height var(--dur-slow) var(--ease-out), margin var(--dur-slow) var(--ease-out), background-color var(--dur-slow), border-color var(--dur-slow), color var(--dur-fast), box-shadow var(--dur-slow); }
-.stop-mk.lit { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
-/* A stop already passed shrinks to a dot on the orbit; only the current one keeps its number and name. */
-.stop-mk.lit:not(.cur) { width: 10px; height: 10px; margin: -5px 0 0 -5px; font-size: 0; }
-.stop-mk.cur { box-shadow: 0 0 0 6px var(--accent-quiet), 0 0 24px color-mix(in srgb, var(--ring) 45%, transparent); }
-.stop-mk.cur span { opacity: 1; }
-@media (max-width: 720px) { .stop-mk { width: 28px; height: 28px; margin: -14px 0 0 -14px; } .stop-mk span { display: none; } }
-/* Very wide and short screens (a phone held sideways): the headline takes the width it has, so it wraps less and the hero fits. */
-@media (min-aspect-ratio: 9/5) { .h1 { max-width: none; } }
-/* A very short hero (a phone held sideways) keeps the headline and the action; the sentence steps aside. */
-@media (max-height: 420px) { .hero-sub { display: none; } }
 
 /* The three bodies, named. Each tag rides with its sun through the whole story. */
 .body-tag { position: absolute; left: 0; top: 0; opacity: 0; will-change: transform, opacity; display: inline-flex; align-items: center; gap: 6px; padding: 4px 9px; border-radius: var(--radius-pill); background: color-mix(in oklch, var(--bg) 74%, transparent); border: 1px solid var(--line-strong); font: var(--fw-semibold) var(--fs-2xs)/1.2 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--text); white-space: nowrap; }
 .body-tag i { width: 6px; height: 6px; border-radius: 50%; background: var(--warn); box-shadow: 0 0 8px var(--warn); transition: background-color var(--dur-slow), box-shadow var(--dur-slow); }
 .body-tag.in i { background: var(--ok); box-shadow: 0 0 8px var(--ok); }
 .body-tag.ai { color: var(--accent-text); border-color: color-mix(in oklch, var(--accent) 60%, transparent); box-shadow: 0 0 14px color-mix(in srgb, var(--ring) 35%, transparent); }
-@media (min-width: 900px) { .scroll-cue { display: block; } }
 /* No JavaScript: nothing pins, everything reads in order. */
 html:not(.js) .stage { position: relative; height: auto; min-height: 100svh; }
 
-/* One light per section, clipped by the section. The core sits away from prose. */
-.light { position: absolute; z-index: var(--z-sky); pointer-events: none; width: var(--ls, 80vmax); aspect-ratio: 1; border-radius: 50%; translate: -50% -50%;
-  background: radial-gradient(closest-side, color-mix(in oklch, var(--sun2) 20%, transparent), color-mix(in oklch, var(--sun1) 7%, transparent) 45%, transparent 72%); }
 
 /* ── The journey: one pinned stage, one stop per screen (lib/home/journey.ts). The world is the page; each stop's few
    words sit low in the sky beside it, shaded by their own shadow, never on a panel. ── */
-.journey { position: relative; height: calc(var(--n, 14) * 100vh); height: calc(var(--n, 14) * 100svh); }
+.journey { position: relative; height: calc(var(--n, 10) * 100vh); height: calc(var(--n, 10) * 100svh); }
 .journey .stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; pointer-events: none; }
 .journey .stage a { pointer-events: auto; }
 .caps { list-style: none; margin: 0 auto; padding: 0; position: relative; height: 100%; }
@@ -101,58 +80,36 @@ html:not(.js) .stage { position: relative; height: auto; min-height: 100svh; }
 .cap-h { margin: 0; font-family: var(--font-display); font-size: clamp(1.75rem, min(4.6vw + 0.9rem, 9svh), 4.6rem); font-weight: var(--fw-black); letter-spacing: var(--track-statement); line-height: 0.98; max-width: 15ch; text-wrap: balance; }
 .cap-hero { font-size: clamp(2rem, min(6.4vw + 1rem, 11svh), 5rem); max-width: 12ch; }
 .cap-h em { font-style: normal; background: var(--grad-headline); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: none; }
+/* While the world draws them, the words are type in the space (lib/home/scene.ts): the page's own words keep their
+   place and stay for screen readers, unseen. */
+.type3d #journey .cap > :is(h1, h2, p, ul, ol) { opacity: 0; }
+/* A screen too short for the opening's second line keeps only the headline and the call. */
+@media (max-height: 420px) { .cap-hero + .say { display: none; } }
+/* The world can be dragged to look round (a mouse): the cursor says so. */
+@media (hover: hover) and (pointer: fine) { .type3d body { cursor: grab; } .dragging, .dragging body { cursor: grabbing; user-select: none; } }
 .say { margin: 0; font-size: var(--fs-lede); color: var(--text); }
 .fig { margin: 0; display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); font-size: var(--fs-lede); color: var(--text); }
 .fig b { color: var(--text); font-weight: var(--fw-semibold); font-variant-numeric: tabular-nums; }
 .fig s { color: var(--muted); text-decoration-thickness: 2px; }
 .fig .lg { width: 22px; height: 22px; color: var(--accent-text); }
 .ex { display: inline-block; padding: 1px 8px; border: 1px dashed var(--line-strong); border-radius: var(--radius-pill); font: var(--fw-semibold) var(--fs-2xs)/1.5 var(--font-mono); color: var(--muted); text-shadow: none; }
-.step { margin: 0; display: grid; gap: var(--space-2); font-family: var(--font-display); font-size: clamp(1.75rem, min(3.6vw + 0.6rem, 8svh), 2.8rem); font-weight: var(--fw-bold); letter-spacing: var(--track-display); line-height: 1.05; max-width: 18ch; }
 .cap-plan { font-size: clamp(1.4rem, 2.6vw, 2rem); max-width: none; }
+.steps { margin: 0; padding-left: 1.4em; display: grid; gap: var(--space-1); font-family: var(--font-display); font-size: clamp(1.1rem, 1.5vw + 0.5rem, 1.6rem); font-weight: var(--fw-semibold); color: var(--text); max-width: 30ch; }
 .chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-3); }
 .chips li { padding: var(--space-2) var(--space-4); border: 1px solid var(--line-strong); border-radius: var(--radius-pill); font-weight: var(--fw-semibold); color: var(--text); background: color-mix(in oklch, var(--bg) 55%, transparent); }
 .cap.on .chips li { animation: chip-in 700ms cubic-bezier(0.16, 1, 0.3, 1) both; }
 .cap.on .chips li:nth-child(2) { animation-delay: 120ms; } .cap.on .chips li:nth-child(3) { animation-delay: 240ms; } .cap.on .chips li:nth-child(4) { animation-delay: 360ms; }
 @keyframes chip-in { from { opacity: 0; transform: translateY(10px) scale(0.96); } }
-/* A tool's things, held beside its world (lib/home/scene.ts): glass cards, a colour and a word for each state. */
-.proof { position: absolute; inset: 0; }
-.pstack { position: absolute; left: 0; top: 0; width: min(17rem, calc(100vw - 32px)); display: flex; flex-direction: column; gap: 8px; opacity: 0; will-change: transform, opacity; }
-.pt { display: grid; gap: 2px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--glass-bg); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); box-shadow: inset 0 1px 0 var(--glass-edge); transition: border-color var(--dur-slow), opacity var(--dur-slow), transform var(--dur-slow) var(--ease-out), box-shadow var(--dur-slow); }
-.pt b { font-weight: var(--fw-semibold); font-size: var(--fs-sm); color: var(--text); }
-.pt span { font: var(--fw-semibold) var(--fs-2xs)/1.4 var(--font-mono); font-variant-numeric: tabular-nums; color: var(--muted); }
-.pt[data-state="hot"] { border-color: var(--accent); box-shadow: inset 0 1px 0 var(--glass-edge), 0 0 22px color-mix(in srgb, var(--ring) 35%, transparent); }
-.pt[data-state="hot"] span { color: var(--accent-text); }
-.pt[data-state="hot"] span::before { content: "Needs you · "; }
-.pt[data-state="new"] { border-color: var(--accent); transform: translateX(-6px); }
-.pt[data-state="new"] span { color: var(--accent-text); }
-.pt[data-state="new"] span::before { content: "New · "; }
-.pt[data-state="done"] { border-color: color-mix(in oklch, var(--ok) 60%, transparent); }
-.pt[data-state="done"] span { color: var(--ok); }
-.pt[data-state="done"] span::before { content: "Done · "; }
-.pt[data-state="dim"] { opacity: 0.42; }
-.asks { display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-3); }
-.ask { min-height: var(--tap-min); padding: 0 var(--space-4); border: 1px solid var(--line-strong); border-radius: var(--radius-pill); background: color-mix(in oklch, var(--bg) 60%, transparent); color: var(--text); font: var(--fw-medium) var(--fs-sm)/1.2 var(--font-text); text-align: left; cursor: pointer; text-shadow: none; transition: border-color var(--dur-fast), color var(--dur-fast); }
-.ask:hover { border-color: var(--accent); }
-.ask[aria-pressed="true"] { border-color: var(--accent); color: var(--accent-text); }
-.ask:focus-visible { outline: var(--focus-width) solid var(--focus-color); outline-offset: 3px; }
-.asks .reply { flex-basis: 100%; margin: var(--space-2) 0 0; font-size: var(--fs-lede); color: var(--text); min-height: 1.5em; }
-.asks .reply .ex { margin-left: var(--space-2); vertical-align: 2px; }
-.journey .stage .ask { pointer-events: auto; }
-@media (max-width: 640px) { .pt { padding: 8px 12px; } .ask { padding: 0 var(--space-3); } .asks .reply { font-size: var(--fs-body); } }
 .story { margin: 0; padding: 0; list-style: none; }
 html.js .story { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 html:not(.js) .story { position: relative; padding: calc(var(--nav-height) + var(--space-7)) var(--gutter) var(--space-7); max-width: 40rem; margin-inline: auto; display: grid; gap: var(--space-4); font-size: var(--fs-lede); color: var(--text); }
 .vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-.jticks { position: absolute; right: max(10px, calc(var(--gutter) * 0.5)); top: 50%; translate: 0 -50%; display: grid; gap: 7px; }
-.jticks i { display: block; width: 3px; height: 16px; border-radius: 2px; background: var(--line-strong); transition: background-color var(--dur-slow), height var(--dur-slow) var(--ease-out); }
-.jticks i.on { height: 28px; background: var(--ring); }
 .jbook { position: absolute; right: var(--gutter); bottom: clamp(1.25rem, 4svh, 2.5rem); transition: opacity var(--dur-base) var(--ease-out); }
 .journey[data-stop="chaos"] .jbook { opacity: 0; pointer-events: none; }
 @media (prefers-reduced-motion: reduce) { .cap, .cap.on { transform: none; } .cap.on .chips li { animation: none; } }
-@media (max-width: 640px) { .cap { bottom: calc(5.5rem + env(safe-area-inset-bottom)); } .jbook { left: var(--gutter); right: auto; } .jticks { gap: 5px; } .jticks i { height: 10px; } .jticks i.on { height: 18px; } }
+@media (max-width: 640px) { .cap { bottom: calc(5.5rem + env(safe-area-inset-bottom)); } .jbook { left: var(--gutter); right: auto; } }
 html:not(.js) .journey { height: auto; } html:not(.js) .journey .stage { position: relative; height: auto; overflow: visible; }
-html:not(.js) .cap { position: relative; inset: auto; opacity: 1; visibility: visible; transform: none; padding-block: var(--space-8); } html:not(.js) .jticks { display: none; }
-
+html:not(.js) .cap { position: relative; inset: auto; opacity: 1; visibility: visible; transform: none; padding-block: var(--space-8); } html:not(.js) 
 /* ── Closing: no box, no second canvas. The same orbit, seen whole, above the words. ── */
 .close-sec { position: relative; min-height: 100vh; min-height: 100svh; display: grid; align-items: center; }
 .close-in { padding-block: calc(var(--nav-height) + var(--space-7)) var(--space-9); display: grid; justify-items: start; text-shadow: 0 0 28px var(--bg), 0 0 12px var(--bg), 0 1px 2px var(--bg); }
@@ -171,7 +128,6 @@ html:not(.js) .cap { position: relative; inset: auto; opacity: 1; visibility: vi
 .close-sec .close-alt { display: inline-flex; text-shadow: 0 0 12px var(--bg), 0 0 4px var(--bg); align-items: center; min-height: var(--tap-min); font-size: var(--fs-body); color: var(--muted); text-decoration: underline; text-decoration-color: var(--line-strong); text-underline-offset: 4px; }
 .close-sec .close-alt:hover { color: var(--text); text-decoration-color: currentColor; }
 .close-sec .close-alt:focus-visible { outline: var(--focus-width) solid var(--focus-color); outline-offset: 3px; border-radius: var(--radius-pill); }
-.photo { flex: none; width: 76px; height: 76px; padding: 8px; box-sizing: border-box; border-radius: 50%; border: 1px dashed var(--line-strong); display: grid; place-items: center; text-align: center; font: var(--fw-semibold) var(--fs-2xs)/1.15 var(--font-mono); color: var(--muted); }
 
 /* The end of the journey: the close and the footer share the last screen, so the scroll ends on the stable orbit. */
 .finale { min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; }
@@ -199,23 +155,14 @@ html[data-motion="on"] .scene-ui.lock-pop .body-tag.ai { animation-delay: 320ms;
 /* Section headlines build word by word as the camera arrives. */
 .hw { display: inline-block; overflow: clip; padding-block: 0.08em 0.16em; margin-block: -0.08em -0.16em; vertical-align: top; }
 .hw > span { display: inline-block; transition: transform 0.95s var(--ease-out); transition-delay: calc(var(--i) * 65ms + 90ms); }
-.h2 em .hw > span, .say-h em .hw > span, #close-h em .hw > span { background: var(--grad-headline); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .04em; }
+#close-h em .hw > span { background: var(--grad-headline); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .04em; }
 html.js[data-motion="on"] .hb.arm:not(.play) .hw > span { transform: translateY(112%); }
-/* Alive under the pointer: a light that follows it across cards, a primary button that leans toward it. */
 .btn:active { scale: 0.97; }
-/* Narrow screens: the scene holds the top of the screen and the words rise out of the dark below it,
-   so no label ever sits on the copy. */
 .lg { width: 18px; height: 18px; flex: none; fill: currentColor; }
-/* Each login is its real mark, riding its own body. */
+/* Each tool world wears its real mark. */
 .moon-tag { position: absolute; left: 0; top: 0; opacity: 0; will-change: transform, opacity; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; color: var(--text); background: color-mix(in oklch, var(--bg) 80%, transparent); border: 1px solid var(--line-strong); }
 .moon-tag .lg { width: 15px; height: 15px; }
-/* Promises: one at a time, upright, with the settled orbit beside them. */
 .tm-note { font-size: var(--fs-xs); color: var(--faint); flex-basis: 100%; }
-/* A threshold (60 days, 14 days) is a dashed tick on each track at the same place, named once under the bars. */
-@media (prefers-reduced-motion: reduce) { .tb-bar { animation: none; } }
-/* What it costs you, drawn: one dot per step by hand against one dot for the sentence. */
-@media (min-width: 700px) and (max-width: 1099px) { .tools-in { grid-template-columns: minmax(0, 24rem); } }
-@media (max-height: 1000px) { .tools-in { row-gap: var(--space-3); } }
 .world-tag { width: 52px; height: 52px; background: color-mix(in oklch, var(--bg) 88%, transparent); border-color: color-mix(in oklch, var(--accent) 55%, transparent); box-shadow: 0 0 24px color-mix(in srgb, var(--ring) 40%, transparent); }
 .world-tag .lg { width: 26px; height: 26px; }
 @media (max-width: 899px) { .close-sec { align-items: end; } .close-in { padding-block: var(--space-7); } }
@@ -241,12 +188,6 @@ html.js[data-motion="on"] .hb.arm:not(.play) .hw > span { transform: translateY(
   <div class="moon-tag world-tag" data-world="quickbooks"><svg class="lg"><use href="#lg-quickbooks"/></svg></div>
   <div class="moon-tag world-tag" data-world="gmail"><svg class="lg"><use href="#lg-gmail"/></svg></div>
   <div class="moon-tag world-tag" data-world="microsoftexcel"><svg class="lg"><use href="#lg-microsoftexcel"/></svg></div>
-  <div class="proof"></div>
-  <div class="stop-mk" data-k="0">01<span>Find the hours</span></div>
-  <div class="stop-mk" data-k="1">02<span>Cut the tools</span></div>
-  <div class="stop-mk" data-k="2">03<span>One AI</span></div>
-  <div class="stop-mk" data-k="3">04<span>Your website</span></div>
-  <div class="stop-mk" data-k="4">05<span>Fixed price</span></div>
 </div>
 
 <div id="main">
@@ -255,75 +196,59 @@ html.js[data-motion="on"] .hb.arm:not(.play) .hw > span { transform: translateY(
   <ol class="story">
     <li>Revenue, costs and time, pulled apart by a dozen tools. We put one AI at the centre of the tools you already use. Hours back, every week.</li>
     <li>Each tool you run eats hours you do not get paid for. That is where this starts.</li>
-    <li>We set up the AI agent of your choice for your team and connect it to the tools you already use. You say what you want in plain words, and it gets done in those tools.</li>
-    <li>Example: you ask who owes you money. Hillside Roofing is 64 days late; three clients owe $4,450. Then you ask to invoice Harbour Dental for the retainer, and the invoice is ready for you to check before it goes.</li>
-    <li>Example: you ask to sort today's inbox. Four emails need a reply today, nine can wait, sixteen are junk. Then you ask to book 30 minutes with Harbour Dental: Tuesday at 10:30, and the invite waits for your OK.</li>
-    <li>Example: you ask what runs out this month. Sea salt caramels and wool mitts will run out within 30 days. Then you ask to reorder them, and both reorders are drafted for you to approve.</li>
-    <li>Example: you ask which ad is wasting money. Local awareness now costs far more for each sale than it did. Then you ask to move its budget to the fall sale, and the change waits for your call.</li>
-    <li>Example: you ask what sold best this month. Bread and coffee are up; pastry slipped. Then you ask for a chart, and it is added to your sales sheet.</li>
-    <li>On the call, we add up what your tools cost you, in hours and dollars.</li>
-    <li>You stop paying for the ones you barely use. The rest move off outdated software.</li>
-    <li>We set up the AI agent of your choice and connect it to your tools. Then we teach your team to use it.</li>
-    <li>It is where your customers decide to call you. We look after it. You own everything.</li>
-    <li>Agreed on the call. No surprise invoice.</li>
-    <li>Fixed price, in writing, agreed on the call. You own it all: accounts, code and data in your name. Based in St. John's. Your team is taught to use it.</li>
+    <li>Stop learning ten tools and talk to one. You don't need to be an expert: you ask in plain words, and it gets done in the tools you already use.</li>
+    <li>You are also the receptionist. Example: calls and emails come in while you work. The AI answers nine for you, puts the four that need you on top, and clears sixteen junk. Asked to book Harbour Dental, it finds Tuesday at 10:30 and waits for your OK.</li>
+    <li>You are also the bookkeeper. Example: you ask who owes you money. Hillside Roofing is 64 days late; three clients owe $4,450. Then you ask to invoice Harbour Dental for the retainer, and the invoice is ready for you to check before it goes.</li>
+    <li>You are also the ad manager. Example: you ask which ad is wasting money. Local awareness now costs far more for each sale than it did. Then you ask to move its budget to the fall sale, and the change waits for your call.</li>
+    <li>You are also the stock manager. Example: you ask what runs out this month. Sea salt caramels and wool mitts will run out within 30 days. Then you ask to reorder them, and both reorders are drafted for you to approve.</li>
+    <li>You are also the analyst. Example: you ask what slipped this month. Pastry slipped 4%; bread and coffee are up. Then you ask for a chart, and it is added to your sales sheet.</li>
+    <li>From one call to a stable orbit: on the call we find where your hours go and what your tools cost; we cut the tools you don't use; we set up one AI you choose in your tools and teach your team; we build your website, and you own it; and the price is fixed, in writing, agreed on the call.</li>
+    <li>Fixed price: one number, in writing, agreed on the call. You own it all: accounts, code and data in your name. Plain English: updates you read in a minute, on your phone. No lock-in: leave any month, keep everything you paid for.</li>
   </ol>
   <div class="stage" data-hero>
     <ol class="caps wrap">
       <li class="cap on" data-k="0">
         <h1 class="cap-h cap-hero">Your business is a <em>three&#8209;body problem.</em></h1>
+        <p class="say">AI can now do the jobs you do by hand.</p>
         <a class="btn btn-primary" href="/book">Book a call</a>
       </li>
       <li class="cap" data-k="1">
         <h2 class="cap-h">Every tool pulls <em>its own way.</em></h2>
-        <p class="fig"><b>6.5 hours</b> a week, lost to them <span class="ex">Example</span></p>
+        <p class="say">Each one eats hours you don't get paid for.</p>
       </li>
       <li class="cap" data-k="2">
         <h2 class="cap-h">Stop learning ten tools. <em>Talk to one.</em></h2>
-        <p class="say">Your AI agent, set up in the tools you use.</p>
+        <p class="say">You don't need to be an expert to use it.</p>
       </li>
       <li class="cap" data-k="3">
-        <h2 class="cap-h">You don't need to be an expert in <em>QuickBooks.</em></h2>
-        <div class="asks" data-tool="quickbooks"></div>
+        <h2 class="cap-h">You're also the <em>receptionist.</em></h2>
+        <div class="asks vh" data-tool="gmail"></div>
       </li>
       <li class="cap" data-k="4">
-        <h2 class="cap-h">You don't need to be an expert in <em>Gmail.</em></h2>
-        <div class="asks" data-tool="gmail"></div>
+        <h2 class="cap-h">You're also the <em>bookkeeper.</em></h2>
+        <div class="asks vh" data-tool="quickbooks"></div>
       </li>
       <li class="cap" data-k="5">
-        <h2 class="cap-h">You don't need to be an expert in <em>Shopify.</em></h2>
-        <div class="asks" data-tool="shopify"></div>
+        <h2 class="cap-h">You're also the <em>ad manager.</em></h2>
+        <div class="asks vh" data-tool="meta"></div>
       </li>
       <li class="cap" data-k="6">
-        <h2 class="cap-h">You don't need to be an expert in <em>Meta Ads.</em></h2>
-        <div class="asks" data-tool="meta"></div>
+        <h2 class="cap-h">You're also the <em>stock manager.</em></h2>
+        <div class="asks vh" data-tool="shopify"></div>
       </li>
       <li class="cap" data-k="7">
-        <h2 class="cap-h">You don't need to be an expert in <em>Excel.</em></h2>
-        <div class="asks" data-tool="microsoftexcel"></div>
+        <h2 class="cap-h">You're also the <em>analyst.</em></h2>
+        <div class="asks vh" data-tool="microsoftexcel"></div>
       </li>
       <li class="cap" data-k="8">
         <h2 class="cap-h cap-plan">From one call to a <em>stable orbit.</em></h2>
-        <p class="step">We find where the hours go.</p>
+        <ol class="steps"><li>We find where your hours go.</li><li>We cut the tools you don't use.</li><li>One AI you choose, set up in your tools.</li><li>We build your website, and you own it.</li><li>A fixed price, in writing.</li></ol>
       </li>
       <li class="cap" data-k="9">
-        <p class="step">We cut the tools you don't need.</p>
-      </li>
-      <li class="cap" data-k="10">
-        <p class="step">One AI sits at the centre.</p>
-      </li>
-      <li class="cap" data-k="11">
-        <p class="step">We build your website.</p>
-      </li>
-      <li class="cap" data-k="12">
-        <p class="step">A fixed price, in writing.</p>
-      </li>
-      <li class="cap" data-k="13">
-        <h2 class="cap-h">Four promises, <em>kept.</em></h2>
-        <ul class="chips"><li>Fixed price</li><li>You own it</li><li>Local, St. John's</li><li>Team taught</li></ul>
+        <h2 class="cap-h">Four promises, <em>on paper.</em></h2>
+        <ul class="chips"><li>Fixed price</li><li>You own it</li><li>Plain English</li><li>No lock-in</li></ul>
       </li>
     </ol>
-    <div class="jticks" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
     <a class="btn btn-ghost jbook" href="/book">Book a call</a>
   </div>
 </section>
@@ -332,15 +257,14 @@ html.js[data-motion="on"] .hb.arm:not(.play) .hw > span { transform: translateY(
 <section class="close-sec" id="close" data-scene="close" aria-labelledby="close-h">
   <div class="wrap close-in">
     <h2 id="close-h" class="rv">Let's find your <em>stable orbit.</em></h2>
-    <p class="rv">A short call with one accountable local person about where your week goes.</p>
+    <p class="rv">On a short call, we add up what your tools cost you, then show the AI at work on your own business.</p>
     <div class="close-ctas rv">
       <a class="btn btn-primary" href="/book">Book a call</a>
       <a class="close-alt" href="mailto:hello@solenix.dev">or email hello@solenix.dev</a>
     </div>
     <div class="close-proof rv">
-      <p class="close-who"><span class="photo" aria-hidden="true">Photo to come</span><span><span class="who">Jager Cooper</span>, founder, St. John's, NL</span></p>
-      <p class="close-terms">A fixed price, in writing. Agreed on the call. No surprise invoice.</p>
-      <p class="close-terms">You own everything.</p>
+      <p class="close-who"><span><span class="who">Jager Cooper</span>, founder, St. John's, NL</span></p>
+      <p class="close-terms">Fixed price in writing. You own everything. Leave any month.</p>
     </div>
   </div>
 </section>

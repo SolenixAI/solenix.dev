@@ -2,7 +2,7 @@
 //   node --test lib/fresh.test.ts
 import { test } from "node:test"
 import assert from "node:assert/strict"
-import { makeFresh, type Get } from "./fresh.ts"
+import { makeFresh, READ_LIMIT_MS, type Get } from "./fresh.ts"
 
 const answer = (status: number, body?: unknown, etag?: string) =>
   new Response(body === undefined ? null : JSON.stringify(body), { status, headers: etag ? { etag } : {} })
@@ -106,4 +106,20 @@ test("an unchanged source (304) is not a failed read: nothing is logged", async 
   await fresh("https://x/same")
   await fresh("https://x/same")
   assert.equal(warn.mock.callCount(), 0)
+})
+
+test("every read carries a time limit, so a source that hangs fails instead of holding the page", async () => {
+  const seen: RequestInit[] = []
+  const fresh = makeFresh(async (_url, init) => { seen.push(init); return new Response("{}") })
+  await fresh("https://x/live")
+  await fresh("https://x/cached", {}, { tags: ["t"], revalidate: 60 })
+  assert.equal(seen.length, 2)
+  for (const init of seen) assert.ok(init.signal instanceof AbortSignal)
+})
+
+test("a source that never answers gives null once the signal aborts", async () => {
+  const fresh = makeFresh((_url, init) => new Promise((_, reject) => init.signal?.addEventListener("abort", () => reject(init.signal?.reason))))
+  const start = Date.now()
+  assert.equal(await fresh("https://x/hangs"), null)
+  assert.ok(Date.now() - start <= READ_LIMIT_MS + 500)
 })

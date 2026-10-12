@@ -10,6 +10,8 @@ colors:
   hairline: "#1e222b"
   ember: "#f59e0b"
   sun-gold: "#fbbf24"
+  faint: "#8f8983"
+  ember-ink: "#1a1206"
 ---
 
 # Solenix
@@ -20,19 +22,21 @@ colors:
 
 *One tech expert for small businesses in Newfoundland & Labrador. Your business is a three-body problem — we find the stable orbit.*
 
-The system behind solenix.dev. Solenix is one tech expert for small businesses in St. John's, Newfoundland and Labrador: we put one AI at the centre of the tools the business already uses, cut the tools it does not need, teach the team, and build the website. The visual world is a night sky — deep blue-black grounds, one warm light source, orbit lines — and the story is chaos settling into the figure-eight orbit. The marketing site is dark, and its signature is one three.js night-sky scene that runs behind the whole homepage, where three suns settle into a figure-eight. Calm, confident, a little expensive-looking. Plain Canadian English.
+The system behind solenix.dev. Solenix is one tech expert for small businesses in St. John's, Newfoundland and Labrador: we put one AI at the centre of the tools the business already uses, cut the tools it does not need, teach the team, and build the website. The visual world is a night sky — deep blue-black grounds, one warm light source, orbit lines — and the story is chaos settling into the figure-eight orbit. The marketing site is dark, and its signature is one three.js night-sky world that is the whole homepage, where three suns settle into a figure-eight. Calm, confident, a little expensive-looking. Plain Canadian English.
 
 
 ## Decisions (Jager's, binding on every page; his latest word wins)
 
-- Homepage base: the approved baseline, git tag `approved-baseline` (restored 2026-10-01 as the best so far). Never fall below it. Changes go through Impeccable, one named change at a time, and Jager judges each before the next.
+- Homepage base: the one journey through the 3D world (#80, 2026-10-11). Never fall below it. Changes go through Impeccable, one named change at a time, and Jager judges each before the next.
 - The hero opens with "Your business is a three-body problem", and a small-business owner must understand in seconds what Solenix does and want to call.
-- The homepage is one journey through the 3D world (2026-10-11: he judged text laid over the world as two worlds that sell nothing). Each stop is a scene with a caption of ten words or fewer; each tool stop lets the visitor ask in plain words and shows the answer at once as things beside that tool's world (example data). No races, no simulated typing, no clocks, no live runs. Stops and scenes: lib/home/journey.ts; the tools' things and asks: lib/home/proof.ts.
-- Keep "From one call to a stable orbit": five stops, slow enough to read, visuals over text, steps never overlapping.
-- The 3D world runs through the page and must get better: never flattened, never panels laid over it.
+- The 3D world is the site (2026-10-11). Everything the visitor sees on the homepage lives in the world: each tool's work is 3D objects at that tool's world, and the words are type set in the space. Nothing flat is laid over the scene: no card, panel, caption or tag. Only the nav, Book a call and the screen-reader story are flat. At each tool the AI does the job live in front of the visitor, every time they arrive: the ask, the agent at work, the result, in under seven seconds (proofLength in lib/home/proof.ts); scrolling on skips it. A line of words is ten words or fewer. The camera glides on one continuous path, the scroll stays native up and down, and the journey ends on the close, never the footer. The visitor has never seen AI do real work. Stops: lib/home/journey.ts; each tool's work: lib/home/proof.ts. <!-- bans: /simulated typing|race clocks?|no live runs?|answers? (shows|appears) at once|answers at once|glass cards|stack held beside|stand in a stack|captions? sit low in the sky|scene (fixed|running) behind/i in PRODUCT.md AGENTS.md GLOSSARY.md .agents/product-marketing.md .impeccable/** design/*.md design/*.html docs/** lib/home/** -->
+- The work stops are roles, not tools (2026-10-11): an owner is also the receptionist, the bookkeeper, the ad manager, the stock manager and the analyst. Each stop speaks to that pain ("You're also the bookkeeper.") and shows the AI doing the job, live, on real use cases. "You don't need to be an expert" stays, on the Talk-to-one stop. <!-- bans: /expert in (QuickBooks|Gmail|Shopify|Meta Ads|Excel|\[tool\])/i in design/*.html design/*.md .impeccable/surfaces/design-home-html.md PRODUCT.md .agents/product-marketing.md lib/home/** -->
+- Keep "From one call to a stable orbit": five steps, slow enough to read, visuals over text, steps never overlapping. They are five numbered stops on the orbit, lit one at a time on one stop of the journey, each with its line of words (2026-10-12).
+- Every stop holds still long enough to play and to read, and nothing on screen is empty or without context (2026-10-11: "half the shit just flashes by", "one tiny scroll and everything is gone to something with no context", the plan stops were "a blank screen that has no coherence"). No stop is words over an empty sky; no number is invented to fill one. <!-- bans: /one stop lights per step|plan-[1-5]\b|6\.5 hours|Photo to come/ in .impeccable/** design/*.md design/*.html lib/home/** PRODUCT.md DESIGN.md -->
+- The 3D world must keep getting better: never flattened, nothing flat laid over it.
 - Price line: "A fixed price, in writing. Agreed on the call. No surprise invoice." No public prices; value-based per initiative.
 - No on-page ROI calculator and no "your numbers, not ours".
-- The site is dark only.
+- The site is dark only. <!-- bans: /follows? the device/i in AGENTS.md DESIGN.md -->
 - No Motion switch.
 - Offer: one AI at the centre of the tools they already use; cut unused tools; teach; build the website. Claims land on time or money.
 - The AI is the customer's own agent: "the AI agent of your choice". Customer copy never names a vendor as the AI we set up. (Jager, 2026-10-11) <!-- bans: /\b(Claude|ChatGPT|Codex|Cursor)\b/ in design/home.html app lib -->
@@ -51,11 +55,11 @@ The system behind solenix.dev. Solenix is one tech expert for small businesses i
 | foreground | Paper | `#f4f2ee` | Headings and body (--text). 17.4:1 on Night, 15.9:1 on Glass. |
 | muted | Stone | `#a39e97` | Secondary prose, nav links at rest, status words (--muted). 7.3:1 on Night. Captions and metadata may drop to Faint #8f8983 (5.6:1) — never anything a reader acts on. |
 | border | Hairline | `#1e222b` | Solid hairlines and SVG rules (--line-solid). In CSS use --line (paper 9%) over surfaces and --line-strong (paper 20%) for ghost buttons, inputs and anything that must read as a boundary. |
-| accent | Ember | `#f59e0b` | Action ember: the one solid fill per screen (Book a call), with ink #1a1206 at 8.6:1. Light ember is unlimited: links, focus rings, orbit strokes, glows, chart series one. 9.1:1 on Night. |
+| accent | Ember | `#f59e0b` | Action ember: the one solid fill per screen (Book a call, or Copy for your AI on the marketplace), with ink #1a1206 at 8.6:1. Light ember is unlimited: links, focus rings, orbit strokes, glows, chart series one. 9.1:1 on Night. |
 | accent-secondary | Sun gold | `#fbbf24` | The sun's bright stop (--sun1) and the ember hover/accent-text (--accent-hover, --accent-text). Hover on an accent fill moves lighter, so contrast goes up (11.1:1 with ink). Paired with Sun ember #f97316 for the mark gradient, the headline gradient and the scene's suns. |
 
 ## Typography
-- **Display:** Sora — weights 500, 600, 650, 700, 800 — fallbacks: ui-sans-serif, -apple-system, BlinkMacSystemFont, Segoe UI, Noto Sans, Helvetica, Arial, sans-serif (Geometric grotesque whose round bowls echo the mark. Headlines, statements, the lockup (650), stat numerals (700, tabular-nums). Tracking tightens as size grows: -0.015em headings, -0.03em display, -0.04em statement, -0.045em hero, -0.055em beat. Line height 1.04 display, 0.98 hero/beat. Self-hosted in fonts/ (SIL OFL 1.1). Display sizes grow 1.5–2× from phone to desktop and stop at 5rem (80px); the scale is the same at 1440, 1920 and 2560. Scale: hero clamp(1.6rem, min(1.9rem + 3vw, 11svh), 5rem), scaled by height too so every hero fits its screen; statement clamp(2.5rem, 1.85rem + 2.8vw, 4.75rem); display clamp(2.2rem, 1.7rem + 2.2vw, 3.75rem); h1 clamp(1.9rem, 5vw, 2.6rem); h2 clamp(1.4rem, 3.4vw, 1.75rem); h3 1.2rem; h4 1.02rem.)
+- **Display:** Sora — weights 500, 600, 650, 700, 800 — fallbacks: ui-sans-serif, -apple-system, BlinkMacSystemFont, Segoe UI, Noto Sans, Helvetica, Arial, sans-serif (Geometric grotesque whose round bowls echo the mark. Headlines, statements, the lockup (650), stat numerals (700, tabular-nums). Tracking tightens as size grows: -0.015em headings, -0.03em display, -0.04em statement, -0.045em hero, -0.055em beat. Line height 1.04 display, 0.98 hero/beat. Self-hosted from @fontsource-variable/sora by scripts/vendor.ts (public/vendor/fonts.css; SIL OFL 1.1). Display sizes grow 1.5–2× from phone to desktop and stop at 5rem (80px); the scale is the same at 1440, 1920 and 2560. Scale: hero clamp(1.6rem, min(1.9rem + 3vw, 11svh), 5rem), scaled by height too so every hero fits its screen; statement clamp(2.5rem, 1.85rem + 2.8vw, 4.75rem); display clamp(2.2rem, 1.7rem + 2.2vw, 3.75rem); h1 clamp(1.9rem, 5vw, 2.6rem); h2 clamp(1.4rem, 3.4vw, 1.75rem); h3 1.2rem; h4 1.02rem.)
 - **Body:** ui-sans-serif — weights 400, 500, 600 — fallbacks: -apple-system, BlinkMacSystemFont, Segoe UI, Noto Sans, Helvetica, Arial, sans-serif (The system grotesque carries body, UI and buttons. 1rem at 1.5 line height, lede clamp(1.05rem, min(2.6vw, 3.4svh), 1.25rem), small 0.92rem. Prose capped at 34rem. text-wrap: balance on headings, pretty on paragraphs.)
 - **Mono:** ui-monospace — weights 400, 600 — fallbacks: SFMono-Regular, Menlo, Consolas, Liberation Mono, monospace (Does real work: labels (0.8rem, caps, +0.14em), badges (0.75rem, +0.12em — the floor, nothing smaller), numbers, table headers, status words, HUD readouts. Numbers are always tabular-nums.)
 - **Brand motion mono:** JetBrains Mono — weight 700 — fallbacks: none (drawn on a canvas). Used only in brand/motion/index.html, the three-body motion piece: the SOLENIX.DEV line and the name tags. No site page draws text in it. Self-hosted: scripts/vendor.ts writes its @font-face rules into public/vendor/fonts.css from @fontsource-variable/jetbrains-mono.
@@ -81,8 +85,8 @@ The system behind solenix.dev. Solenix is one tech expert for small businesses i
 ## Imagery
 
 - **Style:** Made of light, not photographs: a night sky with one warm light source, orbit rings, a 32px hairline grid and a sparse starfield, glass panels catching light on their top edge. The signature is the real-physics three.js scene — three plasma suns over a spacetime grid, settling from chaos into the Chenciner–Montgomery figure-eight.
-- **Subjects:** the mark — sun, one orbit ring, one agent dot, the figure-eight orbit drawn from real simulation path data, the three-body night-sky scene (one scene, running behind the whole homepage; its first-frame still stands behind the platform page), status boards, sparklines and timelines with real or Example-labelled data
-- **Treatment:** On the homepage the scene is fixed behind every section and text sits directly in it; the platform page shows its still the same way. Keep text readable with its own soft shadow and by keeping bodies and trails out from behind small text, never by fading the scene across the screen or laying a panel over the world. Each journey stop holds still through its own stretch of scroll and the world moves only between stops; the scroll stays the visitor's own (2026-10-11: a scroll that took over the wheel fought him both ways). Every page may open in chaos but ends settled.
+- **Subjects:** the mark — sun, one orbit ring, one agent dot, the figure-eight orbit drawn from real simulation path data, the three-body night-sky scene (one scene that is the whole homepage; its first-frame still stands behind the platform page), status boards, sparklines and timelines with real or Example-labelled data
+- **Treatment:** On the homepage the scene is the page: the tools' work, the words and the AI agent are objects in it, lit by its light, and the camera moves through it on one continuous path (Decisions). The platform page shows the scene's still behind its words. Words in the world stay readable by their own glow and by keeping bodies and trails out from behind them, never by fading the scene or laying a panel over it. Every page may open in chaos but ends settled.
 - **Avoid:** stock photography or stock faces, illustrations of people, gradient blobs and purple AI washes, glassmorphism card grids as decoration, AI sparkle icons, an ∞ glyph or a hand-drawn lemniscate in place of the figure-eight, fake client logos or testimonials, light sections
 
 ## Layout
@@ -95,13 +99,13 @@ The system behind solenix.dev. Solenix is one tech expert for small businesses i
 - Radius pairing is the silhouette: buttons, badges and nav links are pills (999px); cards are 20px; full-bleed panels and bento cells 28px; inputs, icon chips and code wells 12px. Never square either off, never round further.
 - Containers: 64rem default, 78rem for bento/split/full-bleed/demo, prose capped at 34rem. Gutter 16px, 32px from 640px. 375px is a designed floor; nothing scrolls sideways.
 - No eyebrow or kicker above a heading, on any page: the heading carries itself (Impeccable's ban, Jager's choice). A label may name a list or a value, never a heading.
-- One action per page — Book a call — as the only solid ember fill in view; everything else is a ghost pill (transparent, --line-strong border, --text label) or a link. Sticky on phones only when no inline primary is on screen.
-- No two adjacent sections share an archetype: night-sky hero, full-bleed feature, split with visual, bento, big statement, live demo panel, card grid. The big statement is one per page.
-- Three depth layers in fixed order: light and orbit (z 0), texture (z 1), content and glass (z 2). A glass panel at rest carries shadow-md plus the lit inset edge.
+- One action per screen as the only solid ember fill in view: Book a call, or Copy for your AI on the Agents Marketplace; everything else is a ghost pill (transparent, --line-strong border, --text label) or a link. Sticky on phones only when no inline primary is on screen.
+- On pages other than the homepage (the homepage is one 3D world): no two adjacent sections share an archetype: night-sky hero, full-bleed feature, split with visual, bento, big statement, live demo panel, card grid. The big statement is one per page.
+- On pages other than the homepage, three depth layers in fixed order: light and orbit (z 0), texture (z 1), content and glass (z 2). A glass panel at rest carries shadow-md plus the lit inset edge.
 - Every state is a colour and a word: Live (#34d399), Building (#fbbf24), Down (#fb7185). Charts: five series max, baseline at zero, every series labelled in words.
 - 44px minimum tap target on every control; focus is 2px solid ember at a 3px offset on :focus-visible. Hover never greys text — glow grows, lift -1px (buttons) or -3px (cards).
-- Motion explains, then stops: the three-body world settling into its orbit, one light sweep, first-time reveals, count-ups. No on-page Motion switch; the operating system's prefers-reduced-motion setting freezes everything with every value still on screen.
-- Numbers you don't have yet are a dashed 'to confirm' chip; sample data wears an Example tag; a missing photo is a dashed 'Photo to come' circle.
+- Motion explains: the three-body world settling into its orbit, the AI agent doing each tool's job live on every arrival, one light sweep, first-time reveals. No on-page Motion switch; the operating system's prefers-reduced-motion setting freezes everything with every value still on screen.
+- Numbers you don't have yet are a dashed 'to confirm' chip; sample data says Example (on the homepage, in the world, never a flat tag); a missing photo is left out until there is a real one (a placeholder read as unfinished at the decision point).
 
 ## Components
 
@@ -128,7 +132,7 @@ Glass over the night sky, lit along the top edge.
 - **Behaviour:** hover lifts 3px with one light sweep across the card; reduced motion removes the sweep. Source: app/articles/route.ts (.card).
 
 ### Navigation
-One floating glass pill on every page, held still while pages cross-fade beneath it.
+One floating glass pill on every page, held still while the next page paints; on an article it gives way to the article's own bar as you read.
 - **Style:** --glass-bg with an 18px blur, 12px from the top, as wide as the page; Sora wordmark with the mark. Source: lib/site-nav.ts.
 - **States:** links rest in --muted, hover on a --line wash, and the current page reads --accent-text on --accent-quiet; "Solenix platform" ("Platform" on phones) carries a small orbiting dot.
 - **Articles:** an article's own bar slides in as the site nav leaves and names the section being read (client/article-bar.ts).
@@ -137,7 +141,7 @@ One floating glass pill on every page, held still while pages cross-fade beneath
 The marketplace's one action: a sentence a visitor copies and pastes into their AI agent.
 - **Shape and colour:** the primary button's ember pill.
 - **States:** idle; "Copied. Paste it into your AI" for 3 seconds; when copying fails, the sentence is selected and the page says how to copy it by hand. Source: lib/copy-for-ai.ts.
-- **Sentence:** one renderer (Sentence in app/(site)/agents/worlds.tsx) shows commands in code, never breaking inside a word or between a flag and its value.
+- **Sentence:** one renderer (Sentence in app/(site)/agents/worlds.tsx) shows commands in code only when a copy fails, never breaking inside a word or between a flag and its value.
 
 ### Live article window (signature)
 The articles page's first screen: the newest article itself, live, in a window with the visitor's own screen shape.

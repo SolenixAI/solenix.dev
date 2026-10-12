@@ -1,5 +1,4 @@
-// The homepage's label placement: where a tool's stack of things sits beside its world, and where each sun's tag sits
-// under its sun, stepped apart from its neighbour and clear of the words. Pure: the measured numbers in, the places out.
+// The homepage's label placement: where each sun's tag sits under its sun, stepped apart from its neighbour and clear of the words. Pure: the measured numbers in, the places out.
 // The scene (lib/home/scene.ts) reads the frame and the page, applies these places, and keeps the easing it owns.
 //   node --test lib/home/labels.test.ts
 
@@ -34,17 +33,4 @@ export function placeTags(suns: Sun[], o: { width: number; tagW: number[]; tagH:
     const gap = o.readBox.length ? Math.min(...o.readBox.map(clear)) : 99
     return { i: p.i, x, y: p.y, opacity: o.show * p.vis * o.smooth(0, FADE, gap) }
   })
-}
-
-/**
- * Where a tool's stack sits beside its world: on the world's left when it fits there, else on its right. On a phone it
- * sits centred under the world. Either way it stays in the open sky, between the nav and the words (band; null means
- * the whole height below the top).
- */
-export function placeStack(o: { wx: number; wy: number; width: number; height: number; sw: number; sh: number; portrait: boolean; band: { y0: number; y1: number } | null }): { x: number; y: number } {
-  const top = o.band ? o.band.y0 : 84, bottom = o.band ? o.band.y1 - 4 : o.height - 16
-  const left = o.wx - 56 - o.sw >= 24
-  const x = o.portrait ? Math.min(Math.max(o.wx - o.sw / 2, 16), o.width - o.sw - 16) : left ? o.wx - 56 - o.sw : Math.min(o.wx + 56, o.width - o.sw - 24)
-  const y = Math.min(Math.max(o.portrait ? o.wy + 40 : o.wy - o.sh / 2, top), Math.max(top, bottom - o.sh))
-  return { x, y }
 }

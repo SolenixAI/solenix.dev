@@ -52,9 +52,6 @@ grep -rn -E 'color-scheme[[:space:]]*:[^;}]*(light[^;}]*dark|dark[^;}]*light)' a
 # light-dark() pairs are written once, in design/tokens.css (the design's contract); a pair written anywhere else is a second copy of a colour.
 grep -rn -E 'light-dark\(' app components lib 2>/dev/null \
   | while read -r l; do echo "check: a light-dark() pair outside design/tokens.css (pairs are written once, in the tokens): ${l:0:80}"; done | grep . && fail=1
-# The theme decision is dark only (DESIGN.md): the docs must not say that the portal or the site follows the device.
-grep -n -i -E 'follows? the device' AGENTS.md DESIGN.md 2>/dev/null \
-  | while read -r l; do echo "check: contradicts the theme decision (the site is dark only, DESIGN.md): ${l:0:80}"; done | grep . && fail=1
 
 # No on-page Motion switch; the OS reduced-motion setting is the control.
 grep -n -E 'motion-toggle|class="word">Motion<' design/*.html 2>/dev/null \

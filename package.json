@@ -11,6 +11,7 @@
     "prepare": "git config core.hooksPath .githooks",
     "scenes": "node scripts/scene-check.ts",
     "shots": "node scripts/shots.ts",
+    "film": "node scripts/film.ts",
     "check:test": "bash scripts/check-test.sh",
     "share-images": "node scripts/share-images.ts",
     "article-covers": "node scripts/article-covers.ts",
