@@ -27,7 +27,7 @@ export default function Platform() {
         <div className="sx-hero-in">
           <div className="sx-hero-text">
             <h1>The {title} is being rebuilt.</h1>
-            <p className="sx-sub"><span style={{ color: "#fbbf24", fontWeight: 600 }}>Building.</span> Until it opens, start with one call. A fixed price, in writing, agreed on the call.</p>
+            <p className="sx-sub">Building: until it opens, start with one call. A fixed price, in writing, agreed on the call.</p>
             <div className="flex flex-wrap items-center gap-3">
               <Button asChild size="lg">
                 <a href="/book">Book a call</a>

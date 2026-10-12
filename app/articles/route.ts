@@ -49,7 +49,7 @@ function newestHero(a: Article, more: number) {
 <header class="sx-hero ar-hero" data-hero data-live-scope>
  <div class="sx-hero-in">
   <div class="sx-hero-text">
-   <h1>Articles</h1>
+   <h1>AI articles</h1>
    <p class="sx-sub">Pages you can play with, built with AI.</p>
    <a class="btn" href="/book">Book a call</a>
   </div>
@@ -76,7 +76,7 @@ export async function GET() {
       `<link rel="preload" as="image" href="${first.heroPhone}" imagesrcset="${srcset(first.heroPhone, first.heroPhone2x)}" media="(max-width:760px)" fetchpriority="high">`
     : ""
   const html = `<!doctype html>
-<html lang="en-CA"><head>
+<html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${title}</title><meta name="description" content="${esc(description)}">
 ${preload}<style>
@@ -157,7 +157,7 @@ footer p{margin:0;color:var(--muted);max-width:34rem}
 ${hero}
 <div class="wrap" id="more">
 ${list}
-<footer><p>Solenix built these pages with AI. For your business, we set up one AI at the centre of the tools you already use. We cut the tools you don't need and teach your team. A fixed price, in writing.</p><a class="btn primary" href="/book">Book a call</a></footer>
+<footer><p>Solenix built these pages with AI. For your business, we put one AI at the centre of the tools you already use, cut the ones you don't, and teach your team. A fixed price, in writing.</p><a class="btn primary" href="/book">Book a call</a></footer>
 </div><script>${CLIENT["articles-live"]}</script></body></html>`
   return servePage(html, { title, description, path: "/articles", cover: first?.cover, structuredData: articlesStructuredData(all) })
 }
