@@ -10,5 +10,5 @@
     "tw-animate-css",
     "shadcn"
   ],
-  "ignoreBinaries": ["vercel"]
+  "ignoreBinaries": ["vercel", "ffmpeg"]
 }

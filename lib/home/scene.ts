@@ -9,7 +9,7 @@ import { orbitStop } from "@/lib/space/orbit";
 import { listener } from "./listen";
 import { PROOF, playProof, proofLength } from "./proof";
 import { slotAz, TOOL_WORLDS } from "./worlds";
-import { JOURNEY } from "./journey";
+import { JOURNEY, PLAN_STEPS } from "./journey";
 
 // The tool worlds (lib/home/worlds.ts): each is a well (its mass) at its own place. az is the camera's view of it in
 // reduced motion.
@@ -17,8 +17,11 @@ const WELLS: SpaceWell[] = TOOL_WORLDS.map(w => ({ x: w.x, z: w.z, mass: w.mass,
 // The reduced-motion view of the sections that need their own: [elevation, distance] (the rest use the hero, a
 // station or the calm default).
 const RVIEW: Record<string, number[]> = { guide: [44, 12.5], promises: [17, 8.8] };
-// The plan's five stops sit on the real orbit, in the order the ink reaches them.
-const STOP_U = [0, 1, 2, 3, 4].map(k => orbitStop(k, 5));
+// The plan's stops sit on the real orbit, in the order the ink reaches them.
+const STOP_U = Array.from({ length: PLAN_STEPS }, (_, k) => orbitStop(k, PLAN_STEPS));
+// How many of the plan's steps are lit: one more every 1.1 s from arriving at the plan; all of them before reduced
+// motion, and on every stop after the plan.
+const PLAN_BEAT_MS = 1100;
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 // Each stop's tool, if it is a tool stop.
@@ -45,7 +48,7 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
   let sceneAgent = (q: Vec3): Vec3 => q;
   let shown: SpaceCard[] = [], things: SpaceSprite[] = [], agentAt: string | Vec3 | null = null, last: SpaceFrame | null = null;
   const started: { play: Solenix['play']; at: number } = { play: null, at: -1 };
-  const capWords = [...document.querySelectorAll<HTMLElement>('#journey .cap')].map(cap => [...cap.querySelectorAll<HTMLElement>(':scope > :is(h1, h2, p, ul)')]);
+  const capWords = [...document.querySelectorAll<HTMLElement>('#journey .cap')].map(cap => [...cap.querySelectorAll<HTMLElement>(':scope > :is(h1, h2, p, ul, ol)')]);
 
   function work(f: SpaceFrame) {
     shown = []; things = []; agentAt = null;
@@ -56,6 +59,8 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
     if (started.play !== S.play) { started.play = S.play; started.at = -1; }
     if (started.at < 0 && al > 0.92) started.at = performance.now();
     const a = S.play.ask, t = !S.motion ? Infinity : started.at < 0 ? 0 : (performance.now() - started.at) / 1000, m = playProof(p, a, Math.min(t, proofLength(p, a)));
+    // The world's own drift (T) stops under reduced motion: every value is still on screen, nothing moves by itself.
+    const T = S.motion ? performance.now() / 1000 : 0;
     // Units: view heights at the world's depth. The things (when a tool shows its work as cards) stand in a column
     // beside the world: to its left on a wide screen, under it on a narrow one. What is asked and what came back sit
     // just above the stop's words, where the eye already is.
@@ -66,7 +71,7 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
     const capLeft = cap.length ? Math.min(...cap.map(r => r.left)) : 32, capTop = cap.length ? Math.min(...cap.map(r => r.top)) : H * 0.62;
     // A card's offset so its left edge and top land on a point of the screen (CSS pixels).
     const toScreen = (cw: number, px: number, py: number) => ({ dx: (px - W / 2) / H + cw / 2 - v.x * aspect / 2, dy: (H / 2 - py) / H - v.y / 2 });
-    const live = hasScene(p.tool) ? playScene(p, a, Math.min(t, proofLength(p, a)), performance.now() / 1000) : null;
+    const live = hasScene(p.tool) ? playScene(p, a, Math.min(t, proofLength(p, a)), T) : null;
     if (live) {
       // The scene fits the frame: centred in the open part of the screen (the right half on a wide screen, the upper
       // half on a phone) at the world's depth, and sized to the view there, whatever the tool's camera.
@@ -78,11 +83,13 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
       const place = (q: { x: number; y: number; z: number }) => ({ x: o.x + (q.x * rx + q.z * fx) * k, y: o.y + q.y * k, z: o.z + (q.x * rz + q.z * fz) * k });
       for (const th of live.things) things.push({ id: id(th.id), ...place(th), size: th.size * k, aspect: th.aspect, icon: th.icon, tone: th.tone, alpha: al * th.alpha });
       sceneAgent = place;
+      // Labels are sized to the screen's width, so on a phone they stay inside it.
+      const lw = Math.min(1, aspect / 1.2);
       // Each thing that has a name wears it under it, small, in the world.
-      for (const th of live.things) if (th.label && th.alpha > 0.05) { const q = place({ x: th.x, y: th.y - th.size * 0.75, z: th.z }); shown.push({ id: id(`name-${th.id}`), at: q, dx: 0, dy: 0, w: 0.2, kind: 'type', title: '', lines: [{ size: 'p', px: 110, weight: 600, parts: [{ t: th.label, em: th.tone === 'new' }] }], alpha: al * th.alpha }); }
+      for (const th of live.things) if (th.label && th.alpha > 0.05) { const q = place({ x: th.x, y: th.y - th.size * 0.75, z: th.z }); shown.push({ id: id(`name-${th.id}`), at: q, dx: 0, dy: 0, w: 0.2 * lw, kind: 'type', center: true, title: '', lines: [{ size: 'p', px: 110, weight: 600, parts: [{ t: th.label, em: th.tone === 'new' }] }], alpha: al * th.alpha }); }
       // The AI wears its name while it works, so no one wonders what is moving.
       if (live.agent) shown.push({ id: own('ai'), at: place({ ...live.agent, y: live.agent.y + 0.55 }), dx: 0, dy: 0, w: 0.075, kind: 'pill', title: 'AI', alpha: al });
-      for (const lb of live.labels) shown.push({ id: id(`label-${lb.id}`), at: place(lb), dx: 0, dy: 0, w: 0.34, kind: 'type', title: '', lines: [{ size: 'p', px: 150, weight: 650, parts: [{ t: lb.text, em: lb.tone === 'new' }] }], alpha: al });
+      for (const lb of live.labels) shown.push({ id: id(`label-${lb.id}`), at: place(lb), dx: 0, dy: 0, w: 0.34 * lw, kind: 'type', center: true, title: '', lines: [{ size: 'p', px: 150, weight: 650, parts: [{ t: lb.text, em: lb.tone === 'new' }] }], alpha: al });
     } else {
       const y0 = f.portrait ? -0.1 : 0.22;
       for (const th of m.things) shown.push({ id: id(th.id), at, dx: x, dy: y0 - th.slot * step, w, kind: 'thing', title: th.label, value: th.value, state: th.state, alpha: al * th.show });
@@ -99,6 +106,8 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
   // caption: one source), drawn at the caption's own size and place while the stop is on, and left in the world when
   // the camera moves on, so it passes them. The page's own words stay for screen readers and keyboards.
   const TW = 1600, CANVAS_H = 132;
+  // The plan's steps as lines, each with its number, as many as are lit.
+  const planLit = () => S.sec !== 'plan' || !S.motion || S.planAt < 0 ? PLAN_STEPS : Math.min(PLAN_STEPS, 1 + Math.floor((performance.now() - S.planAt) / PLAN_BEAT_MS));
   const partsOf = (el: HTMLElement): TypeLine['parts'] => el.tagName === 'UL'
     ? [{ t: [...el.querySelectorAll('li')].map(li => li.textContent!.trim()).join(' · ') }]
     : [...el.childNodes].map(n => n instanceof HTMLElement ? (n.classList.contains('ex') ? { t: 'Example', ex: true } : { t: n.textContent!.replace(/\u2011/g, '-'), em: n.tagName === 'EM' }) : { t: (n.textContent ?? '').replace(/\u2011/g, '-') }).filter(p => p.t.trim());
@@ -111,7 +120,9 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
     if (!rs.length) return;
     const left = Math.min(...rs.map(r => r.left)), right = Math.max(...rs.map(r => r.right)), bottom = Math.max(...rs.map(r => r.bottom));
     const sizes = els.map(e => parseFloat(getComputedStyle(e.tagName === 'UL' ? e.querySelector('li') ?? e : e).fontSize)), big = Math.max(...sizes), K = CANVAS_H / big;
-    const lines: TypeLine[] = els.map((e, i) => ({ size: /^H/.test(e.tagName) ? 'h' : 'p', px: Math.round(sizes[i] * K), weight: +getComputedStyle(e).fontWeight || 600, parts: partsOf(e) }));
+    const lines: TypeLine[] = els.flatMap((e, i): TypeLine[] => e.tagName === 'OL'
+      ? [...e.querySelectorAll('li')].slice(0, planLit()).map((li, n) => ({ size: 'p' as const, px: Math.round(sizes[i] * K), weight: +getComputedStyle(e).fontWeight || 600, parts: [{ t: `${n + 1}`, em: true }, { t: li.textContent!.trim() }] }))
+      : [{ size: /^H/.test(e.tagName) ? 'h' : 'p', px: Math.round(sizes[i] * K), weight: +getComputedStyle(e).fontWeight || 600, parts: partsOf(e) }]);
     // The subject this stop is about: its tool's world, or the AI at the centre.
     const sc = JOURNEY_TOOL[S.cur], wi = sc ? S.fly.findIndex(w => w.id === sc) : -1, at = wi >= 0 ? f.well(wi) : f.hub();
     const v = f.project(at.x, at.y, at.z); if (v.z > 1) return;
@@ -128,15 +139,15 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
   }
   const goRole = (tool: string) => { const k = JOURNEY.findIndex(s => 'tool' in s.scene && s.scene.tool === tool), j = document.getElementById('journey')!, st = j.querySelector<HTMLElement>('.stage')!;
     scrollTo({ top: j.getBoundingClientRect().top + scrollY + ((k + 0.5) / JOURNEY.length) * (j.offsetHeight - st.offsetHeight), behavior: S.motion ? 'smooth' : 'instant' }); };
-  let roleCards: SpaceCard[] = [];
+  let roleCards: SpaceCard[] = [], planCards: SpaceCard[] = [];
 
   // A tap on an ask in the world plays it.
   const hitAsk = (e: PointerEvent) => {
     if (!last) return null;
-    for (const c of [...shown, ...roleCards]) if ((c.kind === 'ask' || c.kind === 'pill') && c.alpha > 0.5) { const r = last.cardRect(c.id); if (r && e.clientX >= r.x0 && e.clientX <= r.x1 && e.clientY >= r.y0 && e.clientY <= r.y1) return c; }
+    for (const c of [...shown, ...roleCards]) if ((c.kind === 'ask' || c.id.startsWith('role:')) && c.alpha > 0.5) { const r = last.cardRect(c.id); if (r && e.clientX >= r.x0 && e.clientX <= r.x1 && e.clientY >= r.y0 && e.clientY <= r.y1) return c; }
     return null;
   };
-  l.on(window, 'pointerup', (e: PointerEvent) => { const c = hitAsk(e); if (c?.id.startsWith('role:')) return goRole(c.id.slice(5)); if (!c || !S.play) return; const p = PROOF.find(x => x.tool === S.play!.tool)!; S.ask(p.tool, p.asks.findIndex(q => q.say === c.title)); });
+  l.on(window, 'pointerup', (e: PointerEvent) => { const c = hitAsk(e); if (c?.id.startsWith('role:')) return goRole(c.id.slice(5)); if (c?.kind !== 'ask' || !S.play) return; const p = PROOF.find(x => x.tool === S.play!.tool)!; S.ask(p.tool, p.asks.findIndex(q => q.say === c.title)); });
   l.on(window, 'pointermove', (e: PointerEvent) => { document.documentElement.style.cursor = hitAsk(e) ? 'pointer' : ''; }, { passive: true });
   l.add(() => { document.documentElement.style.cursor = ''; document.documentElement.classList.remove('type3d'); });
 
@@ -189,14 +200,9 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
     { const al = la * Math.max(sc.conn, sc.free * 0.75) * (1 - fl); tagAi.style.opacity = al.toFixed(3);
       if (al > 0.001) { const h = f.hub(), hp = f.project(h.x, h.y, h.z); tagAi.style.transform = `translate3d(${((hp.x + 1) / 2 * W).toFixed(1)}px, ${((1 - hp.y) / 2 * H - 30).toFixed(1)}px, 0) translateX(-50%)`; } }
 
-    // The five stops, pinned to their places on the orbit.
-    S.stops.forEach((e, k) => {
-      if (sc.stops < 0.01) { e.style.opacity = '0'; return; }
-      const o = f.orbit(STOP_U[k]), p = f.project(o.x, o.y, o.z);
-      const sx = (p.x + 1) / 2 * W, sy = (1 - p.y) / 2 * H, lit = S.jCur >= k || (S.jCur < 0 && sc.ink >= (k + 0.5) / 5 - 0.02);
-      e.style.opacity = (lit ? sc.stops : 0).toFixed(3); e.style.transform = `translate3d(${sx.toFixed(1)}px, ${sy.toFixed(1)}px, 0)`;
-      e.classList.toggle('lit', lit); e.classList.toggle('cur', k === S.jCur && !(locked || sc.agent > 0.98)); e.classList.toggle('flip', sx > W - 240);
-    });
+    // The plan's stops: numbered markers on the orbit itself, lit one at a time with their steps (words()).
+    const lit = planLit(), pw = portrait ? 0.045 : 0.03;
+    planCards = sc.stops < 0.01 ? [] : STOP_U.map((u, k) => ({ id: `plan:${k}`, at: f.orbit(u), dx: 0, dy: 0.035, w: pw, kind: 'pill' as const, title: String(k + 1), alpha: k < lit ? sc.stops : 0 }));
   }
 
   const binding: SpaceBinding = {
@@ -212,7 +218,7 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
     },
     openBand,
     onFrame: labels,
-    cards: () => [...shown, ...roleCards, ...(typeOn ? [typeOn] : [])],
+    cards: () => [...shown, ...roleCards, ...planCards, ...(typeOn ? [typeOn] : [])],
     sprites: () => things,
     agentTo: () => agentAt,
     onLock: (holding) => { ui.classList.toggle('locked', holding); },

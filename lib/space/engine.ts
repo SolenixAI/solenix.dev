@@ -26,7 +26,7 @@ export type { SpaceSprite, SpriteIcon, SpriteTone } from "./sprites";
 export interface SpaceParams {
   k: number; free: number; order: number; ink: number; third: number
   el: number; az: number; dist: number; ox: number; oy: number; poy: number
-  calm: number; dim: number; labels: number; conn: number; agent: number; stops: number
+  calm: number; dim: number; conn: number; agent: number; stops: number
   tx: number; tz: number; fly: number; wsel: number; hero: number; lens: number
   rf: number; rs: number; sp: number; rw: number
 }
@@ -326,7 +326,7 @@ export function createSpace(env: SpaceEnv): Space {
   deepSky.rotation.x = 1.02; deepSky.frustumCulled = false; deepSky.renderOrder = -1; scene.add(deepSky);
 
   // Spacetime: each of the three suns and each well body dips its own well. A well ends a short way out
-  // (WELL_R), so each body makes its own well, not one basin, not one basin, and the lines show only where space is bent.
+  // (WELL_R), so each body makes its own well, not one basin, and the lines show only where space is bent.
   const toolU = { value: env.wells.map((w, i) => new THREE.Vector3(w.x, w.z, TOOL_M[i])) };
   const gridU = { uB: bodyU, uT: toolU, uLens: lensU, uAsp: aspU, uC: { value: new THREE.Vector3() }, uLock: { value: 99 }, uTime: timeU, uDepth: { value: 0.95 }, uChaos: { value: 1 }, uBase: { value: -0.35 }, uSoft: { value: 0.3 }, uR: { value: 1 / Math.sqrt(WELL_R * WELL_R + 0.3) }, uCell: { value: 0.5 },
     uLine: { value: C.text.clone().multiplyScalar(0.34) }, uWarm: { value: C.sun2.clone() }, uAlpha: { value: 1 } };

@@ -109,9 +109,9 @@ function shop(p: ToolProof, a: number, t: number, T: number): SceneMoment {
     labels.push({ id: `name-${st.id}`, text: st.name, tone: "plain", x, y: -1.05 - (k % 2) * 0.35, z: 0.5 })
     if (st.out < 30 && day >= st.out && refill === 0) things.push({ id: `${st.id}-empty`, x, y: -0.6, z: 0.5, size: 0.4, icon: "box", tone: "hot", alpha: 0.5 + 0.3 * Math.sin(T * 4) })
   })
-  labels.push({ id: "day", text: a > 0 ? "Next 30 days" : `Day ${Math.round(day)} of 30`, tone: "plain", x: 0, y: 2.6, z: 0.5 })
-  if (a === 0 && t >= last) labels.push({ id: "out", text: "Caramels and mitts run out", tone: "hot", x: 0, y: -1.0, z: 0.5 })
-  if (a === 1 && t >= last) labels.push({ id: "re", text: "Reorder drafted · you approve it", tone: "new", x: 0, y: -1.0, z: 0.5 })
+  labels.push({ id: "day", text: a > 0 ? "Next 30 days" : `Day ${Math.round(day)} of 30`, tone: "plain", x: 0, y: 3.0, z: 0.5 })
+  if (a === 0 && t >= last) labels.push({ id: "out", text: "Caramels and mitts run out", tone: "hot", x: 0, y: 2.4, z: 0.5 })
+  if (a === 1 && t >= last) labels.push({ id: "re", text: "Reorder drafted · you approve it", tone: "new", x: 0, y: 2.4, z: 0.5 })
   const k = agentOver(p, a, t, STOCK.length)
   return { things, labels, agent: k >= 0 ? { x: -1.4 + k * 1.4, y: 0.6, z: 0.5 } : null }
 }
@@ -120,7 +120,7 @@ function shop(p: ToolProof, a: number, t: number, T: number): SceneMoment {
 // sends back almost no one. Asked to move its budget, the stream swings to the fall sale, which lights up.
 const ADS = [{ id: "local", ang: 0.6, sales: 1, name: "Local awareness" }, { id: "arrivals", ang: 2.6, sales: 3, name: "New arrivals" }, { id: "fall", ang: 4.4, sales: 5, name: "Fall sale" }]
 function ads(p: ToolProof, a: number, t: number, T: number): SceneMoment {
-  const things: SceneThing[] = [], labels: SceneLabel[] = [], { last } = pace(p, a), moved = a === 1 ? smooth(pace(p, a).s0, last, t) : 0
+  const things: SceneThing[] = [], labels: SceneLabel[] = [], { s0, last } = pace(p, a), moved = a === 1 ? smooth(s0, last, t) : 0
   ADS.forEach((ad, k) => {
     const at = { x: Math.cos(ad.ang) * 1.8, y: 0.5, z: Math.sin(ad.ang) * 1.8 }, seen = a > 0 ? 1 : smooth(0, 0.6, t - visit(p, a, k, ADS.length))
     const tone: Tone = ad.id === "local" ? (moved > 0.5 ? "dim" : seen > 0.5 ? "hot" : "plain") : ad.id === "fall" && moved > 0.5 ? "done" : "plain"
@@ -129,7 +129,7 @@ function ads(p: ToolProof, a: number, t: number, T: number): SceneMoment {
     const coins = ad.id === "local" ? Math.round(7 * (1 - moved)) + 1 : ad.id === "fall" ? 3 + Math.round(5 * moved) : 3
     for (let c = 0; c < 8; c++) { const u = (T * 0.45 + c / 8) % 1; things.push({ id: `${ad.id}-c${c}`, ...mix({ x: 0, y: 0.2, z: 0 }, at, u), size: 0.2, icon: "coin", tone: "new", alpha: c < coins ? Math.sin(u * Math.PI) : 0 }) }
     // The customers back: sparks rising from the ad, as many as it brings.
-    const sales = ad.id === "fall" ? ad.sales + Math.round(4 * moved) : ad.id === "local" ? ad.sales : ad.sales
+    const sales = ad.id === "fall" ? ad.sales + Math.round(4 * moved) : ad.sales
     for (let c = 0; c < 9; c++) { const u = (T * 0.35 + c / 9 + k * 0.17) % 1; things.push({ id: `${ad.id}-s${c}`, x: at.x, y: at.y + u * 1.6, z: at.z, size: 0.16, icon: "spark", tone: "done", alpha: c < sales ? Math.sin(u * Math.PI) : 0 }) }
   })
   if (a === 0 && t >= last) labels.push({ id: "waste", text: "$9.40 a sale · was $5.90", tone: "hot", x: Math.cos(0.6) * 2.1, y: 1.6, z: Math.sin(0.6) * 2.1 })
@@ -146,18 +146,20 @@ function numbers(p: ToolProof, a: number, t: number): SceneMoment {
   SALES.forEach((b, k) => {
     const g = a > 0 ? 1 : smooth(0, 0.8, t - visit(p, a, k, SALES.length)), hgt = Math.max(0.02, (b.v / 4210) * 1.8 * (0.15 + 0.85 * g)), w = 0.55
     things.push({ id: b.id, x: -1.0 + k * 1.0, y: -0.4 + hgt / 2, z: 0.6, size: w, aspect: hgt / w, icon: "bar", tone: a === 1 && t >= last ? "done" : g > 0.5 ? b.tone : "plain", alpha: 0.9 })
+    // Each bar wears its month's sales on top and its product under it.
     labels.push({ id: `name-${b.id}`, text: b.name, tone: "plain", x: -1.0 + k * 1.0, y: -0.75, z: 0.6 })
+    labels.push({ id: `sum-${b.id}`, text: `$${b.v.toLocaleString("en-CA")}`, tone: b.tone === "hot" && g > 0.5 ? "hot" : "plain", x: -1.0 + k * 1.0, y: -0.4 + hgt + 0.3, z: 0.6 })
   })
-  if (a === 0 && t >= last) labels.push({ id: "slip", text: "Pastry slipped 4%", tone: "hot", x: 0, y: 2.0, z: 0.6 })
-  if (a === 1 && t >= last) labels.push({ id: "chart", text: "Chart added to your sales sheet", tone: "new", x: 0, y: 2.0, z: 0.6 })
+  if (a === 0 && t >= last) labels.push({ id: "slip", text: "Pastry slipped 4%", tone: "hot", x: 0, y: 2.9, z: 0.6 })
+  if (a === 1 && t >= last) labels.push({ id: "chart", text: "Chart added to your sales sheet", tone: "new", x: 0, y: 2.9, z: 0.6 })
   const k = agentOver(p, a, t, SALES.length)
-  return { things, labels, agent: k >= 0 ? { x: -1.0 + k * 1.0, y: 1.6, z: 0.6 } : null }
+  return { things, labels, agent: k >= 0 ? { x: -1.0 + k * 1.0, y: 2.3, z: 0.6 } : null }
 }
 
 const SCENES: Record<string, (p: ToolProof, a: number, t: number, T: number) => SceneMoment> = { gmail: inbox, quickbooks: books, shopify: shop, meta: ads, microsoftexcel: numbers }
 
 /** Whether a tool's work is shown as things in the world (else as cards). */
-export const hasScene = (tool: string) => tool in SCENES
+export const hasScene = (tool: string) => Object.hasOwn(SCENES, tool)
 
 /** Tool p's work at time t of ask a; T keeps the world's drift going between asks. */
 export function playScene(p: ToolProof, a: number, t: number, T: number): SceneMoment {

@@ -114,7 +114,7 @@ journey
     Watches the AI do each role's job live: 5: Owner
     Reads the five-step plan and the promises: 5: Owner
   section Trust
-    Looks for proof, finds a placeholder photo: 2: Owner
+    Looks for proof, finds the founder named, no photo or client result yet: 2: Owner
     Looks for a price, finds only fixed price: 2: Owner
     Taps Solenix platform: being rebuilt, Book a call: 3: Owner
   section Browse

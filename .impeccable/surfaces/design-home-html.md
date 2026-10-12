@@ -27,11 +27,11 @@ Each stop: one scene state, one focal object, one line of words of 10 words or f
 | # | Stop | The scene shows | Words | Lever |
 |---|---|---|---|---|
 | 1 | Chaos | Revenue, Costs, Time fling apart | Your business is a three-body problem. | Contrast: the before, vivid |
-| 2 | Tools pull | The tool worlds tug the suns; 6.5 hours a week lost (Example) | Every tool pulls its own way. | Loss aversion: hours you lose |
+| 2 | Tools pull | The tool worlds tug the suns | Every tool pulls its own way. + Each one eats hours you don't get paid for. | Loss aversion: hours you lose |
 | 3 | Talk to one | The AI lights at the centre; every world is joined to it | Stop learning ten tools. Talk to one. + You don't need to be an expert to use it. | Hick's law: ten become one |
 | 4–8 | The roles an owner plays (TOOL_STOPS, most worn first): receptionist, bookkeeper, ad manager, stock manager, analyst | The camera arrives at the role's world. The ask types out, and the AI does the job as things in the world: calls and emails swarm and it answers nine itself, lifts the four that need you and clears the junk; invoices line up by days late; ad budget streams as coins and customers spark back, then moves to the ad that works; stock drains over a month and crates refill it; sales bars grow and the one that slipped turns red. The other ask waits as a card to tap. | You're also the [role]. | Pain named, then relieved in front of them |
-| 9–13 | The plan | The figure-eight forms; one stop lights per step | From one call to a stable orbit. + one line per step | Goal gradient |
-| 14 | Promises | Down inside the orbit; the four promises | Four promises, on paper. Fixed price · You own it · Plain English · No lock-in | Regret aversion |
+| 9 | The plan | The figure-eight is whole; its five numbered stops light one at a time, each with its step | From one call to a stable orbit. + five steps, one per light | Goal gradient |
+| 10 | Promises | Down inside the orbit; the four promises | Four promises, on paper. Fixed price · You own it · Plain English · No lock-in | Regret aversion |
 | Close | Stable orbit | The calm, centred orbit | Let's find your stable orbit. | Peak-end, the prompt at the peak |
 
 ## Scope and boundaries

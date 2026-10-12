@@ -6,7 +6,7 @@ import { test } from "node:test"
 import assert from "node:assert/strict"
 import { readFileSync } from "node:fs"
 import { fileURLToPath } from "node:url"
-import { JOURNEY } from "./journey.ts"
+import { JOURNEY, PLAN_STEPS } from "./journey.ts"
 import { TOOL_WORLDS } from "./worlds.ts"
 
 const html = readFileSync(fileURLToPath(new URL("../../design/home.html", import.meta.url)), "utf8")
@@ -14,7 +14,8 @@ const caps = [...html.matchAll(/<li class="cap(?: on)?" data-k="(\d+)">([\s\S]*?
 const text = (s: string) => s.replace(/<span class="ex">[\s\S]*?<\/span>/g, "").replace(/<svg[\s\S]*?<\/svg>/g, "")
   .replace(/<span class="no">[\s\S]*?<\/span>/g, "").replace(/<[^>]+>/g, " ").replace(/&#8209;/g, "-").replace(/&[a-z]+;/g, " ")
 const words = (s: string) => text(s).split(/\s+/).filter((w) => /[a-z0-9]/i.test(w)).length
-const lines = (body: string) => [...body.matchAll(/<(h1|h2|p|ul)\b[^>]*>([\s\S]*?)<\/\1>/g)].map((m) => m[2])
+const lines = (body: string) => [...body.matchAll(/<(h1|h2|p|ul)\b[^>]*>([\s\S]*?)<\/\1>/g), ...body.matchAll(/<ol\b[^>]*>([\s\S]*?)<\/ol>/g)]
+  .flatMap((m) => (m[0].startsWith("<ol") ? [...m[1].matchAll(/<li>([\s\S]*?)<\/li>/g)].map((li) => li[1]) : [m[2]]))
 
 test("there is one caption per stop, in order", () => {
   assert.equal(caps.length, JOURNEY.length)
@@ -49,9 +50,15 @@ test("each tool stop flies to a tool world that exists, and holds that tool's as
   })
 })
 
-test("the plan's five steps are five stops in a row", () => {
-  const steps = JOURNEY.map((s) => s.step).filter((s) => s !== undefined)
-  assert.deepEqual(steps, [0, 1, 2, 3, 4])
+test("the plan is one stop, and its words hold one line per step on the orbit", () => {
+  const plan = JOURNEY.flatMap((s, k) => (s.sec === "plan" ? [k] : []))
+  assert.equal(plan.length, 1)
+  const steps = caps[plan[0]].body.match(/<ol class="steps">([\s\S]*?)<\/ol>/)?.[1] ?? ""
+  assert.equal((steps.match(/<li>/g) ?? []).length, PLAN_STEPS)
+})
+
+test("the page's fallback stop count is the journey's: the scroll is one screen per stop before the script runs", () => {
+  assert.match(html, new RegExp(`\\.journey \\{[^}]*var\\(--n, ${JOURNEY.length}\\)`))
 })
 
 test("the page's stylesheet is whole: every rule opens and closes, so no broken rule swallows the ones after it", () => {

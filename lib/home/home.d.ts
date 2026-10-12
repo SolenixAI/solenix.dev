@@ -5,7 +5,7 @@
 interface HomeSceneParams {
   k: number; free: number; order: number; ink: number; third: number
   el: number; az: number; dist: number; ox: number; oy: number; poy: number
-  calm: number; dim: number; labels: number; conn: number; agent: number; stops: number
+  calm: number; dim: number; conn: number; agent: number; stops: number
   tx: number; tz: number; fly: number; wsel: number; hero: number; lens: number
   rf: number; rs: number; sp: number; rw: number
 }
@@ -19,7 +19,6 @@ interface HomeFlyWorld {
 /** The page's shared state: written by lib/home/ui.ts, read by lib/home/scene.ts. */
 interface Solenix {
   motion: boolean
-  vh: number
   scene: HomeSceneParams
   smooth: (a: number, b: number, x: number) => number
   hero: { el: number; dist: number; lens: number }
@@ -28,9 +27,9 @@ interface Solenix {
   cur: number
   /** The part of the story the page is at (lib/home/journey.ts sec), or close. */
   sec: string
-  stops: HTMLElement[]
   pingN: number
-  jCur: number
+  /** When the plan stop was reached (performance.now() ms): its steps light one at a time from then. -1 before it. */
+  planAt: number
   /** Per tool stop, the ask the visitor's world is answering (lib/home/proof.ts); absent: not asked yet. */
   asked: Record<string, number>
   /** The ask playing now, and when it started (performance.now() ms). Null before any tool stop. */

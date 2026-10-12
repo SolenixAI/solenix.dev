@@ -25,6 +25,8 @@ export interface SpaceCard {
   lines?: TypeLine[]
   /** Type only: where its lines wrap, in canvas pixels (the canvas is 1600 wide). */
   wrap?: number
+  /** Type only: each line centred on the card's point (a label on a thing), not starting at its left. */
+  center?: boolean
   /** Which edge of the card dx, dy place (default its centre). */
   align?: "center" | "bottom"
   title: string
@@ -51,8 +53,9 @@ function wrap(g: CanvasRenderingContext2D, text: string, max: number): string[] 
 const TW = 1600;
 // Words set in the space: big Sora headlines with the ember on their em part, a softer line under them. No card
 // behind them; a soft dark halo keeps them readable over the suns.
-function drawType(c: HTMLCanvasElement, lines: TypeLine[], wrapAt = TW - 40): number {
-  const g = c.getContext('2d')!;
+function drawType(c: HTMLCanvasElement, lines: TypeLine[], wrap = TW - 40, center = false): number {
+  // A line never runs past the canvas: a wrap wider than it cut words off at the right edge.
+  const g = c.getContext('2d')!, wrapAt = Math.min(wrap, TW - 40);
   const px = (l: TypeLine) => l.px ?? (l.size === 'h' ? 132 : 56);
   const font = (l: TypeLine, ex?: boolean) => ex ? `600 ${Math.round(px(l) * 0.6)}px ${MONO}` : `${l.weight ?? (l.size === 'h' ? 800 : 500)} ${px(l)}px ${SANS}`;
   const lh = (l: TypeLine) => px(l) * (l.size === 'h' ? 1.0 : 1.45);
@@ -69,7 +72,8 @@ function drawType(c: HTMLCanvasElement, lines: TypeLine[], wrapAt = TW - 40): nu
   c.width = TW; c.height = H; g.clearRect(0, 0, TW, H);
   let y = 20;
   for (const r of rows) {
-    y += lh(r.l); let x = 20; const space = px(r.l) * 0.27, base = y - lh(r.l) * 0.18;
+    const space = px(r.l) * 0.27, rowW = r.words.reduce((a, w, i) => a + w.w + (i ? space : 0), 0);
+    y += lh(r.l); let x = center ? (TW - rowW) / 2 : 20; const base = y - lh(r.l) * 0.18;
     for (const w of r.words) {
       g.font = font(r.l, w.ex); (g as CanvasRenderingContext2D & { letterSpacing: string }).letterSpacing = r.l.size === 'h' && !w.ex ? '-5px' : '0px';
       g.shadowColor = 'rgba(5,6,10,0.75)'; g.shadowBlur = 28;
@@ -94,7 +98,7 @@ function drawPill(c: HTMLCanvasElement, text: string): number {
 }
 
 function draw(c: HTMLCanvasElement, card: SpaceCard): number {
-  if (card.kind === 'type') return drawType(c, card.lines ?? [], card.wrap);
+  if (card.kind === 'type') return drawType(c, card.lines ?? [], card.wrap, card.center);
   const g = c.getContext('2d')!, st = card.state ?? 'plain', pad = 36;
   // Measure first: the card's height follows its words.
   g.font = `600 ${card.kind === 'say' ? 44 : card.kind === 'reply' ? 38 : card.kind === 'ask' ? 34 : 38}px ${SANS}`;
@@ -141,7 +145,7 @@ export function createCards(camera: THREE.PerspectiveCamera) {
         mesh.renderOrder = 20; mesh.frustumCulled = false; scene.add(mesh);
         e = { mesh, key: '', aspect: 0.2, pos: new THREE.Vector3(), seen: false, al: 0, w: 0, h: 0 }; live.set(c.id, e);
       }
-      const key = `${c.kind}|${c.title}|${c.value ?? ''}|${c.state ?? ''}|${c.lines ? JSON.stringify(c.lines) : ''}`;
+      const key = `${c.kind}|${c.center ? 'c' : ''}|${c.title}|${c.value ?? ''}|${c.state ?? ''}|${c.lines ? JSON.stringify(c.lines) : ''}`;
       if (key !== e.key) {
         const map = e.mesh.material.map!, cv = map.image as HTMLCanvasElement, w0 = cv.width, h0 = cv.height;
         e.key = key; e.aspect = draw(cv, c);

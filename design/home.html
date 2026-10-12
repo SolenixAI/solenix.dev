@@ -55,16 +55,6 @@ html { background: var(--bg); }
 footer { position: relative; z-index: 2; } /* inside main, above the scene's tags (.scene-ui) */
 .stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; pointer-events: none; }
 .stage a, .stage button { pointer-events: auto; }
-.stop-mk { position: absolute; left: 0; top: 0; opacity: 0; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%; display: grid; place-items: center; font: var(--fw-semibold) var(--fs-2xs)/1 var(--font-mono); letter-spacing: .04em; color: var(--muted); background: color-mix(in oklch, var(--bg) 82%, transparent); border: 1px solid var(--line-strong); will-change: transform, opacity; transition: background-color var(--dur-slow), color var(--dur-slow), border-color var(--dur-slow), box-shadow var(--dur-slow); }
-.stop-mk span { position: absolute; left: calc(100% + 10px); top: 50%; translate: 0 -50%; white-space: nowrap; padding: 5px 9px; border-radius: var(--radius-xs); background: color-mix(in oklch, var(--bg) 82%, transparent); border: 1px solid var(--line-strong); color: var(--text); letter-spacing: var(--track-label); text-transform: uppercase; opacity: 0; transition: opacity var(--dur-slow); }
-.stop-mk.flip span { left: auto; right: calc(100% + 10px); }
-.stop-mk { transition: width var(--dur-slow) var(--ease-out), height var(--dur-slow) var(--ease-out), margin var(--dur-slow) var(--ease-out), background-color var(--dur-slow), border-color var(--dur-slow), color var(--dur-fast), box-shadow var(--dur-slow); }
-.stop-mk.lit { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
-/* A stop already passed shrinks to a dot on the orbit; only the current one keeps its number and name. */
-.stop-mk.lit:not(.cur) { width: 10px; height: 10px; margin: -5px 0 0 -5px; font-size: 0; }
-.stop-mk.cur { box-shadow: 0 0 0 6px var(--accent-quiet), 0 0 24px color-mix(in srgb, var(--ring) 45%, transparent); }
-.stop-mk.cur span { opacity: 1; }
-@media (max-width: 720px) { .stop-mk { width: 28px; height: 28px; margin: -14px 0 0 -14px; } .stop-mk span { display: none; } }
 
 /* The three bodies, named. Each tag rides with its sun through the whole story. */
 .body-tag { position: absolute; left: 0; top: 0; opacity: 0; will-change: transform, opacity; display: inline-flex; align-items: center; gap: 6px; padding: 4px 9px; border-radius: var(--radius-pill); background: color-mix(in oklch, var(--bg) 74%, transparent); border: 1px solid var(--line-strong); font: var(--fw-semibold) var(--fs-2xs)/1.2 var(--font-mono); letter-spacing: var(--track-label); text-transform: uppercase; color: var(--text); white-space: nowrap; }
@@ -77,7 +67,7 @@ html:not(.js) .stage { position: relative; height: auto; min-height: 100svh; }
 
 /* ── The journey: one pinned stage, one stop per screen (lib/home/journey.ts). The world is the page; each stop's few
    words sit low in the sky beside it, shaded by their own shadow, never on a panel. ── */
-.journey { position: relative; height: calc(var(--n, 14) * 100vh); height: calc(var(--n, 14) * 100svh); }
+.journey { position: relative; height: calc(var(--n, 10) * 100vh); height: calc(var(--n, 10) * 100svh); }
 .journey .stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; pointer-events: none; }
 .journey .stage a { pointer-events: auto; }
 .caps { list-style: none; margin: 0 auto; padding: 0; position: relative; height: 100%; }
@@ -92,7 +82,7 @@ html:not(.js) .stage { position: relative; height: auto; min-height: 100svh; }
 .cap-h em { font-style: normal; background: var(--grad-headline); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: none; }
 /* While the world draws them, the words are type in the space (lib/home/scene.ts): the page's own words keep their
    place and stay for screen readers, unseen. */
-.type3d #journey .cap > :is(h1, h2, p, ul) { opacity: 0; }
+.type3d #journey .cap > :is(h1, h2, p, ul, ol) { opacity: 0; }
 /* A screen too short for the opening's second line keeps only the headline and the call. */
 @media (max-height: 420px) { .cap-hero + .say { display: none; } }
 /* The world can be dragged to look round (a mouse): the cursor says so. */
@@ -103,8 +93,8 @@ html:not(.js) .stage { position: relative; height: auto; min-height: 100svh; }
 .fig s { color: var(--muted); text-decoration-thickness: 2px; }
 .fig .lg { width: 22px; height: 22px; color: var(--accent-text); }
 .ex { display: inline-block; padding: 1px 8px; border: 1px dashed var(--line-strong); border-radius: var(--radius-pill); font: var(--fw-semibold) var(--fs-2xs)/1.5 var(--font-mono); color: var(--muted); text-shadow: none; }
-.step { margin: 0; display: grid; gap: var(--space-2); font-family: var(--font-display); font-size: clamp(1.75rem, min(3.6vw + 0.6rem, 8svh), 2.8rem); font-weight: var(--fw-bold); letter-spacing: var(--track-display); line-height: 1.05; max-width: 18ch; }
 .cap-plan { font-size: clamp(1.4rem, 2.6vw, 2rem); max-width: none; }
+.steps { margin: 0; padding-left: 1.4em; display: grid; gap: var(--space-1); font-family: var(--font-display); font-size: clamp(1.1rem, 1.5vw + 0.5rem, 1.6rem); font-weight: var(--fw-semibold); color: var(--text); max-width: 30ch; }
 .chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-3); }
 .chips li { padding: var(--space-2) var(--space-4); border: 1px solid var(--line-strong); border-radius: var(--radius-pill); font-weight: var(--fw-semibold); color: var(--text); background: color-mix(in oklch, var(--bg) 55%, transparent); }
 .cap.on .chips li { animation: chip-in 700ms cubic-bezier(0.16, 1, 0.3, 1) both; }
@@ -114,16 +104,12 @@ html:not(.js) .stage { position: relative; height: auto; min-height: 100svh; }
 html.js .story { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 html:not(.js) .story { position: relative; padding: calc(var(--nav-height) + var(--space-7)) var(--gutter) var(--space-7); max-width: 40rem; margin-inline: auto; display: grid; gap: var(--space-4); font-size: var(--fs-lede); color: var(--text); }
 .vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-.jticks { position: absolute; right: max(10px, calc(var(--gutter) * 0.5)); top: 50%; translate: 0 -50%; display: grid; gap: 7px; }
-.jticks i { display: block; width: 3px; height: 16px; border-radius: 2px; background: var(--line-strong); transition: background-color var(--dur-slow), height var(--dur-slow) var(--ease-out); }
-.jticks i.on { height: 28px; background: var(--ring); }
 .jbook { position: absolute; right: var(--gutter); bottom: clamp(1.25rem, 4svh, 2.5rem); transition: opacity var(--dur-base) var(--ease-out); }
 .journey[data-stop="chaos"] .jbook { opacity: 0; pointer-events: none; }
 @media (prefers-reduced-motion: reduce) { .cap, .cap.on { transform: none; } .cap.on .chips li { animation: none; } }
-@media (max-width: 640px) { .cap { bottom: calc(5.5rem + env(safe-area-inset-bottom)); } .jbook { left: var(--gutter); right: auto; } .jticks { gap: 5px; } .jticks i { height: 10px; } .jticks i.on { height: 18px; } }
+@media (max-width: 640px) { .cap { bottom: calc(5.5rem + env(safe-area-inset-bottom)); } .jbook { left: var(--gutter); right: auto; } }
 html:not(.js) .journey { height: auto; } html:not(.js) .journey .stage { position: relative; height: auto; overflow: visible; }
-html:not(.js) .cap { position: relative; inset: auto; opacity: 1; visibility: visible; transform: none; padding-block: var(--space-8); } html:not(.js) .jticks { display: none; }
-
+html:not(.js) .cap { position: relative; inset: auto; opacity: 1; visibility: visible; transform: none; padding-block: var(--space-8); } html:not(.js) 
 /* ── Closing: no box, no second canvas. The same orbit, seen whole, above the words. ── */
 .close-sec { position: relative; min-height: 100vh; min-height: 100svh; display: grid; align-items: center; }
 .close-in { padding-block: calc(var(--nav-height) + var(--space-7)) var(--space-9); display: grid; justify-items: start; text-shadow: 0 0 28px var(--bg), 0 0 12px var(--bg), 0 1px 2px var(--bg); }
@@ -142,7 +128,6 @@ html:not(.js) .cap { position: relative; inset: auto; opacity: 1; visibility: vi
 .close-sec .close-alt { display: inline-flex; text-shadow: 0 0 12px var(--bg), 0 0 4px var(--bg); align-items: center; min-height: var(--tap-min); font-size: var(--fs-body); color: var(--muted); text-decoration: underline; text-decoration-color: var(--line-strong); text-underline-offset: 4px; }
 .close-sec .close-alt:hover { color: var(--text); text-decoration-color: currentColor; }
 .close-sec .close-alt:focus-visible { outline: var(--focus-width) solid var(--focus-color); outline-offset: 3px; border-radius: var(--radius-pill); }
-.photo { flex: none; width: 76px; height: 76px; padding: 8px; box-sizing: border-box; border-radius: 50%; border: 1px dashed var(--line-strong); display: grid; place-items: center; text-align: center; font: var(--fw-semibold) var(--fs-2xs)/1.15 var(--font-mono); color: var(--muted); }
 
 /* The end of the journey: the close and the footer share the last screen, so the scroll ends on the stable orbit. */
 .finale { min-height: 100vh; min-height: 100svh; display: flex; flex-direction: column; }
@@ -203,11 +188,6 @@ html.js[data-motion="on"] .hb.arm:not(.play) .hw > span { transform: translateY(
   <div class="moon-tag world-tag" data-world="quickbooks"><svg class="lg"><use href="#lg-quickbooks"/></svg></div>
   <div class="moon-tag world-tag" data-world="gmail"><svg class="lg"><use href="#lg-gmail"/></svg></div>
   <div class="moon-tag world-tag" data-world="microsoftexcel"><svg class="lg"><use href="#lg-microsoftexcel"/></svg></div>
-  <div class="stop-mk" data-k="0">01<span>Find the hours</span></div>
-  <div class="stop-mk" data-k="1">02<span>Cut the tools</span></div>
-  <div class="stop-mk" data-k="2">03<span>One AI</span></div>
-  <div class="stop-mk" data-k="3">04<span>Your website</span></div>
-  <div class="stop-mk" data-k="4">05<span>Fixed price</span></div>
 </div>
 
 <div id="main">
@@ -222,11 +202,7 @@ html.js[data-motion="on"] .hb.arm:not(.play) .hw > span { transform: translateY(
     <li>You are also the ad manager. Example: you ask which ad is wasting money. Local awareness now costs far more for each sale than it did. Then you ask to move its budget to the fall sale, and the change waits for your call.</li>
     <li>You are also the stock manager. Example: you ask what runs out this month. Sea salt caramels and wool mitts will run out within 30 days. Then you ask to reorder them, and both reorders are drafted for you to approve.</li>
     <li>You are also the analyst. Example: you ask what slipped this month. Pastry slipped 4%; bread and coffee are up. Then you ask for a chart, and it is added to your sales sheet.</li>
-    <li>On the call, we add up what your tools cost you, in hours and dollars.</li>
-    <li>You stop paying for the ones you barely use. The rest move off outdated software.</li>
-    <li>We set up any AI agent you choose and connect it to your tools. Then we teach your team to use it.</li>
-    <li>It is where your customers decide to call you. We look after it. You own everything.</li>
-    <li>Agreed on the call. No surprise invoice.</li>
+    <li>From one call to a stable orbit: on the call we find where your hours go and what your tools cost; we cut the tools you don't use; we set up one AI you choose in your tools and teach your team; we build your website, and you own it; and the price is fixed, in writing, agreed on the call.</li>
     <li>Fixed price: one number, in writing, agreed on the call. You own it all: accounts, code and data in your name. Plain English: updates you read in a minute, on your phone. No lock-in: leave any month, keep everything you paid for.</li>
   </ol>
   <div class="stage" data-hero>
@@ -238,7 +214,7 @@ html.js[data-motion="on"] .hb.arm:not(.play) .hw > span { transform: translateY(
       </li>
       <li class="cap" data-k="1">
         <h2 class="cap-h">Every tool pulls <em>its own way.</em></h2>
-        <p class="fig"><b>6.5 hours</b> a week, lost to them <span class="ex">Example</span></p>
+        <p class="say">Each one eats hours you don't get paid for.</p>
       </li>
       <li class="cap" data-k="2">
         <h2 class="cap-h">Stop learning ten tools. <em>Talk to one.</em></h2>
@@ -266,26 +242,13 @@ html.js[data-motion="on"] .hb.arm:not(.play) .hw > span { transform: translateY(
       </li>
       <li class="cap" data-k="8">
         <h2 class="cap-h cap-plan">From one call to a <em>stable orbit.</em></h2>
-        <p class="step">We find where the hours go.</p>
+        <ol class="steps"><li>We find where your hours go.</li><li>We cut the tools you don't use.</li><li>One AI you choose, set up in your tools.</li><li>We build your website, and you own it.</li><li>A fixed price, in writing.</li></ol>
       </li>
       <li class="cap" data-k="9">
-        <p class="step">We cut the tools you don't need.</p>
-      </li>
-      <li class="cap" data-k="10">
-        <p class="step">Any AI agent, set up in your tools.</p>
-      </li>
-      <li class="cap" data-k="11">
-        <p class="step">We build your website.</p>
-      </li>
-      <li class="cap" data-k="12">
-        <p class="step">A fixed price, in writing.</p>
-      </li>
-      <li class="cap" data-k="13">
         <h2 class="cap-h">Four promises, <em>on paper.</em></h2>
         <ul class="chips"><li>Fixed price</li><li>You own it</li><li>Plain English</li><li>No lock-in</li></ul>
       </li>
     </ol>
-    <div class="jticks" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
     <a class="btn btn-ghost jbook" href="/book">Book a call</a>
   </div>
 </section>
@@ -294,14 +257,14 @@ html.js[data-motion="on"] .hb.arm:not(.play) .hw > span { transform: translateY(
 <section class="close-sec" id="close" data-scene="close" aria-labelledby="close-h">
   <div class="wrap close-in">
     <h2 id="close-h" class="rv">Let's find your <em>stable orbit.</em></h2>
-    <p class="rv">On a short call, we show it working on your own business.</p>
+    <p class="rv">On a short call, we add up what your tools cost you, then show the AI at work on your own business.</p>
     <div class="close-ctas rv">
       <a class="btn btn-primary" href="/book">Book a call</a>
       <a class="close-alt" href="mailto:hello@solenix.dev">or email hello@solenix.dev</a>
     </div>
     <div class="close-proof rv">
-      <p class="close-who"><span class="photo" aria-hidden="true">Photo to come</span><span><span class="who">Jager Cooper</span>, founder, St. John's, NL</span></p>
-      <p class="close-terms">Fixed price in writing. You own everything.</p>
+      <p class="close-who"><span><span class="who">Jager Cooper</span>, founder, St. John's, NL</span></p>
+      <p class="close-terms">Fixed price in writing. You own everything. Leave any month.</p>
     </div>
   </div>
 </section>
