@@ -7,6 +7,7 @@ import type { SpaceCard, SpaceFrame, SpaceSprite, SpaceWell, TypeLine, Vec3 } fr
 import { hasScene, playScene } from "./scenes";
 import { orbitStop } from "@/lib/space/orbit";
 import { listener } from "./listen";
+import { placeTags, type Box } from "./labels";
 import { PROOF, playProof, proofLength } from "./proof";
 import { slotAz, TOOL_WORLDS } from "./worlds";
 import { JOURNEY } from "./journey";
@@ -146,7 +147,7 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
   let tagShow = 1, tagW = [90, 90, 90], tagH = 28;
   // The words on screen (the stop's caption, or the close) are kept clear: no tag lands on any of them.
   const caps = [...document.querySelectorAll<HTMLElement>('#journey .cap')], closeBlocks = [...document.querySelectorAll<HTMLElement>('#close .close-in > *')];
-  let readBox: number[][] = [], boxDirty = true, boxCur = -1;
+  let readBox: Box[] = [], boxDirty = true, boxCur = -1;
   const markDirty = () => { boxDirty = true; };
   l.on(window, 'scroll', markDirty, { passive: true });
   l.on(window, 'resize', markDirty);
@@ -171,7 +172,7 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
     // Beside one world, only its mark shows; seen from afar (no world picked), every world wears its mark.
     worldTags.forEach((e, i) => placeAt(e, f.well(i), fl * (wsel < 0 ? 1 : (portrait ? 0 : 1) * Math.max(0, 1 - Math.abs(wsel - i) * 1.6)), 0, f));
     tagShow = lerp(tagShow, locked || sc.agent > 0.98 ? 1 : 0, 1 - Math.exp(-f.dt * 4));
-    const pad = (e: Element) => { const r = e.getBoundingClientRect(); return [r.left - 14, r.top - 10, r.right + 14, r.bottom + 10]; };
+    const pad = (e: Element): Box => { const r = e.getBoundingClientRect(); return [r.left - 14, r.top - 10, r.right + 14, r.bottom + 10]; };
     // Re-measured on scroll and whenever the stop (and so its words) changes.
     if (boxDirty || boxCur !== S.cur) { boxDirty = false; boxCur = S.cur; readBox = (S.cur < caps.length ? [...caps[S.cur].children] : closeBlocks).map(pad); }
     // On a phone the close fills the screen with words: the tags step back there.
@@ -179,13 +180,9 @@ export function startScene(S: Solenix): { binding: SpaceBinding; stop: () => voi
     const bd = [0, 1, 2].map(i => f.offOrbit(i));
     const pos = [0, 1, 2].map(i => { const B = f.sun(i), v = f.project(B.x, B.y, B.z), rad = f.sunRadiusPx(i);
       return { i, vis: 1 - Math.max(heroAmt, Math.min(1, sc.rw)) * smooth(1.02, 1.16, Math.abs(v.x)), x: (v.x + 1) / 2 * W, y: (1 - v.y) / 2 * H + lerp(margin, Math.max(margin, Math.min(rad, H * 0.22) + 18), heroAmt) }; }).sort((p0, p1) => p0.y - p1.y);
-    // Two tags that would touch: the lower one steps down by a whole tag, so neither hides the other.
-    const step = tagH + 6;
-    for (let n = 1; n < 3; n++) for (let m = 0; m < n; m++) if (Math.abs(pos[n].x - pos[m].x) < (tagW[pos[n].i] + tagW[pos[m].i]) / 2 + 8 && pos[n].y - pos[m].y < step) pos[n].y = pos[m].y + step;
-    pos.forEach(pp => { const e = tags[pp.i], hw = tagW[pp.i] / 2 + 10, x = Math.min(Math.max(pp.x, hw), W - hw);
-      const clear = (bx: number[]) => Math.max(bx[0] - (x + hw), (x - hw) - bx[2], bx[1] - (pp.y + 12), (pp.y - 12) - bx[3]);
-      const gap = readBox.length ? Math.min(...readBox.map(clear)) : 99;
-      e.style.opacity = (la * pp.vis * smooth(0, 28, gap)).toFixed(3); e.style.transform = `translate3d(${x.toFixed(1)}px, ${pp.y.toFixed(1)}px, 0) translateX(-50%)`; e.classList.toggle('in', bd[pp.i] < 0.05); });
+    // Where each tag sits: stepped apart from its neighbour, held in the viewport, clear of the words (lib/home/labels.ts).
+    placeTags(pos, { width: W, tagW, tagH, readBox, show: la, smooth }).forEach(pp => { const e = tags[pp.i];
+      e.style.opacity = pp.opacity.toFixed(3); e.style.transform = `translate3d(${pp.x.toFixed(1)}px, ${pp.y.toFixed(1)}px, 0) translateX(-50%)`; e.classList.toggle('in', bd[pp.i] < 0.05); });
     { const al = la * Math.max(sc.conn, sc.free * 0.75) * (1 - fl); tagAi.style.opacity = al.toFixed(3);
       if (al > 0.001) { const h = f.hub(), hp = f.project(h.x, h.y, h.z); tagAi.style.transform = `translate3d(${((hp.x + 1) / 2 * W).toFixed(1)}px, ${((1 - hp.y) / 2 * H - 30).toFixed(1)}px, 0) translateX(-50%)`; } }
 

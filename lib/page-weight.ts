@@ -13,7 +13,7 @@ const KB = 1024
 export const DEFAULT: Budget = { total: 900 * KB, script: 450 * KB }
 const BUDGETS: Record<string, Budget> = {
   "/": { total: 770 * KB, script: 610 * KB }, // measured 667 KB, 531 KB script (the 3D engine, analytics); live: 683 / 530
-  "/agents": { total: 525 * KB, script: 455 * KB }, // measured 455 KB, 393 KB script; its live stream (/agents/live) is left out
+  "/agents": { total: 525 * KB, script: 455 * KB }, // measured 455 KB, 393 KB script; its live stream (/agents/live) counts the bytes it sends, none without Redis
   "/app": { total: 560 * KB, script: 420 * KB }, // measured 487 KB, 366 KB script
   "/articles": { total: 1120 * KB, script: 570 * KB }, // measured 974 KB, 496 KB script (the newest article inline, PostHog)
   "/articles/proof-flood": { total: 665 * KB, script: 570 * KB }, // measured 577 KB, 492 KB script (inline, PostHog)
@@ -29,4 +29,12 @@ export function overBudget(w: Weight, b = budgetFor(w.path)): string[] {
   if (w.total > b.total) out.push(`${w.path} weighs ${kb(w.total)}, over its ${kb(b.total)} budget`)
   if (w.script > b.script) out.push(`${w.path} loads ${kb(w.script)} of script, over its ${kb(b.script)} budget`)
   return out
+}
+
+/** Whether the browser can hand back a response's body. A response with none to read is weighed by the bytes it sent. */
+export function hasReadableBody(status: number, contentType: string | null, contentLength: string | null): boolean {
+  if (status === 204 || status === 205 || status === 304) return false // an empty status: no body by protocol
+  if (status >= 300 && status < 400) return false // a redirect
+  if ((contentType ?? "").startsWith("text/event-stream")) return false // a live stream: it does not end
+  return contentLength !== "0" // an empty body
 }
