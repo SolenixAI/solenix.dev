@@ -1,7 +1,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>The Proof Flood: OpenAI's 372 math results</title>
 <meta name="description" content="OpenAI released 372 new math results in October 2026. Every one is explained in plain words: the question, the answer, why it matters and what it makes possible.">
-<meta name="article:published_time" content="2026-10-08">
+<meta property="article:published_time" content="2026-10-08">
 <style>
 /* Layout: Solenix night sky. One warm light source, a 32px hairline grid, glass panels with a lit top edge; three suns settle into the figure-eight behind the hero. Single dark design, as the Solenix site is dark. */
 :root{
@@ -68,7 +68,7 @@ section{padding-top:var(--nav-height);display:grid;gap:22px}
 .qcap b{color:var(--ink)}
 .qed i.hot{outline:2px solid var(--ink);outline-offset:2px;transform:scale(1.25);position:relative;z-index:2;transition:transform .2s}
 .qtip{position:absolute;z-index:5;width:min(280px,80%);padding:12px 14px;border-radius:16px;background:color-mix(in srgb,var(--surface-solid) 94%,transparent);border:1px solid color-mix(in srgb,var(--text) 14%,transparent);box-shadow:inset 0 1px 0 color-mix(in srgb,var(--text) 12%,transparent),0 16px 40px rgba(0,0,0,.5);pointer-events:none;transition:left .35s cubic-bezier(.2,.8,.2,1),top .35s cubic-bezier(.2,.8,.2,1),opacity .2s;display:grid;gap:4px}
-.qtip .f,.tip .f{font:600 11px/1.3 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:6px}
+.qtip .f,.tip .f{font:600 12px/1.3 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:6px}
 .qtip .f i,.tip .f i{width:8px;height:8px;border-radius:50%}
 .qtip .h,.tip .h{font:650 15px/1.25 var(--f-display);color:var(--ink);letter-spacing:-.01em}
 .qtip .k,.tip .k{font:400 13.5px/1.4 var(--f-body);color:var(--muted)}
@@ -175,7 +175,7 @@ section{padding-top:var(--nav-height);display:grid;gap:22px}
 .pcard{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:18px;display:grid;gap:10px;align-content:start;text-align:left}
 .pcard .glyph{font:600 26px/1 var(--f-mono);color:var(--accent)}
 .pcard .row{display:grid;grid-template-columns:72px 1fr;gap:10px;font-size:15px}
-.pcard .row b{font:600 11px/1.6 var(--f-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.pcard .row b{font:600 12px/1.6 var(--f-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
 
 /* playground */
 .play{display:grid;grid-template-columns:1fr 300px;gap:18px;align-items:start}
@@ -242,7 +242,7 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 #atlas .search .ico{width:16px;height:16px;flex:none;fill:none;stroke:var(--muted);stroke-width:1.7;stroke-linecap:round}
 #atlas .search input{flex:1;min-width:0;border:0;background:none;font:16px var(--f-body);color:var(--ink);padding:12px 0;outline:none;caret-color:var(--accent)}
 #atlas .search input::placeholder{color:var(--muted);opacity:1}
-#atlas .search kbd{font:600 11px var(--f-mono);color:var(--muted);border:1px solid var(--line-strong);border-radius:6px;padding:2px 6px}
+#atlas .search kbd{font:600 12px var(--f-mono);color:var(--muted);border:1px solid var(--line-strong);border-radius:6px;padding:2px 6px}
 #atlas .seg{display:inline-flex;border:1px solid var(--line-strong);border-radius:999px;padding:3px;gap:2px;background:var(--paper)}
 #atlas .seg button{min-height:44px;padding:0 16px;border:0;border-radius:999px;background:transparent;color:var(--muted);font:600 14px/1 var(--f-body)}
 #atlas .seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
@@ -344,7 +344,7 @@ details.more .chiprow:last-child{margin-bottom:0}
 .dpic .gl{position:absolute;right:12px;bottom:8px;font-size:26px!important;opacity:.8}
 .qa{display:grid;gap:8px}
 .qa > div{border-radius:14px;padding:14px 16px;font-size:18px;line-height:1.4;font-family:var(--f-display);font-weight:600;letter-spacing:-.01em}
-.qa b,.kid b,.sec > b{display:block;font:600 11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.qa b,.kid b,.sec > b{display:block;font:600 12px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
 .qa .q{background:var(--paper-solid);border:1px solid var(--line)}
 .qa .a.yes{background:var(--ok-soft);border:1px solid color-mix(in srgb,var(--ok) 35%,transparent)}
 .qa .a.no{background:var(--bad-soft);border:1px solid color-mix(in srgb,var(--down) 35%,transparent)}
@@ -366,11 +366,11 @@ details.more .chiprow:last-child{margin-bottom:0}
 .dbody .official{font:14px/1.45 var(--f-body);color:var(--muted);font-style:italic}
 .dbody .lead{font-size:19px;line-height:1.5}
 .pic{background:var(--accent-soft);border-radius:12px;padding:12px 14px;font-size:16px}
-.pic b{font:600 11px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:4px}
+.pic b{font:600 12px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:4px}
 .pvi{display:grid;gap:8px}
 .pvi div{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px}
 .pvi i{font-style:normal;font:700 20px/1.2 var(--f-mono);color:var(--gc);text-align:center}
-.pvi b{font:600 11px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block}
+.pvi b{font:600 12px var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block}
 .meters{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .meters div{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:grid;gap:6px;font:12px var(--f-mono);color:var(--muted)}
 .pips{display:flex;gap:3px} .pips i{flex:1;height:8px;border-radius:3px;background:var(--line)} .pips i.on{background:var(--gc)}
@@ -391,6 +391,10 @@ details.tech p{margin-top:8px;font-size:14.5px;color:var(--muted)}
 }
 .qed i{cursor:pointer}
 .qed i:hover{outline:2px solid var(--ink);outline-offset:1px}
+.qed i:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+/* Each square's touch and click area is at least 24px across, though the square is drawn at its own size. */
+.qed i{position:relative}
+.qed i::before{content:"";position:absolute;inset:-5px}
 
 /* fluid */
 #fluid ::selection{background:color-mix(in srgb,var(--accent) 34%,transparent);color:var(--text)}
@@ -500,7 +504,7 @@ details.tech p{margin-top:8px;font-size:14.5px;color:var(--muted)}
 .dbt{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:20px;align-items:stretch}
 .dbt-list{position:relative;isolation:isolate;overflow:hidden;padding:18px;border-radius:28px;background:var(--paper);border:1px solid var(--line);box-shadow:var(--edge),var(--shadow);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
 .dbt-list::after{content:"";position:absolute;right:-130px;bottom:-170px;width:380px;height:380px;border-radius:50%;background:radial-gradient(closest-side,color-mix(in srgb,var(--sun1) 14%,transparent),transparent);pointer-events:none;z-index:-1}
-.dbt-axis{display:grid;grid-template-columns:minmax(0,1fr) minmax(128px,1.2fr);gap:16px;padding:0 14px 12px;font:600 .72rem/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.dbt-axis{display:grid;grid-template-columns:minmax(0,1fr) minmax(128px,1.2fr);gap:16px;padding:0 14px 12px;font:600 .75rem/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 .dbt-axis>span:last-child{display:flex;justify-content:space-between}
 .dbt-rows{list-style:none;margin:0;padding:0;display:grid;gap:4px}
 .dbt-rows button{appearance:none;display:grid;grid-template-columns:minmax(0,1fr) minmax(128px,1.2fr);align-items:center;gap:16px;width:100%;min-height:52px;margin:0;padding:10px 14px;border:1px solid transparent;border-radius:14px;background:transparent;color:var(--muted);text-align:left;transition:background-color .2s,border-color .2s,color .2s}
@@ -524,7 +528,7 @@ details.tech p{margin-top:8px;font-size:14.5px;color:var(--muted)}
 .dbt-lamp{position:absolute;top:50%;left:var(--x,4%);width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;background:radial-gradient(circle at 40% 38%,var(--hot),var(--sun2) 55%,transparent 72%);box-shadow:0 10px 30px -6px color-mix(in srgb,var(--sun2) 70%,transparent);transition:left .7s cubic-bezier(.16,1,.3,1)}
 .dbt-text{display:grid;gap:12px}
 .dbt-who{font:800 clamp(1.6rem,1.2rem + 1.6vw,2.3rem)/1.05 var(--f-display);letter-spacing:-.03em}
-.dbt-role{font:600 .72rem/1.4 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.dbt-role{font:600 .75rem/1.4 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 .dbt-say{font-size:1.05rem;line-height:1.55;max-width:34rem}
 .dbt-say b{color:var(--text)}
 #debate ::selection{background:color-mix(in srgb,var(--accent) 35%,transparent);color:var(--text)}
@@ -588,7 +592,7 @@ details.tech p{margin-top:8px;font-size:14.5px;color:var(--muted)}
 #sources .unknowns p{margin:0;font-size:16px;line-height:1.55;text-wrap:pretty}
 #sources .unknowns a{color:var(--text);text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--accent) 60%,transparent);text-decoration-thickness:1px;text-underline-offset:3px}
 #sources .unknowns a:hover{color:var(--accent-hover)}
-#sources .chip{display:inline-flex;align-items:center;min-height:28px;padding:0 10px;border:1px dashed var(--warn);border-radius:999px;font:600 .72rem/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--warn);white-space:nowrap}
+#sources .chip{display:inline-flex;align-items:center;min-height:28px;padding:0 10px;border:1px dashed var(--warn);border-radius:999px;font:600 .75rem/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--warn);white-space:nowrap}
 #sources .chip.to-confirm{border-color:var(--line-strong);color:var(--muted)}
 #sources h3{margin:clamp(40px,6vw,56px) 0 0;font-size:1.2rem}
 #sources .src{margin-top:12px;border-bottom:1px solid var(--line)}
@@ -1418,7 +1422,13 @@ const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&g
 /* hero grid becomes the atlas index */
 (()=>{const q=$("#qed");q.innerHTML="";A.forEach((a,i)=>{const s=el("i",{role:"button","aria-label":a.h,"data-i":i});s.style.background=a.c==2?GC(a.G):"transparent";
  s.style.boxShadow=`inset 0 0 0 1.5px ${GC(a.G)}`;if(a.c==1)s.style.background=`linear-gradient(135deg,${GC(a.G)} 50%,transparent 50%)`;if(a.c==0)s.style.opacity=.6;
- s.onclick=()=>openD(i);q.append(s)})})();
+ s.onclick=()=>openD(i);s.tabIndex=-1;q.append(s)})})();
+/* The squares are keyboard buttons: one tab stop for the grid, arrow keys move between squares, Enter or Space opens one. */
+(()=>{const q=$("#qed"),move=(s,to)=>{to=Math.max(0,Math.min(q.children.length-1,to));s.tabIndex=-1;q.children[to].tabIndex=0;q.children[to].focus()};
+ q.addEventListener("keydown",e=>{const s=e.target.closest("i[data-i]");if(!s)return;const k=[...q.children].indexOf(s),cols=+(q.style.gridTemplateColumns.match(/repeat\((\d+)/)||[0,24])[1];
+  const step={ArrowRight:1,ArrowLeft:-1,ArrowDown:cols,ArrowUp:-cols,Home:-k,End:q.children.length-1-k}[e.key];
+  if(step!==undefined){e.preventDefault();move(s,k+step)}else if(e.key==="Enter"||e.key===" "){e.preventDefault();openD(+s.dataset.i)}});
+ q.children[0].tabIndex=0})();
 
 /* The grid fills the room it has: the column count that gives the largest square wins.
    When the squares would be too small to see (under half a line of the caption), the explaining
@@ -1443,12 +1453,14 @@ const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&g
  const still=matchMedia("(prefers-reduced-motion: reduce)").matches;
  function start(){if(still){show(famous[0]);return}clearInterval(tour);show(famous[k%famous.length]);tour=setInterval(()=>{k++;show(famous[k%famous.length])},3200)}
  q.addEventListener("pointerover",e=>{const s=e.target.closest("i[data-i]");if(!s)return;clearInterval(tour);show(+s.dataset.i)});
+ // Keyboard focus shows the same card as the pointer does.
+ q.addEventListener("focusin",e=>{const s=e.target.closest("i[data-i]");if(!s)return;clearInterval(tour);show(+s.dataset.i)});
  q.addEventListener("pointerleave",()=>start());
  new IntersectionObserver(es=>{if(es[0].isIntersecting)start();else clearInterval(tour)}).observe(q)})();
 
 /* start-here strip */
 (()=>{const top=[...A].sort((x,y)=>y.fm-x.fm||y.r-x.r||x.i.localeCompare(y.i)).slice(0,12);
- $("#starts").innerHTML=top.map(a=>`<button class="scard" style="--gc:${GC(a.G)}" data-i="${byId[a.i]}"><canvas class="spic" data-pc="${a.pc}" aria-hidden="true"></canvas><h3>${sup(a.h)}</h3><p class="sq">${sup(a.q)}</p><p>${sup(a.an)}</p><span class="ck c${a.c}"><i></i><span class="mono" style="font-size:11px">${CHK[a.c]}</span></span></button>`).join("");
+ $("#starts").innerHTML=top.map(a=>`<button class="scard" style="--gc:${GC(a.G)}" data-i="${byId[a.i]}"><canvas class="spic" data-pc="${a.pc}" aria-hidden="true"></canvas><h3>${sup(a.h)}</h3><p class="sq">${sup(a.q)}</p><p>${sup(a.an)}</p><span class="ck c${a.c}"><i></i><span class="mono" style="font-size:12px">${CHK[a.c]}</span></span></button>`).join("");
  requestAnimationFrame(()=>document.querySelectorAll("#starts canvas.spic").forEach(cv=>picMount(cv,cv.dataset.pc,tok(getComputedStyle(cv.parentElement).getPropertyValue("--gc").trim().slice(4,-1)))));
  $("#starts").onclick=e=>{const b=e.target.closest("[data-i]");if(b)openD(+b.dataset.i)}})();
 

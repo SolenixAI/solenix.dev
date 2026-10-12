@@ -3,7 +3,7 @@ import { Suspense } from "react"
 import { GithubIcon } from "@/components/brand/github-icon"
 import { catalogVersion, getCatalog, MARKETPLACE_REPO, orbit, type Entry } from "@/lib/marketplace"
 import { OG_IMAGE, SITE_URL } from "@/lib/site-meta"
-import { agentsSchema, ldJson } from "@/lib/site-schema"
+import { agentsStructuredData, jsonLd } from "@/lib/structured-data"
 import { HERO_CSS } from "@/lib/site-hero"
 import { Sky } from "./sky"
 import { KindIcon, MiniOrbit, StarIcon, System } from "./system"
@@ -87,7 +87,8 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
   const entry = world ? (await getCatalog())?.find((e) => e.id === world) : undefined
   const title = entry ? `${entry.name} for your AI` : "Agents Marketplace"
   const description = entry ? `${entry.for} One sentence sets it up in any AI agent, the makers' way.` : "Set up your AI the makers' way: one sentence installs what a tool's makers built for AI, in any AI agent."
-  const url = `${SITE_URL}/agents${entry ? `?world=${entry.id}` : ""}`
+  // A world's link is a query variant of this page: its canonical is the page itself, so search engines count one page.
+  const url = `${SITE_URL}/agents`
   // A world's link previews that world's own picture (app/(site)/agents/og); the marketplace keeps the site picture.
   const image = entry ? { url: `${SITE_URL}/agents/og?world=${entry.id}`, width: 1200, height: 630, alt: `${entry.name} for your AI` } : OG_IMAGE
   return {
@@ -106,7 +107,7 @@ export default async function Agents({ searchParams }: { searchParams: Promise<{
   const entry = world ? catalog.find((e) => e.id === world) : undefined
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(agentsSchema(catalog)) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(agentsStructuredData(catalog)) }} />
       <style dangerouslySetInnerHTML={{ __html: HERO_CSS + WORLDS_CSS + WAIT_CSS }} />
       {entry && (
         <noscript>

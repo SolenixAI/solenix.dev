@@ -16,7 +16,7 @@ export const NAV = {
   // page, a plain link (the browser loads it).
   links: [
     { href: "/articles", label: "Articles" },
-    { href: "/agents", label: "Agents Marketplace", wide: true, app: true },
+    { href: "/agents", label: "Agents Marketplace", short: "Agents", wide: true, app: true },
   ],
   platform: { href: "/app", label: "Solenix platform", short: "Platform", aria: "Solenix platform: being rebuilt" },
   contact: { href: "mailto:hello@solenix.dev", label: "hello@solenix.dev" },
@@ -63,6 +63,12 @@ const BAR = `position:fixed;z-index:var(--z-nav);top:calc(12px + env(safe-area-i
 
 export const NAV_CSS = `
 html{scroll-padding-top:var(--nav-height)}
+/* One experience across pages: the browser cross-fades the page beneath, and the nav holds still. Where a browser has no cross-document transitions, the page swaps at once on the same dark ground (lib/site-ground.ts). */
+@view-transition{navigation:auto}
+.snav{view-transition-name:site-nav}
+::view-transition-group(site-nav),::view-transition-old(site-nav),::view-transition-new(site-nav){animation:none}
+::view-transition-old(root),::view-transition-new(root){animation-duration:420ms;animation-timing-function:cubic-bezier(.16,1,.3,1)}
+@media (prefers-reduced-motion:reduce){::view-transition-old(root),::view-transition-new(root){animation:none}}
 .snav{${BAR};transform:translateX(-50%);padding:0 var(--space-2) 0 var(--space-4)}
 .snav[data-local]{position:absolute}
 .snav.is-solid{background:color-mix(in srgb,var(--surface-solid) 86%,transparent)}
@@ -72,7 +78,7 @@ html{scroll-padding-top:var(--nav-height)}
 .snav-links{flex:none;display:flex;align-items:center;gap:var(--space-1);margin-left:auto}
 .snav-links a,.lnav-in a{flex:none;display:inline-flex;align-items:center;min-height:var(--tap-min);padding:0 var(--space-3);border-radius:var(--radius-pill);color:var(--muted);white-space:nowrap}
 .snav-links a:hover,.lnav-in a:hover,.lnav-list a:hover{background:var(--line);color:var(--text)}
-.snav-links a[aria-current],.lnav-in a[aria-current],.lnav-list a[aria-current]{color:var(--accent-text);background:var(--accent-quiet)}
+.snav-links a[aria-current],.lnav-in a[aria-current],.lnav-list a[aria-current],.snav-act[aria-current="page"]{color:var(--accent-text);background:var(--accent-quiet)}
 .snav-act{flex:none;display:inline-flex;align-items:center;gap:10px;min-height:var(--tap-min);margin-left:var(--space-2);padding:0 var(--space-4) 0 var(--space-3);border-radius:var(--radius-pill);border:1px solid var(--line-strong);font-weight:600;white-space:nowrap}
 .snav-act:hover,.lnav-share:hover,.lnav-cur:hover{background:var(--line)}
 .snav-act .short{display:none}
@@ -84,12 +90,14 @@ html{scroll-padding-top:var(--nav-height)}
 @keyframes snav-orbit{to{transform:rotate(360deg)}}
 .snav :focus-visible,.lnav :focus-visible,.lnav-list :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 /* No width guesses: the script measures the real space and uses the first layout that fits, in this
-   order: everything; c1 tighter + "Platform"; + c2 the mark without the name; c3 without the wide link
-   (the name back); both. */
+   order: everything; c1 tighter + "Platform"; + c2 the mark without the name; c3 the wide link under its short name;
+   c4 (the last resort, below the phone widths) without the wide link
+   (Agents); both. */
 .snav.c1{padding-left:var(--space-3)}.snav.c1 .snav-links a{padding:0 var(--space-2)}.snav.c1 .snav-act{padding:0 var(--space-3) 0 10px}
 .snav.c1 .snav-act .long{display:none}.snav.c1 .snav-act .short{display:inline}
 .snav.c2 .snav-brand span{display:none}
-.snav.c3 .snav-links a.wide{display:none}
+.snav-links .short{display:none}.snav.c3 .snav-links a.wide .long{display:none}.snav.c3 .snav-links a.wide .short{display:inline}
+.snav.c4 .snav-links a.wide{display:none}
 /* An article's own bar takes the same place once the site nav has scrolled away, moving with the
    scroll (no timer). First layout that fits: every section link; l1 the section you are in, tap for
    the list; l2 Share as an icon; l3 without the mark (the title still leads home: one scroll up);
@@ -137,21 +145,30 @@ export type NavItem = (typeof NAV.links)[number]
  * `link` draws each link: a plain anchor on the raw pages (plainLink), NavLink on the React pages.
  * `local`: the page has its own bar too. The fit script sets the header's layout classes before React
  * hydrates, so React leaves its attributes as they are (suppressHydrationWarning). */
-export function navHeader(link: (l: NavItem) => ReactNode, { local = false } = {}) {
+export function navHeader(link: (l: NavItem) => ReactNode, { local = false, act }: { local?: boolean; act?: (props: PlatformProps, inner: ReactNode[]) => ReactNode } = {}) {
   const p = NAV.platform
+  const props: PlatformProps = { className: "snav-act", href: p.href, "aria-label": p.aria }
+  const inner = [
+    h("span", { key: "orb", className: "snav-orb", "aria-hidden": "true" }, h("i")),
+    h("span", { key: "long", className: "long" }, p.label),
+    h("span", { key: "short", className: "short" }, p.short),
+  ]
   return h("header", { className: "snav", "data-snav": "", "data-local": local ? "" : undefined, suppressHydrationWarning: true },
     h("a", { className: "snav-brand", href: NAV.home.href, "aria-label": NAV.home.aria },
       h("svg", { viewBox: "0 0 32 32", "aria-hidden": "true", dangerouslySetInnerHTML: { __html: markInner() } }),
       h("span", null, NAV.home.label)),
     h("nav", { className: "snav-links", "aria-label": "Main" }, NAV.links.map(link)),
-    h("a", { className: "snav-act", href: p.href, "aria-label": p.aria },
-      h("span", { className: "snav-orb", "aria-hidden": "true" }, h("i")),
-      h("span", { className: "long" }, p.label),
-      h("span", { className: "short" }, p.short)))
+    act ? act(props, inner) : h("a", props, ...inner))
 }
 
+/** The platform button's anchor attributes; a React page passes `act` to mark it current (components/site/platform-link.tsx). */
+export type PlatformProps = { className: string; href: string; "aria-label": string }
+
 /** A nav link as a plain anchor, for the raw pages: client/site-nav.ts marks the current one. */
-export const plainLink = (l: NavItem) => h("a", { key: l.href, className: l.wide ? "wide" : undefined, href: l.href }, l.label)
+export const plainLink = (l: NavItem) => h("a", { key: l.href, className: l.wide ? "wide" : undefined, href: l.href }, navText(l.label, "short" in l ? l.short : undefined))
+
+/** A nav link's copy: the full name, and the short name a narrow bar shows (c3). */
+const navText = (label: string, short?: string) => short ? [h("span", { key: "long", className: "long" }, label), h("span", { key: "short", className: "short" }, short)] : label
 
 /** The markers a page's markup may hold: <!--site:brand--> (the mark and name, linked home), <!--site:footer-links--> (the footer
  * links), <!--site:mark--> (the mark alone, no link) and <!--site:sun--> (the sun's light as a gradient with id "site-sun",

@@ -35,7 +35,7 @@ The system behind solenix.dev. Solenix is one tech expert for small businesses i
 - The site is dark only.
 - No Motion switch.
 - Offer: one AI at the centre of the tools they already use; cut unused tools; teach; build the website. Claims land on time or money.
-- The AI is the customer's own agent: "the AI agent of your choice". Customer copy never names a vendor as the AI we set up. (Jager, 2026-10-11) <!-- bans: /\b(claude|chatgpt|codex|cursor)\b/i in design/home.html app lib -->
+- The AI is the customer's own agent: "the AI agent of your choice". Customer copy never names a vendor as the AI we set up. (Jager, 2026-10-11) <!-- bans: /\b(Claude|ChatGPT|Codex|Cursor)\b/ in design/home.html app lib -->
 
 - "Agents Marketplace" (never "Tools we use"): works with any AI, one copy-paste prompt per tool, GitHub stars for open source.
 - Book a call opens a real booking page, never mailto.

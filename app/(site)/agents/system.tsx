@@ -4,7 +4,8 @@ import { avatar } from "@/lib/avatar"
 import { useEffect, useRef, useState, type ReactNode } from "react"
 import { ago, count } from "@/lib/format"
 import { flushSync } from "react-dom"
-import type { Kind, Orbit, Part, Source } from "@/lib/marketplace"
+import type { Kind, Orbit, Part, Piece } from "@/lib/marketplace"
+import { addressFor, crumbsOf, diveOf, enterPart, initialPath, levelOf, type Path } from "@/lib/agents/drill"
 
 // A world as a small solar system: the maker is the sun, each piece a planet on one orbit ring (the
 // Solenix mark: a sun, one ring, one agent dot). Pick any body and its sub-world opens beside it:
@@ -39,14 +40,14 @@ const CheckIcon = () => <Icon d={<path d="m5 12.5 4.5 4.5L19 7.5" />} />
 const OutIcon = () => <Icon d={<path d="M14 5h5v5M19 5l-8 8M17 14v4a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h4" />} />
 
 /** What a planet says at a glance: one number that measures it (stars, a count), never a version or a sentence. */
-function tag(s: Source) {
+function tag(s: Piece) {
   if (s.kind === "maker" || s.kind === "tool") return s.repo?.stars != null ? compact(s.repo.stars) : null
   if (s.kind === "skills") return s.items.length ? String(s.items.length) : null
   return null
 }
 
 /** The body's face: the maker's own avatar where a repo has one, otherwise the piece's drawn icon. */
-function Face({ s, size }: { s: Source; size: number }) {
+function Face({ s, size }: { s: Piece; size: number }) {
   if ((s.kind === "maker" || s.kind === "tool") && s.repo?.avatar) return <img className="sy-face" src={avatar(s.repo.avatar, size * 2)} width={size} height={size} alt="" />
   return <KindIcon kind={s.kind} />
 }
@@ -96,49 +97,31 @@ function dive(from: HTMLElement | null, direction: "in" | "out", update: () => v
   document.startViewTransition(() => flushSync(update))
 }
 
-type Level = { kind: "world" } | { kind: "piece"; piece: Source } | { kind: "part"; piece: Source; part: Part }
-
 /** A world you can dive into: the world, then any piece's own world, then any part inside it. */
 export function System({ orbit, world, initial }: { orbit: Orbit; world: string; initial?: string | null }) {
-  const pieceOf = (id: string | null | undefined) => orbit.planets.find((p) => p.id === id)
-  const [path, setPath] = useState<string[]>(() => (pieceOf(initial) ? [initial!] : []))
+  const [path, setPath] = useState<Path>(() => initialPath(orbit, initial))
   const stage = useRef<HTMLDivElement>(null)
   const moved = useRef(false) // set by a drill-down; the first render does not move focus
   // The server hands over only the piece, so a link with a part lands on the piece here, then steps in.
-  useEffect(() => {
-    const q = new URLSearchParams(location.search)
-    const part = q.get("part")
-    if (q.get("world") !== world || !part) return
-    setPath((p) => (p.length === 1 && pieceOf(p[0])?.parts.some((x) => x.id === part) ? [p[0], part] : p))
-  }, [])
+  useEffect(() => { setPath((p) => enterPart(orbit, p, world, location.search)) }, [])
   // Focus follows the drill-down: the new level's heading takes it, so a keyboard or screen reader reader keeps their place.
   useEffect(() => {
     if (!moved.current) return
     moved.current = false
     stage.current?.querySelector<HTMLElement>("[data-level-title]")?.focus({ preventScroll: true })
   }, [path])
-  const piece = pieceOf(path[0])
-  const part = piece?.parts.find((x) => x.id === path[1])
-  const level: Level = part && piece ? { kind: "part", piece, part } : piece ? { kind: "piece", piece } : { kind: "world" }
+  const level = levelOf(orbit, path)
   // The address names where you are (?world=vercel&piece=skills&part=ai-sdk), so a link lands there.
   // It replaces the entry rather than adding one: Back still closes the world.
-  const go = (next: string[], from: HTMLElement | null) => {
+  const go = (next: Path, from: HTMLElement | null) => {
     // A new level opens at its top: on a phone the title, the trail and the copy action are what a reader needs first.
     const dialog = from?.closest("dialog")
     moved.current = true
-    dive(from, next.length >= path.length ? "in" : "out", () => { setPath(next); dialog?.scrollTo({ top: 0 }) })
-    const q = new URLSearchParams(location.search)
-    if (q.get("world") !== world) return
-    q.delete("piece"); q.delete("part")
-    if (next[0]) q.set("piece", next[0])
-    if (next[1]) q.set("part", next[1])
-    history.replaceState(history.state, "", `?${q}`)
+    dive(from, diveOf(path, next), () => { setPath(next); dialog?.scrollTo({ top: 0 }) })
+    const address = addressFor(world, location.search, next)
+    if (address) history.replaceState(history.state, "", address)
   }
-  const crumbs: { label: string; to: string[] }[] = [
-    { label: orbit.sun.name, to: [] },
-    ...(piece ? [{ label: piece.name, to: [piece.id] }] : []),
-    ...(part && piece ? [{ label: part.name, to: [piece.id, part.id] }] : []),
-  ]
+  const crumbs = crumbsOf(orbit, path)
   return (
     <div className="sy">
       {/* The trail shows once you are inside a piece: at the world level it would be one lone name. */}
@@ -178,7 +161,7 @@ export function System({ orbit, world, initial }: { orbit: Orbit; world: string;
 
 type Planet = { id: string; name: string; tag: string | null; face: ReactNode; onPick: (el: HTMLElement) => void }
 /** A piece's parts on rings by kind: agents nearest, then commands, then skills. Many become dots. */
-function rings(piece: Source, pick: (x: Part, el: HTMLElement) => void): Planet[][] {
+function rings(piece: Piece, pick: (x: Part, el: HTMLElement) => void): Planet[][] {
   const order: Part["kind"][] = ["agent", "command", "skill"]
   return order.map((k) => piece.parts.filter((x) => x.kind === k)).filter((r) => r.length > 0)
     .map((r) => r.map((x) => ({ id: x.id, name: x.name, tag: null, face: <KindIcon kind={x.kind} />, onPick: (el: HTMLElement) => pick(x, el) })))
@@ -218,7 +201,7 @@ function Ago({ iso }: { iso: string }) {
   return <time dateTime={iso} suppressHydrationWarning>{ago(ms, now)}</time>
 }
 
-function SubWorld({ s, onPart }: { s: Source; onPart?: (x: Part, el: HTMLElement) => void }) {
+function SubWorld({ s, onPart }: { s: Piece; onPart?: (x: Part, el: HTMLElement) => void }) {
   const stats = [
     s.repo?.stars != null && <li key="s"><StarIcon />{count(s.repo.stars)}<span>stars</span></li>,
     s.repo?.forks != null && <li key="f"><ForkIcon />{count(s.repo.forks)}<span>forks</span></li>,
@@ -254,7 +237,7 @@ function SubWorld({ s, onPart }: { s: Source; onPart?: (x: Part, el: HTMLElement
 const KIND_WORD: Record<Part["kind"], string> = { skill: "Skill", agent: "Specialist agent", command: "Shortcut" }
 // A maker's own blurb that names its machinery (an install command, a package tool) stays off the screen.
 const MACHINERY = /\b(npx|npm|pip|brew|curl)\b|--[a-z]/i
-function PartView({ part, piece }: { part: Part; piece: Source }) {
+function PartView({ part, piece }: { part: Part; piece: Piece }) {
   return (
     <section className="sy-world" aria-label={part.name}>
       <header className="sy-world-head">

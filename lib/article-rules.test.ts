@@ -1,7 +1,7 @@
 import { test } from "node:test"
 import assert from "node:assert/strict"
 import { readFileSync } from "node:fs"
-import { articleProblems, pageEdges, placeholderTexts } from "./article-rules.ts"
+import { articleHead, articleProblems, pageEdges, placeholderTexts } from "./article-rules.ts"
 
 const read = (p: string) => readFileSync(new URL(p, import.meta.url), "utf8")
 const TEMPLATE = read("../articles/_template/index.html")
@@ -55,4 +55,19 @@ test("a page edge other than the gutter fails, and the template's own edge passe
   assert.equal(fails("padding-right:16px"), true)
   assert.equal(fails("padding-inline:var(--gutter);padding-bottom:96px"), false)
   assert.equal(articleProblems("my-new-piece", TEMPLATE).some((p) => p.includes("page edge")), false)
+})
+
+test("the publication date is a property meta tag: a name tag is refused, and the date is read from the property", () => {
+  const PAGE = read("../articles/proof-flood/index.html")
+  assert.equal(articleHead(PAGE).published, "2026-10-08")
+  assert.deepEqual(articleProblems("proof-flood", PAGE), [])
+  const named = PAGE.replace('property="article:published_time"', 'name="article:published_time"')
+  assert.equal(articleHead(named).published, "")
+  assert.ok(articleProblems("proof-flood", named).some((p) => p.includes('property="article:published_time"')))
+})
+
+test("articleHead reads a page's title, description and publish date, and gives empty strings for what is missing", () => {
+  const html = `<title>Hello there</title><meta name="description" content="A description long enough to pass the rules here.">`
+  assert.deepEqual(articleHead(html), { title: "Hello there", description: "A description long enough to pass the rules here.", published: "" })
+  assert.deepEqual(articleHead(""), { title: "", description: "", published: "" })
 })

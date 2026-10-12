@@ -2,13 +2,13 @@ import { existsSync } from "node:fs"
 import { readdir, readFile } from "node:fs/promises"
 import path from "node:path"
 import { servePage } from "@/lib/site-page"
-import { SLUG, articleProblems } from "@/lib/article-rules"
-import { articleSchema } from "@/lib/site-schema"
+import { SLUG, articleHead, articleProblems } from "@/lib/article-rules"
+import { articleStructuredData } from "@/lib/structured-data"
 
 // Articles are self-contained interactive pages: one folder per article in articles/,
 // holding index.html and whatever data it loads. Adding an article = adding a folder.
 // The page is the one source of truth for its title, description and date
-// (<title>, <meta name="description">, <meta name="article:published_time">).
+// (<title>, <meta name="description">, <meta property="article:published_time">).
 // At serve time lib/site-page.ts adds what every page shares: the nav, head tags and measurement.
 
 const DIR = path.join(process.cwd(), "articles")
@@ -28,14 +28,14 @@ export async function readArticle(slug: string): Promise<{ meta: Article; html: 
   // Build gate: a page that breaks the article rules fails the build, so it can never ship.
   const problems = articleProblems(slug, html)
   if (problems.length) throw new Error(`articles/${slug}:\n  - ${problems.join("\n  - ")}`)
-  const pick = (re: RegExp) => html.match(re)?.[1]?.trim() ?? ""
+  const head = articleHead(html)
   // The file's URL if it exists, else undefined.
   const still = (file: string) => existsSync(path.join(process.cwd(), "public/articles", slug, file)) ? `/articles/${slug}/${file}` : undefined
   const meta: Article = {
     slug,
-    title: pick(/<title>([^<]*)<\/title>/) || slug,
-    description: pick(/<meta name="description" content="([^"]*)"/),
-    date: pick(/<meta name="article:published_time" content="([^"]*)"/),
+    title: head.title || slug,
+    description: head.description,
+    date: head.published,
     path: `/articles/${slug}`,
     // From npm run article-covers; also the share image.
     cover: still("cover.png"),
@@ -57,7 +57,7 @@ export async function listArticles(): Promise<Article[]> {
 
 /** Serve an article: wrap a bare page in a document, then add what every page shares. */
 export function serveArticle(meta: Article, html: string) {
-  return servePage(/<html[\s>]/i.test(html) ? html : wrapFragment(html), { ...meta, schema: meta.date ? articleSchema(meta) : undefined })
+  return servePage(/<html[\s>]/i.test(html) ? html : wrapFragment(html), { ...meta, type: "article", structuredData: articleStructuredData(meta) })
 }
 
 // A page written as a fragment (no <html>): its leading meta, title, link and style tags
@@ -66,5 +66,5 @@ function wrapFragment(html: string) {
   const m = html.match(/^(\s*(?:<meta[^>]*>|<title>[^<]*<\/title>|<link[^>]*>|<style[\s\S]*?<\/style>|\s)*)([\s\S]*)$/i)
   const head = m?.[1] ?? ""
   const body = m?.[2] ?? html
-  return `<!doctype html><html lang="en"><head>${head}</head><body>${body}</body></html>`
+  return `<!doctype html><html lang="en-CA"><head>${head}</head><body>${body}</body></html>`
 }
