@@ -52,6 +52,8 @@ html { background: var(--bg); }
 /* ── The world's stage (.world, its canvas and its first-frame still) is styled by components/space/stage-css.ts,
    with the stage itself: every page that shows the world shares it. ── */
 .scene-ui { position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
+/* The scene's tags belong to the world: they fade up with it from its first drawn frame (html.gl-on, lib/space/world.ts), never ahead of it over a dark screen. */
+.type3d .scene-ui { opacity: 0; } .type3d.gl-on .scene-ui { opacity: 1; transition: opacity 400ms ease; }
 footer { position: relative; z-index: 2; } /* inside main, above the scene's tags (.scene-ui) */
 .stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; pointer-events: none; }
 .stage a, .stage button { pointer-events: auto; }

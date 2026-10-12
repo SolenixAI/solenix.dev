@@ -16,7 +16,7 @@ function fakePage() {
   g.document = {
     createElement: () => { const el = { style: {} as Record<string, string>, remove: () => { inBody.delete(el) } }; return el },
     body: { append: (el: object) => { inBody.add(el) } },
-    documentElement: { classList: { remove: (c: string) => { marks.delete(c) } } },
+    documentElement: { classList: { add: (c: string) => { marks.add(c) }, remove: (c: string) => { marks.delete(c) } } },
   }
   g.getComputedStyle = () => ({ color: "rgb(0, 0, 0)" })
   return inBody
