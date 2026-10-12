@@ -9,9 +9,6 @@ import { NAV } from "./site-nav.ts"
 export const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 const MAX_BYTES = 8 * 1024 * 1024
 
-/** An article's publication date: its <meta property="article:published_time">, the one form the site reads ("" when absent). */
-export const publishedDate = (html: string) => html.match(/<meta property="article:published_time" content="([^"]*)"/)?.[1]?.trim() ?? ""
-
 // Things that must never reach a public page.
 const PRIVATE: [RegExp, string][] = [
   [/\/Users\/[a-z]/i, "a local file path"],
@@ -57,16 +54,26 @@ export function pageEdges(html: string): string[] {
   return out
 }
 
+/** The head fields every article page declares: its title, its description and its publish date. Empty when a page leaves one out. */
+export function articleHead(html: string) {
+  const pick = (re: RegExp) => html.match(re)?.[1]?.trim() ?? ""
+  return {
+    title: pick(/<title>([^<]*)<\/title>/),
+    description: pick(/<meta name="description" content="([^"]*)"/),
+    published: pick(/<meta property="article:published_time" content="([^"]*)"/),
+  }
+}
+
 /** Problems with one article page; empty means it passes. */
 export function articleProblems(slug: string, html: string): string[] {
   const out: string[] = []
-  const pick = (re: RegExp) => html.match(re)?.[1]?.trim() ?? ""
+  const head = articleHead(html)
   if (!SLUG.test(slug)) out.push(`folder name "${slug}" must be lower-case words joined by hyphens`)
-  const title = pick(/<title>([^<]*)<\/title>/)
+  const title = head.title
   if (title.length < 3 || title.length > 70) out.push(`<title> must be 3–70 characters (now ${title.length})`)
-  const description = pick(/<meta name="description" content="([^"]*)"/)
+  const description = head.description
   if (description.length < 50 || description.length > 200) out.push(`<meta name="description"> must be 50–200 characters (now ${description.length})`)
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(publishedDate(html)))
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(head.published))
     out.push(`<meta property="article:published_time" content="YYYY-MM-DD"> is missing or not a date`)
   if (!/<meta name="viewport"[^>]*width=device-width/i.test(html)) out.push(`<meta name="viewport" content="width=device-width, initial-scale=1"> is missing`)
   if (Buffer.byteLength(html) > MAX_BYTES) out.push(`page is larger than 8 MB`)

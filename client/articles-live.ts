@@ -40,7 +40,7 @@ const shape = (c: HTMLElement) => {
 }
 const fit = () => {
   for (const c of document.querySelectorAll<HTMLElement>(".live")) {
-    if (c.classList.contains("play")) shape(c)
+    if (c.classList.contains("play") && !c.closest(".ar-hero")) shape(c)
     const b = box(c)
     c.style.setProperty("--s", String(b.s))
     c.style.setProperty("--vw", b.w + "px")
