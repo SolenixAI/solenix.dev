@@ -1,4 +1,4 @@
-// Reading other people's facts (GitHub, npm, the MCP registry) through Next's data cache, for lib/marketplace.ts.
+// Reading other people's facts (GitHub, npm, the MCP registry) through Next's data cache, for lib/marketplace/read.ts.
 // A source that fails, or answers with something that is not JSON, gives null and logs why (lib/failed):
 // it drops only its own facts. `optional`: a 404 means the fact does not exist (a repo with no release), so
 // it gives null quietly. `get` is the seam: the site passes fetch, a test passes a fake.

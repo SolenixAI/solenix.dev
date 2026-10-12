@@ -9,7 +9,7 @@ export function SiteNav() {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: NAV_CSS }} />
-      {navHeader((l) => <NavLink key={l.href} href={l.href} label={l.label} wide={l.wide} app={l.app} />)}
+      {navHeader((l) => <NavLink key={l.href} href={l.href} label={l.label} short={"short" in l ? l.short : undefined} wide={l.wide} app={l.app} />)}
       <script dangerouslySetInnerHTML={{ __html: NAV_FIT }} />
       <script type="speculationrules" dangerouslySetInnerHTML={{ __html: NAV_PREFETCH }} />
     </>

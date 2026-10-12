@@ -46,9 +46,9 @@ try {
         else analytics++
       }
       if (!res || (res.status() >= 300 && res.status() < 400)) return { total: 0, script: 0 } // a redirect carries no body
-      // A live stream (/agents/live) is left out: it sends a retry line and the catalog's version (a few dozen bytes),
-      // then one short notice per catalog change while the page is open, and its body cannot be read once it closes.
-      if ((await res.headerValue("content-type"))?.startsWith("text/event-stream")) return { total: 0, script: 0 }
+      // A live stream (/agents/live) is left out: it sends a few dozen bytes, then one short notice per catalog change while
+      // the page is open, and its body cannot be read once the page closes. The request type says so before the response is read.
+      if (req.resourceType() === "eventsource") return { total: 0, script: 0 }
       const body = await res.body()
       const total = gz(body)
       if (req.resourceType() === "script") return { total, script: total }

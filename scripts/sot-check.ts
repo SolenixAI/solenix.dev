@@ -36,7 +36,7 @@ const RULES = [
   },
   {
     what: "the catalog key (catalog:<branch>)",
-    owner: "lib/marketplace.ts",
+    owner: "lib/marketplace/read.ts",
     // A key built by hand, in either form: a template literal, or a quoted prefix joined with +.
     re: /catalog:\$\{|["'`]catalog:["'`]\s*\+/,
     allow: [] as string[],
