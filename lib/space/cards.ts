@@ -61,25 +61,32 @@ const WORLD_FONTS = '/vendor/fonts/world/';
 const SORA_WEIGHTS = [400, 500, 600, 700, 800];
 const soraFile = (w: number) => `${WORLD_FONTS}sora-latin-${SORA_WEIGHTS.reduce((a, b) => (Math.abs(b - w) < Math.abs(a - w) ? b : a))}-normal.woff`;
 const EMBER_A = new THREE.Color('#fbbf24'), EMBER_B = new THREE.Color('#f97316'), TINT = new THREE.Color();
+// Troika writes each range's colour into the glyphs as raw bytes, outside three's colour management, and the frame's
+// output then encodes it to sRGB: so a range colour is given in linear values, or it shows washed out.
+const raw = (c: THREE.Color) => c.getHex(THREE.LinearSRGBColorSpace);
 
 /** One line of type as troika lays it out: its words joined by single spaces, the em words coloured along the
  * ember gradient one character at a time, the Example label muted. */
 function typeLine(l: TypeLine, wrapAt: number, center: boolean): Text {
   const px = l.px ?? (l.size === 'h' ? 132 : 56);
-  const base = l.size === 'h' ? 0xefece6 : 0xd6d1ca;
+  const base = raw(new THREE.Color(l.size === 'h' ? '#efece6' : '#d6d1ca'));
   const words: { t: string; em?: boolean; ex?: boolean }[] = [];
   for (const p of l.parts) for (const t of p.t.split(/\s+/).filter(Boolean)) words.push({ t, em: p.em, ex: p.ex });
   let text = '';
-  const ranges: Record<number, number> = {};
+  // Every character takes a range colour: the base from the first, the ember and the Example label over it.
+  const ranges: Record<number, number> = { 0: base };
+  // Words are joined by a space and a hair space: Sora's space alone, with the headline's tightened letters, closes
+  // the words up (the canvas set 0.27em between them).
+  const GAP = l.size === 'h' ? ' \u200a' : ' ';
   for (let i = 0; i < words.length; i++) {
-    const w = words[i], at = text.length + (i ? 1 : 0);
-    text += (i ? ' ' : '') + w.t;
-    if (w.ex) { ranges[at] = 0xa39e97; ranges[at + w.t.length] = base; }
+    const w = words[i], at = text.length + (i ? GAP.length : 0);
+    text += (i ? GAP : '') + w.t;
+    if (w.ex) { ranges[at] = raw(TINT.set('#a39e97')); ranges[at + w.t.length] = base; }
     else if (w.em) {
       // The gradient runs across the whole em run, as one stroke of colour.
       let j = i; while (j + 1 < words.length && words[j + 1].em) j++;
-      const run = words.slice(i, j + 1).map((x) => x.t).join(' ');
-      for (let k = 0; k < run.length; k++) ranges[at + k] = TINT.copy(EMBER_A).lerp(EMBER_B, run.length > 1 ? k / (run.length - 1) : 0).getHex();
+      const run = words.slice(i, j + 1).map((x) => x.t).join(GAP);
+      for (let k = 0; k < run.length; k++) ranges[at + k] = raw(TINT.copy(EMBER_A).lerp(EMBER_B, run.length > 1 ? k / (run.length - 1) : 0));
       ranges[at + run.length] = base;
       text += run.slice(w.t.length); i = j;
     }
@@ -94,7 +101,6 @@ function typeLine(l: TypeLine, wrapAt: number, center: boolean): Text {
   t.textAlign = center ? 'center' : 'left';
   t.anchorX = center ? 'center' : 'left';
   t.anchorY = 'top';
-  t.color = base;
   t.colorRanges = ranges;
   t.outlineWidth = 0;
   t.outlineBlur = px * 0.22;
