@@ -75,9 +75,7 @@ function typeLine(l: TypeLine, wrapAt: number, center: boolean): Text {
   let text = '';
   // Every character takes a range colour: the base from the first, the ember and the Example label over it.
   const ranges: Record<number, number> = { 0: base };
-  // Words are joined by a space and a hair space: Sora's space alone, with the headline's tightened letters, closes
-  // the words up (the canvas set 0.27em between them).
-  const GAP = l.size === 'h' ? ' \u200a' : ' ';
+  const GAP = ' ';
   for (let i = 0; i < words.length; i++) {
     const w = words[i], at = text.length + (i ? GAP.length : 0);
     text += (i ? GAP : '') + w.t;
@@ -95,7 +93,8 @@ function typeLine(l: TypeLine, wrapAt: number, center: boolean): Text {
   t.text = text;
   t.font = soraFile(l.weight ?? (l.size === 'h' ? 800 : 500));
   t.fontSize = px;
-  t.letterSpacing = l.size === 'h' ? -5 / px : 0;
+  // The headline's letters sit a little tight, as on the page; tighter than this closes up Sora's word spaces.
+  t.letterSpacing = l.size === 'h' ? -0.02 : 0;
   t.lineHeight = l.size === 'h' ? 1.0 : 1.45;
   t.maxWidth = wrapAt;
   t.textAlign = center ? 'center' : 'left';
