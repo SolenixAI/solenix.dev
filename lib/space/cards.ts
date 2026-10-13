@@ -4,6 +4,7 @@
 // and motion as everything else. Offsets and sizes are in view heights at the anchor's depth, so a layout reads the
 // same on any screen and at any distance.
 import * as THREE from 'three';
+import { Text } from 'troika-three-text';
 
 export type CardState = "plain" | "hot" | "done" | "dim" | "new"
 
@@ -51,39 +52,82 @@ function wrap(g: CanvasRenderingContext2D, text: string, max: number): string[] 
 }
 
 const TW = 1600;
-// Words set in the space: big Sora headlines with the ember on their em part, a softer line under them. No card
-// behind them; a soft dark halo keeps them readable over the suns.
-function drawType(c: HTMLCanvasElement, lines: TypeLine[], wrap = TW - 40, center = false): number {
-  // A line never runs past the canvas: a wrap wider than it cut words off at the right edge.
-  const g = c.getContext('2d')!, wrapAt = Math.min(wrap, TW - 40);
-  const px = (l: TypeLine) => l.px ?? (l.size === 'h' ? 132 : 56);
-  const font = (l: TypeLine, ex?: boolean) => ex ? `600 ${Math.round(px(l) * 0.6)}px ${MONO}` : `${l.weight ?? (l.size === 'h' ? 800 : 500)} ${px(l)}px ${SANS}`;
-  const lh = (l: TypeLine) => px(l) * (l.size === 'h' ? 1.0 : 1.45);
-  type Word = { t: string; em?: boolean; ex?: boolean; w: number };
-  const rows: { l: TypeLine; words: Word[] }[] = [];
-  for (const l of lines) {
-    const words: Word[] = [];
-    for (const p of l.parts) for (const t of p.t.split(/\s+/).filter(Boolean)) { g.font = font(l, p.ex); (g as CanvasRenderingContext2D & { letterSpacing: string }).letterSpacing = l.size === 'h' && !p.ex ? '-5px' : '0px'; words.push({ t, em: p.em, ex: p.ex, w: g.measureText(t).width + (p.ex ? 40 : 0) }); }
-    let row: Word[] = [], width = 0; const space = px(l) * 0.27;
-    for (const w of words) { if (row.length && width + space + w.w > wrapAt) { rows.push({ l, words: row }); row = []; width = 0; } width += (row.length ? space : 0) + w.w; row.push(w); }
-    if (row.length) rows.push({ l, words: row });
-  }
-  const H = Math.ceil(rows.reduce((a, r) => a + lh(r.l), 0) + 60);
-  c.width = TW; c.height = H; g.clearRect(0, 0, TW, H);
-  let y = 20;
-  for (const r of rows) {
-    const space = px(r.l) * 0.27, rowW = r.words.reduce((a, w, i) => a + w.w + (i ? space : 0), 0);
-    y += lh(r.l); let x = center ? (TW - rowW) / 2 : 20; const base = y - lh(r.l) * 0.18;
-    for (const w of r.words) {
-      g.font = font(r.l, w.ex); (g as CanvasRenderingContext2D & { letterSpacing: string }).letterSpacing = r.l.size === 'h' && !w.ex ? '-5px' : '0px';
-      g.shadowColor = 'rgba(5,6,10,0.75)'; g.shadowBlur = 28;
-      if (w.ex) { g.shadowBlur = 0; g.strokeStyle = 'rgba(244,242,238,0.3)'; g.lineWidth = 2; g.beginPath(); const ph = px(r.l) * 0.95; g.roundRect(x, base - ph * 0.78, w.w, ph, ph / 2); g.stroke(); g.fillStyle = MUTED; g.fillText(w.t, x + 20, base - ph * 0.12); }
-      else if (w.em) { const gr = g.createLinearGradient(x, 0, x + w.w, 0); gr.addColorStop(0, '#fbbf24'); gr.addColorStop(1, '#f97316'); g.fillStyle = gr; g.fillText(w.t, x, base); }
-      else { g.fillStyle = r.l.size === 'h' ? '#efece6' : '#d6d1ca'; g.fillText(w.t, x, base); }
-      x += w.w + space;
+// Words set in the space are SDF type (troika-three-text): sharp at any size, distance and screen density. Big Sora
+// headlines with an ember gradient on their em part, a softer line under them, no card behind them; a soft dark
+// halo (the outline blur) keeps them readable over the suns. Laid out in the same units as before: a card 1600
+// wide, so the page's type sizes (TypeLine.px) and wraps carry over unchanged. Troika reads .woff, not .woff2, so
+// the static weights are vendored for the world (scripts/vendor.ts, public/vendor/fonts/world).
+const WORLD_FONTS = '/vendor/fonts/world/';
+const SORA_WEIGHTS = [400, 500, 600, 700, 800];
+const soraFile = (w: number) => `${WORLD_FONTS}sora-latin-${SORA_WEIGHTS.reduce((a, b) => (Math.abs(b - w) < Math.abs(a - w) ? b : a))}-normal.woff`;
+const EMBER_A = new THREE.Color('#fbbf24'), EMBER_B = new THREE.Color('#f97316'), TINT = new THREE.Color();
+
+/** One line of type as troika lays it out: its words joined by single spaces, the em words coloured along the
+ * ember gradient one character at a time, the Example label muted. */
+function typeLine(l: TypeLine, wrapAt: number, center: boolean): Text {
+  const px = l.px ?? (l.size === 'h' ? 132 : 56);
+  const base = l.size === 'h' ? 0xefece6 : 0xd6d1ca;
+  const words: { t: string; em?: boolean; ex?: boolean }[] = [];
+  for (const p of l.parts) for (const t of p.t.split(/\s+/).filter(Boolean)) words.push({ t, em: p.em, ex: p.ex });
+  let text = '';
+  const ranges: Record<number, number> = {};
+  for (let i = 0; i < words.length; i++) {
+    const w = words[i], at = text.length + (i ? 1 : 0);
+    text += (i ? ' ' : '') + w.t;
+    if (w.ex) { ranges[at] = 0xa39e97; ranges[at + w.t.length] = base; }
+    else if (w.em) {
+      // The gradient runs across the whole em run, as one stroke of colour.
+      let j = i; while (j + 1 < words.length && words[j + 1].em) j++;
+      const run = words.slice(i, j + 1).map((x) => x.t).join(' ');
+      for (let k = 0; k < run.length; k++) ranges[at + k] = TINT.copy(EMBER_A).lerp(EMBER_B, run.length > 1 ? k / (run.length - 1) : 0).getHex();
+      ranges[at + run.length] = base;
+      text += run.slice(w.t.length); i = j;
     }
   }
-  return H / TW;
+  const t = new Text();
+  t.text = text;
+  t.font = soraFile(l.weight ?? (l.size === 'h' ? 800 : 500));
+  t.fontSize = px;
+  t.letterSpacing = l.size === 'h' ? -5 / px : 0;
+  t.lineHeight = l.size === 'h' ? 1.0 : 1.45;
+  t.maxWidth = wrapAt;
+  t.textAlign = center ? 'center' : 'left';
+  t.anchorX = center ? 'center' : 'left';
+  t.anchorY = 'top';
+  t.color = base;
+  t.colorRanges = ranges;
+  t.outlineWidth = 0;
+  t.outlineBlur = px * 0.22;
+  t.outlineColor = 0x05060a;
+  t.outlineOpacity = 0.75;
+  t.material = new THREE.MeshBasicMaterial({ transparent: true, depthWrite: false, toneMapped: false });
+  t.renderOrder = 20;
+  return t;
+}
+
+/** A card of type: its lines stacked from the top, centred on the group's origin once every line has its font and
+ * layout. Calls back with the card's height over its width; until then it is not shown, so a fallback face never
+ * shows. */
+function buildType(lines: readonly TypeLine[], wrap = TW - 40, center = false, ready: (aspect: number) => void) {
+  const group = new THREE.Group(), wrapAt = Math.min(wrap, TW - 40);
+  const texts = lines.map((l) => typeLine(l, wrapAt, center));
+  let left = texts.length;
+  const done = () => {
+    if (--left > 0) return;
+    let y = 20;
+    for (const t of texts) {
+      const b = t.textRenderInfo?.blockBounds ?? [0, 0, 0, 0];
+      t.position.set(center ? TW / 2 : 20, -y, 0);
+      y += b[3] - b[1];
+    }
+    const H = Math.ceil(y + 40);
+    for (const t of texts) { t.position.x -= TW / 2; t.position.y += H / 2; group.add(t); }
+    ready(H / TW);
+  };
+  if (!texts.length) queueMicrotask(() => ready(0.05));
+  for (const t of texts) t.sync(done);
+  const dispose = () => { for (const t of texts) { t.dispose(); (t.material as THREE.Material).dispose(); } };
+  return { group, texts, dispose };
 }
 
 // A name to tap: a pill with the word in it, the ember edge saying it can be pressed.
@@ -98,7 +142,6 @@ function drawPill(c: HTMLCanvasElement, text: string): number {
 }
 
 function draw(c: HTMLCanvasElement, card: SpaceCard): number {
-  if (card.kind === 'type') return drawType(c, card.lines ?? [], card.wrap, card.center);
   const g = c.getContext('2d')!, st = card.state ?? 'plain', pad = 36;
   // Measure first: the card's height follows its words.
   g.font = `600 ${card.kind === 'say' ? 44 : card.kind === 'reply' ? 38 : card.kind === 'ask' ? 34 : 38}px ${SANS}`;
@@ -131,12 +174,47 @@ export function createCards(camera: THREE.PerspectiveCamera) {
   const geo = new THREE.PlaneGeometry(1, 1);
   const live = new Map<string, { mesh: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>; key: string; aspect: number; pos: THREE.Vector3; seen: boolean; al: number; w: number; h: number }>();
   const right = new THREE.Vector3(), up = new THREE.Vector3(), want = new THREE.Vector3(), tmp = new THREE.Vector3();
+  // Type cards: troika text, one group per card. A card whose words change keeps showing until its new words are
+  // laid out, then swaps, so a change never blinks.
+  type Built = ReturnType<typeof buildType> & { aspect: number };
+  const types = new Map<string, { shown: Built | null; next: Built | null; key: string; pos: THREE.Vector3; seen: boolean; al: number }>();
+
+  function updateType(c: SpaceCard, vh: number, k: number) {
+    let e = types.get(c.id);
+    if (!e) { e = { shown: null, next: null, key: '', pos: new THREE.Vector3(), seen: false, al: 0 }; types.set(c.id, e); }
+    const key = `${c.center ? 'c' : ''}|${c.wrap ?? ''}|${JSON.stringify(c.lines ?? [])}`;
+    if (key !== e.key) {
+      e.key = key; e.next?.dispose();
+      const entry = e, b = buildType(c.lines ?? [], c.wrap, c.center, (aspect) => {
+        if (entry.next !== built) return; // replaced again before it was ready
+        built.aspect = aspect; entry.shown?.dispose(); if (entry.shown) scene.remove(entry.shown.group);
+        entry.shown = built; entry.next = null; scene.add(built.group);
+      });
+      const built: Built = Object.assign(b, { aspect: 0 });
+      e.next = built;
+    }
+    const sh = e.shown; if (!sh) return;
+    const w = c.w * vh, h = w * sh.aspect;
+    if (c.align === 'bottom') want.addScaledVector(up, h / 2);
+    if (!e.seen) { e.pos.copy(want); e.seen = true; } else e.pos.copy(want);
+    sh.group.position.copy(e.pos); sh.group.quaternion.copy(camera.quaternion); sh.group.scale.setScalar(w / TW);
+    e.al += (c.alpha - e.al) * k;
+    for (const t of sh.texts) { t.fillOpacity = e.al; t.outlineOpacity = 0.75 * e.al; }
+    sh.group.visible = e.al > 0.004;
+  }
 
   function update(cards: readonly SpaceCard[], dt: number) {
     right.setFromMatrixColumn(camera.matrixWorld, 0); up.setFromMatrixColumn(camera.matrixWorld, 1);
     const keep = new Set<string>(), k = 1 - Math.exp(-dt * 7);
     for (const c of cards) {
       keep.add(c.id);
+      if (c.kind === 'type') {
+        tmp.set(c.at.x, c.at.y, c.at.z);
+        const vh = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * Math.max(0.5, tmp.distanceTo(camera.position));
+        want.copy(tmp).addScaledVector(right, c.dx * vh).addScaledVector(up, c.dy * vh);
+        updateType(c, vh, k);
+        continue;
+      }
       let e = live.get(c.id);
       if (!e) {
         const canvas = document.createElement('canvas'), map = new THREE.CanvasTexture(canvas);
@@ -159,13 +237,14 @@ export function createCards(camera: THREE.PerspectiveCamera) {
       want.copy(tmp).addScaledVector(right, c.dx * vh).addScaledVector(up, c.dy * vh);
       e.w = c.w * vh; e.h = e.w * e.aspect;
       if (c.align === 'bottom') want.addScaledVector(up, e.h / 2);
-      if (!e.seen) { e.pos.copy(want); e.seen = true; } else e.pos.lerp(want, c.kind === 'type' ? 1 : k);
+      if (!e.seen) { e.pos.copy(want); e.seen = true; } else e.pos.lerp(want, k);
       // Each card turns a little toward the middle of the view, so a column reads as objects standing in space.
-      e.mesh.position.copy(e.pos); e.mesh.quaternion.copy(camera.quaternion); if (c.kind !== 'type') e.mesh.rotateY(-c.dx * 0.55); e.mesh.scale.set(e.w, e.h, 1);
+      e.mesh.position.copy(e.pos); e.mesh.quaternion.copy(camera.quaternion); e.mesh.rotateY(-c.dx * 0.55); e.mesh.scale.set(e.w, e.h, 1);
       e.al += ((c.state === 'dim' ? 0.45 : 1) * c.alpha - e.al) * k;
       e.mesh.material.opacity = e.al; e.mesh.visible = e.al > 0.004;
     }
     for (const [id, e] of live) if (!keep.has(id)) { e.al *= Math.max(0, 1 - k * 2.5); e.mesh.material.opacity = e.al; e.mesh.visible = e.al > 0.004; }
+    for (const [id, e] of types) if (!keep.has(id) && e.shown) { e.al *= Math.max(0, 1 - k * 2.5); for (const t of e.shown.texts) { t.fillOpacity = e.al; t.outlineOpacity = 0.75 * e.al; } e.shown.group.visible = e.al > 0.004; }
   }
 
   /** Where a card is: its centre in world space, or null. */
@@ -183,6 +262,9 @@ export function createCards(camera: THREE.PerspectiveCamera) {
     const auto = renderer.autoClear; renderer.autoClear = false; renderer.setRenderTarget(null); renderer.clearDepth(); renderer.render(scene, camera); renderer.autoClear = auto;
   }
 
-  function dispose() { for (const e of live.values()) { scene.remove(e.mesh); e.mesh.material.map?.dispose(); e.mesh.material.dispose(); } live.clear(); geo.dispose(); }
+  function dispose() {
+    for (const e of live.values()) { scene.remove(e.mesh); e.mesh.material.map?.dispose(); e.mesh.material.dispose(); } live.clear(); geo.dispose();
+    for (const e of types.values()) { e.shown?.dispose(); e.next?.dispose(); } types.clear();
+  }
   return { update, render, where, rect, dispose };
 }
