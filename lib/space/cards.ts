@@ -67,7 +67,7 @@ const raw = (c: THREE.Color) => c.getHex(THREE.LinearSRGBColorSpace);
 
 /** One line of type as troika lays it out: its words joined by single spaces, the em words coloured along the
  * ember gradient one character at a time, the Example label muted. */
-function typeLine(l: TypeLine, wrapAt: number, center: boolean): Text {
+function typeLine(l: TypeLine, wrapAt: number, center: boolean, material: THREE.Material): Text {
   const px = l.px ?? (l.size === 'h' ? 132 : 56);
   const base = raw(new THREE.Color(l.size === 'h' ? '#efece6' : '#d6d1ca'));
   const words: { t: string; em?: boolean; ex?: boolean }[] = [];
@@ -105,20 +105,24 @@ function typeLine(l: TypeLine, wrapAt: number, center: boolean): Text {
   t.outlineBlur = px * 0.22;
   t.outlineColor = 0x05060a;
   t.outlineOpacity = 0.75;
-  t.material = new THREE.MeshBasicMaterial({ transparent: true, depthWrite: false, toneMapped: false });
+  t.material = material;
   t.renderOrder = 20;
   return t;
 }
 
 /** A card of type: its lines stacked from the top, centred on the group's origin once every line has its font and
  * layout. Calls back with the card's height over its width; until then it is not shown, so a fallback face never
- * shows. */
+ * shows. The lines share one base material, disposed once with them (troika disposes the materials it derives from
+ * it). A card cancelled before it is ready is freed when its layout lands, never while troika is still building it. */
 function buildType(lines: readonly TypeLine[], wrap = TW - 40, center = false, ready: (aspect: number) => void) {
   const group = new THREE.Group(), wrapAt = Math.min(wrap, TW - 40);
-  const texts = lines.map((l) => typeLine(l, wrapAt, center));
-  let left = texts.length;
+  const material = new THREE.MeshBasicMaterial({ transparent: true, depthWrite: false, toneMapped: false });
+  const texts = lines.map((l) => typeLine(l, wrapAt, center, material));
+  let left = texts.length, cancelled = false, freed = false;
+  const free = () => { if (freed) return; freed = true; for (const t of texts) t.dispose(); material.dispose(); };
   const done = () => {
     if (--left > 0) return;
+    if (cancelled) return free();
     let y = 20;
     for (const t of texts) {
       const b = t.textRenderInfo?.blockBounds ?? [0, 0, 0, 0];
@@ -129,9 +133,10 @@ function buildType(lines: readonly TypeLine[], wrap = TW - 40, center = false, r
     for (const t of texts) { t.position.x -= TW / 2; t.position.y += H / 2; group.add(t); }
     ready(H / TW);
   };
-  if (!texts.length) queueMicrotask(() => ready(0.05));
+  if (!texts.length) queueMicrotask(() => (cancelled ? free() : ready(0.05)));
   for (const t of texts) t.sync(done);
-  const dispose = () => { for (const t of texts) { t.dispose(); (t.material as THREE.Material).dispose(); } };
+  /** Frees the card now if it is laid out, or as soon as its layout lands. */
+  const dispose = () => { if (left > 0) cancelled = true; else free(); };
   return { group, texts, dispose };
 }
 
@@ -182,28 +187,30 @@ export function createCards(camera: THREE.PerspectiveCamera) {
   // Type cards: troika text, one group per card. A card whose words change keeps showing until its new words are
   // laid out, then swaps, so a change never blinks.
   type Built = ReturnType<typeof buildType> & { aspect: number };
-  const types = new Map<string, { shown: Built | null; next: Built | null; key: string; pos: THREE.Vector3; seen: boolean; al: number }>();
+  const types = new Map<string, { shown: Built | null; next: Built | null; key: string; pos: THREE.Vector3; al: number; w: number; h: number }>();
+  let disposed = false;
 
   function updateType(c: SpaceCard, vh: number, k: number) {
     let e = types.get(c.id);
-    if (!e) { e = { shown: null, next: null, key: '', pos: new THREE.Vector3(), seen: false, al: 0 }; types.set(c.id, e); }
+    if (!e) { e = { shown: null, next: null, key: '', pos: new THREE.Vector3(), al: 0, w: 0, h: 0 }; types.set(c.id, e); }
     const key = `${c.center ? 'c' : ''}|${c.wrap ?? ''}|${JSON.stringify(c.lines ?? [])}`;
     if (key !== e.key) {
       e.key = key; e.next?.dispose();
-      const entry = e, b = buildType(c.lines ?? [], c.wrap, c.center, (aspect) => {
-        if (entry.next !== built) return; // replaced again before it was ready
-        built.aspect = aspect; entry.shown?.dispose(); if (entry.shown) scene.remove(entry.shown.group);
+      const entry = e;
+      const built: Built = Object.assign(buildType(c.lines ?? [], c.wrap, c.center, (aspect) => {
+        if (disposed || entry.next !== built) return built.dispose(); // torn down, or replaced again before it was ready
+        built.aspect = aspect;
+        if (entry.shown) { scene.remove(entry.shown.group); entry.shown.dispose(); }
         entry.shown = built; entry.next = null; scene.add(built.group);
-      });
-      const built: Built = Object.assign(b, { aspect: 0 });
+      }), { aspect: 0 });
       e.next = built;
     }
     const sh = e.shown; if (!sh) return;
-    const w = c.w * vh, h = w * sh.aspect;
-    if (c.align === 'bottom') want.addScaledVector(up, h / 2);
-    if (!e.seen) { e.pos.copy(want); e.seen = true; } else e.pos.copy(want);
-    sh.group.position.copy(e.pos); sh.group.quaternion.copy(camera.quaternion); sh.group.scale.setScalar(w / TW);
-    e.al += (c.alpha - e.al) * k;
+    e.w = c.w * vh; e.h = e.w * sh.aspect;
+    if (c.align === 'bottom') want.addScaledVector(up, e.h / 2);
+    e.pos.copy(want);
+    sh.group.position.copy(e.pos); sh.group.quaternion.copy(camera.quaternion); sh.group.scale.setScalar(e.w / TW);
+    e.al += ((c.state === 'dim' ? 0.45 : 1) * c.alpha - e.al) * k;
     for (const t of sh.texts) { t.fillOpacity = e.al; t.outlineOpacity = 0.75 * e.al; }
     sh.group.visible = e.al > 0.004;
   }
@@ -249,15 +256,24 @@ export function createCards(camera: THREE.PerspectiveCamera) {
       e.mesh.material.opacity = e.al; e.mesh.visible = e.al > 0.004;
     }
     for (const [id, e] of live) if (!keep.has(id)) { e.al *= Math.max(0, 1 - k * 2.5); e.mesh.material.opacity = e.al; e.mesh.visible = e.al > 0.004; }
-    for (const [id, e] of types) if (!keep.has(id) && e.shown) { e.al *= Math.max(0, 1 - k * 2.5); for (const t of e.shown.texts) { t.fillOpacity = e.al; t.outlineOpacity = 0.75 * e.al; } e.shown.group.visible = e.al > 0.004; }
+    for (const [id, e] of types) {
+      if (keep.has(id)) continue;
+      e.al *= Math.max(0, 1 - k * 2.5);
+      if (e.shown) { for (const t of e.shown.texts) { t.fillOpacity = e.al; t.outlineOpacity = 0.75 * e.al; } e.shown.group.visible = e.al > 0.004; }
+      // Gone from the page and faded out: freed, not kept for the session.
+      if (e.al < 0.004) { if (e.shown) { scene.remove(e.shown.group); e.shown.dispose(); } e.next?.dispose(); types.delete(id); }
+    }
   }
 
   /** Where a card is: its centre in world space, or null. */
-  const where = (id: string) => { const e = live.get(id); return e && e.mesh.visible ? e.pos : null; };
+  const where = (id: string) => {
+    const e = live.get(id); if (e) return e.mesh.visible ? e.pos : null;
+    const t = types.get(id); return t?.shown?.group.visible ? t.pos : null;
+  };
 
   /** A card's box on screen in CSS pixels (for taps), or null when it is not shown. */
   function rect(id: string, W: number, H: number) {
-    const e = live.get(id); if (!e || e.al < 0.5) return null;
+    const e = live.get(id) ?? types.get(id); if (!e || e.al < 0.5) return null;
     const a = tmp.copy(e.pos).addScaledVector(right, -e.w / 2).addScaledVector(up, e.h / 2).project(camera), x0 = (a.x + 1) / 2 * W, y0 = (1 - a.y) / 2 * H;
     const b = tmp.copy(e.pos).addScaledVector(right, e.w / 2).addScaledVector(up, -e.h / 2).project(camera), x1 = (b.x + 1) / 2 * W, y1 = (1 - b.y) / 2 * H;
     return { x0, y0, x1, y1 };
@@ -269,7 +285,8 @@ export function createCards(camera: THREE.PerspectiveCamera) {
 
   function dispose() {
     for (const e of live.values()) { scene.remove(e.mesh); e.mesh.material.map?.dispose(); e.mesh.material.dispose(); } live.clear(); geo.dispose();
-    for (const e of types.values()) { e.shown?.dispose(); e.next?.dispose(); } types.clear();
+    disposed = true;
+    for (const e of types.values()) { if (e.shown) scene.remove(e.shown.group); e.shown?.dispose(); e.next?.dispose(); } types.clear();
   }
   return { update, render, where, rect, dispose };
 }

@@ -23,7 +23,10 @@ declare module "troika-three-text" {
     outlineBlur: number | `${number}%`
     outlineColor: ColorRepresentation
     outlineOpacity: number
-    material: Material
+    /** Set a base material; reads back the derived one, or [outline, fill] once an outline is set. Dispose the
+     * base material you set: troika then disposes the materials it derived. */
+    get material(): Material | Material[]
+    set material(base: Material)
     /** Layout as of the last finished sync, or null before the first. */
     readonly textRenderInfo: { blockBounds: [number, number, number, number] } | null
     sync(callback?: () => void): void
