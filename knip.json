@@ -6,6 +6,7 @@
   "ignoreDependencies": [
     "@fontsource-variable/sora",
     "@fontsource-variable/jetbrains-mono",
+    "@fontsource/sora",
     "tailwindcss",
     "tw-animate-css",
     "shadcn"
