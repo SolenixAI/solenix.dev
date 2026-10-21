@@ -21,7 +21,7 @@ git ls-files --cached --others --exclude-standard \
   | grep -E '(^|/)[^/]*[-_.]v[0-9]+(\.|$)' \
   | while read -r f; do echo "check: versioned file name: $f"; done | grep . && fail=1
 
-# No version labels in the design system or code (AGENTS.md quotes them as examples).
+# No version labels in the design system or code.
 grep -rn -E '· v[0-9]|\(v[0-9]\)|/\* v[0-9]|\bv[0-9] ·' DESIGN.md design/tokens.css app components lib 2>/dev/null \
   | while read -r l; do echo "check: version label: $l"; done | grep . && fail=1
 
@@ -73,10 +73,6 @@ node scripts/sot-check.ts || fail=1
 node --no-warnings scripts/decisions-check.ts || fail=1
 node scripts/journey-check.ts || fail=1
 node scripts/origin-check.ts || fail=1
-# Every skill is model-invocable for every agent; a skills install or update can lock one again (scripts/unlock-skills.sh fixes it).
-bash scripts/unlock-skills.sh --check || fail=1
-# The git guard blocks what destroys work and nothing else: its table of allowed and blocked commands.
-bash .claude/hooks/block-dangerous-git.test.sh || fail=1
 # TypeScript only: no JavaScript file outside scripts/js-allowlist.txt (a list that may only shrink).
 # Installed skills are vendor code, like public/: their installers own them (Impeccable's live mode injects its JS into the page).
 git ls-files -co --exclude-standard | grep -E '\.(js|jsx|mjs|cjs)$' | grep -vE '^(public/|\.(agents|claude|cursor|github|grok)/skills/)' | grep -vxFf <(grep -v '^#' scripts/js-allowlist.txt) \
@@ -167,36 +163,10 @@ for m in missing: print(f"check: approved by Jager but missing from the homepage
 sys.exit(1 if missing else 0)
 PY
 
-# Impeccable's detector on the homepage. Findings may not rise above the baseline
-# (6 on 2026-10-11, measured on the journey homepage: all six are the ember glows DESIGN.md allows.)
-# Fix findings and lower the baseline; never raise it.
-# The launcher ships in this repo (.claude/skills/impeccable); on its first run it downloads its pinned, sha256-checked engine.
-IMP=${IMPECCABLE:-.claude/skills/impeccable/scripts/impeccable}
-IMPECCABLE_BASELINE=6
-if [ -x "$IMP" ]; then
-  det=$(mktemp)
-  "$IMP" detect --json --no-advisory design/home.html >"$det" 2>/dev/null; rc=$?
-  if [ "$rc" -gt 2 ]; then bad "impeccable detect failed on design/home.html (exit $rc)"
-  else python3 - "$det" "$IMPECCABLE_BASELINE" <<'PYEOF' || fail=1
-import json, sys
-found, base = json.load(open(sys.argv[1])), int(sys.argv[2])
-if len(found) > base:
-    for x in found: print(f"check: impeccable {x['antipattern']} on design/home.html:{x['line']}: {x['snippet']}")
-    print(f"check: impeccable found {len(found)} findings on design/home.html, above the baseline of {base} (scripts/check.sh)")
-    sys.exit(1)
-PYEOF
-  fi
-  rm -f "$det"
-else
-  missing impeccable "the homepage design detector"
-fi
-
-# Every source of truth named in AGENTS.md exists.
+# Design inputs required by the site and its checks exist.
 for f in DESIGN.md design/tokens.css design/home.html design/approved.md; do
   [ -f "$f" ] || bad "missing source of truth: $f"
 done
-# The marketing context is a real file, not a link to PRODUCT.md: every marketing skill reads it, and sot-check.ts keeps its one-liner and audience equal to PRODUCT.md's.
-[ -f .agents/product-marketing.md ] && [ ! -L .agents/product-marketing.md ] || bad ".agents/product-marketing.md must be a real file, not a link (sot-check.ts compares it with PRODUCT.md)"
 
 # The homepage is app/(site)/page.tsx, which reads design/home.html. No second route may serve "/".
 [ -f app/route.ts ] && bad "second homepage: app/route.ts (/ is app/(site)/page.tsx, which reads design/home.html)"

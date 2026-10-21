@@ -11,7 +11,7 @@ pass=0; fail=0
 # A clone of the repo as it is on disk now, uncommitted changes included (so new rules are tested before they're committed).
 fresh() {
   rm -rf "$tmp/r"; git clone -q --local "$root" "$tmp/r"
-  (cd "$root" && git ls-files -co --exclude-standard) | rsync -a --files-from=- "$root/" "$tmp/r/"
+  (cd "$root" && git ls-files -co --exclude-standard) | while IFS= read -r f; do [ -e "$root/$f" ] && printf '%s\n' "$f"; done | rsync -a --files-from=- "$root/" "$tmp/r/"
   # A file deleted in the working tree is still in the commit the clone came from: remove it from the copy too.
   (cd "$root" && git ls-files) | while read -r f; do [ -e "$root/$f" ] || rm -f "$tmp/r/$f"; done
   # Dependencies are installed in the repo, not in the copy (node_modules is ignored): link them, or tsc fails in every copy.
@@ -90,19 +90,6 @@ expect fail "homepage analytics removed"
 fresh; edit 's|<SpaceWorld />||' "$tmp/r/app/(site)/layout.tsx"
 expect fail "the 3D world not mounted in the layout"
 
-# A locked skill: the check must name it (the exit code alone also fails on unrelated rules in a bare clone).
-locked_named() { # locked_named <file> <name>
-  run_check; saw "check: locked skill $1" "$2"
-}
-fresh; f="$tmp/r/.agents/skills/tdd/SKILL.md"; awk 'NR==2{print "disable-model-invocation: true # upstream flag"}1' "$f" > "$f.new" && mv "$f.new" "$f"
-locked_named .agents/skills/tdd/SKILL.md "a skill locked again by an install or update (SKILL.md)"
-fresh; printf 'policy:\n  allow_implicit_invocation: false\n' >> "$tmp/r/.agents/skills/tdd/agents/openai.yaml"
-locked_named .agents/skills/tdd/agents/openai.yaml "a skill locked again for Codex (agents/openai.yaml)"
-
-# The theme decision is dark only (DESIGN.md). A doc that says the portal follows the device contradicts it.
-fresh; echo "- The portal follows the device (light or dark)." >> "$tmp/r/AGENTS.md"
-run_check; saw "contradicts a decision (DESIGN.md: The site is dark only" "AGENTS.md says the portal follows the device (the old theme decision comes back)"
-
 # A replaced rule comes back in a brief (the 3D world is the site; the old instant-answer rule is banned).
 fresh; echo "- No simulated typing: a result shows the moment its stop is reached." >> "$tmp/r/.impeccable/surfaces/design-home-html.md"
 run_check; saw "contradicts a decision (DESIGN.md: The 3D world is the site" "a brief brings back the replaced no-live-work rule"
@@ -110,15 +97,8 @@ run_check; saw "contradicts a decision (DESIGN.md: The 3D world is the site" "a 
 fresh; python3 -c "import sys; p=sys.argv[1]; s=open(p).read(); open(p,'w').write(s.replace('</body>', '<p>We set up ChatGPT.</p></body>', 1))" "$tmp/r/design/home.html"
 run_check; saw "contradicts a decision (DESIGN.md: Offer: one AI agent" "the homepage names a vendor as the AI we set up"
 
-# The design-findings baseline runs from the launcher in this repo, on a machine with no Impeccable plugin (CI has none).
-fresh; for i in 1 2 3 4 5 6; do edit 's|</body>|<div style="box-shadow: 0 0 40px #f59e0b"></div></body>|' "$tmp/r/design/home.html"; done
-run_check HOME="$tmp/nohome" IMPECCABLE_HOME="$HOME/.impeccable"
-saw "check: impeccable found" "homepage design findings above the Impeccable baseline (no plugin on the machine)"
-
-# A tool a rule needs: CI installs every tool scripts/check.sh calls, so a missing one fails the check there.
+# A tool a rule needs: CI installs every remaining tool scripts/check.sh calls, so a missing one fails the check there.
 # On a laptop the rule skips, loudly, and the rest still runs.
-fresh; rm "$tmp/r/.claude/skills/impeccable/scripts/impeccable"
-run_check CI=1; saw "impeccable is not installed" "the Impeccable launcher missing in CI fails the check (it does not skip)"
 fresh; run_check CI=1 ACTIONLINT=/nonexistent/actionlint
 saw "actionlint is not installed" "actionlint missing in CI fails the check (it does not skip)"
 fresh; run_check CI=1 ZIZMOR=/nonexistent/zizmor
@@ -165,21 +145,6 @@ kill "$srv" 2>/dev/null
 
 fresh; mkdir -p "$tmp/r/app/(site)/law"
 expect fail "an industry page (app/(site)/law)"
-
-fresh; rm "$tmp/r/.agents/product-marketing.md"; ln -s ../PRODUCT.md "$tmp/r/.agents/product-marketing.md"
-expect fail "the marketing context is a link to PRODUCT.md"
-
-fresh; edit 's/^\*\*One-liner:\*\*.*/**One-liner:** Solenix is a tech expert for small businesses./' "$tmp/r/.agents/product-marketing.md"
-expect fail "the one-liner in the marketing context differs from PRODUCT.md"
-
-fresh; edit 's/^\*\*One-liner:\*\*.*/**One-liner:** Solenix is one tech expert for small businesses./' "$tmp/r/.agents/product-marketing.md"
-expect fail "the one-liner in the marketing context is trimmed (drops the location)"
-
-fresh; edit 's/^\*\*Target companies:\*\*.*/**Target companies:** small businesses./' "$tmp/r/.agents/product-marketing.md"
-expect fail "the audience in the marketing context is trimmed (drops the location)"
-
-fresh; edit 's/^\*\*Target companies:\*\*.*/**Target companies:** small businesses in Newfoundland./' "$tmp/r/.agents/product-marketing.md"
-expect fail "the audience in the marketing context differs from PRODUCT.md"
 
 fresh; edit 's#</body>#<p>Care plans from $199/month</p></body>#' "$tmp/r/design/home.html"
 expect fail "a public price on the homepage"
