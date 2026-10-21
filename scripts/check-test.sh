@@ -92,10 +92,10 @@ expect fail "the 3D world not mounted in the layout"
 
 # A replaced rule comes back in a brief (the 3D world is the site; the old instant-answer rule is banned).
 fresh; echo "- No simulated typing: a result shows the moment its stop is reached." >> "$tmp/r/.impeccable/surfaces/design-home-html.md"
-run_check; saw "contradicts a decision (DESIGN.md: The 3D world is the site" "a brief brings back the replaced no-live-work rule"
+run_check; saw "check: a decision is broken (DESIGN.md:32)" "a brief brings back the replaced no-live-work rule"
 # A vendor named as the AI we set up, in the homepage copy.
 fresh; python3 -c "import sys; p=sys.argv[1]; s=open(p).read(); open(p,'w').write(s.replace('</body>', '<p>We set up ChatGPT.</p></body>', 1))" "$tmp/r/design/home.html"
-run_check; saw "contradicts a decision (DESIGN.md: Offer: one AI agent" "the homepage names a vendor as the AI we set up"
+run_check; saw "check: a decision is broken (DESIGN.md:44)" "the homepage names a vendor as the AI we set up"
 
 # A tool a rule needs: CI installs every remaining tool scripts/check.sh calls, so a missing one fails the check there.
 # On a laptop the rule skips, loudly, and the rest still runs.
