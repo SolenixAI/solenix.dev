@@ -1,6 +1,3 @@
 # JavaScript files allowed in the repo. Everything else is TypeScript (scripts/check.sh fails a new
 # .js/.jsx/.mjs/.cjs file). This list may only shrink: remove a line when its file becomes .ts.
 # Why each one is still JavaScript:
-#   .claude/workflows/*.js: Claude Code workflow scripts are JavaScript by that tool's format
-.claude/workflows/design-ab.js
-.claude/workflows/scene-review.js
