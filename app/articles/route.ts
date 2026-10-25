@@ -42,7 +42,7 @@ function newestHero(a: Article, more: number) {
   const still = a.hero && a.heroPhone
     ? `<picture><source media="(max-width:760px)" srcset="${srcset(a.heroPhone, a.heroPhone2x)}" width="390" height="844"><img src="${a.hero}" srcset="${srcset(a.hero, a.hero2x)}" alt="" width="1440" height="900" decoding="sync" fetchpriority="high"></picture>`
     : a.cover ? `<img src="${a.cover}" alt="" width="1200" height="630">` : `<div class="noimg" aria-hidden="true"></div>`
-  const live = `<div class="cover live play">${still}<iframe data-src="${a.path}" hidden tabindex="-1" aria-hidden="true" title="${t}"></iframe></div>`
+  const live = `<div class="cover live play fill-small">${still}<iframe data-src="${a.path}" hidden tabindex="-1" aria-hidden="true" title="${t}"></iframe></div>`
   const enter = `<a class="enter" href="${a.path}" aria-label="Play with ${t}">Play with it<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>`
   const cue = `<a class="sx-cue" href="#more">${more ? "More articles" : "Who made these"} ↓</a>`
   return `
@@ -55,7 +55,7 @@ function newestHero(a: Article, more: number) {
   </div>
   <div class="win">
    ${live}
-   <div class="win-bar"><span class="win-cap"><b>New</b><time class="win-date" datetime="${a.date}">${esc(day(a.date))}</time><span class="win-name">${t}</span><span class="win-hint">Try it right here.</span></span>${enter}</div>
+   <div class="win-bar"><span class="win-cap"><b>New</b><time class="win-date" datetime="${a.date}">${esc(day(a.date))}</time><span class="win-name">${t}</span><span class="win-summary">${esc(a.description)}</span><span class="win-hint">Try it right here.</span></span>${enter}</div>
   </div>
  </div>
  ${cue}
@@ -103,11 +103,11 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background-im
 @media (max-width:760px){.ar-hero .sx-hero-in{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto;align-content:start}}
 .win-bar{flex:none;display:flex;gap:10px 16px;align-items:center;justify-content:space-between;padding:8px 8px 8px 20px;border-top:1px solid var(--line)}
 .win-cap{flex:1;display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;min-width:0;color:var(--text)}
-.win-name{min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:650 clamp(1rem,3.2cqmin,1.4rem)/1.15 var(--font-display);letter-spacing:-.01em}
-.win-cap b{display:inline-flex;align-items:center;gap:7px;padding:6px 9px;border-radius:999px;border:1px solid color-mix(in srgb,var(--accent) 40%,transparent);background:color-mix(in srgb,var(--accent) 14%,transparent);font:600 .72rem/1 var(--font-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent-text)}
+.win-name{flex-basis:100%;min-width:0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:650 clamp(1rem,3.2cqmin,1.4rem)/1.15 var(--font-display);letter-spacing:-.01em}
+.win-summary{flex-basis:100%;max-width:56rem;color:var(--muted);font:400 .92rem/1.45 var(--font-text);text-wrap:pretty}.win-cap b{display:inline-flex;align-items:center;gap:7px;padding:6px 9px;border-radius:999px;border:1px solid color-mix(in srgb,var(--accent) 40%,transparent);background:color-mix(in srgb,var(--accent) 14%,transparent);font:600 .72rem/1 var(--font-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent-text)}
 .win-cap b::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent)}
-/* A narrow window (a small or short screen): the article shows its own title right above, so the bar keeps only the action. */
-@container win (max-width:440px){.win-cap{display:none}.win-bar{padding:8px}.enter{flex:1;justify-content:center}}
+/* A narrow window keeps the story's title and context visible alongside the action. */
+@container win (max-width:440px){.win-bar{display:grid;grid-template-columns:1fr;gap:12px;padding:14px}.win-cap{display:flex;flex-direction:column;align-items:flex-start;gap:8px}.win-name{white-space:normal;overflow:visible;text-overflow:clip}.win-summary{font-size:.9rem}.win-hint{display:none}.enter{width:100%;justify-content:center}}@media (max-width:760px) and (max-height:680px){.ar-hero .sx-hero-text{gap:.6rem}.ar-hero .sx-hero-text .sx-sub{display:none}.ar-hero .win .live{aspect-ratio:3/1}.ar-hero .win-bar{gap:8px;padding:8px}.ar-hero .win-cap{gap:6px}.ar-hero .win-summary{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}}@media (min-width:500px) and (max-width:760px) and (max-height:420px){.ar-hero .sx-hero-text{flex-direction:row;align-items:center;justify-content:space-between;gap:8px}.ar-hero .sx-hero-text h1{font-size:clamp(1.2rem,5vw,1.8rem);white-space:nowrap}.ar-hero .win .live{aspect-ratio:auto;height:32px}.ar-hero .win-bar{display:flex;gap:6px;padding:6px}.ar-hero .win-cap{display:flex;flex-wrap:wrap;align-items:center;gap:2px 8px}.ar-hero .win-name{font-size:1rem}.ar-hero .win-summary{-webkit-line-clamp:1;font-size:.82rem}.ar-hero .win-hint{display:none}.ar-hero .enter{width:auto;min-height:36px;padding-inline:12px}}
 .win-hint{font:400 .9rem/1.2 var(--font-text);color:var(--muted)}
 .win-date{font:500 .8rem ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--faint);letter-spacing:.06em}
 @container (max-width:480px){.win-hint{display:none}}
