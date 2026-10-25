@@ -80,5 +80,5 @@ else if (bar) {
   else update()
 
   list?.addEventListener("click", (e) => { if ((e.target as Element).closest("a")) list.hidePopover() })
-  share?.addEventListener("click", async () => { const url = location.origin + location.pathname; if (navigator.share) { try { await navigator.share({ title: document.title, url }); announceShare("Shared"); window.captureGoal?.("article_shared"); return } catch { /* use the copy action when the browser cannot complete native sharing */ } } try { await navigator.clipboard.writeText(url); announceShare("Link copied"); window.captureGoal?.("article_shared") } catch { announceShare("Could not share link") } })
+  share?.addEventListener("click", async () => { const url = location.origin + location.pathname; if (navigator.share) { try { await navigator.share({ title: document.title, url }); announceShare("Shared"); window.captureGoal?.("article_shared"); return } catch (error) { if (error instanceof DOMException && error.name === "AbortError") return; /* use the copy action when the browser cannot complete native sharing */ } } try { await navigator.clipboard.writeText(url); announceShare("Link copied"); window.captureGoal?.("article_shared") } catch { announceShare("Could not share link") } })
 }
