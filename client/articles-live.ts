@@ -25,7 +25,7 @@ const box = (c: HTMLElement) => {
   const still = layout(c)
   if (c.classList.contains("play")) {
     const w = still?.naturalWidth || innerWidth, h = still?.naturalHeight || innerHeight
-    return { r, w, h, s: Math.min(r.height / h, r.width / w) }
+    const fillSmall = c.classList.contains("fill-small") && matchMedia("(max-width: 760px)").matches; return { r, w, h, s: fillSmall ? r.width / w : Math.min(r.height / h, r.width / w) }
   }
   const w = still?.naturalWidth || innerWidth, s = r.width / w
   return { r, w, s, h: still?.naturalHeight || r.height / s }
