@@ -1414,7 +1414,7 @@ const CHK=["Not checked yet","Partly checked by computer","Main result checked b
 const KINDS=[...new Set(A.map(a=>a.k))].sort();
 A.forEach(a=>{a.F=FIELDS[a.f];a.G=FG[a.F];a.s=[a.h,a.t,a.p,a.F,a.a,a.k,a.q,a.kd,a.mt,(a.lf||[]).join(" ")].join(" ").toLowerCase()});
 const byId=Object.fromEntries(A.map((a,i)=>[a.i,i]));
-const st={q:"",g:-1,field:null,c:-1,k:null,life:null,view:"map",sort:"fame",shown:60};
+const st={q:"",g:-1,field:null,c:-1,k:null,life:null,view:matchMedia("(max-width: 760px)").matches?"cards":"map",sort:"fame",shown:60};
 const match=a=>(!st.life||(a.lf||[]).includes(st.life))&&(st.g<0||a.G==st.g)&&(!st.field||a.F==st.field)&&(st.c<0||a.c==st.c)&&(!st.k||a.k==st.k)&&(!st.q||st.q.split(/\s+/).every(w=>a.s.includes(w)));
 const sup=s=>esc(s).replace(/([A-Za-z0-9π)])\^(\(?[-0-9.\/ε]+\)?)/g,"$1<sup>$2</sup>");
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -1516,7 +1516,7 @@ $("#q").oninput=e=>{st.q=e.target.value.trim().toLowerCase();st.shown=60;render(
 const setView=v=>{st.view=v;$("#vMap").setAttribute("aria-pressed",v=="map");$("#vCards").setAttribute("aria-pressed",v=="cards");$("#mapView").hidden=v!="map";$("#cardView").hidden=v!="cards";render()};
 $("#vMap").onclick=()=>setView("map");$("#vCards").onclick=()=>setView("cards");
 document.addEventListener("keydown",e=>{if(e.key=="/"&&document.activeElement.tagName!="INPUT"){e.preventDefault();$("#q").focus();$("#atlas").scrollIntoView({behavior:"smooth"})}});
-render();
+setView(st.view);
 
 /* drawer */
 let cur=-1;const dr=$("#drawer"),scrim=$("#scrim");
