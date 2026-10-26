@@ -14,7 +14,7 @@ else if (bar) {
   const progress = bar.querySelector<HTMLElement>(".lnav-prog")
   const share = bar.querySelector<HTMLButtonElement>(".lnav-share")
   const shareLabel = share?.querySelector<HTMLElement>(".lab")
-  const shareText = shareLabel?.textContent ?? ""
+  const shareText = shareLabel?.textContent ?? ""; let shareReset = 0; const announceShare = (text: string) => { if (!shareLabel) return; shareLabel.textContent = text; window.clearTimeout(shareReset); shareReset = window.setTimeout(() => { shareLabel.textContent = shareText }, 2800) }
   const noSection = current?.textContent ?? ""
   const ids = [...new Set(links.map((a) => a.hash.slice(1)))]
 
@@ -80,13 +80,5 @@ else if (bar) {
   else update()
 
   list?.addEventListener("click", (e) => { if ((e.target as Element).closest("a")) list.hidePopover() })
-  share?.addEventListener("click", async () => {
-    const url = location.origin + location.pathname
-    if (navigator.share) {
-      try { await navigator.share({ title: document.title, url }); window.captureGoal?.("article_shared") } catch { /* the visitor closed the sheet */ }
-      return
-    }
-    try { await navigator.clipboard.writeText(url); if (shareLabel) shareLabel.textContent = "Link copied"; window.captureGoal?.("article_shared") } catch { /* no clipboard */ }
-  })
-  for (const type of ["mouseleave", "blur"]) share?.addEventListener(type, () => { if (shareLabel) shareLabel.textContent = shareText })
+  share?.addEventListener("click", async () => { const url = location.origin + location.pathname; if (navigator.share) { try { await navigator.share({ title: document.title, url }); announceShare("Shared"); window.captureGoal?.("article_shared"); return } catch (error) { if (error instanceof DOMException && error.name === "AbortError") return; /* use the copy action when the browser cannot complete native sharing */ } } try { await navigator.clipboard.writeText(url); announceShare("Link copied"); window.captureGoal?.("article_shared") } catch { announceShare("Could not share link") } })
 }
