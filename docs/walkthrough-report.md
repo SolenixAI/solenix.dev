@@ -1,8 +1,8 @@
 # End-to-end user journey audit log
 
 - **Last updated:** 2026-10-25
-- **Iteration:** 3
-- **Status:** Audit complete; all four findings fixed and verified in the running application.
+- **Iteration:** 4
+- **Status:** All four application findings are fixed and verified. A separate native-share cancellation follow-up is fixed.
 
 ## Scope and method
 
@@ -60,6 +60,14 @@ This audit follows the visitor-facing application in the running local site at `
 - Booking hands off to Google Calendar. The appointment schedule loaded with available 30-minute slots in the local timezone. The visual handoff is noticeable, but booking itself worked up to the point of selecting a slot; no booking was submitted.
 - The local development overlay and the local-only analytics endpoint were excluded from findings because they are not visitor-facing application behavior in the audited journeys.
 
+## Review follow-up
+
+### R-01 — P2: Native share cancellation copied the link — fixed
+
+- **Source:** Code review found that cancelling `navigator.share()` fell through to the clipboard fallback and recorded a successful share. The [W3C Web Share API](https://www.w3.org/TR/web-share/) rejects with `AbortError` when a share is cancelled.
+- **Fix:** `AbortError` now stops the flow without copying the URL or recording a share. Other native-share failures still use the clipboard fallback.
+- **Verification:** The fix is included in this PR and its CI passed. This cancellation branch was not separately exercised in the application browser walkthrough.
+
 ## Iteration log
 
 | Date | Change |
@@ -67,3 +75,4 @@ This audit follows the visitor-facing application in the running local site at `
 | 2026-10-25 | Completed the browser-only walkthrough and added findings A-01 through A-03. No site code was changed. |
 | 2026-10-25 | Fixed A-01 mobile preview and story context, A-02 Share feedback and copy fallback, and A-03 responsive atlas default. Rechecked the affected journeys in the running application at 390 × 844 and 1440 × 900. |
 | 2026-10-25 | Rechecked the article hero at 305 × 624, 320 × 568, 640 × 360, and 667 × 300; found short-screen overlap A-04, compacted phone and landscape layouts, and verified all actions and the scroll cue remain distinct. All four findings are closed. |
+| 2026-10-25 | Fixed the native-share cancellation issue found in code review; CI passed, and the cancellation branch is recorded as not separately exercised in the application walkthrough. |
